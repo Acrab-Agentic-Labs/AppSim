@@ -1,0 +1,18 @@
+# api client
+openai
+
+# 环境变量管理
+python-dotenv
+
+# 图像处理和可视化
+matplotlib
+Pillow
+
+# Android 设备控制
+uiautomator2==3.3.3
+
+# 进度条显示
+tqdm
+
+# 其他
+pydantic
