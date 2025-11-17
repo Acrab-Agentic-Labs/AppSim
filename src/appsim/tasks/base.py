@@ -13,6 +13,8 @@ class TaskItem(BaseModel):
 
     instruction: str
     verify_func: Callable[[dict], Any]
+    human_steps: int
+    is_reasoning: bool
 
     class Config:
         arbitrary_types_allowed = True

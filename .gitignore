@@ -154,4 +154,5 @@ results/
 scripts/results/
 scripts/*.sh
 scripts/*.json
+scripts/*.txt
 !scripts/eval.sh
