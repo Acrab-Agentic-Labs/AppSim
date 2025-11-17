@@ -1,7 +1,3 @@
-import subprocess
-import json
-
-
 def validate_addresses_page(result=None, device_id=None):
     # cmd = ['adb']
     # if device_id:

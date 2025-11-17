@@ -6,8 +6,8 @@ This script verifies that the "打车去东湖风景区" action was correctly re
 by reading the private storage JSON file using ADB.
 """
 
-import subprocess
 import json
+import subprocess
 import sys
 
 

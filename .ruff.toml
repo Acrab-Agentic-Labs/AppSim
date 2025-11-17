@@ -19,43 +19,19 @@ exclude = [
 
 # Enable specific rule sets
 [lint]
-# Enable all rules by default, then selectively disable
+# Only enable pyflakes and isort
 select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
     "F",   # pyflakes
     "I",   # isort
-    "N",   # pep8-naming
-    "UP",  # pyupgrade
-    "B",   # flake8-bugbear
-    "C4",  # flake8-comprehensions
-    "SIM", # flake8-simplify
-]
-
-# Ignore specific rules
-ignore = [
-    "E501",  # line too long (handled by formatter)
 ]
 
 # Allow autofix for all enabled rules
 fixable = ["ALL"]
 unfixable = []
 
-# Allow unused variables when underscore-prefixed
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-[lint.per-file-ignores]
-# Ignore specific rules in test files
-"**/test_*.py" = ["E501"]
-"**/eval_*.py" = ["E501"]
-
 [lint.isort]
 # Use black-compatible import sorting
 known-first-party = ["appsim"]
-
-[lint.mccabe]
-# Maximum complexity
-max-complexity = 10
 
 [format]
 # Use double quotes for strings

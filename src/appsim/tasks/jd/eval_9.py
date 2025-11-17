@@ -1,7 +1,3 @@
-import subprocess
-import re
-
-
 def validate_task_nine(result=None, device_id=None):
     """验证任务九：计算购物车中所有商品的总价"""
 

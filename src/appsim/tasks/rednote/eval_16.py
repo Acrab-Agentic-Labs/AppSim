@@ -1,7 +1,5 @@
-import subprocess
 import json
-import sys
-import io
+import subprocess
 
 
 def BrowseAndInteractCheck(userId="user_current", viewCount=2, commentContent="很精彩", result=None, device_id=None):
@@ -47,17 +45,17 @@ def BrowseAndInteractCheck(userId="user_current", viewCount=2, commentContent="�
 
     # 检查命令是否成功执行
     if browsing_result.returncode != 0 or not browsing_result.stdout:
-        print(f" Failed to read browsing history file")
+        print(" Failed to read browsing history file")
         print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
         if browsing_result.stderr:
             print(f"   Error: {browsing_result.stderr}")
         return False
     if likes_result.returncode != 0:
-        print(f" Failed to read likes file")
+        print(" Failed to read likes file")
         print(f"   Reason: ADB command failed (return code: {likes_result.returncode})")
         return False
     if collections_result.returncode != 0:
-        print(f" Failed to read collections file")
+        print(" Failed to read collections file")
         print(f"   Reason: ADB command failed (return code: {collections_result.returncode})")
         return False
 
@@ -72,8 +70,8 @@ def BrowseAndInteractCheck(userId="user_current", viewCount=2, commentContent="�
         else:
             comments_data = []
     except:
-        print(f" Failed to parse JSON data")
-        print(f"   Reason: Invalid JSON format")
+        print(" Failed to parse JSON data")
+        print("   Reason: Invalid JSON format")
         return False
 
     # 检查浏览、点赞、收藏和评论
@@ -84,7 +82,7 @@ def BrowseAndInteractCheck(userId="user_current", viewCount=2, commentContent="�
         ]
 
         if len(home_browsing) < viewCount:
-            print(f" Not enough home feed browsing records")
+            print(" Not enough home feed browsing records")
             print(f"   Reason: Found {len(home_browsing)} records, expected {viewCount}")
             return False
 
@@ -119,7 +117,7 @@ def BrowseAndInteractCheck(userId="user_current", viewCount=2, commentContent="�
             print(f"   Liked, collected and commented on {success_count} notes")
             return True
         else:
-            print(f" Not all notes have complete interactions")
+            print(" Not all notes have complete interactions")
             print(f"   Reason: Only {success_count} out of {viewCount} notes have all interactions")
             # Show details for each note
             for i, note_id in enumerate(note_ids):
@@ -137,7 +135,7 @@ def BrowseAndInteractCheck(userId="user_current", viewCount=2, commentContent="�
             return False
 
     except:
-        print(f" Error while checking interactions")
+        print(" Error while checking interactions")
         return False
 
 

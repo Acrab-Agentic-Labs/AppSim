@@ -1,7 +1,5 @@
-import subprocess
 import json
-import sys
-import io
+import subprocess
 
 
 def SearchResultCountCheck(userId="user_current", searchQuery="美妆", minCount=1, result=None, device_id=None):
@@ -29,13 +27,13 @@ def SearchResultCountCheck(userId="user_current", searchQuery="美妆", minCount
 
     # 检查命令是否成功执行
     if search_result.returncode != 0 or not search_result.stdout:
-        print(f" Failed to read search history file")
+        print(" Failed to read search history file")
         print(f"   Reason: ADB command failed (return code: {search_result.returncode})")
         if search_result.stderr:
             print(f"   Error: {search_result.stderr}")
         return False
     if browsing_result.returncode != 0 or not browsing_result.stdout:
-        print(f" Failed to read browsing history file")
+        print(" Failed to read browsing history file")
         print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
         if browsing_result.stderr:
             print(f"   Error: {browsing_result.stderr}")
@@ -57,16 +55,16 @@ def SearchResultCountCheck(userId="user_current", searchQuery="美妆", minCount
                 )
                 seen_note_ids.add(note_id)
     except:
-        print(f" Failed to parse JSON data")
-        print(f"   Reason: Invalid JSON format")
+        print(" Failed to parse JSON data")
+        print("   Reason: Invalid JSON format")
         return False
 
     # 检查搜索和统计
     try:
         # 检查是否有搜索记录
         if not search_data or len(search_data) == 0:
-            print(f" Search history is empty")
-            print(f"   Reason: No search records found")
+            print(" Search history is empty")
+            print("   Reason: No search records found")
             print(f"   Expected: Search query '{searchQuery}'")
             return False
 
@@ -76,7 +74,7 @@ def SearchResultCountCheck(userId="user_current", searchQuery="美妆", minCount
         ]
 
         if not user_searches:
-            print(f" Search query not found")
+            print(" Search query not found")
             print(f"   Reason: User '{userId}' did not search for '{searchQuery}'")
             recent_searches = [item.get("query", "UNKNOWN") for item in search_data if item.get("userId") == userId][:5]
             if recent_searches:
@@ -91,15 +89,15 @@ def SearchResultCountCheck(userId="user_current", searchQuery="美妆", minCount
         if note_count >= minCount:
             print(f"✓ Successfully searched '{searchQuery}'")
             print(f"   Found {note_count} matching notes (title matches only)")
-            print(f"   Note: Content/tags/topics cannot be verified from browsing history")
+            print("   Note: Content/tags/topics cannot be verified from browsing history")
             return True
         else:
-            print(f" Not enough matching notes")
+            print(" Not enough matching notes")
             print(f"   Reason: Found {note_count} notes, expected at least {minCount}")
             return False
 
     except:
-        print(f" Error while checking search results")
+        print(" Error while checking search results")
         return False
 
 

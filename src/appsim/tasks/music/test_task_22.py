@@ -14,12 +14,12 @@
 """
 
 import logging
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from .verification_functions import task_22_check_view_listening_stats, read_json_from_device
+from .verification_functions import read_json_from_device, task_22_check_view_listening_stats
 
 
 def test22(stat_type=None, result=None, device_id=None):

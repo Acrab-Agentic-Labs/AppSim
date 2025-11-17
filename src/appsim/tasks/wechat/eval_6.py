@@ -2,8 +2,8 @@
 
 
 def Task6_MessageSendCheck(result=None, device_id=None):
-    import subprocess
     import json
+    import subprocess
 
     def _MessageSendCheck(receiverId, senderId, message_content, device_id):
         try:

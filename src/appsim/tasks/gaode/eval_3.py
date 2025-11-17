@@ -6,8 +6,8 @@ This script verifies that the "搜索美食" action was correctly recorded
 by reading the private storage JSON file using ADB.
 """
 
-import subprocess
 import json
+import subprocess
 import sys
 
 

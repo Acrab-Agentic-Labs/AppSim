@@ -2,13 +2,14 @@
 """OpenAI LLM Wrapper for M3A Agent"""
 
 import base64
+import io
 import logging
 import time
-from typing import Optional, Any
+from typing import Any, Optional
+
 import numpy as np
-from PIL import Image
-import io
 from openai import OpenAI
+from PIL import Image
 
 
 def array_to_jpeg_bytes(image: np.ndarray) -> bytes:

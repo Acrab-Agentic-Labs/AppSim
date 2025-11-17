@@ -1,7 +1,5 @@
-import subprocess
 import json
-import sys
-import io
+import subprocess
 
 
 def NoteInteractionCheck(result=None, device_id=None):
@@ -21,14 +19,14 @@ def NoteInteractionCheck(result=None, device_id=None):
     browsing_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
 
     if browsing_result.returncode != 0 or not browsing_result.stdout:
-        print(f" Failed to read browsing_history.json")
+        print(" Failed to read browsing_history.json")
         print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
         return False
 
     try:
         browsing_data = json.loads(browsing_result.stdout)
         if not browsing_data or len(browsing_data) == 0:
-            print(f" Browsing history is empty")
+            print(" Browsing history is empty")
             return False
 
         last_browsing = browsing_data[-1]
@@ -36,13 +34,13 @@ def NoteInteractionCheck(result=None, device_id=None):
         browsing_title = last_browsing.get("noteTitle", "")
 
         if browsing_author_id == "user_003" and browsing_title == "AI技术在日常生活中的应用，太实用了！":
-            print(f"✓ Browsing history check passed")
+            print("✓ Browsing history check passed")
             print(f"   Note Author ID: {browsing_author_id}")
             print(f"   Note Title: {browsing_title}")
             print(f"   Browsed at: {last_browsing.get('browsedAt', 'Unknown')}")
         else:
-            print(f" Browsing history check failed")
-            print(f"   Expected: noteAuthor.id='user_003', noteTitle='AI技术在日常生活中的应用，太实用了！'")
+            print(" Browsing history check failed")
+            print("   Expected: noteAuthor.id='user_003', noteTitle='AI技术在日常生活中的应用，太实用了！'")
             print(f"   Actual: noteAuthor.id='{browsing_author_id}', noteTitle='{browsing_title}'")
             return False
     except:
@@ -58,26 +56,26 @@ def NoteInteractionCheck(result=None, device_id=None):
     )
 
     if likes_result.returncode != 0 or not likes_result.stdout:
-        print(f" Failed to read likes.json")
+        print(" Failed to read likes.json")
         print(f"   Reason: ADB command failed (return code: {likes_result.returncode})")
         return False
 
     try:
         likes_data = json.loads(likes_result.stdout)
         if not likes_data or len(likes_data) == 0:
-            print(f" Likes list is empty")
+            print(" Likes list is empty")
             return False
 
         last_like = likes_data[-1]
         like_target_id = last_like.get("targetId", "")
 
         if like_target_id == "note_002":
-            print(f"✓ Like check passed")
+            print("✓ Like check passed")
             print(f"   Target ID: {like_target_id}")
             print(f"   Liked at: {last_like.get('likedAt', 'Unknown')}")
         else:
-            print(f" Like check failed")
-            print(f"   Expected: targetId='note_002'")
+            print(" Like check failed")
+            print("   Expected: targetId='note_002'")
             print(f"   Actual: targetId='{like_target_id}'")
             return False
     except:
@@ -92,14 +90,14 @@ def NoteInteractionCheck(result=None, device_id=None):
     comments_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
 
     if comments_result.returncode != 0 or not comments_result.stdout:
-        print(f" Failed to read comments.json")
+        print(" Failed to read comments.json")
         print(f"   Reason: ADB command failed (return code: {comments_result.returncode})")
         return False
 
     try:
         comments_data = json.loads(comments_result.stdout)
         if not comments_data or len(comments_data) == 0:
-            print(f" Comments list is empty")
+            print(" Comments list is empty")
             return False
 
         last_comment = comments_data[-1]
@@ -107,13 +105,13 @@ def NoteInteractionCheck(result=None, device_id=None):
         comment_note_id = last_comment.get("noteId", "")
 
         if comment_content == "很实用！" and comment_note_id == "note_002":
-            print(f"✓ Comment check passed")
+            print("✓ Comment check passed")
             print(f"   Content: {comment_content}")
             print(f"   Note ID: {comment_note_id}")
             print(f"   Created at: {last_comment.get('createdAt', 'Unknown')}")
         else:
-            print(f" Comment check failed")
-            print(f"   Expected: content='很实用！', noteId='note_002'")
+            print(" Comment check failed")
+            print("   Expected: content='很实用！', noteId='note_002'")
             print(f"   Actual: content='{comment_content}', noteId='{comment_note_id}'")
             return False
     except:

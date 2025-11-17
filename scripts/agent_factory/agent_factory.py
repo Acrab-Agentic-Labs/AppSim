@@ -3,6 +3,7 @@
 
 import os
 from enum import Enum
+
 from appsim.agents.base import BaseAgent
 
 

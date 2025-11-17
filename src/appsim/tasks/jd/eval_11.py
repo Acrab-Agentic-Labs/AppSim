@@ -1,7 +1,3 @@
-import subprocess
-import re
-
-
 def validate_task_eleven(result=None, device_id=None):
     """验证任务十一：计算我一共收到多少条京东客服的消息"""
 

@@ -1,7 +1,3 @@
-import subprocess
-import json
-
-
 def validate_my_orders_all(result=None, device_id=None):
     # cmd = ['adb']
     # if device_id:

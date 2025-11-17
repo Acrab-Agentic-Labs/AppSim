@@ -1,8 +1,7 @@
+import json
 import os
 import re
 import subprocess
-import json
-from datetime import datetime, time
 
 # 任务25：进入 "火车票" 页面，查10月22日广州到杭州下午2点到5点的车次，检索这些车次中最高的价格
 # 检查条件：智能体返回的价格是否是这些车次中的最高价格

@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 def validate_scheduled_order(result=None, device_id=None):

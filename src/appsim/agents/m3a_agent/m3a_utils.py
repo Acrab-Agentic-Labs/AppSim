@@ -3,9 +3,9 @@
 
 import re
 from typing import Optional, Tuple
+
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-
 
 TRIGGER_SAFETY_CLASSIFIER = "Triggered LLM safety classifier."
 

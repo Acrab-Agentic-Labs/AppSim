@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务21：进入"火车票"页面，选择出发地"长沙"、目的地"天津"、选择日期1月18日，选择学生票，得到车次列表
 # 检查条件：type="train_search", from="长沙", to="天津", date="2026-01-18", ticketType="学生票"

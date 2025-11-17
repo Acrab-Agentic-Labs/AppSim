@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务5：点击"行程"按钮
 # 检查条件：icon="行程", page="行程页面"

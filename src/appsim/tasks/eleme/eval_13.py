@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 def validate_close_notification(result=None, device_id=None):

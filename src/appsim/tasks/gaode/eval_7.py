@@ -3,8 +3,8 @@
 Android App Home Button Click Log Verification Script
 """
 
-import subprocess
 import json
+import subprocess
 import sys
 
 

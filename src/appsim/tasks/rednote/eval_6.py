@@ -1,7 +1,5 @@
-import subprocess
 import json
-import sys
-import io
+import subprocess
 from io import StringIO
 
 
@@ -24,9 +22,9 @@ def ReplyCommentCheck(userId="user_current", replyContent="谢谢喜欢～", res
     # 检查命令是否成功执行
     # comments.json 可能不存在，需要容错处理
     if result1.returncode != 0 or not result1.stdout or not result1.stdout.strip():
-        print(f" Failed to read comments file")
-        print(f"   Reason: Comments file does not exist or is empty")
-        print(f"   Note: Please add a comment first to create the file")
+        print(" Failed to read comments file")
+        print("   Reason: Comments file does not exist or is empty")
+        print("   Note: Please add a comment first to create the file")
         if result1.stderr:
             print(f"   Error: {result1.stderr}")
         return False
@@ -35,15 +33,15 @@ def ReplyCommentCheck(userId="user_current", replyContent="谢谢喜欢～", res
     try:
         data = json.loads(result1.stdout.strip())
     except:
-        print(f" Failed to parse comments data")
-        print(f"   Reason: Invalid JSON format")
+        print(" Failed to parse comments data")
+        print("   Reason: Invalid JSON format")
         return False
 
     # 检查评论回复
     try:
         if not data or len(data) == 0:
-            print(f" Comments list is empty")
-            print(f"   Reason: No comments found")
+            print(" Comments list is empty")
+            print("   Reason: No comments found")
             return False
 
         # 查找回复类型的评论（parentCommentId不为空表示是回复）
@@ -62,7 +60,7 @@ def ReplyCommentCheck(userId="user_current", replyContent="谢谢喜欢～", res
                 print(f"✓ Successfully replied with '{replyContent}'")
                 return True
 
-        print(f" Reply comment not found")
+        print(" Reply comment not found")
         print(f"   Reason: No reply with content '{replyContent}' from user '{userId}'")
         # Show recent replies
         user_replies = [
@@ -75,7 +73,7 @@ def ReplyCommentCheck(userId="user_current", replyContent="谢谢喜欢～", res
         return False
 
     except:
-        print(f" Error while checking reply comments")
+        print(" Error while checking reply comments")
         return False
     finally:
         # 释放缓冲区资源

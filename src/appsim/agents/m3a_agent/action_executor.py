@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Action Executor - 将 JSON Action 转换为 uiautomator2 操作"""
 
-import json
 import logging
 import time
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 import uiautomator2 as u2
 
 

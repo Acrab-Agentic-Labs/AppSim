@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务27：进入"机票"页面，选出发地"成都"、目的地"深圳"，选择日期10月24号，舱型默认，得到航班列表后，预订第一架航班
 # 检查条件：type="flight_booking", from="成都", to="深圳", date="2025-10-24", flightIndex=0

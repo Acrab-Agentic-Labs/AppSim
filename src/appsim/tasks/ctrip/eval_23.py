@@ -1,6 +1,6 @@
+import json
 import re
 import subprocess
-import json
 
 # 任务23：进入 "酒店" 页面，为我检索上海所有酒店中最低的价格
 # 检查条件：智能体返回的价格是否是上海所有酒店中的最低价格

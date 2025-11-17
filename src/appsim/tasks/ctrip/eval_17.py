@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务17：进入"酒店"页面，城市选上海，入住时间任意天，退房时间任意天，房间选择2间、成人选择2位、儿童选择0位，得到酒店列表
 # 检查条件：type="hotel_search", city="上海", rooms=2, adults=2, children=0, 日期动态

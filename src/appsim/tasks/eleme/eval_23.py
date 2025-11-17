@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 # 验证任务23: 在"我的"-"全部订单"中找到有麻辣烫的订单,进入"订单详情页",点击申请食无忧理赔

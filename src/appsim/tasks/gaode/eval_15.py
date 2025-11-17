@@ -6,8 +6,8 @@ This script verifies that the "公交导航去木屋烧烤" action was correctly
 by reading the private storage JSON file using ADB.
 """
 
-import subprocess
 import json
+import subprocess
 import sys
 
 

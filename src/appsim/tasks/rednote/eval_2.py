@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 def BrowseNotesCheck(userId="user_current", expectedCount=3, result=None, device_id=None):
@@ -68,7 +68,7 @@ def BrowseNotesCheck(userId="user_current", expectedCount=3, result=None, device
         # print(f"   Reason: User has only {len(user_browsing)} browsing record(s)")
         # print(f"   Expected: At least {expectedCount} browsing records")
         return False
-    except Exception as e:
+    except Exception:
         # print(f"❌ Error while checking browsing history")
         # print(f"   Reason: {e}")
         return False

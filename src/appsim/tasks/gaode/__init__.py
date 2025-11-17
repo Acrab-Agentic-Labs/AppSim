@@ -1,6 +1,5 @@
 # 引用所有检验函数
-from ..base import TaskItem, AppTasks
-
+from ..base import AppTasks, TaskItem
 from .eval_1 import verify_last_navigation_log1
 from .eval_2 import verify_last_log2
 from .eval_3 import verify_last_log3

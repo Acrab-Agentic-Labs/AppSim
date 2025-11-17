@@ -3,9 +3,9 @@
 用于验证各项任务是否成功完成
 """
 
-import subprocess
 import json
 import os
+import subprocess
 
 # App包名
 APP_PACKAGE = "com.example.mymusic"
@@ -221,7 +221,7 @@ def task_13_check_search_and_play(search_query="稻香", device_id=None, result=
         print(f"  → 检查搜索记录: 《{search_query}》")
         for search in data["searches"]:
             if search.get("query") == search_query and search.get("action") == "play":
-                print(f"  → 找到匹配的搜索并播放记录")
+                print("  → 找到匹配的搜索并播放记录")
                 return True
         print(f"  → 未找到搜索《{search_query}》并播放的记录")
     return False

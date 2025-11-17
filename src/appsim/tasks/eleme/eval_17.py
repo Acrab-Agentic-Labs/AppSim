@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 def validate_add_address(result=None, device_id=None):

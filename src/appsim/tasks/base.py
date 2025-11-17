@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
+from typing import Any, Callable, List
+
 from pydantic import BaseModel
-from typing import Callable, List, Any
 
 
 class TaskItem(BaseModel):

@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 # 验证任务26: 点击搜索框,在搜索历史页面找到"清除历史"按钮并点击

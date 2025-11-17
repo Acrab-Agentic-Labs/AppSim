@@ -13,12 +13,12 @@
 """
 
 import logging
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from .verification_functions import task_31_check_change_player_style, read_json_from_device
+from .verification_functions import read_json_from_device, task_31_check_change_player_style
 
 
 def test31(style_id=None, result=None, device_id=None):

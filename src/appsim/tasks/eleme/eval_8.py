@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 def validate_search_and_filter(result=None, device_id=None):

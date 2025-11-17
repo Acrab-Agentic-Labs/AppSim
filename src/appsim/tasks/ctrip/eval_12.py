@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务12：进入"机票"页面，选择公务/头等舱，得到航班列表
 # 检查条件：type="flight_search", cabin字段为"公务/头等舱"

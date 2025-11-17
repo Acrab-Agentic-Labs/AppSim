@@ -6,8 +6,8 @@ This script verifies navigation actions recorded by the Android app
 by reading the private storage JSON file using ADB.
 """
 
-import subprocess
 import json
+import subprocess
 import sys
 
 

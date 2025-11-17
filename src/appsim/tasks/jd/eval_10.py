@@ -1,7 +1,3 @@
-import subprocess
-import re
-
-
 def validate_task_ten(result=None, device_id=None):
     """验证任务十：计算待收货的订单有多少项"""
 

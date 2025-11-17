@@ -1,6 +1,5 @@
 # 引用所有检验函数
-from ..base import TaskItem, AppTasks
-
+from ..base import AppTasks, TaskItem
 from .test_task_05 import test5
 from .test_task_06 import test6
 from .test_task_07 import test7

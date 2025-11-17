@@ -1,31 +1,32 @@
 # -*- coding: utf-8 -*-
 """M3A Agent - 基于 uiautomator2 和 OpenAI 的多模态 Android 自动化 Agent"""
 
-import os
 import json
+import logging
+import os
 import time
 from datetime import datetime
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 from PIL import Image
 
-from ..base import BaseAgent, AgentExecutionResult
-from .u2_env import U2Env, UIElement
-from .openai_wrapper import OpenAIWrapper
+from ..base import AgentExecutionResult, BaseAgent
 from .action_executor import ActionExecutor
 from .m3a_utils import (
-    validate_ui_element,
-    add_ui_element_mark,
     add_screenshot_label,
+    add_ui_element_mark,
     parse_reason_action_output,
+    validate_ui_element,
 )
+from .openai_wrapper import OpenAIWrapper
 from .prompt import (
-    PROMPT_PREFIX,
-    GUIDANCE,
     ACTION_SELECTION_PROMPT_TEMPLATE,
+    GUIDANCE,
+    PROMPT_PREFIX,
     SUMMARY_PROMPT_TEMPLATE,
 )
-import logging
+from .u2_env import U2Env, UIElement
 
 logging.basicConfig(level=logging.INFO)
 
@@ -284,8 +285,8 @@ class M3AAgent(BaseAgent):
         logging.debug(f"Action output: {action_output}, is_safe: {is_safe}")
 
         if is_safe == False:
-            action_output = f"""Reason: Triggered LLM safety classifier.
-Action: {{"action_type": "status", "goal_status": "infeasible"}}"""
+            action_output = """Reason: Triggered LLM safety classifier.
+Action: {"action_type": "status", "goal_status": "infeasible"}"""
 
         if not raw_response:
             logging.error("Error calling LLM in action selection phase.")

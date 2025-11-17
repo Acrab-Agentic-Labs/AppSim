@@ -1,19 +1,18 @@
-import os
-import time
-import re
-import json
-import logging
-from datetime import datetime
-from PIL import Image
 import base64
-import uiautomator2 as u2
+import logging
+import os
+import re
+import time
+from datetime import datetime
 
-from appsim.tasks import AppEnum, APP_TASKS_MAP
-from .prompt import PHONE_USE_DOUBAO
-from .action_parser import ActionParser
+import uiautomator2 as u2
 from openai import OpenAI
 
+from appsim.tasks import APP_TASKS_MAP, AppEnum
+
 from ..base import AgentExecutionResult, BaseAgent
+from .action_parser import ActionParser
+from .prompt import PHONE_USE_DOUBAO
 
 
 class SeedAgent(BaseAgent):
@@ -188,7 +187,7 @@ class SeedAgent(BaseAgent):
 
             # 测试连接是否正常
             info = self.u2_device.info
-            self.logger.info(f"✅ uiautomator2 连接成功!")
+            self.logger.info("✅ uiautomator2 连接成功!")
             self.logger.info(f"   设备型号: {info.get('productName', 'Unknown')}")
             self.logger.info(f"   Android版本: {info.get('version', 'Unknown')}")
             self.logger.info(
@@ -305,7 +304,7 @@ class SeedAgent(BaseAgent):
                 raise RuntimeError("uiautomator2 设备未连接，无法输入文本")
 
             # 使用 uiautomator2 输入（原生支持中文）
-            self.logger.debug(f"✅ 使用 uiautomator2 输入中文")
+            self.logger.debug("✅ 使用 uiautomator2 输入中文")
             self.u2_device.send_keys(text)
             self.logger.debug(f"✅ 已使用 uiautomator2 成功输入文本: {text}")
 

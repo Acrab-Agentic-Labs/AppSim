@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务14：进入"火车票"页面，选择日期10月24日，得到车次列表
 # 检查条件：type="train_search", date="2025-10-24"

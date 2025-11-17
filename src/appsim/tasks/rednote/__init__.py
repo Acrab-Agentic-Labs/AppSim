@@ -1,6 +1,5 @@
 # 引用所有检验函数
-from ..base import TaskItem, AppTasks
-
+from ..base import AppTasks, TaskItem
 from .eval_1 import MessageSendCheck
 from .eval_2 import BrowseNotesCheck
 from .eval_3 import SearchAndViewCheck

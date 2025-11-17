@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 def validate_cart_checkout(result=None, device_id=None):

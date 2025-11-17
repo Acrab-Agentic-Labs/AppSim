@@ -1,7 +1,5 @@
-import subprocess
 import json
-import sys
-import io
+import subprocess
 
 
 def PublishAndSelfInteractCheck(
@@ -40,17 +38,17 @@ def PublishAndSelfInteractCheck(
 
     # 检查命令是否成功执行
     if browsing_result.returncode != 0 or not browsing_result.stdout:
-        print(f" Failed to read browsing history file")
+        print(" Failed to read browsing history file")
         print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
         if browsing_result.stderr:
             print(f"   Error: {browsing_result.stderr}")
         return False
     if likes_result.returncode != 0:
-        print(f" Failed to read likes file")
+        print(" Failed to read likes file")
         print(f"   Reason: ADB command failed (return code: {likes_result.returncode})")
         return False
     if collections_result.returncode != 0:
-        print(f" Failed to read collections file")
+        print(" Failed to read collections file")
         print(f"   Reason: ADB command failed (return code: {collections_result.returncode})")
         return False
 
@@ -75,8 +73,8 @@ def PublishAndSelfInteractCheck(
                     }
                 )
     except:
-        print(f" Failed to parse JSON data")
-        print(f"   Reason: Invalid JSON format")
+        print(" Failed to parse JSON data")
+        print("   Reason: Invalid JSON format")
         return False
 
     # 检查笔记发布和互动
@@ -85,9 +83,9 @@ def PublishAndSelfInteractCheck(
         user_notes = [note for note in notes_data if note.get("title") == noteTitle]
 
         if not user_notes:
-            print(f" Published note not found")
+            print(" Published note not found")
             print(f"   Expected: Title='{noteTitle}'")
-            print(f"   Note: Content and visibility cannot be verified from browsing history")
+            print("   Note: Content and visibility cannot be verified from browsing history")
             # Show recent notes by user
             if notes_data:
                 recent_titles = [n.get("title", "N/A") for n in notes_data[:3]]
@@ -108,14 +106,14 @@ def PublishAndSelfInteractCheck(
         has_collected = any(col.get("userId") == userId and col.get("noteId") == note_id for col in collections_data)
 
         if has_liked and has_collected:
-            print(f"✓ Successfully published and interacted with note")
+            print("✓ Successfully published and interacted with note")
             print(f"   Note ID: {note_id}")
             print(f"   Title: '{noteTitle}'")
-            print(f"   Liked: ✓, Collected: ✓")
-            print(f"   Note: Content and visibility cannot be verified from browsing history")
+            print("   Liked: ✓, Collected: ✓")
+            print("   Note: Content and visibility cannot be verified from browsing history")
             return True
         else:
-            print(f" Note published but missing interactions")
+            print(" Note published but missing interactions")
             print(f"   Note ID: {note_id}")
             print(f"   Title: '{noteTitle}'")
             print(f"   Liked: {'✓' if has_liked else '✗'}")
@@ -123,7 +121,7 @@ def PublishAndSelfInteractCheck(
             return False
 
     except:
-        print(f" Error while checking published note")
+        print(" Error while checking published note")
         return False
 
 

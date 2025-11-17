@@ -1,7 +1,7 @@
+import json
 import re
 import subprocess
-import json
-from datetime import datetime, date
+from datetime import date
 
 # 任务24：进入 "机票" 页面，查10月21日从北京飞广州的机票，统计下最便宜的 3 趟航班的平均价格
 # 检查条件：智能体计算的平均价格是否与真实的平均价格一致

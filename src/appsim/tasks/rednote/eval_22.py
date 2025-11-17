@@ -1,7 +1,5 @@
-import subprocess
 import json
-import sys
-import io
+import subprocess
 
 
 def CountAuthorNotesCheck(authorNickname="旅行日记", minCount=0, result=None, device_id=None):
@@ -25,13 +23,13 @@ def CountAuthorNotesCheck(authorNickname="旅行日记", minCount=0, result=None
 
     # 检查命令是否成功执行
     if browsing_result.returncode != 0 or not browsing_result.stdout:
-        print(f" Failed to read browsing history file")
+        print(" Failed to read browsing history file")
         print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
         if browsing_result.stderr:
             print(f"   Error: {browsing_result.stderr}")
         return False
     if users_result.returncode != 0 or not users_result.stdout:
-        print(f" Failed to read users file")
+        print(" Failed to read users file")
         print(f"   Reason: ADB command failed (return code: {users_result.returncode})")
         return False
 
@@ -48,8 +46,8 @@ def CountAuthorNotesCheck(authorNickname="旅行日记", minCount=0, result=None
                 {"id": item.get("noteId"), "title": item.get("noteTitle", ""), "author": {"id": author_id}}
             )
     except:
-        print(f" Failed to parse JSON data")
-        print(f"   Reason: Invalid JSON format")
+        print(" Failed to parse JSON data")
+        print("   Reason: Invalid JSON format")
         return False
 
     # 统计博主笔记数量
@@ -62,7 +60,7 @@ def CountAuthorNotesCheck(authorNickname="旅行日记", minCount=0, result=None
                 break
 
         if not target_author:
-            print(f" Author not found")
+            print(" Author not found")
             print(f"   Reason: No user with nickname '{authorNickname}'")
             # Show available nicknames
             available_nicknames = [u.get("nickname", "UNKNOWN") for u in users_data][:10]
@@ -77,18 +75,18 @@ def CountAuthorNotesCheck(authorNickname="旅行日记", minCount=0, result=None
         note_count = len(author_notes)
 
         if note_count >= minCount:
-            print(f"✓ Successfully counted author notes")
+            print("✓ Successfully counted author notes")
             print(f"   Author: '{authorNickname}' (ID: {author_id})")
             print(f"   Total notes: {note_count}")
             return True
         else:
-            print(f" Not enough notes by author")
+            print(" Not enough notes by author")
             print(f"   Author: '{authorNickname}' (ID: {author_id})")
             print(f"   Found {note_count} notes, expected at least {minCount}")
             return False
 
     except:
-        print(f" Error while counting author notes")
+        print(" Error while counting author notes")
         return False
 
 

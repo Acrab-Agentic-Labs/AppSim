@@ -1,7 +1,3 @@
-import subprocess
-import json
-
-
 def validate_sort_selection(result=None, device_id=None):
     # cmd = ['adb']
     # if device_id:

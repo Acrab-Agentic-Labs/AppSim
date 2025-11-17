@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务6：点击"我的"按钮
 # 检查条件：icon="我的", page="我的页面"

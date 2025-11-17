@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务19：进入"机票"页面，选择出发地"成都"、目的地"上海"、选择日期10月20日，选头等舱，得到航班列表
 # 检查条件：type="flight_search", from="成都", to="上海", date="2025-10-20", cabin="头等舱"

@@ -1,7 +1,5 @@
-import subprocess
 import json
-import sys
-import io
+import subprocess
 
 
 def ChangeNicknameCheck(userId="user_current", expectedNickname="111", result=None, device_id=None):
@@ -20,7 +18,7 @@ def ChangeNicknameCheck(userId="user_current", expectedNickname="111", result=No
 
     # 检查命令是否成功执行
     if result1.returncode != 0 or not result1.stdout:
-        print(f" Failed to read users file")
+        print(" Failed to read users file")
         print(f"   Reason: ADB command failed (return code: {result1.returncode})")
         if result1.stderr:
             print(f"   Error: {result1.stderr}")
@@ -30,16 +28,16 @@ def ChangeNicknameCheck(userId="user_current", expectedNickname="111", result=No
     try:
         data = json.loads(result1.stdout)
     except:
-        print(f" Failed to parse users data")
-        print(f"   Reason: Invalid JSON format")
+        print(" Failed to parse users data")
+        print("   Reason: Invalid JSON format")
         return False
 
     # 检查昵称修改
     try:
         if not data or len(data) == 0:
-            print(f" Users list is empty")
-            print(f"   Reason: No user records found")
-            print(f"   Expected: At least one user record")
+            print(" Users list is empty")
+            print("   Reason: No user records found")
+            print("   Expected: At least one user record")
             return False
 
         # 查找当前用户
@@ -48,18 +46,18 @@ def ChangeNicknameCheck(userId="user_current", expectedNickname="111", result=No
                 # 检查昵称是否已修改
                 nickname = user.get("nickname", "")
                 if nickname == expectedNickname:
-                    print(f"✓ Successfully changed nickname")
+                    print("✓ Successfully changed nickname")
                     print(f"   User ID: {userId}")
                     print(f"   New nickname: {expectedNickname}")
                     return True
                 else:
-                    print(f" Nickname does not match expected value")
+                    print(" Nickname does not match expected value")
                     print(f"   Reason: User nickname is '{nickname}', expected '{expectedNickname}'")
                     if not nickname:
-                        print(f"   Note: Nickname field is empty or not set")
+                        print("   Note: Nickname field is empty or not set")
                     return False
 
-        print(f" User not found")
+        print(" User not found")
         print(f"   Reason: User '{userId}' does not exist in users list")
         print(f"   Total users in system: {len(data)}")
         # Show available user IDs
@@ -69,7 +67,7 @@ def ChangeNicknameCheck(userId="user_current", expectedNickname="111", result=No
         return False
 
     except:
-        print(f" Error while checking nickname")
+        print(" Error while checking nickname")
         return False
 
 

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """uiautomator2 Environment Wrapper for M3A Agent"""
 
-import time
 import logging
+import time
 import xml.etree.ElementTree as ET
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
+
 import numpy as np
-from PIL import Image
 import uiautomator2 as u2
 
 logger = logging.getLogger(__name__)
@@ -154,7 +154,7 @@ class U2Env:
                     # 检查边界是否有效
                     if right <= left or bottom <= top:
                         return None
-                except (ValueError, IndexError) as e:
+                except (ValueError, IndexError):
                     return None
 
                 # 解析布尔属性

@@ -1,5 +1,5 @@
 # 引用所有检验函数
-from ..base import TaskItem, AppTasks
+from ..base import AppTasks, TaskItem
 
 # 导入所有验证函数（按指令序号对应 eval_1 至 eval_30）
 from .eval_1 import validate_coupons_page

@@ -1,16 +1,16 @@
 # -*- coding:utf-8 -*-
 
+from enum import Enum
+
 from .bilibili import BILIBILI_TASKS
-from .gaode import GAODE_TASKS
+from .ctrip import CTRIP_TASKS
 from .eleme import ELEME_TASKS
+from .gaode import GAODE_TASKS
+from .jd import JD_TASKS
 from .music import MUSIC_TASKS
-from .wechat import WECHAT_TASKS
 from .rednote import RED_NOTE_TASKS
 from .tencentmeeting import TENCENT_MEETING_TASKS
-from .jd import JD_TASKS
-from .ctrip import CTRIP_TASKS
-
-from enum import Enum
+from .wechat import WECHAT_TASKS
 
 
 class AppEnum(Enum):

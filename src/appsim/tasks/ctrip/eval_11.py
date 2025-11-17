@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务11：进入"机票"页面，选择日期10月22日，得到航班列表
 # 检查条件：type="flight_search", date="2025-10-22"

@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务18：进入"机票"页面，选择出发地"北京"、目的地"深圳"、选择日期10月25日，得到航班列表
 # 检查条件：type="flight_search", from="北京", to="深圳", date="2025-10-25"

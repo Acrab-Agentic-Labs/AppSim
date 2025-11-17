@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务29：选上海的酒店，入住日期选10月21日，退房10月25日，客房数和入住人数默认，得到酒店列表后，选择价格最低的酒店，然后选择最便宜的房型预订
 # 检查条件：type="hotel_booking", city="上海", checkIn="2025-10-21", checkOut="2025-10-25", selection="cheapest"

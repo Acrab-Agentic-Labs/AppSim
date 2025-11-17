@@ -11,8 +11,8 @@
 """
 
 import logging
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from .verification_functions import task_05_check_pause_song

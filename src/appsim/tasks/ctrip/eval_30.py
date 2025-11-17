@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务30：进入"火车票"页面，选出发地"北京"、目的地"上海"，选择日期10月20日，得到车次列表后，预订下午1点到下午3点的任意一班车次
 # 检查条件：type="train_booking", from="北京", to="上海", date="2025-10-20", departureTime在13:00-15:00范围内

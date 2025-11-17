@@ -1,8 +1,3 @@
-import json
-import subprocess
-import re
-
-
 def validate_task_twelve(result=None, device_id=None):
     """验证任务十二：查看京东秒送的物流消息，确定商品还有多久能送达"""
     # 检查result中的final_message是否包含时间30的各种表达形式

@@ -1,7 +1,5 @@
-import subprocess
 import json
-import sys
-import io
+import subprocess
 
 
 def ViewAndCommentNotesCheck(result=None, device_id=None):
@@ -20,16 +18,16 @@ def ViewAndCommentNotesCheck(result=None, device_id=None):
     browsing_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
 
     if browsing_result.returncode != 0 or not browsing_result.stdout:
-        print(f" Failed to read browsing_history.json")
+        print(" Failed to read browsing_history.json")
         print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
         return False
 
     try:
         browsing_data = json.loads(browsing_result.stdout)
         if not browsing_data or len(browsing_data) < 3:
-            print(f" Browsing history has less than 3 records")
+            print(" Browsing history has less than 3 records")
             print(f"   Found: {len(browsing_data) if browsing_data else 0} records")
-            print(f"   Expected: At least 3 records")
+            print("   Expected: At least 3 records")
             return False
 
         # 获取最后三条浏览历史
@@ -39,14 +37,14 @@ def ViewAndCommentNotesCheck(result=None, device_id=None):
         expected_browsing_ids = ["note_010", "note_011", "note_012"]
 
         if browsing_note_ids == expected_browsing_ids:
-            print(f"✓ Browsing history check passed")
+            print("✓ Browsing history check passed")
             for i, item in enumerate(last_three_browsing):
                 print(f"   Record {i + 1}:")
                 print(f"     Note ID: {item.get('noteId')}")
                 print(f"     Note Title: {item.get('noteTitle', 'Unknown')}")
                 print(f"     Browsed at: {item.get('browsedAt', 'Unknown')}")
         else:
-            print(f" Browsing history check failed")
+            print(" Browsing history check failed")
             print(f"   Expected note IDs: {expected_browsing_ids}")
             print(f"   Actual note IDs: {browsing_note_ids}")
             return False
@@ -62,16 +60,16 @@ def ViewAndCommentNotesCheck(result=None, device_id=None):
     comments_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
 
     if comments_result.returncode != 0 or not comments_result.stdout:
-        print(f" Failed to read comments.json")
+        print(" Failed to read comments.json")
         print(f"   Reason: ADB command failed (return code: {comments_result.returncode})")
         return False
 
     try:
         comments_data = json.loads(comments_result.stdout)
         if not comments_data or len(comments_data) < 3:
-            print(f" Comments list has less than 3 records")
+            print(" Comments list has less than 3 records")
             print(f"   Found: {len(comments_data) if comments_data else 0} records")
-            print(f"   Expected: At least 3 records")
+            print("   Expected: At least 3 records")
             return False
 
         # 获取最后三条评论
@@ -94,7 +92,7 @@ def ViewAndCommentNotesCheck(result=None, device_id=None):
                 print(f"   Actual: content='{content}', noteId='{note_id}'")
 
         if all_match:
-            print(f"✓ Comments check passed")
+            print("✓ Comments check passed")
             for i, comment in enumerate(last_three_comments):
                 print(f"   Comment {i + 1}:")
                 print(f"     Content: {comment.get('content')}")

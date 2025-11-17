@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 # 验证任务22: 进入"我的"-"我的订单-待评价",找到已评价,删除最近的一个评价

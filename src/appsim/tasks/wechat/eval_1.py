@@ -6,8 +6,8 @@ def Task1_MessageSendCheck(
     result=None,
     device_id=None,
 ):
-    import subprocess
     import json
+    import subprocess
 
     try:
         # adb拿到文件

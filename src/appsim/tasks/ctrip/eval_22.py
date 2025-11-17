@@ -1,6 +1,6 @@
+import json
 import re
 import subprocess
-import json
 
 # 任务22：进入 "酒店" 页面，为我筛选北京评分最高的前 3 家酒店的平均价
 # 检查条件：智能体计算的平均价格是否与真实的平均价格一致

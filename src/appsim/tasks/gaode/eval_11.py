@@ -6,8 +6,8 @@ This script verifies that the "收藏老乡鸡餐厅" action was correctly recor
 by reading the private storage JSON file using ADB.
 """
 
-import subprocess
 import json
+import subprocess
 import sys
 
 

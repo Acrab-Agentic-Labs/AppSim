@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务7：酒店搜索上海
 # 检查条件：type="hotel_search", city="上海"

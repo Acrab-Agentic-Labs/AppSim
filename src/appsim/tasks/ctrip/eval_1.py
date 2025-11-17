@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 def check_click_hotel(result=None, device_id=None):

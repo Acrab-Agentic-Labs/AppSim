@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务4：点击"消息"按钮
 # 检查条件：icon="消息", page="消息页面"

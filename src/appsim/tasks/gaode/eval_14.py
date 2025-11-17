@@ -6,8 +6,8 @@ This script verifies that the "分享如家酒店位置给妈妈" action was cor
 by reading the private storage JSON file using ADB.
 """
 
-import subprocess
 import json
+import subprocess
 import sys
 
 

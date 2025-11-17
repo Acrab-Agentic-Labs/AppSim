@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务10：进入"机票"页面，选择出发地"广州"、目的地"深圳"，得到航班列表
 # 检查条件：type="flight_search", from="广州", to="深圳"

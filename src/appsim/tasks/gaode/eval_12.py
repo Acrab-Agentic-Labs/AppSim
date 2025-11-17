@@ -6,8 +6,8 @@ This script verifies that the "发送与爸爸的聊天，询问吃了吗" actio
 by reading the private storage JSON file using ADB.
 """
 
-import subprocess
 import json
+import subprocess
 import sys
 
 

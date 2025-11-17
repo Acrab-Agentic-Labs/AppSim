@@ -1,7 +1,5 @@
-import subprocess
 import json
-import sys
-import io
+import subprocess
 
 
 def PublishNoteCheck(userId="user_current", noteTitle="今日份分享", noteContent="天晴了", result=None, device_id=None):
@@ -21,7 +19,7 @@ def PublishNoteCheck(userId="user_current", noteTitle="今日份分享", noteCon
 
     # 检查命令是否成功执行
     if browsing_result.returncode != 0 or not browsing_result.stdout:
-        print(f" Failed to read browsing history file")
+        print(" Failed to read browsing history file")
         print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
         if browsing_result.stderr:
             print(f"   Error: {browsing_result.stderr}")
@@ -50,15 +48,15 @@ def PublishNoteCheck(userId="user_current", noteTitle="今日份分享", noteCon
         # 这里只能进行部分验证
         data = user_published_notes
     except:
-        print(f" Failed to parse notes data")
-        print(f"   Reason: Invalid JSON format")
+        print(" Failed to parse notes data")
+        print("   Reason: Invalid JSON format")
         return False
 
     # 检查笔记发布
     try:
         if not data or len(data) == 0:
-            print(f" Notes list is empty")
-            print(f"   Reason: No notes found in system")
+            print(" Notes list is empty")
+            print("   Reason: No notes found in system")
             print(f"   Expected: At least one note published by user '{userId}'")
             return False
 
@@ -66,33 +64,33 @@ def PublishNoteCheck(userId="user_current", noteTitle="今日份分享", noteCon
         matching_notes = [note for note in data if note.get("title") == noteTitle]
 
         if matching_notes:
-            print(f"✓ Successfully published note")
+            print("✓ Successfully published note")
             print(f"   Title: {noteTitle}")
-            print(f"   Note: Content and visibility cannot be verified from browsing history")
+            print("   Note: Content and visibility cannot be verified from browsing history")
             print(f"   Note ID: {matching_notes[0].get('id', 'Unknown')}")
             return True
 
         # Check if note exists with wrong attributes
         if not data:
-            print(f" No notes found for user")
+            print(" No notes found for user")
             print(f"   Reason: User '{userId}' has not published any notes")
             print(f"   Expected: Note with title '{noteTitle}'")
             return False
 
-        print(f" Note not found with expected title")
+        print(" Note not found with expected title")
         print(f"   Reason: Could not find note with title '{noteTitle}'")
         print(f"   Total notes by user: {len(data)}")
 
         # Show recent notes by user
         if data:
-            print(f"   Note: Only title can be verified from browsing history")
+            print("   Note: Only title can be verified from browsing history")
             recent_titles = [note.get("title", "N/A") for note in data[:3]]
             print(f"   Recent note titles: {recent_titles}")
 
         return False
 
     except:
-        print(f" Error while checking published note")
+        print(" Error while checking published note")
         return False
 
 

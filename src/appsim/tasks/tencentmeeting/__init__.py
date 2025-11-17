@@ -1,6 +1,5 @@
 # 所有指令
-from ..base import TaskItem, AppTasks
-
+from ..base import AppTasks, TaskItem
 from .eval_3 import check_recent_ended_meeting
 from .eval_8 import check_previous_meeting_playback
 from .eval_9 import check_join_meeting_with_password

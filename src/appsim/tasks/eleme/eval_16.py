@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 def validate_share_malatang(result=None, device_id=None):

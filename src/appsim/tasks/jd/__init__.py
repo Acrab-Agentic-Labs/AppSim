@@ -1,5 +1,4 @@
-from ..base import TaskItem, AppTasks
-
+from ..base import AppTasks, TaskItem
 from .eval_1 import validate_task_one
 from .eval_2 import validate_task_two
 from .eval_3 import validate_task_three

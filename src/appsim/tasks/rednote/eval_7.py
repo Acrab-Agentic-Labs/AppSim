@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 def BrowsingHistoryCheck(result=None, device_id=None):

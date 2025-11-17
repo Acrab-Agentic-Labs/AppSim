@@ -1,7 +1,5 @@
-import subprocess
 import json
-import sys
-import io
+import subprocess
 
 
 def LikeCommentCheck(userId="user_current", result=None, device_id=None):
@@ -20,7 +18,7 @@ def LikeCommentCheck(userId="user_current", result=None, device_id=None):
 
     # 检查命令是否成功执行
     if result1.returncode != 0 or not result1.stdout:
-        print(f" Failed to read likes file")
+        print(" Failed to read likes file")
         print(f"   Reason: ADB command failed (return code: {result1.returncode})")
         if result1.stderr:
             print(f"   Error: {result1.stderr}")
@@ -30,15 +28,15 @@ def LikeCommentCheck(userId="user_current", result=None, device_id=None):
     try:
         data = json.loads(result1.stdout)
     except:
-        print(f" Failed to parse likes data")
-        print(f"   Reason: Invalid JSON format")
+        print(" Failed to parse likes data")
+        print("   Reason: Invalid JSON format")
         return False
 
     # 检查评论点赞
     try:
         if not data or len(data) == 0:
-            print(f" Likes list is empty")
-            print(f"   Reason: No like records found")
+            print(" Likes list is empty")
+            print("   Reason: No like records found")
             print(f"   Expected: At least one comment like for user '{userId}'")
             return False
 
@@ -51,7 +49,7 @@ def LikeCommentCheck(userId="user_current", result=None, device_id=None):
             latest_like = sorted(comment_likes, key=lambda x: x.get("likedAt", ""), reverse=True)[0]
             target_id = latest_like.get("targetId", "Unknown")
             liked_at = latest_like.get("likedAt", "Unknown")
-            print(f"✓ Successfully liked a comment")
+            print("✓ Successfully liked a comment")
             print(f"   Comment ID: {target_id}")
             print(f"   Liked at: {liked_at}")
             return True
@@ -59,9 +57,9 @@ def LikeCommentCheck(userId="user_current", result=None, device_id=None):
         # Check if user liked notes instead of comments
         note_likes = [like for like in data if like.get("userId") == userId and like.get("targetType") == "NOTE"]
 
-        print(f" No comment like records for user")
+        print(" No comment like records for user")
         print(f"   Reason: User '{userId}' has not liked any comments")
-        print(f"   Expected: At least one comment like (targetType: COMMENT)")
+        print("   Expected: At least one comment like (targetType: COMMENT)")
 
         if note_likes:
             print(f"   Note: User has liked {len(note_likes)} note(s), but no comments")
@@ -73,7 +71,7 @@ def LikeCommentCheck(userId="user_current", result=None, device_id=None):
         return False
 
     except:
-        print(f" Error while checking comment like")
+        print(" Error while checking comment like")
         return False
 
 

@@ -1,5 +1,5 @@
 # 引用所有检验函数
-from ..base import TaskItem, AppTasks
+from ..base import AppTasks, TaskItem
 
 # 导入验证函数（对应所有测试场景）
 from .eval_1 import CheckWatchHistory

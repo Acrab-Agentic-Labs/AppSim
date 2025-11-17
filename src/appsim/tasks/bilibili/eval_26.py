@@ -1,9 +1,4 @@
 import subprocess
-import json
-import os
-import shutil
-import time
-import re
 
 
 def CheckHistoryItemDelete(result=None, device_id=None):

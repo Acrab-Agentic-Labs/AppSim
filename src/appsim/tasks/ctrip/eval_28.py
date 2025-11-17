@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务28：进入"火车票"页面，选出发地"北京"、目的地"上海"，选择日期10月23日，得到车次列表后，预订第一班车次
 # 检查条件：type="train_booking", from="北京", to="上海", date="2025-10-23", trainIndex=0

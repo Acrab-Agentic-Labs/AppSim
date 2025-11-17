@@ -1,17 +1,14 @@
+import argparse
+import json
 import logging
-from math import log
 import os
 import sys
 import time
-import argparse
-import json
-from tqdm import tqdm
-
-
-from appsim.utils import run_app_with_clear_data
-from appsim.tasks import AppEnum, APP_TASKS_MAP
 
 from dotenv import load_dotenv
+
+from appsim.tasks import APP_TASKS_MAP, AppEnum
+from appsim.utils import run_app_with_clear_data
 
 try:
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))

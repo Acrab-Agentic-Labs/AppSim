@@ -1,7 +1,3 @@
-import json
-import subprocess
-
-
 def validate_task_thirteen(result=None, device_id=None):
     """算一下首页前十个商品中，评分大于等于4.7的有几个。"""
     # 检查result中的final_message是否包含数字300的各种表达形式

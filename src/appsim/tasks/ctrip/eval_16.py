@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务16：进入"酒店"页面，城市选择北京，入住时间选择10月22日，退房时间选择10月23日，得到酒店列表
 # 检查条件：type="hotel_search", city="北京", checkIn="2025-10-22", checkOut="2025-10-23"

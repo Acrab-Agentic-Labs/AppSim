@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 
 def SearchAndViewCheck(userId="user_current", searchQuery="秋冬穿搭", viewCount=3, result=None, device_id=None):

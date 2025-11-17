@@ -1,8 +1,4 @@
 import subprocess
-import json
-import os
-import shutil
-import time
 
 
 def CheckSearchGame1(result=None, device_id=None):

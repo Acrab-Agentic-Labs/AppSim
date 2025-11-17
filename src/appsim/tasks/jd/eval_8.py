@@ -1,7 +1,3 @@
-import subprocess
-import re
-
-
 def validate_task_eight(result=None, device_id=None):
     """验证任务八：计算首页展示的商品中前十个有多少个是手机。"""
 

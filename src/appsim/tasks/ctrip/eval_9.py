@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务9：进入"酒店"页面，选择房间1间、成人1位、儿童1位，得到酒店列表
 # 检查条件：type="hotel_search", rooms=1, adults=1, children=1

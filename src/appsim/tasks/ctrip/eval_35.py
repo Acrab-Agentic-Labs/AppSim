@@ -1,5 +1,5 @@
-import subprocess
 import json
+import subprocess
 
 # 任务35：订10月25日北京飞上海的6张经济舱机票
 # 检查条件：最后6条记录都是：机票(北京->上海, 2025-10-25, 经济舱)

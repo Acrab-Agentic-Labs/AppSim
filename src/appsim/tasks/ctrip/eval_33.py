@@ -1,6 +1,6 @@
-import subprocess
 import json
 import re
+import subprocess
 
 # 任务33：订5张10月20日深圳到北京的火车票（要求5小时内到达）
 # 检查条件：最后5条记录都是：火车票(深圳->北京, 2025-10-20, duration<=5小时)

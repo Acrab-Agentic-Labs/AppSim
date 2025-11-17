@@ -1,5 +1,4 @@
-from ..base import TaskItem, AppTasks
-
+from ..base import AppTasks, TaskItem
 from .eval_1 import Task1_MessageSendCheck
 from .eval_2 import Task2_MessageSendCheck
 from .eval_3 import Task3_number_count

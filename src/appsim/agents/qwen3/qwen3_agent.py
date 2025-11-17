@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
 """Qwen3 Agent - 基于 Qwen3-VL 和 uiautomator2 的移动端自动化 Agent"""
 
-import os
-import json
-import time
 import base64
+import json
+import logging
+import os
+import time
 from datetime import datetime
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List, Optional
+
 import numpy as np
-from PIL import Image
 import uiautomator2 as u2
 from openai import OpenAI
+from PIL import Image
 
-import logging
-
-from ..base import BaseAgent, AgentExecutionResult
-
+from ..base import AgentExecutionResult, BaseAgent
 
 SYSTEM_PROMPT_TEMPLATE = """
 
@@ -166,7 +165,7 @@ class Qwen3Agent(BaseAgent):
         try:
             self.u2_device = u2.connect(self.device_id)
             info = self.u2_device.info
-            logging.info(f"✅ uiautomator2 连接成功!")
+            logging.info("✅ uiautomator2 连接成功!")
             logging.info(f"   设备: {self.device_id}")
             logging.info(f"   屏幕尺寸: {info.get('displayWidth', 'Unknown')}x{info.get('displayHeight', 'Unknown')}")
         except Exception as e:

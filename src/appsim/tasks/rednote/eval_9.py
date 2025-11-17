@@ -1,7 +1,3 @@
-import subprocess
-import json
-
-
 def BrowsingHistoryCheck(result=None, device_id=None):
     if result is None:
         return False

@@ -1,8 +1,4 @@
 import subprocess
-import json
-import os
-import shutil
-import time
 
 
 def CheckWatchHistory(result=None, device_id=None):

@@ -16,3 +16,7 @@ tqdm
 
 # 其他
 pydantic
+setuptools
+
+# 格式化
+ruff

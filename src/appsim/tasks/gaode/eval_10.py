@@ -6,8 +6,8 @@ This script verifies that the "预订汉庭酒店" action was correctly recorded
 by reading the private storage JSON file using ADB.
 """
 
-import subprocess
 import json
+import subprocess
 import sys
 
 
