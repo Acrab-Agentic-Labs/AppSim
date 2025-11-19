@@ -12,8 +12,8 @@ from collections import defaultdict
 from enum import Enum
 
 
-from appsim.tasks.base import TaskItem, AppTasks, AppEnum
-
+from appsim.tasks.base import TaskItem, AppTasks
+from appsim.tasks import AppEnum
 
 
 
@@ -45,7 +45,7 @@ def load_tasks_from_module(app_enum):
 
 
 def load_results_from_jsonl(jsonl_file_path):
-    """从.jsonl文件中加载结果"""
+    """从.jsonl文件中加载结果，使用 instruction 作为 key"""
     import re
     results = {}
 
@@ -56,34 +56,34 @@ def load_results_from_jsonl(jsonl_file_path):
                 if not line:
                     continue
 
-                task_id = None
+                instruction = None
                 verify_result = False
 
                 try:
                     # 尝试完整解析JSON
                     data = json.loads(line)
-                    task_id = data.get('id')
+                    instruction = data.get('instruction')
                     verify_result_raw = data.get('verify_result', False)
                     # 只有当 verify_result 是布尔值 True 时才算成功
                     verify_result = verify_result_raw is True
 
                 except json.JSONDecodeError:
                     # JSON解析失败，使用正则表达式提取关键字段
-                    # 提取 "id": 数字
-                    id_match = re.search(r'"id"\s*:\s*(\d+)', line)
-                    if id_match:
-                        task_id = int(id_match.group(1))
+                    # 提取 "instruction": "..."
+                    instruction_match = re.search(r'"instruction"\s*:\s*"([^"]*)"', line)
+                    if instruction_match:
+                        instruction = instruction_match.group(1)
 
                     # 提取 "verify_result": 值，检查是否为布尔值 true (不是字符串 "true")
                     # 使用负向前瞻确保 true 前面没有引号
                     verify_match = re.search(r'"verify_result"\s*:\s*(?!")true(?=\s*[,}\]])', line)
                     verify_result = verify_match is not None
 
-                    if task_id is not None:
-                        print(f"警告: 第 {line_num} 行 JSON 解析失败，使用正则提取 (id={task_id}, verify_result={verify_result})")
+                    if instruction is not None:
+                        print(f"警告: 第 {line_num} 行 JSON 解析失败，使用正则提取 (instruction={instruction[:50]}..., verify_result={verify_result})")
 
-                if task_id is not None:
-                    results[task_id] = verify_result
+                if instruction is not None:
+                    results[instruction] = verify_result
 
     except Exception as e:
         print(f"警告: 加载 {jsonl_file_path} 时出错: {e}")
@@ -194,16 +194,16 @@ def main():
 
         # 统计每个任务
         for task in tasks:
-            task_id = task['id']
+            instruction = task['instruction']
             human_steps = task['human_steps']
             is_reasoning = task['is_reasoning']
 
-            # 获取验证结果
-            if task_id not in results:
-                print(f"  警告: 任务ID {task_id} 没有结果")
+            # 获取验证结果（根据 instruction 匹配）
+            if instruction not in results:
+                print(f"  警告: 任务 '{instruction[:50]}...' 没有结果")
                 continue
 
-            verify_result = results[task_id]
+            verify_result = results[instruction]
             difficulty = get_difficulty_level(human_steps)
 
             # 更新整体统计
@@ -313,65 +313,90 @@ def main():
             print(f"  非推理任务: {non_reasoning['correct']}/{non_reasoning['total']} = "
                   f"{non_reasoning['correct']/non_reasoning['total']*100:.2f}%")
 
-    # 保存结果到文件（使用结果目录名作为输出文件名）
+    # 保存结果到文件（使用结果目录名作为输出文件名，改为 .md 格式）
     results_dir_name = results_dir.name
-    output_file = base_dir / f'{results_dir_name}_accuracy_report.txt'
+    output_file = base_dir / f'{results_dir_name}_accuracy_report.md'
     with open(output_file, 'w', encoding='utf-8') as f:
-        f.write("="*60 + "\n")
-        f.write("整体统计结果\n")
-        f.write("="*60 + "\n\n")
+        f.write("# 准确率统计报告\n\n")
+        f.write("## 整体统计\n\n")
 
-        f.write(f"总准确率: {overall_stats['correct']}/{overall_stats['total']} = "
-                f"{overall_stats['correct']/overall_stats['total']*100:.2f}%\n\n")
+        # 整体准确率表格
+        f.write("| 指标 | 正确数 | 总数 | 准确率 |\n")
+        f.write("|------|--------|------|--------|\n")
+        overall_acc = overall_stats['correct']/overall_stats['total']*100 if overall_stats['total'] > 0 else 0
+        f.write(f"| 总体准确率 | {overall_stats['correct']} | {overall_stats['total']} | {overall_acc:.2f}% |\n\n")
 
-        f.write("【按难度级别统计】\n")
+        # 按难度级别统计表格
+        f.write("## 按难度级别统计\n\n")
+        f.write("| 难度级别 | Steps 范围 | 正确数 | 总数 | 准确率 |\n")
+        f.write("|---------|-----------|--------|------|--------|\n")
         for level in ['L1', 'L2', 'L3']:
             stats = difficulty_stats[level]
             if stats['total'] > 0:
                 accuracy = stats['correct'] / stats['total'] * 100
-                f.write(f"  {level} (steps {'0-5' if level=='L1' else '6-10' if level=='L2' else '11+'}): "
-                        f"{stats['correct']}/{stats['total']} = {accuracy:.2f}%\n")
+                steps_range = '0-5' if level=='L1' else '6-10' if level=='L2' else '11+'
+                f.write(f"| {level} | {steps_range} | {stats['correct']} | {stats['total']} | {accuracy:.2f}% |\n")
+        f.write("\n")
 
-        f.write("\n【按任务类型统计】\n")
+        # 按任务类型统计表格
+        f.write("## 按任务类型统计\n\n")
+        f.write("| 任务类型 | 正确数 | 总数 | 准确率 |\n")
+        f.write("|---------|--------|------|--------|\n")
         if reasoning_stats['total'] > 0:
             reasoning_accuracy = reasoning_stats['correct'] / reasoning_stats['total'] * 100
-            f.write(f"  推理任务 (reasoning=True): {reasoning_stats['correct']}/{reasoning_stats['total']} = "
-                    f"{reasoning_accuracy:.2f}%\n")
-
+            f.write(f"| 推理任务 (Reasoning) | {reasoning_stats['correct']} | {reasoning_stats['total']} | {reasoning_accuracy:.2f}% |\n")
         if non_reasoning_stats['total'] > 0:
             non_reasoning_accuracy = non_reasoning_stats['correct'] / non_reasoning_stats['total'] * 100
-            f.write(f"  非推理任务 (reasoning=False): {non_reasoning_stats['correct']}/{non_reasoning_stats['total']} = "
-                    f"{non_reasoning_accuracy:.2f}%\n")
+            f.write(f"| 非推理任务 (Non-reasoning) | {non_reasoning_stats['correct']} | {non_reasoning_stats['total']} | {non_reasoning_accuracy:.2f}% |\n")
+        f.write("\n")
 
-        f.write("\n" + "="*60 + "\n")
-        f.write("各应用详细统计\n")
-        f.write("="*60 + "\n")
+        # 各应用详细统计表格
+        f.write("## 各应用详细统计\n\n")
+        f.write("| 应用 | L1 | L2 | L3 | Reasoning | Non-reasoning | 总体 |\n")
+        f.write("|------|----|----|----|-----------|--------------:|------|\n")
 
         for app_name in sorted(app_details.keys()):
             stats = app_details[app_name]
-            f.write(f"\n【{app_name}】\n")
+
+            # 计算各项准确率
+            l1_acc = f"{stats['L1']['correct']}/{stats['L1']['total']}" if stats['L1']['total'] > 0 else "-"
+            l2_acc = f"{stats['L2']['correct']}/{stats['L2']['total']}" if stats['L2']['total'] > 0 else "-"
+            l3_acc = f"{stats['L3']['correct']}/{stats['L3']['total']}" if stats['L3']['total'] > 0 else "-"
+            reasoning_acc = f"{stats['reasoning']['correct']}/{stats['reasoning']['total']}" if stats['reasoning']['total'] > 0 else "-"
+            non_reasoning_acc = f"{stats['non_reasoning']['correct']}/{stats['non_reasoning']['total']}" if stats['non_reasoning']['total'] > 0 else "-"
+            overall_acc = f"{stats['overall']['correct']}/{stats['overall']['total']}" if stats['overall']['total'] > 0 else "-"
+
+            f.write(f"| {app_name} | {l1_acc} | {l2_acc} | {l3_acc} | {reasoning_acc} | {non_reasoning_acc} | {overall_acc} |\n")
+
+        f.write("\n")
+
+        # 添加详细的应用统计（含百分比）
+        f.write("## 各应用详细统计（含准确率）\n\n")
+        for app_name in sorted(app_details.keys()):
+            stats = app_details[app_name]
+            f.write(f"### {app_name}\n\n")
+            f.write("| 类别 | 正确数 | 总数 | 准确率 |\n")
+            f.write("|------|--------|------|--------|\n")
 
             overall = stats['overall']
             if overall['total'] > 0:
-                f.write(f"  总体: {overall['correct']}/{overall['total']} = "
-                        f"{overall['correct']/overall['total']*100:.2f}%\n")
+                f.write(f"| 总体 | {overall['correct']} | {overall['total']} | {overall['correct']/overall['total']*100:.2f}% |\n")
 
-            f.write(f"  难度:\n")
             for level in ['L1', 'L2', 'L3']:
                 level_stats = stats[level]
                 if level_stats['total'] > 0:
                     acc = level_stats['correct'] / level_stats['total'] * 100
-                    f.write(f"    {level}: {level_stats['correct']}/{level_stats['total']} = {acc:.2f}%\n")
+                    f.write(f"| {level} | {level_stats['correct']} | {level_stats['total']} | {acc:.2f}% |\n")
 
             reasoning = stats['reasoning']
             if reasoning['total'] > 0:
-                f.write(f"  推理任务: {reasoning['correct']}/{reasoning['total']} = "
-                        f"{reasoning['correct']/reasoning['total']*100:.2f}%\n")
+                f.write(f"| 推理任务 | {reasoning['correct']} | {reasoning['total']} | {reasoning['correct']/reasoning['total']*100:.2f}% |\n")
 
             non_reasoning = stats['non_reasoning']
             if non_reasoning['total'] > 0:
-                f.write(f"  非推理任务: {non_reasoning['correct']}/{non_reasoning['total']} = "
-                        f"{non_reasoning['correct']/non_reasoning['total']*100:.2f}%\n")
+                f.write(f"| 非推理任务 | {non_reasoning['correct']} | {non_reasoning['total']} | {non_reasoning['correct']/non_reasoning['total']*100:.2f}% |\n")
+
+            f.write("\n")
 
     print(f"\n结果已保存到: {output_file}")
 
