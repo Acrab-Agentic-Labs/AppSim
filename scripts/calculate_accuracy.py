@@ -16,7 +16,6 @@ from appsim.tasks.base import TaskItem, AppTasks
 from appsim.tasks import AppEnum
 
 
-
 def load_tasks_from_module(app_enum):
     """从模块中加载任务信息"""
     tasks = []
