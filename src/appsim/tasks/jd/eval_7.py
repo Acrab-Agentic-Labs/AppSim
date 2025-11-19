@@ -1,0 +1,29 @@
+import json
+import subprocess
+
+
+def validate_task_seven(result=None, device_id=None):
+    """验证任务七：给Apple产品京东自营旗舰店发消息问手机什么时候发货"""
+    cmd = ["adb"]
+    if device_id:
+        cmd.extend(["-s", device_id])
+    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/new_messages.json"])
+    subprocess.run(cmd, stdout=open("new_messages.json", "w"))
+
+    try:
+        with open("new_messages.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except:
+        return False
+
+    # 检查消息中是否包含"什么时候发货"
+    content = str(data)
+    if "什么时候发货" in content:
+        return True
+
+    return False
+
+
+if __name__ == "__main__":
+    result = validate_task_seven()
+    print(result)

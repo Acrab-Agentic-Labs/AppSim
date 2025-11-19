@@ -1,0 +1,200 @@
+# 引用所有检验函数
+from ..base import AppTasks, TaskItem
+
+# 导入所有验证函数（按指令序号对应 eval_1 至 eval_30）
+from .eval_1 import validate_coupons_page
+from .eval_2 import validate_sort_selection
+from .eval_4 import validate_task_4
+from .eval_6 import validate_addresses_page
+from .eval_7 import validate_my_orders_all
+from .eval_8 import validate_search_and_filter
+from .eval_9 import validate_cancel_order
+from .eval_10 import validate_payment_setting
+from .eval_11 import validate_cart_checkout
+from .eval_12 import validate_change_phone
+from .eval_13 import validate_close_notification
+from .eval_14 import validate_kfc_order
+from .eval_15 import validate_contact_rider
+from .eval_16 import validate_share_malatang
+from .eval_17 import validate_add_address
+from .eval_18 import validate_contact_merchant
+from .eval_19 import validate_takeout_order
+from .eval_20 import validate_scheduled_order
+from .eval_21 import validate_task_21
+from .eval_22 import validate_delete_review
+from .eval_23 import validate_food_insurance_claim
+from .eval_24 import validate_dual_orders_with_filter
+from .eval_25 import validate_view_first_order_detail
+from .eval_26 import validate_clear_search_history
+from .eval_27 import validate_task_27
+from .eval_28 import validate_task_28
+from .eval_29 import validate_task_29
+
+# 所有测试指令列表（共27条，instruct 完全匹配需求描述）
+ELEME_TASKS = AppTasks(
+    package_name="com.example.myele",
+    task_items=[
+        TaskItem(
+            instruction="看看红包卡券里的红包还能帮我省多少钱，计算红包的总价值",
+            verify_func=validate_coupons_page,
+            human_steps=4,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction='在"美食外卖"下，商家好评最高的10家店中，月销量最高的店铺名为？"。',
+            verify_func=validate_sort_selection,
+            human_steps=3,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="帮我看看瑞幸咖啡的招牌系列中，价格最低的一款饮品叫什么名字。",
+            verify_func=validate_task_4,
+            human_steps=8,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="查看已保存的地址信息中，于骁的信息有几个。",
+            verify_func=validate_addresses_page,
+            human_steps=4,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="查看最近一个订单的状态。",
+            verify_func=validate_my_orders_all,
+            human_steps=2,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction='搜索"烤鸡"，价格区间"0-30"。',
+            verify_func=validate_search_and_filter,
+            human_steps=7,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="帮我检查我刚买的炸酱面的订单商家接单没有？如果没接单就帮我取消订单。",
+            verify_func=validate_cancel_order,
+            human_steps=5,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="开启免密支付。",
+            verify_func=validate_payment_setting,
+            human_steps=4,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="把购物车里面的这几道菜都一起下单，地址选择默认。",
+            verify_func=validate_cart_checkout,
+            human_steps=4,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="进入修改手机号的页面，然后停留在这个页面。",
+            verify_func=validate_change_phone,
+            human_steps=3,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="关闭系统消息通知。",
+            verify_func=validate_close_notification,
+            human_steps=6,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction='搜索"肯德基"，选择任意套餐，使用第一张优惠券，完成下单。',
+            verify_func=validate_kfc_order,
+            human_steps=11,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction='找到第一个配送中的订单，联系骑手，问"出了什么情况，怎么还没到"。',
+            verify_func=validate_contact_rider,
+            human_steps=8,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="找到麻辣烫订单，把商家主页分享给微信好友。",
+            verify_func=validate_share_malatang,
+            human_steps=7,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="添加地址为华中师范大学元宝山学生公寓二期，姓名于骁，手机号13022222222，标签选择学校，门牌号613。",
+            verify_func=validate_add_address,
+            human_steps=15,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction='跟刚送到的订单的商家说"缺少可乐，要求退款"。',
+            verify_func=validate_contact_merchant,
+            human_steps=9,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction='在"美食外卖"排"距离优先"的商家，随便下单任意一家的任意一个商品。',
+            verify_func=validate_takeout_order,
+            human_steps=7,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction='在"美食外卖"选有"跨天预订"的商家，然后下单第一家第一个商品，地址默认，选择明天中午（11-13点)时间段。',
+            verify_func=validate_scheduled_order,
+            human_steps=12,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="找一下我的账单，看一下我9月花销多少钱。",
+            verify_func=validate_task_21,
+            human_steps=4,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="找到已评价的评价，删除最近的一个评价。",
+            verify_func=validate_delete_review,
+            human_steps=5,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="找到有麻辣烫的订单，申请食无忧理赔。",
+            verify_func=validate_food_insurance_claim,
+            human_steps=6,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction='进入"美食外卖"，找有食无忧和跨天预订的商家列表，找第一个商家给于骁和余味两个人分别下一单明日中午11-13点到达的热销商品，于骁的地址用任意一个，余味的地址用唯一的一个。',
+            verify_func=validate_dual_orders_with_filter,
+            human_steps=25,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="找到最新的已送达订单，进入订单详情页，查看实付多少元。",
+            verify_func=validate_view_first_order_detail,
+            human_steps=4,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="清除搜索历史。",
+            verify_func=validate_clear_search_history,
+            human_steps=3,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="找一下我的账单，看看（10.13-10.19）这周买韩国料理花了多少钱。",
+            verify_func=validate_task_27,
+            human_steps=3,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="找一下我的账单的月账单，看看我9月在哪个时间段点外卖次数最多，占比是多少（用小数表示）。",
+            verify_func=validate_task_28,
+            human_steps=5,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="饿了么首页推荐的前十家店铺，免配送费的有几家？",
+            verify_func=validate_task_29,
+            human_steps=4,
+            is_reasoning=True,
+        ),
+    ],
+)

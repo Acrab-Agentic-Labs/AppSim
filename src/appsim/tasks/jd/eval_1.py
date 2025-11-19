@@ -1,0 +1,42 @@
+import json
+import subprocess
+
+
+def validate_task_one(result=None, device_id=None):
+    """验证任务一：在首页中搜索「iPhone 15」，并查看搜索结果的第一个商品"""
+    cmd = ["adb"]
+    if device_id:
+        cmd.extend(["-s", device_id])
+    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/task_one_logs.json"])
+    subprocess.run(cmd, stdout=open("task_one_logs.json", "w"))
+
+    try:
+        with open("task_one_logs.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+            # task_one_logs.json是TaskOneLog的数组，取最后一条
+            if isinstance(data, list):
+                data = data[-1] if data else {}
+    except:
+        return "false1"
+
+    # 检查action是否为TASK_COMPLETED
+    if data.get("action") != "TASK_COMPLETED":
+        return "false2"
+
+    # TaskOneLog结构: details字段包含实际数据
+    details = data.get("details", {})
+
+    # 检查搜索关键词是否为iPhone 15
+    if details.get("searchKeyword") != "iPhone 15":
+        return "false3"
+
+    # 检查查看的商品名称是否为iPhone 15 Pro Max 256GB
+    if details.get("viewedProductName") != "iPhone 15 Pro Max 256GB":
+        return False
+
+    return True
+
+
+if __name__ == "__main__":
+    result = validate_task_one()
+    print(result)

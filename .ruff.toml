@@ -1,0 +1,45 @@
+# Ruff configuration file
+# See https://docs.astral.sh/ruff/configuration/ for more information
+
+# Target Python version
+target-version = "py311"
+
+# Line length
+line-length = 120
+
+# Exclude patterns
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "*.egg-info",
+    "build",
+    "dist",
+]
+
+# Enable specific rule sets
+[lint]
+# Only enable pyflakes and isort
+select = [
+    "F",   # pyflakes
+    "I",   # isort
+]
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+[lint.isort]
+# Use black-compatible import sorting
+known-first-party = ["appsim"]
+
+[format]
+# Use double quotes for strings
+quote-style = "double"
+# Indent with spaces
+indent-style = "space"
+# Use spaces for indentation
+skip-magic-trailing-comma = false
+# Line ending style
+line-ending = "auto"
+
