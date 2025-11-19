@@ -1,3 +1,7 @@
+# /bin/bash
+# MacOS 和 Linux 通用脚本
+
+# 设置环境变量
 export API_BASE='https://ark.cn-beijing.volces.com/api/v3'
 export API_KEY=''
 export MODEL_NAME='doubao-1-5-ui-tars-250428'

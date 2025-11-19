@@ -61,13 +61,16 @@ def parse_args():
 
     parser.add_argument("--end-index", type=int, default=None, help="任务结束的索引（默认: 任务总数）")
 
+    parser.add_argument("--verbose", action="store_true", help="是否开启详细模式")
+
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
 
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    logging_level = logging.DEBUG if args.verbose else logging.INFO
+    logging.basicConfig(level=logging_level, format="%(asctime)s - %(levelname)s - %(message)s")
 
     # 解析任务
     try:
@@ -97,10 +100,9 @@ def main():
     # 构造 Agent
     try:
         agent = create_agent(agent_name, device_id, screenshots_dir)
-        logging.info("✅ M3A Agent 初始化成功！")
         logging.info(f"   任务: {task_app.name}")
         logging.info(f"   设备ID: {device_id}")
-        logging.info(f"   模型: {agent_name}")
+        logging.info(f"   Agent: {agent_name}")
         logging.info(f"   输出目录: {args.output_dir}")
         logging.info(f"   截图目录: {screenshots_dir}")
     except Exception as e:
@@ -138,7 +140,9 @@ def main():
         if result.success:
             logging.info("✅ 指令执行成功！")
             try:
-                verify_result = verify_function(device_id=device_id, result=result.model_dump())
+                verify_result = verify_function(
+                    device_id=device_id, result=result.model_dump(), backup_dir=screenshots_dir
+                )
             except Exception as e:
                 logging.error(e)
                 logging.error(result)

@@ -50,6 +50,10 @@ python scripts/eval_appsim.py \
 
 - `--start-index`: 从指定索引开始执行任务（默认: 0）
 
+- `--end-index`: 执行任务的结束索引（默认为None. 非None时按照Python的习惯执行 task_items[start_index:end_index]）
+
+- `--verbose`: 设置时显示详细的log信息(等同于logging.DEBUG)
+
 #### 环境变量
 
 ```bash
@@ -58,17 +62,9 @@ export API_KEY='your-api-key-here'
 export MODEL_NAME='doubao-1-5-ui-tars-250428'              # 设置使用的模型名，跟AgentName是两个概念
 ```
 
-### 3. 使用 `eval.sh`
+### 3. 使用 `eval.sh` 或 `eval.bat`
 
-在 `eval.sh` 提供了测试脚本的示例用法：
-
-环境变量配置：
-
-```bash
-export API_BASE='https://ark.cn-beijing.volces.com/api/v3'
-export API_KEY='your-api-key-here'
-export MODEL_NAME='doubao-1-5-ui-tars-250428'
-```
+在 `eval.sh`  和 `eval.bat`（For Windows CMD） 中提供了测试脚本的示例用法：
 
 ### 4. 特别说明
 - 使用 `UI-TARS-1.5` Agent 时，模型输出的坐标使用 1000x1000 坐标系
