@@ -3,7 +3,7 @@ def validate_task_nine(result=None, device_id=None):
 
     # 检查result中的final_message是否包含相同的数字
     if result and "final_message" in result:
-        if "22322" in result["final_message"]:
+        if "23338" in result["final_message"]:
             return True
 
     return False
