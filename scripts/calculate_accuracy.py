@@ -7,40 +7,14 @@
 import os
 import sys
 import json
+import argparse
 from pathlib import Path
 from collections import defaultdict
 from enum import Enum
 
 
 from appsim.tasks.base import TaskItem, AppTasks
-from appsim.tasks import AppEnum
-
-
-def load_tasks_from_module(app_enum):
-    """从模块中加载任务信息"""
-    tasks = []
-
-    try:
-        # 动态导入模块
-        module_name = f'appsim.tasks.{app_enum.value}'
-        module = __import__(module_name, fromlist=[''])
-
-        # 查找 AppTasks 对象
-        for attr_name in dir(module):
-            attr = getattr(module, attr_name)
-            if isinstance(attr, AppTasks):
-                for i, task_item in enumerate(attr.task_items):
-                    tasks.append({
-                        'id': i,
-                        'instruction': task_item.instruction,
-                        'human_steps': task_item.human_steps,
-                        'is_reasoning': task_item.is_reasoning
-                    })
-                break
-    except Exception as e:
-        print(f"警告: 加载 {app_enum.value} 模块时出错: {e}")
-
-    return tasks
+from appsim.tasks import AppEnum, APP_TASKS_MAP
 
 
 def load_results_from_jsonl(jsonl_file_path):
@@ -101,34 +75,14 @@ def get_difficulty_level(human_steps):
 
 
 def main():
+    # 解析命令行参数
+    parser = argparse.ArgumentParser(description='统计模型在不同难度级别和推理任务上的准确率')
+    parser.add_argument('--results_dir', type=str, required=True, help='结果文件目录路径')
+    args = parser.parse_args()
+    
     # 定义路径
     base_dir = Path(__file__).parent
-    # results_dir = base_dir / 'doubao-1-5'
-    results_dir = base_dir / 'v1-4/Qwen3-VL'
-
-    # 应用名称映射 (枚举 -> 结果文件前缀)
-    # app_mappings = {
-    #     AppEnum.WECHAT: ['doubao-uitars-微信'],
-    #     AppEnum.JD: ['eval_details_MyJD'],
-    #     AppEnum.CTRIP: ['doubao-UITARS-携程'],
-    #     AppEnum.BILIBILI: ['doubao-UITARS-B站'],
-    #     AppEnum.GAODE: ['eval_details_Gaode'],
-    #     AppEnum.MUSIC: ['eval_details_Music'],
-    #     AppEnum.REDNOTE: ['doubao-UITARS-小红书'],
-    #     AppEnum.ELEME: ['doubao-UITARS-饿了么'],
-    #     AppEnum.TENCENTMEETING: ['eval_details_TencentMeeting']
-    # }
-    app_mappings = {
-        AppEnum.WECHAT: ['eval_details_Wechat'],
-        AppEnum.JD: ['eval_details_MyJD'],
-        AppEnum.CTRIP: ['eval_details_Ctrip'],
-        AppEnum.BILIBILI: ['eval_details_Bilibili'],
-        AppEnum.GAODE: ['eval_details_Gaode'],
-        AppEnum.MUSIC: ['eval_details_Music'],
-        AppEnum.REDNOTE: ['eval_details_RedNote'],
-        AppEnum.ELEME: ['eval_details_EleMe'],
-        AppEnum.TENCENTMEETING: ['eval_details_TencentMeeting']
-    }
+    results_dir = base_dir / args.results_dir
 
     # 统计数据
     difficulty_stats = {
@@ -163,24 +117,19 @@ def main():
     })
 
     # 遍历所有应用
-    for app_enum, result_prefixes in app_mappings.items():
-        # 加载任务信息
-        tasks = load_tasks_from_module(app_enum)
-        if not tasks:
+    for app_enum, tasks in APP_TASKS_MAP.items():
+        if not tasks or not tasks.task_items:
             print(f"警告: {app_enum.value} 没有加载到任务")
             continue
 
-        # 查找对应的结果文件
+        # 查找对应的结果文件（使用应用名称作为前缀）
+        app_name = app_enum.value
         result_file = None
-        for prefix in result_prefixes:
-            for file in results_dir.glob(f'{prefix}*.jsonl'):
-                result_file = file
-                break
-            if result_file:
-                break
+        for file in results_dir.glob(f'eval_details_{app_name}*.jsonl'):
+            result_file = file
+            break
 
-        if not result_file or not result_file.exists():
-            print(f"警告: {app_enum.value} 的结果文件不存在")
+        if not result_file:
             continue
 
         # 加载结果
@@ -188,14 +137,16 @@ def main():
 
         print(f"\n处理应用: {app_enum.value}")
         print(f"  结果文件: {result_file.name}")
-        print(f"  任务数量: {len(tasks)}")
+        print(f"  任务数量: {len(tasks.task_items)}")
         print(f"  结果数量: {len(results)}")
+        
+        assert len(results) == len(tasks.task_items), f"结果数量: {len(results)} 任务数量: {len(tasks.task_items)} 不一致"
 
         # 统计每个任务
-        for task in tasks:
-            instruction = task['instruction']
-            human_steps = task['human_steps']
-            is_reasoning = task['is_reasoning']
+        for task in tasks.task_items:
+            instruction = task.instruction
+            human_steps = task.human_steps
+            is_reasoning = task.is_reasoning
 
             # 获取验证结果（根据 instruction 匹配）
             if instruction not in results:
@@ -244,73 +195,9 @@ def main():
                 if verify_result:
                     app_details[app_name]['non_reasoning']['correct'] += 1
 
-    # 打印结果
-    print("\n" + "="*60)
-    print("整体统计结果")
-    print("="*60)
-
-    if overall_stats['total'] > 0:
-        print(f"\n总准确率: {overall_stats['correct']}/{overall_stats['total']} = "
-              f"{overall_stats['correct']/overall_stats['total']*100:.2f}%")
-    else:
+    if overall_stats['total'] == 0:
         print("\n无统计数据")
         return
-
-    print("\n【按难度级别统计】")
-    for level in ['L1', 'L2', 'L3']:
-        stats = difficulty_stats[level]
-        if stats['total'] > 0:
-            accuracy = stats['correct'] / stats['total'] * 100
-            print(f"  {level} (steps {'0-5' if level=='L1' else '6-10' if level=='L2' else '11+'}): "
-                  f"{stats['correct']}/{stats['total']} = {accuracy:.2f}%")
-        else:
-            print(f"  {level}: 无数据")
-
-    print("\n【按任务类型统计】")
-    if reasoning_stats['total'] > 0:
-        reasoning_accuracy = reasoning_stats['correct'] / reasoning_stats['total'] * 100
-        print(f"  推理任务 (reasoning=True): {reasoning_stats['correct']}/{reasoning_stats['total']} = "
-              f"{reasoning_accuracy:.2f}%")
-    else:
-        print(f"  推理任务: 无数据")
-
-    if non_reasoning_stats['total'] > 0:
-        non_reasoning_accuracy = non_reasoning_stats['correct'] / non_reasoning_stats['total'] * 100
-        print(f"  非推理任务 (reasoning=False): {non_reasoning_stats['correct']}/{non_reasoning_stats['total']} = "
-              f"{non_reasoning_accuracy:.2f}%")
-    else:
-        print(f"  非推理任务: 无数据")
-
-    # 打印各应用的详细统计
-    print("\n" + "="*60)
-    print("各应用详细统计")
-    print("="*60)
-
-    for app_name in sorted(app_details.keys()):
-        stats = app_details[app_name]
-        print(f"\n【{app_name}】")
-
-        overall = stats['overall']
-        if overall['total'] > 0:
-            print(f"  总体: {overall['correct']}/{overall['total']} = "
-                  f"{overall['correct']/overall['total']*100:.2f}%")
-
-        print(f"  难度:")
-        for level in ['L1', 'L2', 'L3']:
-            level_stats = stats[level]
-            if level_stats['total'] > 0:
-                acc = level_stats['correct'] / level_stats['total'] * 100
-                print(f"    {level}: {level_stats['correct']}/{level_stats['total']} = {acc:.2f}%")
-
-        reasoning = stats['reasoning']
-        if reasoning['total'] > 0:
-            print(f"  推理任务: {reasoning['correct']}/{reasoning['total']} = "
-                  f"{reasoning['correct']/reasoning['total']*100:.2f}%")
-
-        non_reasoning = stats['non_reasoning']
-        if non_reasoning['total'] > 0:
-            print(f"  非推理任务: {non_reasoning['correct']}/{non_reasoning['total']} = "
-                  f"{non_reasoning['correct']/non_reasoning['total']*100:.2f}%")
 
     # 保存结果到文件（使用结果目录名作为输出文件名，改为 .md 格式）
     results_dir_name = results_dir.name
@@ -397,7 +284,14 @@ def main():
 
             f.write("\n")
 
-    print(f"\n结果已保存到: {output_file}")
+    # 使用 rich 库打印 output_file 中的内容
+    from rich.console import Console
+    from rich.markdown import Markdown
+    
+    console = Console()
+    with open(output_file, 'r', encoding='utf-8') as f:
+        content = f.read()
+    console.print(Markdown(content))
 
 
 if __name__ == '__main__':
