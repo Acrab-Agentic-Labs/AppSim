@@ -3,7 +3,7 @@ import subprocess
 
 
 def validate_task_seventeen(result=None, device_id=None):
-    """验证任务十七：进入首页iPhone15商品详情并进入店铺主页，然后立即购买店铺中"iPhone 15 粉色 256GB 1件"后，查看待收货订单"""
+    """验证任务十七：帮我在Apple京东自营店购买一件iPhone 15 粉色 256GB"""
     # 读取日志文件
     cmd = ["adb"]
     if device_id:

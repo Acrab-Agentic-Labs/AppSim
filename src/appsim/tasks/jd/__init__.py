@@ -120,7 +120,7 @@ JD_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction='进入首页iPhone15商品详情并进入店铺主页，然后立即购买店铺中"iPhone 15 粉色 256GB 1件"。',
+            instruction='帮我在Apple京东自营店购买一件iPhone 15 粉色 256GB',
             verify_func=validate_task_seventeen,
             human_steps=9,
             is_reasoning=False,
