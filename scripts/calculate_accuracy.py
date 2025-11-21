@@ -8,10 +8,13 @@ import os
 import sys
 import json
 import argparse
+import re
 from pathlib import Path
 from collections import defaultdict
 from enum import Enum
 
+from rich.console import Console
+from rich.markdown import Markdown
 
 from appsim.tasks.base import TaskItem, AppTasks
 from appsim.tasks import AppEnum, APP_TASKS_MAP
@@ -19,7 +22,6 @@ from appsim.tasks import AppEnum, APP_TASKS_MAP
 
 def load_results_from_jsonl(jsonl_file_path):
     """从.jsonl文件中加载结果，使用 instruction 作为 key"""
-    import re
     results = {}
 
     try:
@@ -79,10 +81,9 @@ def main():
     parser = argparse.ArgumentParser(description='统计模型在不同难度级别和推理任务上的准确率')
     parser.add_argument('--results_dir', type=str, required=True, help='结果文件目录路径')
     args = parser.parse_args()
-    
+
     # 定义路径
-    base_dir = Path(__file__).parent
-    results_dir = base_dir / args.results_dir
+    results_dir = Path(args.results_dir)
 
     # 统计数据
     difficulty_stats = {
@@ -139,7 +140,7 @@ def main():
         print(f"  结果文件: {result_file.name}")
         print(f"  任务数量: {len(tasks.task_items)}")
         print(f"  结果数量: {len(results)}")
-        
+
         assert len(results) == len(tasks.task_items), f"结果数量: {len(results)} 任务数量: {len(tasks.task_items)} 不一致"
 
         # 统计每个任务
@@ -199,9 +200,8 @@ def main():
         print("\n无统计数据")
         return
 
-    # 保存结果到文件（使用结果目录名作为输出文件名，改为 .md 格式）
-    results_dir_name = results_dir.name
-    output_file = base_dir / f'{results_dir_name}_accuracy_report.md'
+    # 保存结果到文件（固定输出文件名为 accuracy_report.md，写入结果目录）
+    output_file = results_dir / 'accuracy_report.md'
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write("# 准确率统计报告\n\n")
         f.write("## 整体统计\n\n")
@@ -285,9 +285,6 @@ def main():
             f.write("\n")
 
     # 使用 rich 库打印 output_file 中的内容
-    from rich.console import Console
-    from rich.markdown import Markdown
-    
     console = Console()
     with open(output_file, 'r', encoding='utf-8') as f:
         content = f.read()
