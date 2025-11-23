@@ -1,61 +1,48 @@
 import json
 import subprocess
+import os
 
 
-def validate_task_seventeen(result=None, device_id=None):
+def validate_task_seventeen(result=None, device_id=None, backup_dir=None):
     """验证任务十七：帮我在Apple京东自营店购买一件iPhone 15 粉色 256GB"""
-    # 读取日志文件
-    cmd = ["adb"]
-    if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/task_seventeen_log.txt"])
-    subprocess.run(cmd, stdout=open("task_seventeen_log.txt", "w"))
+    # Define the path for the orders file
+    orders_file_path = os.path.join(backup_dir, 'orders.json') if backup_dir else 'orders.json'
 
-    # 读取订单文件
-    cmd2 = ["adb"]
+    # Construct the adb command to pull the orders.json file from the device
+    cmd = ['adb']
     if device_id:
-        cmd2.extend(["-s", device_id])
-    cmd2.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/orders.json"])
-    subprocess.run(cmd2, stdout=open("orders.json", "w"))
+        cmd.extend(['-s', device_id])
+    cmd.extend(['exec-out', 'run-as', 'com.example.MyJD', 'cat', 'files/persistent_data/orders.json'])
 
     try:
-        with open("task_seventeen_log.txt", "r", encoding="utf-8") as f:
-            log_content = f.read()
-        with open("orders.json", "r", encoding="utf-8") as f:
-            orders_data = json.load(f)
-    except:
+        # Execute the command and capture the output
+        process = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        orders_data = json.loads(process.stdout)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as e:
+        print(f"Error reading or parsing orders.json: {e}")
         return False
 
-    # 检查日志中是否包含关键步骤
-    required_steps = ["进入商品详情页", "进入店铺主页", "加载店铺页面数据", "在店铺中选择商品"]
-    for step in required_steps:
-        if step not in log_content:
-            return False
-
-    # 检查订单中是否包含"iPhone 15 粉色 256GB"
-    orders = orders_data if isinstance(orders_data, list) else []
-    for order in orders:
-        if isinstance(order, dict):
-            # Order结构: items -> List<OrderItem>, OrderItem结构: product -> Product
-            items = order.get("items", [])
+    # Check the orders for the specific iPhone 15 purchase
+    for order in orders_data:
+        if order.get('status') == 'PENDING_RECEIPT':
+            items = order.get('items', [])
             for item in items:
-                if isinstance(item, dict):
-                    product = item.get("product", {})
-                    if isinstance(product, dict):
-                        product_name = product.get("name", "")
-                        # 检查商品名称和颜色/版本
-                        selected_color = item.get("selectedColor", "")
-                        selected_version = item.get("selectedVersion", "")
-                        if (
-                            "iPhone 15" in product_name
-                            and "粉色" in (product_name + selected_color)
-                            and "256GB" in (product_name + selected_version)
-                        ):
-                            return True
+                product = item.get('product', {})
+                product_name = product.get('name', '')
+                selected_color = item.get('selectedColor', '')
+                selected_version = item.get('selectedVersion', '')
+                quantity = item.get('quantity', 0)
+
+                # Check for the specific product details
+                if ('iPhone 15' in product_name and
+                        selected_color == '粉色' and
+                        selected_version == '256GB' and
+                        quantity == 1):
+                    return True
 
     return False
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     result = validate_task_seventeen()
     print(result)
