@@ -12,6 +12,7 @@ from .eval_9 import BrowsingHistoryCheck
 from .eval_10 import SetPasswordCheck
 from .eval_11 import ChangeNicknameCheck
 from .eval_12 import PublishNoteCheck
+from .eval_13 import ShareNoteCheck
 from .eval_14 import SendMessageCheck
 from .eval_15 import LikeCommentCheck
 from .eval_16 import BrowseAndInteractCheck
@@ -25,7 +26,9 @@ from .eval_23 import UnfollowAuthorCheck
 from .eval_24 import eval_24
 from .eval_25 import eval_25
 from .eval_26 import eval_26
+from .eval_27 import FindTieMethod
 from .eval_28 import eval_28
+from .eval_29 import eval_29
 
 # 所有指令
 RED_NOTE_TASKS = AppTasks(
@@ -99,6 +102,12 @@ RED_NOTE_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="发布笔记，内容为'天晴了'，标题为'今日份分享'，笔记设为'仅自己可见'",
+            verify_func=PublishNoteCheck,
+            human_steps=3,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="将首页的第一篇笔记分别分享至朋友圈",
             verify_func=PublishNoteCheck,
             human_steps=9,
             is_reasoning=False,
@@ -182,9 +191,21 @@ RED_NOTE_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
+            instruction="告诉我我关注的博主中最受大众关注的是谁",
+            verify_func=FindTieMethod,
+            human_steps=10,
+            is_reasoning=True,
+        ),
+        TaskItem(
             instruction="查找我的小红书号",
             verify_func=eval_28,
             human_steps=1,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="我想学习围巾的新系法，帮我推荐一篇笔记并打开",
+            verify_func=eval_29,
+            human_steps=3,
             is_reasoning=False,
         ),
     ],
