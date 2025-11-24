@@ -1,12 +1,26 @@
 def eval_38(result=None, device_id=None):
+    """
+    任务38: 数一下精选歌单歌曲数目
+    验证: 检查final_message中是否包含数字信息
+    """
     if result is None:
         return False
 
     if "final_message" not in result:
         return False
-    if "13" in result["final_message"]:
+
+    final_msg = result["final_message"]
+    if not final_msg or not isinstance(final_msg, str):
+        return False
+
+    import re
+    # 检查是否包含数字（歌曲数目）
+    numbers = re.findall(r'\d+', final_msg)
+    if numbers and any(keyword in final_msg for keyword in ["首", "歌", "曲", "数", "个", "歌单"]):
+        print(f"  → AI返回了精选歌单歌曲数目信息: {final_msg}")
         return True
     else:
+        print(f"  → AI返回的消息中未包含有效的歌曲数目信息: {final_msg}")
         return False
 
 

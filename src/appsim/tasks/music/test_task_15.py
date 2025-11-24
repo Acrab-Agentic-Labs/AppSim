@@ -1,13 +1,19 @@
+
+
+
+
 """
-任务15：查看一首歌曲的详细信息
+任务15：点击当前播放的歌曲，查看歌曲详情
 难度：中
 
 人工操作步骤：
-  1. 找到一首歌曲
-  2. 点击进入歌曲详情页面
+  1. 在播放界面找到当前正在播放的歌曲
+  2. 点击歌曲名称或相关区域
+  3. 进入歌曲详情页面
 
 验证标准：
 调用task_15_check_view_song_detail函数进行验证
+检查app_state.json中currentPage是否为"song_detail"
 
 参数：song_id（歌曲ID），默认自动检测
 """
@@ -44,11 +50,12 @@ def test15(song_id=None, result=None, device_id=None):
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("任务15：查看一首歌曲的详细信息")
+    print("任务15：点击当前播放的歌曲，查看歌曲详情")
     print("=" * 70)
     print("\n📋 人工操作步骤：")
-    print("  1. 找到一首歌曲")
-    print("  2. 点击进入歌曲详情页面")
+    print("  1. 在播放界面找到当前正在播放的歌曲")
+    print("  2. 点击歌曲名称或相关区域")
+    print("  3. 进入歌曲详情页面")
 
     # 可以通过命令行参数传入song_id
     # 用法1：python test_task_15.py          # 自动检测当前歌曲
