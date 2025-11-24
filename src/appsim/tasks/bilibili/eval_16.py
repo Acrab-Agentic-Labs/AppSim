@@ -1,52 +1,44 @@
 import subprocess
+import json
+import os
+import shutil
+import time
 
 
-def CheckReplyComment(result=None, device_id=None):
+
+def CheckReplyComment(result=None,device_id=None,backup_dir=None):
     """
     检验逻辑:对首页第一条视频评论，点击回复，输入"谢谢分享！"并发送
     验证用户是否完成评论回复
     """
     try:
-        cmd = ["adb"]
-        if device_id:
-            cmd.extend(["-s", device_id])
-        cmd.extend(["exec-out", "run-as", "com.example.bilibili", "cat", "files/messages.json"])
-
-        print("=" * 60)
-        print("请在虚拟机中执行以下操作:")
-        print("1. 打开bilibili APP")
-        print("2. 在首页点击第一条视频")
-        print("3. 进入评论页面")
-        print("4. 点击回复按钮")
-        print("5. 输入'谢谢分享！'")
-        print("6. 点击发送")
-        print("=" * 60)
-
-        # step2. 读取logcat日志
         print("\n正在检查日志...")
-        cmd_logcat = ["adb"]
+        cmd_logcat = ['adb']
         if device_id:
-            cmd_logcat.extend(["-s", device_id])
-        cmd_logcat.extend(["logcat", "-d", "-s", "BilibiliAutoTest:D"])
+            cmd_logcat.extend(['-s', device_id])
+        cmd_logcat.extend(['logcat', '-d', '-s', 'BilibiliAutoTest:D'])
 
         result1 = subprocess.run(
             cmd_logcat,
             capture_output=True,
             text=True,
             timeout=10,
-            encoding="utf-8",
-            errors="ignore",  # 忽略无法解码的字符
+            encoding='utf-8',
+            errors='ignore'
         )
 
         log_content = result1.stdout
+        if backup_dir:
+            logcat_file_path = os.path.join(backup_dir, 'logcat.txt')
+            open(logcat_file_path, 'w', encoding='utf-8').write(log_content)
 
         # step3. 验证关键操作 - 简化验证逻辑，只检测核心标签
-        comment_page_entered = "COMMENT_PAGE_ENTERED" in log_content
-        reply_button_clicked = "REPLY_BUTTON_CLICKED" in log_content
-        comment_input_text = "COMMENT_INPUT_TEXT" in log_content
-        comment_content_check = "谢谢分享！" in log_content
-        send_button_clicked = "SEND_BUTTON_CLICKED" in log_content
-        comment_sent_success = "COMMENT_SENT_SUCCESS" in log_content
+        comment_page_entered = 'COMMENT_PAGE_ENTERED' in log_content
+        reply_button_clicked = 'REPLY_BUTTON_CLICKED' in log_content
+        comment_input_text = 'COMMENT_INPUT_TEXT' in log_content
+        comment_content_check = '谢谢分享！' in log_content
+        send_button_clicked = 'SEND_BUTTON_CLICKED' in log_content
+        comment_sent_success = 'COMMENT_SENT_SUCCESS' in log_content
 
         # 至少检测到评论页面进入或回复按钮点击
         if not (comment_page_entered or reply_button_clicked):
@@ -77,7 +69,17 @@ def CheckReplyComment(result=None, device_id=None):
     except Exception as e:
         print(f"检查评论回复时发生错误: {str(e)}")
         return False
-
+    finally:
+        # 无论成功失败，最后都清除日志
+        try:
+            cmd_clear = ['adb']
+            if device_id:
+                cmd_clear.extend(['-s', device_id])
+            cmd_clear.extend(['logcat', '-c'])
+            subprocess.run(cmd_clear, timeout=5)
+            print("🔄 已清除日志缓存")
+        except:
+            pass
 
 if __name__ == "__main__":
     result1 = CheckReplyComment()
