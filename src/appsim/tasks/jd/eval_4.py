@@ -1,4 +1,4 @@
-def validate_task_four(result=None, device_id=None):
+def validate_task_four(result=None, device_id=None, backup_dir=None):
     """验证任务四：计算购物车中电子产品的总价"""
 
     # 检查result中的final_message是否包含相同的数字
