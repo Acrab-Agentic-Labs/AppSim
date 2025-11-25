@@ -15,18 +15,14 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from .verification_functions import read_json_from_device, task_28_check_collect_album
 
 
-def test28(album_id=None, result=None, device_id=None):
+def test28(album_id=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定album_id，自动从collected_items.json获取最新收藏的专辑
     if album_id is None:
-        collected_data = read_json_from_device("autotest/collected_items.json", device_id=device_id, result=result)
+        collected_data = read_json_from_device("autotest/collected_items.json", device_id=device_id, result=result, backup_dir=backup_dir)
 
         if collected_data and "collectedAlbums" in collected_data and collected_data["collectedAlbums"]:
             # 获取最后一个（最新）收藏的专辑
@@ -36,7 +32,7 @@ def test28(album_id=None, result=None, device_id=None):
             logging.debug("✗ 错误：无法检测到已收藏的专辑")
             return False
 
-    result1 = task_28_check_collect_album(album_id, device_id=device_id, result=result)
+    result1 = task_28_check_collect_album(album_id, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug(f"✓ 测试通过 - 专辑 {album_id} 已成功收藏")

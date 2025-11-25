@@ -15,18 +15,14 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from .verification_functions import read_json_from_device, task_08_check_favorite_song
 
 
-def test8(song_id=None, result=None, device_id=None):
+def test8(song_id=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定song_id，自动从playback_state.json获取当前播放的歌曲
     if song_id is None:
-        playback_data = read_json_from_device("autotest/playback_state.json", device_id=device_id, result=result)
+        playback_data = read_json_from_device("autotest/playback_state.json", device_id=device_id, result=result, backup_dir=backup_dir)
 
         if playback_data and "currentSong" in playback_data and playback_data["currentSong"]:
             song_id = playback_data["currentSong"].get("songId")
@@ -34,7 +30,7 @@ def test8(song_id=None, result=None, device_id=None):
             logging.debug("✗ 错误：无法检测到当前播放的歌曲")
             return False
 
-    result1 = task_08_check_favorite_song(song_id, device_id=device_id, result=result)
+    result1 = task_08_check_favorite_song(song_id, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug(f"✓ 测试通过 - 歌曲 {song_id} 已成功收藏")

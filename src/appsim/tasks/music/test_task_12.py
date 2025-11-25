@@ -22,17 +22,15 @@
 """
 
 import logging
-import os
-import sys
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import sys
 
 from .verification_functions import task_12_check_create_playlist_and_add_song
 
 
-def test12(playlist_name=None, result=None, device_id=None):
+def test12(playlist_name=None, result=None, device_id=None, backup_dir=None):
     result1 = task_12_check_create_playlist_and_add_song(
-        playlist_name=playlist_name, device_id=device_id, result=result
+        playlist_name=playlist_name, device_id=device_id, result=result, backup_dir=backup_dir
     )
 
     if result1:

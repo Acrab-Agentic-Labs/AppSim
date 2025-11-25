@@ -13,18 +13,14 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from .verification_functions import read_json_from_device, task_31_check_change_player_style
 
 
-def test31(style_id=None, result=None, device_id=None):
+def test31(style_id=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定style_id，自动从player_settings.json获取当前播放器样式
     if style_id is None:
-        settings_data = read_json_from_device("autotest/player_settings.json", device_id=device_id, result=result)
+        settings_data = read_json_from_device("autotest/player_settings.json", device_id=device_id, result=result, backup_dir=backup_dir)
 
         if settings_data and "playerStyle" in settings_data and settings_data["playerStyle"]:
             style_id = settings_data["playerStyle"].get("styleId")
@@ -32,7 +28,7 @@ def test31(style_id=None, result=None, device_id=None):
             logging.debug("✗ 错误：无法检测到当前播放器样式")
             return False
 
-    result1 = task_31_check_change_player_style(style_id, device_id=device_id, result=result)
+    result1 = task_31_check_change_player_style(style_id, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug(f"✓ 测试通过 - 播放器样式已设置为 {style_id}")

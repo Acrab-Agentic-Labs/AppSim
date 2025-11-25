@@ -1,4 +1,4 @@
-def eval_34(result=None, device_id=None):
+def eval_34(result=None, device_id=None, backup_dir=None):
     """
     任务34: 计算我的歌单中每日推荐和热歌榜中一共歌曲数目
     验证: 检查final_message中是否包含数字信息

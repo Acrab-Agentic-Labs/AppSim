@@ -13,15 +13,12 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from .verification_functions import task_23_check_share_to_wechat
+from .verification_functions import task_23_check_uncollect_song
 
 
-def test23(result=None, device_id=None):
-    result1 = task_23_check_share_to_wechat(device_id=device_id, result=result)
+def test23(result=None, device_id=None, backup_dir=None):
+    result1 = task_23_check_uncollect_song(device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug("✓ 测试通过 - 任务23完成")

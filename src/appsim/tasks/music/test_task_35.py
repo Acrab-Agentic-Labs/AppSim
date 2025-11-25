@@ -1,4 +1,4 @@
-def eval_35(result=None, device_id=None):
+def eval_35(result=None, device_id=None, backup_dir=None):
     """
     任务35: 数一下你喜欢的歌曲推荐数目
     验证: 检查final_message中是否包含数字信息

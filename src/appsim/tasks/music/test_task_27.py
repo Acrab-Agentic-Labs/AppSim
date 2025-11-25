@@ -14,18 +14,14 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from .verification_functions import read_json_from_device, task_27_check_playlist_sort_order
 
 
-def test27(playlist_id=None, expected_order=None, result=None, device_id=None):
+def test27(playlist_id=None, expected_order=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定playlist_id，自动从user_playlists.json获取当前浏览的歌单
     if playlist_id is None or expected_order is None:
-        playlists_data = read_json_from_device("autotest/user_playlists.json", device_id=device_id, result=result)
+        playlists_data = read_json_from_device("autotest/user_playlists.json", device_id=device_id, result=result, backup_dir=backup_dir)
 
         if playlists_data and "currentViewingPlaylist" in playlists_data and playlists_data["currentViewingPlaylist"]:
             playlist_id = playlists_data["currentViewingPlaylist"]
@@ -46,7 +42,7 @@ def test27(playlist_id=None, expected_order=None, result=None, device_id=None):
             logging.debug("✗ 错误：无法检测到当前浏览的歌单")
             return False
 
-    result1 = task_27_check_playlist_sort_order(playlist_id, expected_order, device_id=device_id, result=result)
+    result1 = task_27_check_playlist_sort_order(playlist_id, expected_order, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug(f"✓ 测试通过 - 歌单 {playlist_id} 的排序方式为 {expected_order}")

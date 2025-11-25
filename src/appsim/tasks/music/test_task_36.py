@@ -1,4 +1,4 @@
-def eval_36(result=None, device_id=None):
+def eval_36(result=None, device_id=None, backup_dir=None):
     """
     任务36: 数一下我的粉丝数目
     验证: 检查final_message中是否包含数字信息

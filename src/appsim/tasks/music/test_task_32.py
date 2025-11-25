@@ -1,4 +1,4 @@
-def eval_32(result=None, device_id=None):
+def eval_32(result=None, device_id=None, backup_dir=None):
     """
     任务32: 数一下歌曲晴天的评论的数目
     验证: 检查final_message中是否包含数字信息

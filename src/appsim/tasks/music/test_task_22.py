@@ -14,18 +14,14 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from .verification_functions import read_json_from_device, task_22_check_view_listening_stats
 
 
-def test22(stat_type=None, result=None, device_id=None):
+def test22(stat_type=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定stat_type，自动从listening_stats.json检测查看过的统计类型
     if stat_type is None:
-        stats_data = read_json_from_device("autotest/listening_stats.json", device_id=device_id, result=result)
+        stats_data = read_json_from_device("autotest/listening_stats.json", device_id=device_id, result=result, backup_dir=backup_dir)
 
         if stats_data and "viewedStats" in stats_data:
             viewed_stats = stats_data["viewedStats"]
@@ -44,7 +40,7 @@ def test22(stat_type=None, result=None, device_id=None):
             logging.debug("✗ 错误：无法读取统计数据")
             return False
 
-    result1 = task_22_check_view_listening_stats(stat_type, device_id=device_id, result=result)
+    result1 = task_22_check_view_listening_stats(stat_type, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         stat_name = "月度统计" if stat_type == "monthly" else "周统计"

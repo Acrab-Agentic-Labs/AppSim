@@ -19,18 +19,14 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from .verification_functions import read_json_from_device, task_15_check_view_song_detail
 
 
-def test15(song_id=None, result=None, device_id=None):
+def test15(song_id=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定song_id，自动从app_state.json获取当前查看的歌曲详情
     if song_id is None:
-        app_state = read_json_from_device("autotest/app_state.json", device_id=device_id, result=result)
+        app_state = read_json_from_device("autotest/app_state.json", device_id=device_id, result=result, backup_dir=backup_dir)
 
         if app_state and app_state.get("currentPage") == "song_detail" and app_state.get("currentSongId"):
             song_id = app_state.get("currentSongId")
@@ -38,7 +34,7 @@ def test15(song_id=None, result=None, device_id=None):
             logging.debug("✗ 错误：无法检测到当前查看的歌曲详情")
             return False
 
-    result1 = task_15_check_view_song_detail(song_id, device_id=device_id, result=result)
+    result1 = task_15_check_view_song_detail(song_id, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug(f"✓ 测试通过 - 已成功查看歌曲 {song_id} 的详细信息")

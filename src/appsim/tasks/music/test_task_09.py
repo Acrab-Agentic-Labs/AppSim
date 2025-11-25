@@ -13,16 +13,12 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from .verification_functions import task_09_check_volume_adjusted
+from .verification_functions import task_09_check_adjust_volume
 
 
-def test9(expected_volume=None, result=None, device_id=None):
-    result1 = task_09_check_volume_adjusted(expected_volume=expected_volume, device_id=device_id, result=result)
+def test9(expected_volume=None, result=None, device_id=None, backup_dir=None):
+    result1 = task_09_check_volume_adjusted(expected_volume=expected_volume, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug("✓ 测试通过 - 任务9完成")

@@ -15,16 +15,12 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from .verification_functions import task_17_check_stroll_scene_setting
+from .verification_functions import task_17_check_roaming_play
 
 
-def test17(scene_name="欢快", result=None, device_id=None):
-    result1 = task_17_check_stroll_scene_setting(scene_name, device_id=device_id, result=result)
+def test17(scene_name="欢快", result=None, device_id=None, backup_dir=None):
+    result1 = task_17_check_stroll_scene_setting(scene_name, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug(f"✓ 测试通过 - 场景已设置为'{scene_name}'")

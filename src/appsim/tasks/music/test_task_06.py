@@ -13,16 +13,12 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from .verification_functions import task_06_check_switch_previous_song
+from .verification_functions import task_06_check_previous_song
 
 
-def test6(expected_song_id=None, result=None, device_id=None):
-    result1 = task_06_check_switch_previous_song(expected_song_id=expected_song_id, device_id=device_id, result=result)
+def test6(expected_song_id=None, result=None, device_id=None, backup_dir=None):
+    result1 = task_06_check_switch_previous_song(expected_song_id=expected_song_id, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug("✓ 测试通过 - 任务6完成")

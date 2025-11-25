@@ -15,18 +15,14 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from .verification_functions import read_json_from_device, task_24_check_post_comment
 
 
-def test24(song_id=None, comment_content=None, result=None, device_id=None):
+def test24(song_id=None, comment_content=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定song_id，自动从comments.json获取最新发表的评论
     if song_id is None:
-        comments_data = read_json_from_device("autotest/comments.json", device_id=device_id, result=result)
+        comments_data = read_json_from_device("autotest/comments.json", device_id=device_id, result=result, backup_dir=backup_dir)
 
         if comments_data and "userComments" in comments_data and comments_data["userComments"]:
             # 获取最后一个（最新）评论
@@ -36,7 +32,7 @@ def test24(song_id=None, comment_content=None, result=None, device_id=None):
             logging.debug("✗ 错误：无法检测到已发表的评论")
             return False
 
-    result1 = task_24_check_post_comment(song_id, comment_content, device_id=device_id, result=result)
+    result1 = task_24_check_post_comment(song_id, comment_content, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug(f"✓ 测试通过 - 已成功为歌曲 {song_id} 发表评论")

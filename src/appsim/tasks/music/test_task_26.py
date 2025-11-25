@@ -15,15 +15,12 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from .verification_functions import task_26_check_song_recognition
 
 
-def test26(result=None, device_id=None):
-    result1 = task_26_check_song_recognition(device_id=device_id, result=result)
+def test26(result=None, device_id=None, backup_dir=None):
+    result1 = task_26_check_song_recognition(device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug("✓ 测试通过 - 任务26完成")

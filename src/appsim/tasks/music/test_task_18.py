@@ -14,15 +14,12 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from .verification_functions import task_18_check_copy_comment
+from .verification_functions import task_18_check_billboard_and_tell_name
 
 
-def test18(result=None, device_id=None):
-    result1 = task_18_check_copy_comment(device_id=device_id, result=result)
+def test18(result=None, device_id=None, backup_dir=None):
+    result1 = task_18_check_copy_comment(device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug("✓ 测试通过 - 任务18完成")

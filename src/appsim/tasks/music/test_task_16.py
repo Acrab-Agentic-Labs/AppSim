@@ -11,16 +11,14 @@
 """
 
 import logging
-import os
-import sys
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import sys
 
 from .verification_functions import task_16_check_view_lyrics
 
 
-def test16(result=None, device_id=None):
-    result1 = task_16_check_view_lyrics(device_id=device_id, result=result)
+def test16(result=None, device_id=None, backup_dir=None):
+    result1 = task_16_check_view_lyrics(device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug("✓ 测试通过 - 任务16完成")

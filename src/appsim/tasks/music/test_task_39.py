@@ -1,4 +1,4 @@
-def eval_39(result=None, device_id=None):
+def eval_39(result=None, device_id=None, backup_dir=None):
     """
     任务39: 搜索歌手'周杰伦'，计算歌曲总数
     验证: 检查final_message中是否包含数字信息

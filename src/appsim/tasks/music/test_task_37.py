@@ -1,4 +1,4 @@
-def eval_37(result=None, device_id=None):
+def eval_37(result=None, device_id=None, backup_dir=None):
     """
     任务37: 数一下排行榜歌曲数目
     验证: 检查final_message中是否包含数字信息

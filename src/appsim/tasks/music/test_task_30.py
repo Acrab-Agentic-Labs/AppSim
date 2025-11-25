@@ -17,18 +17,15 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from .verification_functions import task_30_check_play_mv
 
 
-def test30(mv_id=None, result=None, device_id=None):
+def test30(mv_id=None, result=None, device_id=None, backup_dir=None):
     if mv_id is None:
         logging.warning("未指定mv_id，将验证是否有任何MV正在播放")
 
-    result1 = task_30_check_play_mv(mv_id=mv_id, device_id=device_id, result=result)
+    result1 = task_30_check_play_mv(mv_id=mv_id, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug("✓ 测试通过 - 任务30完成")

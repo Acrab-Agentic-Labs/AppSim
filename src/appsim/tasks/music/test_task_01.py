@@ -1,25 +1,23 @@
 """
-任务1：进入"我的"页面
+任务1：进入‘我的’页面中‘我喜欢的音乐’这个歌单
 难度：低
 
 人工操作步骤：
   1. 打开音乐APP
   2. 点击底部导航栏的"我的"
+  3. 点击"我喜欢的音乐"歌单
 
 验证标准：
-调用task_03_check_navigate_to_profile函数进行验证
+调用task_01_check_enter_favorite_playlist函数进行验证
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from .verification_functions import task_03_check_navigate_to_profile
+from .verification_functions import task_01_check_enter_favorite_playlist
 
 
-def test1(result=None, device_id=None):
-    result1 = task_03_check_navigate_to_profile(device_id=device_id, result=result)
+def test1(result=None, device_id=None, backup_dir=None):
+    result1 = task_01_check_enter_favorite_playlist(device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug("✓ 测试通过 - 任务1完成")
@@ -31,11 +29,12 @@ def test1(result=None, device_id=None):
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("任务1：进入我的页面")
+    print("任务1：进入‘我的’页面中‘我喜欢的音乐’这个歌单")
     print("=" * 70)
     print("\n📋 人工操作步骤：")
     print("  1. 打开音乐APP")
     print("  2. 点击底部导航栏的'我的'")
+    print("  3. 点击'我喜欢的音乐'歌单")
     print("\n🔍 开始验证...")
 
     # 从命令行获取参数

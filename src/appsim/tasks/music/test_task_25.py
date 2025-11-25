@@ -15,15 +15,12 @@
 """
 
 import logging
-import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from .verification_functions import task_25_check_invite_friend
+from .verification_functions import task_25_check_weekly_listening_duration
 
 
-def test25(result=None, device_id=None):
-    result1 = task_25_check_invite_friend(device_id=device_id, result=result)
+def test25(result=None, device_id=None, backup_dir=None):
+    result1 = task_25_check_invite_friend(device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug("✓ 测试通过 - 任务25完成")
