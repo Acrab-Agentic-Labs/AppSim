@@ -21,7 +21,7 @@ def validate_task_six(result=None, device_id=None, backup_dir=None):
     # 检查第一个订单的状态
     if orders_data:
         first_order = orders_data[0]
-        if first_order.get('id') == 'order_008' and first_order.get('status') != 'PENDING_PAYMENT':
+        if first_order.get('id') == 'order_008' and first_order.get('status') != 'PENDING_RECEIPT':
             return True
 
     return False
