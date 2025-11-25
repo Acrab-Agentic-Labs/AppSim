@@ -1,6 +1,7 @@
 import json
 import subprocess
 import sys
+import os
 
 # 任务32：订10月20日从杭州到北京最快火车票（5小时内到达），住北京王府井希尔顿酒店两晚（10.20-10.22），再订10.22北京回杭州的高铁，最后分析计算所有花费后判断2000元够不够
 # 检查条件：最后3条记录依次是：火车票(杭州->北京,5小时内)、酒店(北京,王府井希尔顿,2晚)、火车票(北京->杭州)
@@ -22,7 +23,7 @@ def parse_duration(duration_str):
     return hours * 60 + minutes
 
 
-def check_booking_complex_budget(result=None, device_id=None):
+def check_booking_complex_budget(result=None, device_id=None, backup_dir=None):
     """
     检查复杂预订任务（含预算判断）
 
@@ -34,6 +35,7 @@ def check_booking_complex_budget(result=None, device_id=None):
 
     app_package = "com.example.Ctrip"
     phone_file_path = "files/booking_history.json"
+    local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
 
     # 1. 通过ADB获取文件内容
     try:
@@ -43,19 +45,14 @@ def check_booking_complex_budget(result=None, device_id=None):
             cmd.extend(["-s", device_id])
         cmd.extend(["exec-out", "run-as", app_package, "cat", phone_file_path])
 
-        result = subprocess.run(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, encoding="utf-8", check=True
-        )
-        file_content = result.stdout
-    except subprocess.CalledProcessError:
-        return False
-    except Exception:
-        return False
+        with open(local_file_path, "w", encoding="utf-8") as f:
+            subprocess.run(cmd, stdout=f)
 
-    # 2. 解析JSON内容
-    try:
-        data = json.loads(file_content)
-    except json.JSONDecodeError:
+        # 2. 解析JSON内容
+        with open(local_file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+    except subprocess.CalledProcessError:
         return False
     except Exception:
         return False

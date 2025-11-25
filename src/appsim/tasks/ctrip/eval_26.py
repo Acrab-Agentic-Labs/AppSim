@@ -1,13 +1,15 @@
 import json
 import subprocess
+import os
 
 # 任务26：选上海的酒店，入住日期选10月22日，退房10月25日，客房数和入住人数默认，得到酒店列表后，点击第一个酒店，然后选择第一个房型预订
 # 检查条件：type="hotel_booking", city="上海", checkIn="2025-10-22", checkOut="2025-10-25", hotelIndex=0, roomIndex=0
 
 
-def check_booking_hotel_shanghai(result=None, device_id=None):
+def check_booking_hotel_shanghai(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.Ctrip"
     phone_file_path = "files/booking_history.json"
+    local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
 
     # 1. 通过ADB获取文件内容
     try:
@@ -17,19 +19,14 @@ def check_booking_hotel_shanghai(result=None, device_id=None):
             cmd.extend(["-s", device_id])
         cmd.extend(["exec-out", "run-as", app_package, "cat", phone_file_path])
 
-        result1 = subprocess.run(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, encoding="utf-8", check=True
-        )
-        file_content = result1.stdout
-    except subprocess.CalledProcessError:
-        return False
-    except Exception:
-        return False
+        with open(local_file_path, "w", encoding="utf-8") as f:
+            subprocess.run(cmd, stdout=f)
 
-    # 2. 解析JSON内容
-    try:
-        data = json.loads(file_content)
-    except json.JSONDecodeError:
+        # 2. 解析JSON内容
+        with open(local_file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+    except subprocess.CalledProcessError:
         return False
     except Exception:
         return False
