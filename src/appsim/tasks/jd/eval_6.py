@@ -1,33 +1,31 @@
+import json
+import os
 import subprocess
 
 
-def validate_task_six(result=None, device_id=None):
+def validate_task_six(result=None, device_id=None, backup_dir=None):
     """验证任务六：结算我的第一个待付款订单"""
+    orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
+
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/task_six_log.txt"])
-    subprocess.run(cmd, stdout=open("task_six_log.txt", "w"))
+    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/orders.json"])
+    subprocess.run(cmd, stdout=open(orders_file_path, "w"))
 
     try:
-        with open("task_six_log.txt", "r", encoding="utf-8") as f:
-            content = f.read()
+        with open(orders_file_path, "r", encoding="utf-8") as f:
+            orders_data = json.load(f)
     except:
         return False
 
-    # 检查日志中是否包含关键信息
-    required_keywords = [
-        "找到第一个待付款订单，订单ID: order_001",
-        "点击付款按钮",
-        "确认付款操作",
-        "付款成功，订单ID: order_001",
-    ]
+    # 检查第一个订单的状态
+    if orders_data:
+        first_order = orders_data[0]
+        if first_order.get("id") == "order_008" and first_order.get("status") != "PENDING_PAYMENT":
+            return True
 
-    for keyword in required_keywords:
-        if keyword not in content:
-            return False
-
-    return True
+    return False
 
 
 if __name__ == "__main__":

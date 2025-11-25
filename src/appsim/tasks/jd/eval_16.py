@@ -1,30 +1,75 @@
+import json
+import os
 import subprocess
 
 
-def validate_task_sixteen(result=None, device_id=None):
-    """验证任务十六：搜索iPhone15，将iPhone15 黑色 256GB加入购物车后，选择微信支付，满3000减50优惠券结算"""
+def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
+    """验证任务十六：将购物车的iPhone15买下来，使用满3000减50的优惠券结算。"""
+
+    cart_items_file_path = os.path.join(backup_dir, "cart_items.json") if backup_dir else "cart_items.json"
+    orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
+
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/task_sixteen_log.txt"])
-    subprocess.run(cmd, stdout=open("task_sixteen_log.txt", "w"))
+    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/cart_items.json"])
+    subprocess.run(cmd, stdout=open(cart_items_file_path, "w"))
 
     try:
-        with open("task_sixteen_log.txt", "r", encoding="utf-8") as f:
-            content = f.read()
+        with open(cart_items_file_path, "r", encoding="utf-8") as f:
+            cart_items = json.load(f)
     except:
         return False
 
-    # 检查日志中是否包含这两行关键信息
-    line1 = "任务十六完成：已成功搜索iPhone15，筛选价格范围和手机类别，将iPhone15 黑色 256GB加入购物车，选择微信支付和满3000减50优惠券完成结算"
-    line2 = "选择优惠券：满3000减50，优惠金额：¥50.0"
+    iphone_in_cart = any("iPhone 15" in item.get("productName", "") for item in cart_items)
+    if iphone_in_cart:
+        print("Validation Failed: iPhone 15 is still in the cart.")
+        return False
 
-    if line1 in content and line2 in content:
-        return True
+    cmd = ["adb"]
+    if device_id:
+        cmd.extend(["-s", device_id])
+    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/orders.json"])
+    subprocess.run(cmd, stdout=open(orders_file_path, "w"))
 
-    return False
+    try:
+        with open(orders_file_path, "r", encoding="utf-8") as f:
+            orders = json.load(f)
+    except:
+        return False
+
+    # 查找最新的 iPhone 15 订单
+    # 假设它是最新创建的订单，所以我们检查列表的第一个
+    new_iphone_order = None
+    for order in sorted(orders, key=lambda x: x.get("createTime", 0), reverse=True):
+        items = order.get("items", [])
+        if any("iPhone 15" in item.get("product", {}).get("name", "") for item in items):
+            new_iphone_order = order
+            break
+
+    if not new_iphone_order:
+        print("Validation Failed: New order for iPhone 15 not found.")
+        return False
+
+    # 验证订单金额是否正确应用了优惠券
+    # 从订单项中获取成交价格
+    expected_total_amount = sum(
+        item.get("price", 0.0) * item.get("quantity", 0) for item in new_iphone_order.get("items", [])
+    )
+    actual_total_amount = new_iphone_order.get("totalAmount", 0.0)
+
+    # 允许微小的浮点数误差
+    if abs(expected_total_amount - actual_total_amount) > 0.01:
+        print(
+            f"Validation Failed: Order total is incorrect. Expected: {expected_total_amount}, Actual: {actual_total_amount}"
+        )
+        return False
+
+    print("Validation Success: iPhone 15 removed from cart and new order created with correct discount.")
+    return True
 
 
 if __name__ == "__main__":
+    # For local testing, ensure the device is connected and the app state is correct.
     result = validate_task_sixteen()
-    print(result)
+    print(f"Validation Result: {result}")

@@ -1,17 +1,20 @@
 import json
+import os
 import subprocess
 
 
-def validate_task_fifteen(result=None, device_id=None):
+def validate_task_fifteen(result=None, device_id=None, backup_dir=None):
     """验证任务十五：将商品"iPhone 15 蓝色 128GB 1件"、"iPhone 15 黑色 256GB 2件"、"iPhone 15 粉色 128GB 3件"共6件商品加入购物车"""
+    cart_items_file_path = os.path.join(backup_dir, "cart_items.json") if backup_dir else "cart_items.json"
+
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
     cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/cart_items.json"])
-    subprocess.run(cmd, stdout=open("cart_items.json", "w"))
+    subprocess.run(cmd, stdout=open(cart_items_file_path, "w"))
 
     try:
-        with open("cart_items.json", "r", encoding="utf-8") as f:
+        with open(cart_items_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
             # cart_items.json是CartItemSpec的数组
             cart_items = data if isinstance(data, list) else []

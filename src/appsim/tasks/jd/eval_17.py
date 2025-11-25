@@ -1,57 +1,43 @@
 import json
+import os
 import subprocess
 
 
-def validate_task_seventeen(result=None, device_id=None):
-    """验证任务十七：进入首页iPhone15商品详情并进入店铺主页，然后立即购买店铺中"iPhone 15 粉色 256GB 1件"后，查看待收货订单"""
-    # 读取日志文件
+def validate_task_seventeen(result=None, device_id=None, backup_dir=None):
+    """验证任务十七：帮我在Apple京东自营店购买一件iPhone 15 粉色 256GB"""
+    orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
+
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/task_seventeen_log.txt"])
-    subprocess.run(cmd, stdout=open("task_seventeen_log.txt", "w"))
-
-    # 读取订单文件
-    cmd2 = ["adb"]
-    if device_id:
-        cmd2.extend(["-s", device_id])
-    cmd2.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/orders.json"])
-    subprocess.run(cmd2, stdout=open("orders.json", "w"))
+    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/orders.json"])
+    subprocess.run(cmd, stdout=open(orders_file_path, "w"))
 
     try:
-        with open("task_seventeen_log.txt", "r", encoding="utf-8") as f:
-            log_content = f.read()
-        with open("orders.json", "r", encoding="utf-8") as f:
+        with open(orders_file_path, "r", encoding="utf-8") as f:
             orders_data = json.load(f)
     except:
         return False
 
-    # 检查日志中是否包含关键步骤
-    required_steps = ["进入商品详情页", "进入店铺主页", "加载店铺页面数据", "在店铺中选择商品"]
-    for step in required_steps:
-        if step not in log_content:
-            return False
-
-    # 检查订单中是否包含"iPhone 15 粉色 256GB"
-    orders = orders_data if isinstance(orders_data, list) else []
-    for order in orders:
-        if isinstance(order, dict):
-            # Order结构: items -> List<OrderItem>, OrderItem结构: product -> Product
+    # Check the orders for the specific iPhone 15 purchase
+    for order in orders_data:
+        if order.get("status") == "PENDING_RECEIPT":
             items = order.get("items", [])
             for item in items:
-                if isinstance(item, dict):
-                    product = item.get("product", {})
-                    if isinstance(product, dict):
-                        product_name = product.get("name", "")
-                        # 检查商品名称和颜色/版本
-                        selected_color = item.get("selectedColor", "")
-                        selected_version = item.get("selectedVersion", "")
-                        if (
-                            "iPhone 15" in product_name
-                            and "粉色" in (product_name + selected_color)
-                            and "256GB" in (product_name + selected_version)
-                        ):
-                            return True
+                product = item.get("product", {})
+                product_name = product.get("name", "")
+                selected_color = item.get("selectedColor", "")
+                selected_version = item.get("selectedVersion", "")
+                quantity = item.get("quantity", 0)
+
+                # Check for the specific product details
+                if (
+                    "iPhone 15" in product_name
+                    and selected_color == "粉色"
+                    and selected_version == "256GB"
+                    and quantity == 1
+                ):
+                    return True
 
     return False
 

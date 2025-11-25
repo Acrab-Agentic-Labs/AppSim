@@ -1,17 +1,20 @@
 import json
+import os
 import subprocess
 
 
-def validate_task_twenty(result=None, device_id=None):
+def validate_task_twenty(result=None, device_id=None, backup_dir=None):
     """验证任务二十：设置Apple产品京东自营旗舰店的聊天为消息免打扰"""
+    mute_settings_file_path = os.path.join(backup_dir, "mute_settings.json") if backup_dir else "mute_settings.json"
+
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
     cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/mute_settings.json"])
-    subprocess.run(cmd, stdout=open("mute_settings.json", "w"))
+    subprocess.run(cmd, stdout=open(mute_settings_file_path, "w"))
 
     try:
-        with open("mute_settings.json", "r", encoding="utf-8") as f:
+        with open(mute_settings_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
             # mute_settings.json是MuteSetting的数组
             settings = data if isinstance(data, list) else []
