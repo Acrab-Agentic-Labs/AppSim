@@ -13,6 +13,7 @@ class AgentExecutionResult(BaseModel):
         completed_steps: 完成的步骤数
         total_actions: 总动作数
         executed_actions: 已执行的动作列表
+        screenshot_dir: 截图目录
         screenshots: 截图路径列表
         final_message: 最终消息（可选）
         error: 错误信息（可选）
@@ -22,6 +23,7 @@ class AgentExecutionResult(BaseModel):
     completed_steps: int
     total_actions: int
     executed_actions: List[Dict[str, Any]]
+    screenshot_dir: str
     screenshots: List[str]
     error: Optional[str] = None
     final_message: Optional[str] = None

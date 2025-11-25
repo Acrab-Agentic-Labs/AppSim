@@ -141,7 +141,7 @@ def main():
             logging.info("✅ 指令执行成功！")
             try:
                 verify_result = verify_function(
-                    device_id=device_id, result=result.model_dump(), backup_dir=screenshots_dir
+                    device_id=device_id, result=result.model_dump(), backup_dir=result.screenshot_dir
                 )
             except Exception as e:
                 logging.error(e)
