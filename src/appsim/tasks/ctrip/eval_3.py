@@ -1,39 +1,33 @@
 import json
 import subprocess
+import os
 
 
-def check_click_train(result=None, device_id=None):
+def check_click_train(result=None, device_id=None, backup_dir=None):
     """
     任务3: 点击 "火车票" 图标，进入火车票预订页面
     检验方法: 维护点击记录存储
     """
     # 定义APP包名和存储点击记录的文件路径
     app_package = "com.example.Ctrip"
-    file_path = "files/click_history.json"
+    phone_file_path = "files/click_history.json"
+    local_file_path = os.path.join(backup_dir, 'click_history.json') if backup_dir else 'click_history.json'
 
-    # 1. 通过ADB直接读取文件内容
     try:
-        # 构建adb命令，如果提供了device_id就添加设备选择参数
+        # 1. 通过ADB获取文件内容
         cmd = ["adb"]
         if device_id:
             cmd.extend(["-s", device_id])
-        cmd.extend(["exec-out", "run-as", app_package, "cat", file_path])
+        cmd.extend(["exec-out", "run-as", app_package, "cat", phone_file_path])
 
-        result1 = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", check=True)
-        file_content = result1.stdout
-    except subprocess.CalledProcessError:
-        print("获取文件失败，可能文件不存在或权限不足")
-        return False
+        with open(local_file_path, "w", encoding="utf-8") as f:
+            subprocess.run(cmd, stdout=f)
 
-    # 2. 解析JSON内容
-    try:
-        data = json.loads(file_content)
-    except json.JSONDecodeError:
-        print("文件解析失败")
-        return False
+        # 2. 解析JSON内容
+        with open(local_file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
 
-    # 3. 检查最新记录
-    try:
+        # 3. 检查最新记录
         latest_event = data["click_events"][-1]
         return latest_event["icon"] == "火车票" and latest_event["page"] == "火车票预订页面"
     except:
