@@ -136,11 +136,14 @@ class SeedAgent(BaseAgent):
                                 completed_steps=step + 1,
                                 total_actions=len(executed_actions),
                                 executed_actions=executed_actions,
+                                screenshot_dir=self.current_task_folder
+                                if self.current_task_folder
+                                else self.screenshots_dir,
                                 screenshots=screenshots,
                                 final_message=action.get("content", "操作完成"),
                             )
 
-                        # 执行动作
+                        # 执行动作Ï
                         if self.execute_action(action):
                             step_executed_actions.append(action)
                             # 等待操作完成
@@ -174,6 +177,7 @@ class SeedAgent(BaseAgent):
             completed_steps=step + 1 if step_success else step,
             total_actions=len(executed_actions),
             executed_actions=executed_actions,
+            screenshot_dir=self.current_task_folder if self.current_task_folder else self.screenshots_dir,
             screenshots=screenshots,
             error="未完成所有操作" if executed_actions else "执行失败",
         )
