@@ -2,11 +2,14 @@ import json
 import subprocess
 
 
-def SearchAndViewCheck(userId="user_current", searchQuery="秋冬穿搭", viewCount=3, result=None, device_id=None):
+def search_and_view_check(result=None, device_id=None,backup_dir=None):
     """
     检查用户是否搜索了指定关键词并查看了指定数量的搜索结果
     任务3: 在搜索栏中输入"秋冬穿搭"，点击查看搜索结果页的前3条内容的详情
     """
+    _USER_ID = "user_current"
+    _SEARCH_QUERY = "秋冬穿搭"
+    _VIEW_COUNT = 3
     # 从设备获取搜索历史文件
     cmd = ["adb"]
     if device_id:
@@ -57,14 +60,14 @@ def SearchAndViewCheck(userId="user_current", searchQuery="秋冬穿搭", viewCo
 
         # 查找最新的搜索记录
         user_searches = [
-            item for item in search_data if item.get("userId") == userId and item.get("query") == searchQuery
+            item for item in search_data if item.get("userId") == _USER_ID and item.get("query") == _SEARCH_QUERY
         ]
 
         if not user_searches:
             # print(f"❌ Search query not found")
             # print(f"   Reason: User '{userId}' did not search for '{searchQuery}'")
             # Show recent searches
-            recent_searches = [item.get("query", "UNKNOWN") for item in search_data if item.get("userId") == userId][:5]
+            recent_searches = [item.get("query", "UNKNOWN") for item in search_data if item.get("userId") == _USER_ID][:5]
             # if recent_searches:
             # print(f"   Recent searches: {recent_searches}")
             return False
@@ -77,13 +80,13 @@ def SearchAndViewCheck(userId="user_current", searchQuery="秋冬穿搭", viewCo
         search_browsing = [
             item
             for item in browsing_data
-            if item.get("userId") == userId
+            if item.get("userId") == _USER_ID
             and item.get("sourceType") == "SEARCH_RESULT"
             and item.get("browsedAt", "") >= search_time
         ]
 
         # 检查浏览数量是否达到预期
-        if len(search_browsing) >= viewCount:
+        if len(search_browsing) >= _VIEW_COUNT:
             # print(f"✓ Successfully searched '{searchQuery}' and viewed {viewCount} results")
             return True
         else:
@@ -98,4 +101,4 @@ def SearchAndViewCheck(userId="user_current", searchQuery="秋冬穿搭", viewCo
 
 
 if __name__ == "__main__":
-    print(SearchAndViewCheck(userId="user_current", searchQuery="秋冬穿搭", viewCount=3))
+    print(search_and_view_check())

@@ -3,13 +3,16 @@ import subprocess
 from io import StringIO
 
 
-def FollowBackFanCheck(userId="user_current", authorUsername="cly_beauty", result=None, device_id=None):
+def follow_back_fan_check(result=None, device_id=None,backup_dir=None):
     """
     检查用户是否回关了指定位置的粉丝
     任务20: 在"我"->"粉丝"对第一个粉丝进行"回关"
     """
     # 使用StringIO捕获输出，避免修改全局stdout
     output_buffer = StringIO()
+    
+    _USER_ID = "user_current"
+    _AUTHOR_USERNAME = "cly_beauty",
 
     try:
         # 从设备获取关注列表
@@ -41,17 +44,17 @@ def FollowBackFanCheck(userId="user_current", authorUsername="cly_beauty", resul
             if not data or len(data) == 0:
                 # print(f"❌ Follows list is empty")
                 # print(f"   Reason: No follow records found")
-                # print(f"   Expected: Following '{authorUsername}'")
+                # print(f"   Expected: Following '{_AUTHOR_USERNAME}'")
                 return False
 
             # 查找用户是否关注了指定博主
             for follow in data:
-                if follow.get("followerId") == userId and follow.get("following", {}).get("username") == authorUsername:
-                    # print(f"✓ Successfully followed author '{authorUsername}'")
+                if follow.get("followerId") == _USER_ID and follow.get("following", {}).get("username") == _AUTHOR_USERNAME:
+                    # print(f"✓ Successfully followed author '{_AUTHOR_USERNAME}'")
                     return True
 
             # print(f"❌ Author not followed")
-            # print(f"   Reason: User '{userId}' did not follow '{authorUsername}'")
+            # print(f"   Reason: User '{_USER_ID}' did not follow '{_AUTHOR_USERNAME}'")
             # if current_follows:
             # print(f"   Current follows: {current_follows}")
             return False
@@ -66,4 +69,4 @@ def FollowBackFanCheck(userId="user_current", authorUsername="cly_beauty", resul
 
 
 if __name__ == "__main__":
-    print(FollowBackFanCheck(userId="user_current", authorUsername="cly_beauty"))
+    print(follow_back_fan_check())

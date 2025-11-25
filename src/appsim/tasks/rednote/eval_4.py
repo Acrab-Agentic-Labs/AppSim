@@ -3,10 +3,12 @@ import subprocess
 from io import StringIO
 
 
-def LikeCollectCommentCheck(userId="user_current", noteKeyword="穿搭", result=None, device_id=None):
+def like_collect_comment_check(result=None, device_id=None,backup_dir=None):
     # 使用StringIO捕获输出，避免修改全局stdout
     output_buffer = StringIO()
-
+    
+    _USER_ID = "user_current"
+    _NOTE_KEYWORD = "穿搭"
     try:
         # 设置 UTF-8 编码以支持 emoji 输出
         # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -91,7 +93,7 @@ def LikeCollectCommentCheck(userId="user_current", noteKeyword="穿搭", result=
 
         # 查找标题包含关键词的笔记
         try:
-            target_notes = [note for note in notes_data if noteKeyword in note.get("title", "")]
+            target_notes = [note for note in notes_data if _NOTE_KEYWORD in note.get("title", "")]
 
             if not target_notes:
                 # print(f"❌ No notes found with keyword '{noteKeyword}'")
@@ -104,12 +106,12 @@ def LikeCollectCommentCheck(userId="user_current", noteKeyword="穿搭", result=
 
                 # 检查收藏
                 has_collected = any(
-                    col.get("userId") == userId and col.get("noteId") == note_id for col in collections_data
+                    col.get("userId") == _USER_ID and col.get("noteId") == note_id for col in collections_data
                 )
 
                 # 检查评论（内容为"很有用！"）
                 has_commented = any(
-                    comment.get("author", {}).get("id") == userId
+                    comment.get("author", {}).get("id") == _USER_ID
                     and comment.get("noteId") == note_id
                     and comment.get("content") == "很有用！"
                     for comment in comments_data
@@ -124,10 +126,10 @@ def LikeCollectCommentCheck(userId="user_current", noteKeyword="穿搭", result=
             note = target_notes[0]
             note_id = note.get("id")
             has_collected = any(
-                col.get("userId") == userId and col.get("noteId") == note_id for col in collections_data
+                col.get("userId") == _USER_ID and col.get("noteId") == note_id for col in collections_data
             )
             has_commented = any(
-                comment.get("author", {}).get("id") == userId and comment.get("noteId") == note_id
+                comment.get("author", {}).get("id") == _USER_ID and comment.get("noteId") == note_id
                 for comment in comments_data
             )
 
@@ -146,4 +148,4 @@ def LikeCollectCommentCheck(userId="user_current", noteKeyword="穿搭", result=
 
 
 if __name__ == "__main__":
-    print(LikeCollectCommentCheck(userId="user_current", noteKeyword="穿搭"))
+    print(like_collect_comment_check())

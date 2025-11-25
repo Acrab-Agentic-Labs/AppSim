@@ -2,11 +2,13 @@ import json
 import subprocess
 
 
-def DislikeNoteCheck(userId="user_current", notePosition=2, result=None, device_id=None):
+def dislike_note_check(result=None, device_id=None,backup_dir=None):
     """
     检查用户是否对首页指定位置的笔记点击了"不喜欢"
     任务8: 对首页第二篇笔记进入详情，点击右上角的图标，选择"不喜欢"
     """
+    _USER_ID = "user_current"
+    _NOTE_POSITION = 2,
     # 从设备获取不喜欢记录
     cmd = ["adb"]
     if device_id:
@@ -35,11 +37,11 @@ def DislikeNoteCheck(userId="user_current", notePosition=2, result=None, device_
         if not data or len(data) == 0:
             print(" Dislikes list is empty")
             print("   Reason: No dislike records found")
-            print(f"   Expected: At least one dislike record for user '{userId}'")
+            print(f"   Expected: At least one dislike record for user '{_USER_ID}'")
             return False
 
         # 查找用户的不喜欢记录
-        user_dislikes = [item for item in data if item.get("userId") == userId]
+        user_dislikes = [item for item in data if item.get("_USER_ID") == _USER_ID]
 
         # 检查是否有最新的不喜欢记录
         if user_dislikes:
@@ -53,7 +55,7 @@ def DislikeNoteCheck(userId="user_current", notePosition=2, result=None, device_
             return True
 
         print(" No dislike records for user")
-        print(f"   Reason: User '{userId}' has not disliked any notes")
+        print(f"   Reason: User '{_USER_ID}' has not disliked any notes")
         print("   Expected: At least one dislike record")
         print(f"   Total dislike records in system: {len(data)}")
         return False
@@ -64,4 +66,4 @@ def DislikeNoteCheck(userId="user_current", notePosition=2, result=None, device_
 
 
 if __name__ == "__main__":
-    print(DislikeNoteCheck(userId="user_current", notePosition=2))
+    print(dislike_note_check())

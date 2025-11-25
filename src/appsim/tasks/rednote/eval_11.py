@@ -2,11 +2,13 @@ import json
 import subprocess
 
 
-def ChangeNicknameCheck(userId="user_current", expectedNickname="111", result=None, device_id=None):
+def change_nickname_check(result=None, device_id=None,backup_dir=None):
     """
     检查用户是否修改了昵称
     任务11: 在"我"打开"编辑资料"，修改自己的名字为"111"
     """
+    _USER_ID = "user_current"
+    _EXPECTED_NICKNAME = "111",
     # 从设备获取用户数据
     cmd = ["adb"]
     if device_id:
@@ -42,28 +44,28 @@ def ChangeNicknameCheck(userId="user_current", expectedNickname="111", result=No
 
         # 查找当前用户
         for user in data:
-            if user.get("id") == userId:
+            if user.get("id") == _USER_ID:
                 # 检查昵称是否已修改
                 nickname = user.get("nickname", "")
-                if nickname == expectedNickname:
+                if nickname == _EXPECTED_NICKNAME:
                     print("✓ Successfully changed nickname")
-                    print(f"   User ID: {userId}")
-                    print(f"   New nickname: {expectedNickname}")
+                    print(f"   User ID: {_USER_ID}")
+                    print(f"   New nickname: {_EXPECTED_NICKNAME}")
                     return True
                 else:
                     print(" Nickname does not match expected value")
-                    print(f"   Reason: User nickname is '{nickname}', expected '{expectedNickname}'")
+                    print(f"   Reason: User nickname is '{nickname}', expected '{_EXPECTED_NICKNAME}'")
                     if not nickname:
                         print("   Note: Nickname field is empty or not set")
                     return False
 
         print(" User not found")
-        print(f"   Reason: User '{userId}' does not exist in users list")
+        print(f"   Reason: User '{_USER_ID}' does not exist in users list")
         print(f"   Total users in system: {len(data)}")
         # Show available user IDs
-        user_ids = [user.get("id", "Unknown") for user in data[:5]]
-        if user_ids:
-            print(f"   Available user IDs (first 5): {user_ids}")
+        _USER_IDs = [user.get("id", "Unknown") for user in data[:5]]
+        if _USER_IDs:
+            print(f"   Available user IDs (first 5): {_USER_IDs}")
         return False
 
     except:
@@ -72,4 +74,4 @@ def ChangeNicknameCheck(userId="user_current", expectedNickname="111", result=No
 
 
 if __name__ == "__main__":
-    print(ChangeNicknameCheck(userId="user_current", expectedNickname="111"))
+    print(change_nickname_check())

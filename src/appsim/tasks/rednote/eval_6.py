@@ -3,9 +3,12 @@ import subprocess
 from io import StringIO
 
 
-def ReplyCommentCheck(userId="user_current", replyContent="谢谢喜欢～", result=None, device_id=None):
+def reply_comment_check(result=None, device_id=None,backup_dir=None):
     # 使用StringIO捕获输出，避免修改全局stdout
     output_buffer = StringIO()
+    
+    _USER_ID = "user_current"
+    _REPLY_CONTENT = "谢谢喜欢～"
     """
     检查用户是否回复了最新收到的评论
     任务6: 查看"消息"->"评论和@"页面，回复最新收到的一条评论，内容为"谢谢喜欢～"
@@ -48,25 +51,25 @@ def ReplyCommentCheck(userId="user_current", replyContent="谢谢喜欢～", res
         replies = [
             comment
             for comment in data
-            if comment.get("author", {}).get("id") == userId
+            if comment.get("author", {}).get("id") == _USER_ID
             and comment.get("parentCommentId") is not None
-            and comment.get("content") == replyContent
+            and comment.get("content") == _REPLY_CONTENT
         ]
 
         # 如果找到符合条件的回复，返回 True
         if replies:
             latest_reply = sorted(replies, key=lambda x: x.get("createdAt", ""), reverse=True)[0]
-            if latest_reply.get("content") == replyContent:
-                print(f"✓ Successfully replied with '{replyContent}'")
+            if latest_reply.get("content") == _REPLY_CONTENT:
+                print(f"✓ Successfully replied with '{_REPLY_CONTENT}'")
                 return True
 
         print(" Reply comment not found")
-        print(f"   Reason: No reply with content '{replyContent}' from user '{userId}'")
+        print(f"   Reason: No reply with content '{_REPLY_CONTENT}' from user '{_USER_ID}'")
         # Show recent replies
         user_replies = [
             c.get("content", "UNKNOWN")
             for c in data
-            if c.get("author", {}).get("id") == userId and c.get("parentCommentId") is not None
+            if c.get("author", {}).get("id") == _USER_ID and c.get("parentCommentId") is not None
         ][:3]
         if user_replies:
             print(f"   Recent replies: {user_replies}")
@@ -81,4 +84,4 @@ def ReplyCommentCheck(userId="user_current", replyContent="谢谢喜欢～", res
 
 
 if __name__ == "__main__":
-    print(ReplyCommentCheck(userId="user_current", replyContent="谢谢喜欢～"))
+    print(reply_comment_check())
