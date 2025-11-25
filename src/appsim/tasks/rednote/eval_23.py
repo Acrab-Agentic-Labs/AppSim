@@ -3,7 +3,7 @@ import subprocess
 from io import StringIO
 
 
-def unfollow_author_check(result=None, device_id=None,backup_dir=None):
+def unfollow_author_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否取消关注了指定博主
     任务23: 在我的关注列表对"潮流时尚达人"取消关注
@@ -12,7 +12,7 @@ def unfollow_author_check(result=None, device_id=None,backup_dir=None):
     output_buffer = StringIO()
 
     _USER_ID = "user_current"
-    _AUTHOR_USERNAME = "fashion_girl",
+    _AUTHOR_USERNAME = "fashion_girl"
 
     try:
         # 从设备获取关注列表
@@ -49,7 +49,10 @@ def unfollow_author_check(result=None, device_id=None,backup_dir=None):
 
             # 查找用户是否关注了指定博主
             for follow in data:
-                if follow.get("followerId") == _USER_ID and follow.get("following", {}).get("username") == _AUTHOR_USERNAME:
+                if (
+                    follow.get("followerId") == _USER_ID
+                    and follow.get("following", {}).get("username") == _AUTHOR_USERNAME
+                ):
                     # print(f"✓ Successfully followed author '{_AUTHOR_USERNAME}'")
                     return False
 

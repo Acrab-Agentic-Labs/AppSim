@@ -2,7 +2,7 @@ import json
 import subprocess
 
 
-def publish_note_check(result=None, device_id=None,backup_dir=None):
+def publish_note_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否发布了指定标题和内容的笔记
     任务12: 点击底部栏的"+"号，点击添加图片，并输入文字"天晴了"，
@@ -10,7 +10,7 @@ def publish_note_check(result=None, device_id=None,backup_dir=None):
     """
     _USER_ID = "user_current"
     _NOTE_TITLE = "今日份分享"
-    _NOTE_CONTENT = "天晴了",
+    _NOTE_CONTENT = "天晴了"
     # 从设备获取浏览历史（用于验证笔记是否存在）
     cmd = ["adb"]
     if device_id:
@@ -40,7 +40,7 @@ def publish_note_check(result=None, device_id=None,backup_dir=None):
                 user_published_notes.append(
                     {
                         "id": item.get("noteId"),
-                        "title": item.get("_NOTE_TITLE", ""),
+                        "title": item.get("noteTitle", ""),
                         "author": {"id": author_id},
                         "content": "",  # 浏览历史中没有完整内容
                         "visibility": "UNKNOWN",  # 浏览历史中没有可见性信息

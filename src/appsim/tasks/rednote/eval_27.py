@@ -8,7 +8,7 @@ def find_tie_method(result=None, device_id=None, backup_dir=None):
     Task 2: 我想学习围巾的新系法，帮我推荐一篇笔记并打开
     """
     _USER_ID = "user_current"
-    message_file_path = os.path.join(backup_dir, 'browsing_history.json') if backup_dir else 'browsing_history.json'
+    message_file_path = os.path.join(backup_dir, "browsing_history.json") if backup_dir else "browsing_history.json"
     # Get browsing history from device
     cmd = ["adb"]
     if device_id:
@@ -65,6 +65,4 @@ def find_tie_method(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(
-        find_tie_method()
-    )
+    print(find_tie_method())

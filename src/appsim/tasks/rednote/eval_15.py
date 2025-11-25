@@ -2,7 +2,7 @@ import json
 import subprocess
 
 
-def like_comment_check( result=None, device_id=None,backup_dir=None):
+def like_comment_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否对首页第二篇笔记的第一条评论进行了点赞
     任务15: 在首页进入第二篇笔记的详情页点击查看第一条评论，对评论进行"点赞"
@@ -42,7 +42,9 @@ def like_comment_check( result=None, device_id=None,backup_dir=None):
             return False
 
         # 查找用户对评论的点赞记录
-        comment_likes = [like for like in data if like.get("_USER_ID") == _USER_ID and like.get("targetType") == "COMMENT"]
+        comment_likes = [
+            like for like in data if like.get("_USER_ID") == _USER_ID and like.get("targetType") == "COMMENT"
+        ]
 
         # 如果有最新的评论点赞记录，返回 True
         if comment_likes:

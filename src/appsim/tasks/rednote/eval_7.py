@@ -2,7 +2,7 @@ import json
 import subprocess
 
 
-def browsing_history_check(result=None, device_id=None,backup_dir=None):
+def browsing_history_check(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])

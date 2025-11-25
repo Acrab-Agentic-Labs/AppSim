@@ -2,7 +2,7 @@ import json
 import subprocess
 
 
-def browse_and_interact_check(result=None, device_id=None,backup_dir=None):
+def browse_and_interact_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否浏览了首页前N篇笔记并进行了点赞、收藏和评论
     任务16: 进入首页，浏览前2篇推荐笔记点击进入笔记详情，对笔记进行点赞、收藏、发送评论"很精彩"
@@ -97,7 +97,9 @@ def browse_and_interact_check(result=None, device_id=None,backup_dir=None):
         success_count = 0
         for note_id in note_ids:
             has_liked = any(
-                like.get("_USER_ID") == _USER_ID and like.get("targetId") == note_id and like.get("targetType") == "NOTE"
+                like.get("_USER_ID") == _USER_ID
+                and like.get("targetId") == note_id
+                and like.get("targetType") == "NOTE"
                 for like in likes_data
             )
 
@@ -124,7 +126,9 @@ def browse_and_interact_check(result=None, device_id=None,backup_dir=None):
             print(f"   Reason: Only {success_count} out of {_VIEW_COUNT} notes have all interactions")
             # Show details for each note
             for i, note_id in enumerate(note_ids):
-                has_liked = any(like.get("_USER_ID") == _USER_ID and like.get("targetId") == note_id for like in likes_data)
+                has_liked = any(
+                    like.get("_USER_ID") == _USER_ID and like.get("targetId") == note_id for like in likes_data
+                )
                 has_collected = any(
                     col.get("_USER_ID") == _USER_ID and col.get("noteId") == note_id for col in collections_data
                 )

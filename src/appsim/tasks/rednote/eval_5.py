@@ -3,10 +3,10 @@ import subprocess
 from io import StringIO
 
 
-def follow_author_check(result=None, device_id=None,backup_dir=None):
+def follow_author_check(result=None, device_id=None, backup_dir=None):
     # 使用StringIO捕获输出，避免修改全局stdout
     output_buffer = StringIO()
-    
+
     _USER_ID = "user_current"
     _AUTHOR_USERNAME = "cly_beauty"
     try:
@@ -50,18 +50,16 @@ def follow_author_check(result=None, device_id=None,backup_dir=None):
 
             # 查找用户是否关注了指定博主
             for follow in data:
-                if follow.get("followerId") == _USER_ID and follow.get("following", {}).get("username") == _AUTHOR_USERNAME:
+                if (
+                    follow.get("followerId") == _USER_ID
+                    and follow.get("following", {}).get("username") == _AUTHOR_USERNAME
+                ):
                     # print(f"✓ Successfully followed author '{authorUsername}'")
                     return True
 
             # print(f"❌ Author not followed")
             # print(f"   Reason: User '{userId}' did not follow '{authorUsername}'")
             # Show current follows
-            current_follows = [
-                f.get("following", {}).get("username", "UNKNOWN") for f in data if f.get("followerId") == _USER_ID
-            ][:5]
-            # if current_follows:
-            # print(f"   Current follows: {current_follows}")
             return False
 
         except:
@@ -74,6 +72,4 @@ def follow_author_check(result=None, device_id=None,backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(
-        follow_author_check()
-    )
+    print(follow_author_check())

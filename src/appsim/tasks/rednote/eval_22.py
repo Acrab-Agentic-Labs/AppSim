@@ -2,13 +2,13 @@ import json
 import subprocess
 
 
-def count_author_notes_check(result=None, device_id=None,backup_dir=None):
+def count_author_notes_check(result=None, device_id=None, backup_dir=None):
     """
     检查并统计指定博主发布的笔记数量
     任务22: 统计博主"旅行日记"发布笔记数量
     """
     _AUTHOR_USERNAME = "旅行日记"
-    _MIN_COUNT = 0,
+    _MIN_COUNT = 0
     # 从设备获取浏览历史（用于获取笔记信息）
     cmd = ["adb"]
     if device_id:

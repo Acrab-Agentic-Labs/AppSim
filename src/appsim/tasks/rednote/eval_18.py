@@ -2,11 +2,7 @@ import json
 import subprocess
 
 
-def publish_and_self_interact_check(
-    
-    result=None,
-    device_id=None,backup_dir=None
-):
+def publish_and_self_interact_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否发布了指定笔记并对其进行点赞和收藏
     任务18: 点击底部栏的"+"号，点击添加图片，并输入文字"今天也要加油呀"，
@@ -104,7 +100,9 @@ def publish_and_self_interact_check(
         )
 
         # 检查是否收藏
-        has_collected = any(col.get("_USER_ID") == _USER_ID and col.get("noteId") == note_id for col in collections_data)
+        has_collected = any(
+            col.get("_USER_ID") == _USER_ID and col.get("noteId") == note_id for col in collections_data
+        )
 
         if has_liked and has_collected:
             print("✓ Successfully published and interacted with note")
@@ -127,6 +125,4 @@ def publish_and_self_interact_check(
 
 
 if __name__ == "__main__":
-    print(
-        publish_and_self_interact_check()
-    )
+    print(publish_and_self_interact_check())

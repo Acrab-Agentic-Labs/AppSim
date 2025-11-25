@@ -1,4 +1,4 @@
-def browsing_history_check(result=None, device_id=None,backup_dir=None):
+def browsing_history_check(result=None, device_id=None, backup_dir=None):
     if result is None:
         return False
 

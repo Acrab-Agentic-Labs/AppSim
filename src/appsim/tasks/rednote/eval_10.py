@@ -2,13 +2,13 @@ import json
 import subprocess
 
 
-def set_password_check(result=None, device_id=None,backup_dir=None):
+def set_password_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否设置了登录密码
     任务10: 在"我"打开编辑资料右侧的设置按钮，找到"账号与安全"选项，设置登录密码为123456
     """
     _USER_ID = "user_current"
-    _EXPECTED_PASSWORD = "123456",
+    _EXPECTED_PASSWORD = "123456"
     # 从设备获取用户数据
     cmd = ["adb"]
     if device_id:

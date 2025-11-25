@@ -3,16 +3,16 @@ import subprocess
 from io import StringIO
 
 
-def follow_back_fan_check(result=None, device_id=None,backup_dir=None):
+def follow_back_fan_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否回关了指定位置的粉丝
     任务20: 在"我"->"粉丝"对第一个粉丝进行"回关"
     """
     # 使用StringIO捕获输出，避免修改全局stdout
     output_buffer = StringIO()
-    
+
     _USER_ID = "user_current"
-    _AUTHOR_USERNAME = "cly_beauty",
+    _AUTHOR_USERNAME = "cly_beauty"
 
     try:
         # 从设备获取关注列表
@@ -49,7 +49,10 @@ def follow_back_fan_check(result=None, device_id=None,backup_dir=None):
 
             # 查找用户是否关注了指定博主
             for follow in data:
-                if follow.get("followerId") == _USER_ID and follow.get("following", {}).get("username") == _AUTHOR_USERNAME:
+                if (
+                    follow.get("followerId") == _USER_ID
+                    and follow.get("following", {}).get("username") == _AUTHOR_USERNAME
+                ):
                     # print(f"✓ Successfully followed author '{_AUTHOR_USERNAME}'")
                     return True
 

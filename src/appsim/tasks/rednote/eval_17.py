@@ -2,7 +2,7 @@ import json
 import subprocess
 
 
-def search_result_count_check(result=None, device_id=None,backup_dir=None):
+def search_result_count_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户搜索并统计搜索结果的笔记数目
     任务17: 在搜索栏中输入"美妆"，统计搜索结果的笔记数目
@@ -79,7 +79,9 @@ def search_result_count_check(result=None, device_id=None,backup_dir=None):
         if not user_searches:
             print(" Search query not found")
             print(f"   Reason: User '{_USER_ID}' did not search for '{_SEARCH_QUERY}'")
-            recent_searches = [item.get("query", "UNKNOWN") for item in search_data if item.get("_USER_ID") == _USER_ID][:5]
+            recent_searches = [
+                item.get("query", "UNKNOWN") for item in search_data if item.get("_USER_ID") == _USER_ID
+            ][:5]
             if recent_searches:
                 print(f"   Recent searches: {recent_searches}")
             return False

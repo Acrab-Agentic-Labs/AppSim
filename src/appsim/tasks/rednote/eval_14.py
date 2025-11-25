@@ -2,7 +2,7 @@ import json
 import subprocess
 
 
-def send_message_check(result=None, device_id=None,backup_dir=None):
+def send_message_check(result=None, device_id=None, backup_dir=None):
     """
     检查最后一条消息是否符合条件：
     - content = "催更"

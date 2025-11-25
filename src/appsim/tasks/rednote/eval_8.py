@@ -2,13 +2,13 @@ import json
 import subprocess
 
 
-def dislike_note_check(result=None, device_id=None,backup_dir=None):
+def dislike_note_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否对首页指定位置的笔记点击了"不喜欢"
     任务8: 对首页第二篇笔记进入详情，点击右上角的图标，选择"不喜欢"
     """
     _USER_ID = "user_current"
-    _NOTE_POSITION = 2,
+    _NOTE_POSITION = (2,)
     # 从设备获取不喜欢记录
     cmd = ["adb"]
     if device_id:

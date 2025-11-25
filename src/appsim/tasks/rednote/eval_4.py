@@ -3,10 +3,10 @@ import subprocess
 from io import StringIO
 
 
-def like_collect_comment_check(result=None, device_id=None,backup_dir=None):
+def like_collect_comment_check(result=None, device_id=None, backup_dir=None):
     # 使用StringIO捕获输出，避免修改全局stdout
     output_buffer = StringIO()
-    
+
     _USER_ID = "user_current"
     _NOTE_KEYWORD = "穿搭"
     try:

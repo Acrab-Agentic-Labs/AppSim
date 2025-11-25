@@ -3,10 +3,10 @@ import subprocess
 from io import StringIO
 
 
-def reply_comment_check(result=None, device_id=None,backup_dir=None):
+def reply_comment_check(result=None, device_id=None, backup_dir=None):
     # 使用StringIO捕获输出，避免修改全局stdout
     output_buffer = StringIO()
-    
+
     _USER_ID = "user_current"
     _REPLY_CONTENT = "谢谢喜欢～"
     """

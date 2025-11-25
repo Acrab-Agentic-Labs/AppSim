@@ -2,7 +2,7 @@ import json
 import subprocess
 
 
-def note_interaction_check(result=None, device_id=None,backup_dir=None):
+def note_interaction_check(result=None, device_id=None, backup_dir=None):
     """
     检查三个文件的最后一条记录是否符合条件：
     1. browsing_history.json: noteAuthor.id = "user_003", noteTitle = "AI技术在日常生活中的应用，太实用了！"

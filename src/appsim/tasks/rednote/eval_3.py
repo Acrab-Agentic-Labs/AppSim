@@ -2,7 +2,7 @@ import json
 import subprocess
 
 
-def search_and_view_check(result=None, device_id=None,backup_dir=None):
+def search_and_view_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否搜索了指定关键词并查看了指定数量的搜索结果
     任务3: 在搜索栏中输入"秋冬穿搭"，点击查看搜索结果页的前3条内容的详情
@@ -67,7 +67,6 @@ def search_and_view_check(result=None, device_id=None,backup_dir=None):
             # print(f"❌ Search query not found")
             # print(f"   Reason: User '{userId}' did not search for '{searchQuery}'")
             # Show recent searches
-            recent_searches = [item.get("query", "UNKNOWN") for item in search_data if item.get("userId") == _USER_ID][:5]
             # if recent_searches:
             # print(f"   Recent searches: {recent_searches}")
             return False

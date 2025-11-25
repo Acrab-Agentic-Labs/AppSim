@@ -2,13 +2,13 @@ import json
 import subprocess
 
 
-def change_nickname_check(result=None, device_id=None,backup_dir=None):
+def change_nickname_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否修改了昵称
     任务11: 在"我"打开"编辑资料"，修改自己的名字为"111"
     """
     _USER_ID = "user_current"
-    _EXPECTED_NICKNAME = "111",
+    _EXPECTED_NICKNAME = "111"
     # 从设备获取用户数据
     cmd = ["adb"]
     if device_id:
