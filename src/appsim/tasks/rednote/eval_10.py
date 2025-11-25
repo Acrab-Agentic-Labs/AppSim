@@ -2,11 +2,13 @@ import json
 import subprocess
 
 
-def SetPasswordCheck(userId="user_current", expectedPassword="123456", result=None, device_id=None):
+def set_password_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否设置了登录密码
     任务10: 在"我"打开编辑资料右侧的设置按钮，找到"账号与安全"选项，设置登录密码为123456
     """
+    _USER_ID = "user_current"
+    _EXPECTED_PASSWORD = "123456"
     # 从设备获取用户数据
     cmd = ["adb"]
     if device_id:
@@ -42,28 +44,28 @@ def SetPasswordCheck(userId="user_current", expectedPassword="123456", result=No
 
         # 查找当前用户
         for user in data:
-            if user.get("id") == userId:
+            if user.get("id") == _USER_ID:
                 # 检查是否设置了密码（简化处理：检查password字段）
                 password = user.get("password", "")
-                if password == expectedPassword:
+                if password == _EXPECTED_PASSWORD:
                     print("✓ Successfully set password")
-                    print(f"   User ID: {userId}")
-                    print(f"   Password: {expectedPassword}")
+                    print(f"   User ID: {_USER_ID}")
+                    print(f"   Password: {_EXPECTED_PASSWORD}")
                     return True
                 else:
                     print(" Password does not match expected value")
-                    print(f"   Reason: User password is '{password}', expected '{expectedPassword}'")
+                    print(f"   Reason: User password is '{password}', expected '{_EXPECTED_PASSWORD}'")
                     if not password:
                         print("   Note: Password field is empty or not set")
                     return False
 
         print(" User not found")
-        print(f"   Reason: User '{userId}' does not exist in users list")
+        print(f"   Reason: User '{_USER_ID}' does not exist in users list")
         print(f"   Total users in system: {len(data)}")
         # Show available user IDs
-        user_ids = [user.get("id", "Unknown") for user in data[:5]]
-        if user_ids:
-            print(f"   Available user IDs (first 5): {user_ids}")
+        _USER_IDs = [user.get("id", "Unknown") for user in data[:5]]
+        if _USER_IDs:
+            print(f"   Available user IDs (first 5): {_USER_IDs}")
         return False
 
     except:
@@ -72,4 +74,4 @@ def SetPasswordCheck(userId="user_current", expectedPassword="123456", result=No
 
 
 if __name__ == "__main__":
-    print(SetPasswordCheck(userId="user_current", expectedPassword="123456"))
+    print(set_password_check())

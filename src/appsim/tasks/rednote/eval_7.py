@@ -2,7 +2,7 @@ import json
 import subprocess
 
 
-def BrowsingHistoryCheck(result=None, device_id=None):
+def browsing_history_check(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
@@ -33,4 +33,4 @@ def BrowsingHistoryCheck(result=None, device_id=None):
 
 
 if __name__ == "__main__":
-    print(BrowsingHistoryCheck())
+    print(browsing_history_check())

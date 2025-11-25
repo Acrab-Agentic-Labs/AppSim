@@ -2,11 +2,12 @@ import json
 import subprocess
 
 
-def LikeCommentCheck(userId="user_current", result=None, device_id=None):
+def like_comment_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否对首页第二篇笔记的第一条评论进行了点赞
     任务15: 在首页进入第二篇笔记的详情页点击查看第一条评论，对评论进行"点赞"
     """
+    _USER_ID = "user_current"
     # 从设备获取点赞记录
     cmd = ["adb"]
     if device_id:
@@ -37,11 +38,13 @@ def LikeCommentCheck(userId="user_current", result=None, device_id=None):
         if not data or len(data) == 0:
             print(" Likes list is empty")
             print("   Reason: No like records found")
-            print(f"   Expected: At least one comment like for user '{userId}'")
+            print(f"   Expected: At least one comment like for user '{_USER_ID}'")
             return False
 
         # 查找用户对评论的点赞记录
-        comment_likes = [like for like in data if like.get("userId") == userId and like.get("targetType") == "COMMENT"]
+        comment_likes = [
+            like for like in data if like.get("_USER_ID") == _USER_ID and like.get("targetType") == "COMMENT"
+        ]
 
         # 如果有最新的评论点赞记录，返回 True
         if comment_likes:
@@ -55,10 +58,10 @@ def LikeCommentCheck(userId="user_current", result=None, device_id=None):
             return True
 
         # Check if user liked notes instead of comments
-        note_likes = [like for like in data if like.get("userId") == userId and like.get("targetType") == "NOTE"]
+        note_likes = [like for like in data if like.get("_USER_ID") == _USER_ID and like.get("targetType") == "NOTE"]
 
         print(" No comment like records for user")
-        print(f"   Reason: User '{userId}' has not liked any comments")
+        print(f"   Reason: User '{_USER_ID}' has not liked any comments")
         print("   Expected: At least one comment like (targetType: COMMENT)")
 
         if note_likes:
@@ -76,4 +79,4 @@ def LikeCommentCheck(userId="user_current", result=None, device_id=None):
 
 
 if __name__ == "__main__":
-    print(LikeCommentCheck(userId="user_current"))
+    print(like_comment_check())

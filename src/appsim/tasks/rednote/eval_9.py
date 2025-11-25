@@ -1,4 +1,4 @@
-def BrowsingHistoryCheck(result=None, device_id=None):
+def browsing_history_check(result=None, device_id=None, backup_dir=None):
     if result is None:
         return False
 
@@ -11,5 +11,5 @@ def BrowsingHistoryCheck(result=None, device_id=None):
 
 
 if __name__ == "__main__":
-    result = BrowsingHistoryCheck()
+    result = browsing_history_check()
     print(result)

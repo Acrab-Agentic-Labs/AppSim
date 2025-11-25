@@ -2,11 +2,13 @@ import json
 import subprocess
 
 
-def CountAuthorNotesCheck(authorNickname="旅行日记", minCount=0, result=None, device_id=None):
+def count_author_notes_check(result=None, device_id=None, backup_dir=None):
     """
     检查并统计指定博主发布的笔记数量
     任务22: 统计博主"旅行日记"发布笔记数量
     """
+    _AUTHOR_USERNAME = "旅行日记"
+    _MIN_COUNT = 0
     # 从设备获取浏览历史（用于获取笔记信息）
     cmd = ["adb"]
     if device_id:
@@ -55,13 +57,13 @@ def CountAuthorNotesCheck(authorNickname="旅行日记", minCount=0, result=None
         # 查找指定昵称的博主
         target_author = None
         for user in users_data:
-            if user.get("nickname") == authorNickname:
+            if user.get("nickname") == _AUTHOR_USERNAME:
                 target_author = user
                 break
 
         if not target_author:
             print(" Author not found")
-            print(f"   Reason: No user with nickname '{authorNickname}'")
+            print(f"   Reason: No user with nickname '{_AUTHOR_USERNAME}'")
             # Show available nicknames
             available_nicknames = [u.get("nickname", "UNKNOWN") for u in users_data][:10]
             print(f"   Available nicknames: {available_nicknames}")
@@ -74,15 +76,15 @@ def CountAuthorNotesCheck(authorNickname="旅行日记", minCount=0, result=None
 
         note_count = len(author_notes)
 
-        if note_count >= minCount:
+        if note_count >= _MIN_COUNT:
             print("✓ Successfully counted author notes")
-            print(f"   Author: '{authorNickname}' (ID: {author_id})")
+            print(f"   Author: '{_AUTHOR_USERNAME}' (ID: {author_id})")
             print(f"   Total notes: {note_count}")
             return True
         else:
             print(" Not enough notes by author")
-            print(f"   Author: '{authorNickname}' (ID: {author_id})")
-            print(f"   Found {note_count} notes, expected at least {minCount}")
+            print(f"   Author: '{_AUTHOR_USERNAME}' (ID: {author_id})")
+            print(f"   Found {note_count} notes, expected at least {_MIN_COUNT}")
             return False
 
     except:
@@ -91,4 +93,4 @@ def CountAuthorNotesCheck(authorNickname="旅行日记", minCount=0, result=None
 
 
 if __name__ == "__main__":
-    print(CountAuthorNotesCheck(authorNickname="旅行日记", minCount=0))
+    print(count_author_notes_check())

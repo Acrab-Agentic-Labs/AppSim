@@ -2,11 +2,14 @@ import json
 import subprocess
 
 
-def BrowseAndInteractCheck(userId="user_current", viewCount=2, commentContent="很精彩", result=None, device_id=None):
+def browse_and_interact_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否浏览了首页前N篇笔记并进行了点赞、收藏和评论
     任务16: 进入首页，浏览前2篇推荐笔记点击进入笔记详情，对笔记进行点赞、收藏、发送评论"很精彩"
     """
+    _USER_ID = "user_current"
+    _VIEW_COUNT = 2
+    _COMMENT_CONTENT = "很精彩"
     # 从设备获取浏览历史
     cmd = ["adb"]
     if device_id:
@@ -78,55 +81,59 @@ def BrowseAndInteractCheck(userId="user_current", viewCount=2, commentContent="�
     try:
         # 获取用户从首页浏览的笔记
         home_browsing = [
-            item for item in browsing_data if item.get("userId") == userId and item.get("sourceType") == "HOME_FEED"
+            item for item in browsing_data if item.get("_USER_ID") == _USER_ID and item.get("sourceType") == "HOME_FEED"
         ]
 
-        if len(home_browsing) < viewCount:
+        if len(home_browsing) < _VIEW_COUNT:
             print(" Not enough home feed browsing records")
-            print(f"   Reason: Found {len(home_browsing)} records, expected {viewCount}")
+            print(f"   Reason: Found {len(home_browsing)} records, expected {_VIEW_COUNT}")
             return False
 
         # 获取最近浏览的N篇笔记
-        recent_browsing = sorted(home_browsing, key=lambda x: x.get("browsedAt", ""), reverse=True)[:viewCount]
+        recent_browsing = sorted(home_browsing, key=lambda x: x.get("browsedAt", ""), reverse=True)[:_VIEW_COUNT]
         note_ids = [item.get("noteId") for item in recent_browsing]
 
         # 检查这些笔记是否都被点赞、收藏和评论
         success_count = 0
         for note_id in note_ids:
             has_liked = any(
-                like.get("userId") == userId and like.get("targetId") == note_id and like.get("targetType") == "NOTE"
+                like.get("_USER_ID") == _USER_ID
+                and like.get("targetId") == note_id
+                and like.get("targetType") == "NOTE"
                 for like in likes_data
             )
 
             has_collected = any(
-                col.get("userId") == userId and col.get("noteId") == note_id for col in collections_data
+                col.get("_USER_ID") == _USER_ID and col.get("noteId") == note_id for col in collections_data
             )
 
             has_commented = any(
-                comment.get("author", {}).get("id") == userId
+                comment.get("author", {}).get("id") == _USER_ID
                 and comment.get("noteId") == note_id
-                and comment.get("content") == commentContent
+                and comment.get("content") == _COMMENT_CONTENT
                 for comment in comments_data
             )
 
             if has_liked and has_collected and has_commented:
                 success_count += 1
 
-        if success_count >= viewCount:
-            print(f"✓ Successfully browsed {viewCount} notes and interacted with them")
+        if success_count >= _VIEW_COUNT:
+            print(f"✓ Successfully browsed {_VIEW_COUNT} notes and interacted with them")
             print(f"   Liked, collected and commented on {success_count} notes")
             return True
         else:
             print(" Not all notes have complete interactions")
-            print(f"   Reason: Only {success_count} out of {viewCount} notes have all interactions")
+            print(f"   Reason: Only {success_count} out of {_VIEW_COUNT} notes have all interactions")
             # Show details for each note
             for i, note_id in enumerate(note_ids):
-                has_liked = any(like.get("userId") == userId and like.get("targetId") == note_id for like in likes_data)
+                has_liked = any(
+                    like.get("_USER_ID") == _USER_ID and like.get("targetId") == note_id for like in likes_data
+                )
                 has_collected = any(
-                    col.get("userId") == userId and col.get("noteId") == note_id for col in collections_data
+                    col.get("_USER_ID") == _USER_ID and col.get("noteId") == note_id for col in collections_data
                 )
                 has_commented = any(
-                    comment.get("author", {}).get("id") == userId and comment.get("noteId") == note_id
+                    comment.get("author", {}).get("id") == _USER_ID and comment.get("noteId") == note_id
                     for comment in comments_data
                 )
                 print(
@@ -140,4 +147,4 @@ def BrowseAndInteractCheck(userId="user_current", viewCount=2, commentContent="�
 
 
 if __name__ == "__main__":
-    print(BrowseAndInteractCheck(userId="user_current", viewCount=2, commentContent="很精彩"))
+    print(browse_and_interact_check())

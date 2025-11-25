@@ -2,12 +2,15 @@ import json
 import subprocess
 
 
-def PublishNoteCheck(userId="user_current", noteTitle="今日份分享", noteContent="天晴了", result=None, device_id=None):
+def publish_note_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否发布了指定标题和内容的笔记
     任务12: 点击底部栏的"+"号，点击添加图片，并输入文字"天晴了"，
            进入下一步，添加标题为"今日份分享"，笔记设为"仅自己可见"，最后发布笔记
     """
+    _USER_ID = "user_current"
+    _NOTE_TITLE = "今日份分享"
+    _NOTE_CONTENT = "天晴了"
     # 从设备获取浏览历史（用于验证笔记是否存在）
     cmd = ["adb"]
     if device_id:
@@ -33,7 +36,7 @@ def PublishNoteCheck(userId="user_current", noteTitle="今日份分享", noteCon
         user_published_notes = []
         for item in browsing_data:
             author_id = item.get("noteAuthor", {}).get("id")
-            if author_id == userId:
+            if author_id == _USER_ID:
                 user_published_notes.append(
                     {
                         "id": item.get("noteId"),
@@ -57,15 +60,15 @@ def PublishNoteCheck(userId="user_current", noteTitle="今日份分享", noteCon
         if not data or len(data) == 0:
             print(" Notes list is empty")
             print("   Reason: No notes found in system")
-            print(f"   Expected: At least one note published by user '{userId}'")
+            print(f"   Expected: At least one note published by user '{_USER_ID}'")
             return False
 
         # 查找符合条件的笔记（由于数据来源限制，只能验证标题）
-        matching_notes = [note for note in data if note.get("title") == noteTitle]
+        matching_notes = [note for note in data if note.get("title") == _NOTE_TITLE]
 
         if matching_notes:
             print("✓ Successfully published note")
-            print(f"   Title: {noteTitle}")
+            print(f"   Title: {_NOTE_TITLE}")
             print("   Note: Content and visibility cannot be verified from browsing history")
             print(f"   Note ID: {matching_notes[0].get('id', 'Unknown')}")
             return True
@@ -73,12 +76,12 @@ def PublishNoteCheck(userId="user_current", noteTitle="今日份分享", noteCon
         # Check if note exists with wrong attributes
         if not data:
             print(" No notes found for user")
-            print(f"   Reason: User '{userId}' has not published any notes")
-            print(f"   Expected: Note with title '{noteTitle}'")
+            print(f"   Reason: User '{_USER_ID}' has not published any notes")
+            print(f"   Expected: Note with title '{_NOTE_TITLE}'")
             return False
 
         print(" Note not found with expected title")
-        print(f"   Reason: Could not find note with title '{noteTitle}'")
+        print(f"   Reason: Could not find note with title '{_NOTE_TITLE}'")
         print(f"   Total notes by user: {len(data)}")
 
         # Show recent notes by user
@@ -95,4 +98,4 @@ def PublishNoteCheck(userId="user_current", noteTitle="今日份分享", noteCon
 
 
 if __name__ == "__main__":
-    print(PublishNoteCheck(userId="user_current", noteTitle="今日份分享", noteContent="天晴了"))
+    print(publish_note_check())

@@ -3,13 +3,16 @@ import subprocess
 from io import StringIO
 
 
-def UnfollowAuthorCheck(userId="user_current", authorUsername="fashion_girl", result=None, device_id=None):
+def unfollow_author_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户是否取消关注了指定博主
     任务23: 在我的关注列表对"潮流时尚达人"取消关注
     """
     # 使用StringIO捕获输出，避免修改全局stdout
     output_buffer = StringIO()
+
+    _USER_ID = "user_current"
+    _AUTHOR_USERNAME = "fashion_girl"
 
     try:
         # 从设备获取关注列表
@@ -41,17 +44,20 @@ def UnfollowAuthorCheck(userId="user_current", authorUsername="fashion_girl", re
             if not data or len(data) == 0:
                 # print(f"❌ Follows list is empty")
                 # print(f"   Reason: No follow records found")
-                # print(f"   Expected: Following '{authorUsername}'")
+                # print(f"   Expected: Following '{_AUTHOR_USERNAME}'")
                 return False
 
             # 查找用户是否关注了指定博主
             for follow in data:
-                if follow.get("followerId") == userId and follow.get("following", {}).get("username") == authorUsername:
-                    # print(f"✓ Successfully followed author '{authorUsername}'")
+                if (
+                    follow.get("followerId") == _USER_ID
+                    and follow.get("following", {}).get("username") == _AUTHOR_USERNAME
+                ):
+                    # print(f"✓ Successfully followed author '{_AUTHOR_USERNAME}'")
                     return False
 
             # print(f"❌ Author not followed")
-            # print(f"   Reason: User '{userId}' did not follow '{authorUsername}'")
+            # print(f"   Reason: User '{_USER_ID}' did not follow '{_AUTHOR_USERNAME}'")
             # if current_follows:
             # print(f"   Current follows: {current_follows}")
             return True
@@ -66,4 +72,4 @@ def UnfollowAuthorCheck(userId="user_current", authorUsername="fashion_girl", re
 
 
 if __name__ == "__main__":
-    print(UnfollowAuthorCheck(userId="user_current", authorUsername="fashion_girl"))
+    print(unfollow_author_check())

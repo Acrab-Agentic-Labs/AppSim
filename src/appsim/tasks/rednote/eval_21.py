@@ -2,7 +2,7 @@ import json
 import subprocess
 
 
-def ViewAndCommentNotesCheck(result=None, device_id=None):
+def view_and_comment_notes_check(result=None, device_id=None, backup_dir=None):
     """
     检查浏览历史和评论记录的最后三条数据：
     1. browsing_history.json 最后三条: noteId 分别为 note_010, note_011, note_012
@@ -112,4 +112,4 @@ def ViewAndCommentNotesCheck(result=None, device_id=None):
 
 
 if __name__ == "__main__":
-    print(ViewAndCommentNotesCheck())
+    print(view_and_comment_notes_check())

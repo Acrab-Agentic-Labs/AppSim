@@ -2,11 +2,14 @@ import json
 import subprocess
 
 
-def SearchResultCountCheck(userId="user_current", searchQuery="美妆", minCount=1, result=None, device_id=None):
+def search_result_count_check(result=None, device_id=None, backup_dir=None):
     """
     检查用户搜索并统计搜索结果的笔记数目
     任务17: 在搜索栏中输入"美妆"，统计搜索结果的笔记数目
     """
+    _USER_ID = "user_current"
+    _SEARCH_QUERY = "美妆"
+    _MIN_COUNT = 1
     # 从设备获取搜索历史
     cmd = ["adb"]
     if device_id:
@@ -65,35 +68,37 @@ def SearchResultCountCheck(userId="user_current", searchQuery="美妆", minCount
         if not search_data or len(search_data) == 0:
             print(" Search history is empty")
             print("   Reason: No search records found")
-            print(f"   Expected: Search query '{searchQuery}'")
+            print(f"   Expected: Search query '{_SEARCH_QUERY}'")
             return False
 
         # 查找用户的搜索记录
         user_searches = [
-            item for item in search_data if item.get("userId") == userId and item.get("query") == searchQuery
+            item for item in search_data if item.get("_USER_ID") == _USER_ID and item.get("query") == _SEARCH_QUERY
         ]
 
         if not user_searches:
             print(" Search query not found")
-            print(f"   Reason: User '{userId}' did not search for '{searchQuery}'")
-            recent_searches = [item.get("query", "UNKNOWN") for item in search_data if item.get("userId") == userId][:5]
+            print(f"   Reason: User '{_USER_ID}' did not search for '{_SEARCH_QUERY}'")
+            recent_searches = [
+                item.get("query", "UNKNOWN") for item in search_data if item.get("_USER_ID") == _USER_ID
+            ][:5]
             if recent_searches:
                 print(f"   Recent searches: {recent_searches}")
             return False
 
         # 统计包含搜索关键词的笔记数量（仅通过标题匹配）
-        matching_notes = [note for note in notes_data if searchQuery in note.get("title", "")]
+        matching_notes = [note for note in notes_data if _SEARCH_QUERY in note.get("title", "")]
 
         note_count = len(matching_notes)
 
-        if note_count >= minCount:
-            print(f"✓ Successfully searched '{searchQuery}'")
+        if note_count >= _MIN_COUNT:
+            print(f"✓ Successfully searched '{_SEARCH_QUERY}'")
             print(f"   Found {note_count} matching notes (title matches only)")
             print("   Note: Content/tags/topics cannot be verified from browsing history")
             return True
         else:
             print(" Not enough matching notes")
-            print(f"   Reason: Found {note_count} notes, expected at least {minCount}")
+            print(f"   Reason: Found {note_count} notes, expected at least {_MIN_COUNT}")
             return False
 
     except:
@@ -102,4 +107,4 @@ def SearchResultCountCheck(userId="user_current", searchQuery="美妆", minCount
 
 
 if __name__ == "__main__":
-    print(SearchResultCountCheck(userId="user_current", searchQuery="美妆", minCount=1))
+    print(search_result_count_check())

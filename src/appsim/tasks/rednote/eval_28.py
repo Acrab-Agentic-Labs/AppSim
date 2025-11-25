@@ -1,4 +1,4 @@
-def eval_28(result=None, device_id=None):
+def eval_28(result=None, device_id=None, backup_dir=None):
     if result is None:
         return False
 

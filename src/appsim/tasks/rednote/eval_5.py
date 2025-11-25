@@ -3,10 +3,12 @@ import subprocess
 from io import StringIO
 
 
-def FollowAuthorCheck(userId="user_current", authorUsername="cly_beauty", result=None, device_id=None):
+def follow_author_check(result=None, device_id=None, backup_dir=None):
     # 使用StringIO捕获输出，避免修改全局stdout
     output_buffer = StringIO()
 
+    _USER_ID = "user_current"
+    _AUTHOR_USERNAME = "cly_beauty"
     try:
         # 设置 UTF-8 编码以支持 emoji 输出
         # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -48,18 +50,16 @@ def FollowAuthorCheck(userId="user_current", authorUsername="cly_beauty", result
 
             # 查找用户是否关注了指定博主
             for follow in data:
-                if follow.get("followerId") == userId and follow.get("following", {}).get("username") == authorUsername:
+                if (
+                    follow.get("followerId") == _USER_ID
+                    and follow.get("following", {}).get("username") == _AUTHOR_USERNAME
+                ):
                     # print(f"✓ Successfully followed author '{authorUsername}'")
                     return True
 
             # print(f"❌ Author not followed")
             # print(f"   Reason: User '{userId}' did not follow '{authorUsername}'")
             # Show current follows
-            current_follows = [
-                f.get("following", {}).get("username", "UNKNOWN") for f in data if f.get("followerId") == userId
-            ][:5]
-            # if current_follows:
-            # print(f"   Current follows: {current_follows}")
             return False
 
         except:
@@ -72,9 +72,4 @@ def FollowAuthorCheck(userId="user_current", authorUsername="cly_beauty", result
 
 
 if __name__ == "__main__":
-    print(
-        FollowAuthorCheck(
-            userId="user_current",
-            authorUsername="cly_beauty",  # 小红薯美妆达人的username
-        )
-    )
+    print(follow_author_check())
