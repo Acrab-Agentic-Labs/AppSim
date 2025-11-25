@@ -1,21 +1,26 @@
 # 6、看看微信好友“同事”发给我的最新消息，阅读他交代我的事情，按他说的做。
 
 
-def Task6_MessageSendCheck(result=None, device_id=None):
+def task6_validate_forward_message(result=None, device_id=None, backup_dir=None):
+    import os
     import json
     import subprocess
 
-    def _MessageSendCheck(receiverId, senderId, message_content, device_id):
+    def _validate_message_send(receiverId, senderId, message_content, result, device_id, backup_dir):
         try:
+            message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
+
             # adb拿到文件
             cmd = ["adb"]
             if device_id:
                 cmd.extend(["-s", device_id])
             cmd.extend(["exec-out", "run-as", "com.example.fakewechat", "cat", "files/messages.json"])
-            subprocess.run(cmd, stdout=open("messages.json", "w"))
+
+            with open(message_file_path, "w", encoding="utf-8") as f:
+                subprocess.run(cmd, stdout=f)
 
             # 打开此文件
-            with open("messages.json", "r", encoding="utf-8") as f:
+            with open(message_file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             # 检查聊天记录
             item = data["privateChatMessages"][receiverId][-1]
@@ -26,17 +31,17 @@ def Task6_MessageSendCheck(result=None, device_id=None):
         except:
             return False
 
-    ALL_USER = ["user_9_10", "user_9_11"]
-    MESSAGE = "明天晚上6点在江汉路小酒馆见面"
-    senderId = "current_user"
+    _ALL_USERS = ["user_9_10", "user_9_11"]
+    _MESSAGE = "明天晚上6点在江汉路小酒馆见面"
+    _SENDER_ID = "current_user"
 
     try:
-        return _MessageSendCheck(
-            receiverId=ALL_USER[0], senderId=senderId, message_content=MESSAGE, device_id=device_id
-        ) and _MessageSendCheck(receiverId=ALL_USER[1], senderId=senderId, message_content=MESSAGE, device_id=device_id)
+        return _validate_message_send(
+            receiverId=_ALL_USERS[0], senderId=_SENDER_ID, message_content=_MESSAGE, result=result, device_id=device_id, backup_dir=backup_dir
+        ) and _validate_message_send(receiverId=_ALL_USERS[1], senderId=_SENDER_ID, message_content=_MESSAGE, result=result, device_id=device_id, backup_dir=backup_dir)
     except:
         return False
 
 
 if __name__ == "__main__":
-    print(Task6_MessageSendCheck())
+    print(task6_validate_forward_message())

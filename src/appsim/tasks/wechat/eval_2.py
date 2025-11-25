@@ -1,13 +1,18 @@
 # 2、发信息到工作群，说“GUI Agent最近很火，我觉得挺有意思的”
-def Task2_MessageSendCheck(
-    group_id="group_2",
-    senderId="current_user",
-    message_content="GUI Agent最近很火，我觉得挺有意思的",
+def task2_group_message_send_check(
     result=None,
     device_id=None,
+    backup_dir=None
 ):
+    import os
     import json
     import subprocess
+
+    _GROUP_ID="group_2",
+    _SENDER_ID="current_user",
+    _MESSAGE_CONTENT="GUI Agent最近很火，我觉得挺有意思的",
+
+    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
 
     try:
         # adb拿到文件
@@ -15,14 +20,15 @@ def Task2_MessageSendCheck(
         if device_id:
             cmd.extend(["-s", device_id])
         cmd.extend(["exec-out", "run-as", "com.example.fakewechat", "cat", "files/messages.json"])
-        subprocess.run(cmd, stdout=open("messages.json", "w"))
+        with open(message_file_path, "w", encoding="utf-8") as f:
+            subprocess.run(cmd, stdout=f)
 
         # 打开此文件
-        with open("messages.json", "r", encoding="utf-8") as f:
+        with open(message_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         # 检查聊天记录
-        item = data["groupChatMessages"][group_id][-1]
-        if item["senderId"] == senderId and item["content"] == message_content:
+        item = data["groupChatMessages"][_GROUP_ID][-1]
+        if item["senderId"] == _SENDER_ID and item["content"] == _MESSAGE_CONTENT:
             return True
         else:
             return False
@@ -31,4 +37,4 @@ def Task2_MessageSendCheck(
 
 
 if __name__ == "__main__":
-    print(Task2_MessageSendCheck())
+    print(task2_group_message_send_check())
