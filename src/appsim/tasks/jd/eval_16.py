@@ -3,25 +3,22 @@ import subprocess
 import os
 
 def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
-    """验证任务十六：将购物车的iPhone15买下来，使用满3000减50的优惠券结算。"""
+    """ 验证任务十六：将购物车的iPhone15买下来，使用满3000减50的优惠券结算。 """
 
-    def get_json_from_device(file_path):
-        """从设备拉取并解析JSON文件。"""
-        cmd = ['adb']
-        if device_id:
-            cmd.extend(['-s', device_id])
-        cmd.extend(['exec-out', 'run-as', 'com.example.MyJD', 'cat', f'files/persistent_data/{file_path}'])
-        try:
-            process = subprocess.run(cmd, capture_output=True, text=True, check=True, encoding='utf-8')
-            return json.loads(process.stdout)
-        except (subprocess.CalledProcessError, json.JSONDecodeError, FileNotFoundError) as e:
-            print(f"Error reading or parsing {file_path} from device: {e}")
-            return None
+    cart_items_file_path = os.path.join(backup_dir, 'cart_items.json') if backup_dir else 'cart_items.json'
+    orders_file_path = os.path.join(backup_dir, 'orders.json') if backup_dir else 'orders.json'
 
-    # 1. 检查购物车 (cart_items.json)
-    cart_items = get_json_from_device('cart_items.json')
-    if cart_items is None:
-        return False  # 如果无法读取文件，则验证失败
+    cmd = ['adb']
+    if device_id:
+        cmd.extend(['-s', device_id])
+    cmd.extend(['exec-out', 'run-as', 'com.example.MyJD', 'cat', 'files/persistent_data/cart_items.json'])
+    subprocess.run(cmd, stdout=open(cart_items_file_path, 'w'))
+
+    try:
+        with open(cart_items_file_path, 'r', encoding='utf-8') as f:
+            cart_items = json.load(f)
+    except:
+        return False
 
     iphone_in_cart = any(
         'iPhone 15' in item.get('productName', '') for item in cart_items
@@ -30,10 +27,17 @@ def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
         print("Validation Failed: iPhone 15 is still in the cart.")
         return False
 
-    # 2. 检查订单 (orders.json)
-    orders = get_json_from_device('orders.json')
-    if orders is None:
-        return False # 如果无法读取文件，则验证失败
+    cmd = ['adb']
+    if device_id:
+        cmd.extend(['-s', device_id])
+    cmd.extend(['exec-out', 'run-as', 'com.example.MyJD', 'cat', 'files/persistent_data/orders.json'])
+    subprocess.run(cmd, stdout=open(orders_file_path, 'w'))
+
+    try:
+        with open(orders_file_path, 'r', encoding='utf-8') as f:
+            orders = json.load(f)
+    except:
+        return False
 
     # 查找最新的 iPhone 15 订单
     # 假设它是最新创建的订单，所以我们检查列表的第一个

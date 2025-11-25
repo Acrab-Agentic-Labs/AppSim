@@ -29,6 +29,8 @@ from .eval_26 import validate_task_twenty_six
 from .eval_27 import validate_task_twenty_seven
 from .eval_28 import validate_task_twenty_eight
 from .eval_29 import validate_task_twenty_nine
+from .eval_30 import validate_task_thirty
+from .eval_31 import validate_task_thirty_one
 
 JD_TASKS = AppTasks(
     package_name="com.example.MyJD",
@@ -205,6 +207,18 @@ JD_TASKS = AppTasks(
             instruction='结算总价低于2000的所有待付款订单。',
             verify_func=validate_task_twenty_nine,
             human_steps=7,
+            is_reasoning=True
+        ),
+        TaskItem(
+            instruction='进入Apple产品京东自营旗舰店选择价格最高的商品规格加入购物车并结算，选择赵六的地址。',
+            verify_func=validate_task_thirty,
+            human_steps=15,
+            is_reasoning=True
+        ),
+        TaskItem(
+            instruction='查看购物车中所有商品，将价格最高的三件商品移出购物车。',
+            verify_func=validate_task_thirty_one,
+            human_steps=12,
             is_reasoning=True
         ),
     ]

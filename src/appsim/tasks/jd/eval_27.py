@@ -1,21 +1,21 @@
 import json
 import subprocess
+import os
 
 def validate_task_twenty_seven(result=None, device_id=None, backup_dir=None):
     """ 验证任务：找到我的待收货订单中购买件数最多的商品并确认收货。 """
-    # 构建 adb 命令来拉取 orders.json 文件
+    orders_file_path = os.path.join(backup_dir, 'orders.json') if backup_dir else 'orders.json'
+
     cmd = ['adb']
     if device_id:
         cmd.extend(['-s', device_id])
-    # 注意：这里的路径是应用在设备上的内部存储路径
     cmd.extend(['exec-out', 'run-as', 'com.example.MyJD', 'cat', 'files/persistent_data/orders.json'])
+    subprocess.run(cmd, stdout=open(orders_file_path, 'w'))
 
     try:
-        # 执行命令并获取输出
-        process = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        orders_data = json.loads(process.stdout)
-    except (subprocess.CalledProcessError, json.JSONDecodeError) as e:
-        print(f"Error reading or parsing orders.json from device: {e}")
+        with open(orders_file_path, 'r', encoding='utf-8') as f:
+            orders_data = json.load(f)
+    except:
         return False
 
     # 遍历订单数据，查找 order_025

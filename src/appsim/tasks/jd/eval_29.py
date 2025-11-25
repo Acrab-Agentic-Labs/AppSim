@@ -5,21 +5,18 @@ import os
 def validate_task_twenty_nine(result=None, device_id=None, backup_dir=None):
     """ 验证任务：结算总价低于2000的所有待付款订单。 """
 
-    def get_json_from_device(file_path):
-        """从设备拉取并解析JSON文件。"""
-        cmd = ['adb']
-        if device_id:
-            cmd.extend(['-s', device_id])
-        cmd.extend(['exec-out', 'run-as', 'com.example.MyJD', 'cat', f'files/persistent_data/{file_path}'])
-        try:
-            process = subprocess.run(cmd, capture_output=True, text=True, check=True, encoding='utf-8')
-            return json.loads(process.stdout)
-        except (subprocess.CalledProcessError, json.JSONDecodeError, FileNotFoundError) as e:
-            print(f"Error reading or parsing {file_path} from device: {e}")
-            return None
+    orders_file_path = os.path.join(backup_dir, 'orders.json') if backup_dir else 'orders.json'
 
-    orders = get_json_from_device('orders.json')
-    if orders is None:
+    cmd = ['adb']
+    if device_id:
+        cmd.extend(['-s', device_id])
+    cmd.extend(['exec-out', 'run-as', 'com.example.MyJD', 'cat', 'files/persistent_data/orders.json'])
+    subprocess.run(cmd, stdout=open(orders_file_path, 'w'))
+
+    try:
+        with open(orders_file_path, 'r', encoding='utf-8') as f:
+            orders = json.load(f)
+    except:
         return False
 
     target_order_ids = ["order_009", "order_010", "order_012", "order_014", "order_015"]

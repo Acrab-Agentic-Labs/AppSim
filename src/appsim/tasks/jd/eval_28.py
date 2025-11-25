@@ -5,23 +5,19 @@ import os
 def validate_task_twenty_eight(result=None, device_id=None, backup_dir=None):
     """ 验证任务：找到购物车中单价最低的商品购买5件。 """
 
-    def get_json_from_device(file_path):
-        """从设备拉取并解析JSON文件。"""
-        cmd = ['adb']
-        if device_id:
-            cmd.extend(['-s', device_id])
-        cmd.extend(['exec-out', 'run-as', 'com.example.MyJD', 'cat', f'files/persistent_data/{file_path}'])
-        try:
-            process = subprocess.run(cmd, capture_output=True, text=True, check=True, encoding='utf-8')
-            return json.loads(process.stdout)
-        except (subprocess.CalledProcessError, json.JSONDecodeError, FileNotFoundError) as e:
-            print(f"Error reading or parsing {file_path} from device: {e}")
-            return None
+    orders_file_path = os.path.join(backup_dir, 'orders.json') if backup_dir else 'orders.json'
 
-    # 1. 检查订单 (orders.json)
-    orders = get_json_from_device('orders.json')
-    if orders is None:
-        return False # 如果无法读取文件，则验证失败
+    cmd = ['adb']
+    if device_id:
+        cmd.extend(['-s', device_id])
+    cmd.extend(['exec-out', 'run-as', 'com.example.MyJD', 'cat', 'files/persistent_data/orders.json'])
+    subprocess.run(cmd, stdout=open(orders_file_path, 'w'))
+
+    try:
+        with open(orders_file_path, 'r', encoding='utf-8') as f:
+            orders = json.load(f)
+    except:
+        return False
 
     # 查找最新的包含 "五常大米" 的订单
     new_wuchang_rice_order = None
@@ -41,7 +37,6 @@ def validate_task_twenty_eight(result=None, device_id=None, backup_dir=None):
         print("Validation Failed: '五常大米' order has no items.")
         return False
 
-    # 假设五常大米是唯一或主要的订单项
     wuchang_rice_item = next((item for item in items if '五常大米' in item.get('product', {}).get('name', '')), None)
 
     if wuchang_rice_item and wuchang_rice_item.get('quantity') == 5 and new_wuchang_rice_order.get('status') == 'PENDING_RECEIPT':
