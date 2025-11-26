@@ -1,104 +1,72 @@
-import json
 import subprocess
+import json
+import os
 
+# 验证任务22: 进入"我的"-"我的订单-待评价",找到已评价,删除最近的一个评价
+# 关键验证点:
+# 1. 必须进入评价中心页面
+# 2. 必须切换到已评价标签
+# 3. 必须删除评价
+# 4. 必须有删除成功弹窗
+def validate_task_twenty(result=None,device_id=None,backup_dir=None):
+    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
 
-def validate_scheduled_order(result=None, device_id=None):
     # 从设备获取文件
-    cmd = ["adb"]
+    cmd = ['adb']
     if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.myele", "cat", "files/messages.json"])
-    subprocess.run(cmd, stdout=open("messages.json", "w"))
+        cmd.extend(['-s', device_id])
+    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
+    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
 
     # 读取文件
     try:
-        with open("messages.json", "r", encoding="utf-8") as f:
+        with open(message_file_path, 'r', encoding='utf-8') as f:
             all_data = json.load(f)
     except:
-        all_data = []
+        return False
 
-    # 检测1: 查找筛选记录，验证选择了跨天预定
-    filter_record = None
-    for record in reversed(all_data):
-        if record.get("action") == "apply_filter":
-            filter_record = record
+    # 检查是否有数据
+    if not all_data:
+        return False
+
+    # 检测1: 验证进入评价中心页面
+    entered_reviews = False
+    for record in all_data:
+        if record.get('action') == 'enter_reviews_page' and record.get('page') == 'reviews':
+            entered_reviews = True
             break
 
-    if filter_record is None:
+    if not entered_reviews:
         return False
 
-    # 检测2: 验证筛选页面是外卖页面
-    if filter_record.get("page") != "takeout":
+    # 检测2: 验证切换到已评价标签
+    switched_to_reviewed = False
+    for record in all_data:
+        if record.get('action') == 'switch_to_reviewed' and record.get('page') == 'reviews':
+            extra_data = record.get('extra_data', {})
+            if extra_data.get('selected_tab') == '已评价':
+                switched_to_reviewed = True
+                break
+
+    if not switched_to_reviewed:
         return False
 
-    # 检测3: 验证筛选选项中包含跨天预定
-    if "extra_data" not in filter_record:
-        return False
+    # 检测3: 验证删除评价
+    deleted_review = False
+    for record in all_data:
+        if record.get('action') == 'delete_review' and record.get('page') == 'reviews':
+            extra_data = record.get('extra_data', {})
+            # 检查是否删除成功
+            if extra_data.get('deleted_successfully') == True:
+                deleted_review = True
+                break
 
-    filter_extra = filter_record["extra_data"]
-    filters = filter_extra.get("filters", [])
-
-    # 检查是否选择了跨天预定
-    if "跨天预订" not in filters:
-        return False
-
-    # 检测4: 从数组中找到最后一个完成订单的记录
-    order_record = None
-    for record in reversed(all_data):
-        if record.get("action") == "complete_order":
-            order_record = record
-            break
-
-    # 检测5: 验证完成订单操作存在
-    if order_record is None:
-        return False
-
-    # 检测6: 验证page
-    if order_record.get("page") != "checkout":
-        return False
-
-    # 检测7: 验证extra_data存在
-    if "extra_data" not in order_record:
-        return False
-
-    extra_data = order_record["extra_data"]
-
-    # 检测8: 【关键】验证来自外卖页面
-    if extra_data.get("from_page") != "takeout":
-        return False
-
-    # 检测9: 【关键】验证支付成功
-    if not extra_data.get("payment_success", False):
-        return False
-
-    # 检测10: 【关键】验证选择了预约配送
-    if extra_data.get("delivery_type") != "scheduled":
-        return False
-
-    # 检测11: 【关键】验证选择了明日
-    if extra_data.get("delivery_date") != "明日":
-        return False
-
-    # 检测12: 验证选择了时间段（中午时间段应该是11:xx-13:xx之间）
-    delivery_time_slot = extra_data.get("delivery_time_slot", "")
-    if not delivery_time_slot:
-        return False
-
-    # 验证时间段是否在中午范围（11:00-13:00）
-    # 时间段格式如 "11:30-11:50"
-    try:
-        start_time = delivery_time_slot.split("-")[0]
-        hour = int(start_time.split(":")[0])
-        # 中午时间段应该在11点到13点之间
-        if hour < 11 or hour >= 13:
-            return False
-    except:
+    if not deleted_review:
         return False
 
     return True
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_scheduled_order()
+    result = validate_task_twenty()
     print(result)
