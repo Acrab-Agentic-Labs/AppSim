@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 
 
@@ -10,99 +11,57 @@ def search_result_count_check(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _SEARCH_QUERY = "美妆"
     _MIN_COUNT = 1
+
     # 从设备获取搜索历史
+    search_file_path = os.path.join(backup_dir, "search_history.json") if backup_dir is not None else "search_history.json"
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(
-        ["exec-out", "run-as", "com.example.test05", "cat", "files/search_history.json"],
-    )
-    search_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
+    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/search_history.json"])
+    with open(search_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
 
     # 从设备获取浏览历史（用于获取笔记信息）
+    browsing_file_path = os.path.join(backup_dir, "browsing_history.json") if backup_dir is not None else "browsing_history.json"
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(
-        ["adb", "exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"],
-    )
-    browsing_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
+    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"])
+    with open(browsing_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
 
-    # 检查命令是否成功执行
-    if search_result.returncode != 0 or not search_result.stdout:
-        print(" Failed to read search history file")
-        print(f"   Reason: ADB command failed (return code: {search_result.returncode})")
-        if search_result.stderr:
-            print(f"   Error: {search_result.stderr}")
-        return False
-    if browsing_result.returncode != 0 or not browsing_result.stdout:
-        print(" Failed to read browsing history file")
-        print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
-        if browsing_result.stderr:
-            print(f"   Error: {browsing_result.stderr}")
-        return False
-
-    # 解析 JSON
     try:
-        search_data = json.loads(search_result.stdout.strip()) if search_result.stdout.strip() else []
-        browsing_data = json.loads(browsing_result.stdout.strip()) if browsing_result.stdout.strip() else []
-
-        # 从浏览历史中提取笔记信息并构建笔记列表
-        notes_data = []
-        seen_note_ids = set()
-        for item in browsing_data:
-            note_id = item.get("noteId")
-            if note_id and note_id not in seen_note_ids:
-                notes_data.append(
-                    {"id": note_id, "title": item.get("noteTitle", ""), "content": "", "tags": [], "topics": []}
-                )
-                seen_note_ids.add(note_id)
+        with open(search_file_path, "r", encoding="utf-8") as f:
+            search_data = json.load(f)
+        with open(browsing_file_path, "r", encoding="utf-8") as f:
+            browsing_data = json.load(f)
     except:
-        print(" Failed to parse JSON data")
-        print("   Reason: Invalid JSON format")
         return False
 
     # 检查搜索和统计
     try:
         # 检查是否有搜索记录
         if not search_data or len(search_data) == 0:
-            print(" Search history is empty")
-            print("   Reason: No search records found")
-            print(f"   Expected: Search query '{_SEARCH_QUERY}'")
             return False
 
         # 查找用户的搜索记录
         user_searches = [
-            item for item in search_data if item.get("_USER_ID") == _USER_ID and item.get("query") == _SEARCH_QUERY
+            item for item in search_data if item.get("userId") == _USER_ID and item.get("query") == _SEARCH_QUERY
         ]
 
         if not user_searches:
-            print(" Search query not found")
-            print(f"   Reason: User '{_USER_ID}' did not search for '{_SEARCH_QUERY}'")
-            recent_searches = [
-                item.get("query", "UNKNOWN") for item in search_data if item.get("_USER_ID") == _USER_ID
-            ][:5]
-            if recent_searches:
-                print(f"   Recent searches: {recent_searches}")
             return False
 
         # 统计包含搜索关键词的笔记数量（仅通过标题匹配）
-        matching_notes = [note for note in notes_data if _SEARCH_QUERY in note.get("title", "")]
-
+        matching_notes = [note for note in browsing_data if _SEARCH_QUERY in note.get("noteTitle", "")]
         note_count = len(matching_notes)
 
         if note_count >= _MIN_COUNT:
-            print(f"✓ Successfully searched '{_SEARCH_QUERY}'")
-            print(f"   Found {note_count} matching notes (title matches only)")
-            print("   Note: Content/tags/topics cannot be verified from browsing history")
             return True
         else:
-            print(" Not enough matching notes")
-            print(f"   Reason: Found {note_count} notes, expected at least {_MIN_COUNT}")
             return False
 
     except:
-        print(" Error while checking search results")
         return False
 
 

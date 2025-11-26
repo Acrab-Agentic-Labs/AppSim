@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 from io import StringIO
 
@@ -10,62 +11,40 @@ def follow_author_check(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _AUTHOR_USERNAME = "cly_beauty"
     try:
-        # 设置 UTF-8 编码以支持 emoji 输出
-        # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
         """
         检查用户是否关注了指定的博主
         任务5: 在首页找到博主"小红薯美妆达人"的笔记，进入笔记并点击"关注"
         """
         # 从设备获取关注列表
+        message_file_path = os.path.join(backup_dir, "follows.json") if backup_dir is not None else "follows.json"
+
         cmd = ["adb"]
         if device_id:
             cmd.extend(["-s", device_id])
         cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/follows.json"])
 
-        result1 = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
+        # 将数据写入备份文件
+        with open(message_file_path, "w") as f:
+            subprocess.run(cmd, stdout=f)
 
-        # 检查命令是否成功执行
-        if result1.returncode != 0 or not result1.stdout:
-            # print(f"❌ Failed to read follows file")
-            # print(f"   Reason: ADB command failed (return code: {result1.returncode})")
-            # if result1.stderr:
-            # print(f"   Error: {result1.stderr}")
+        with open(message_file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        if not data or len(data) == 0:
             return False
 
-        # 解析 JSON
-        try:
-            data = json.loads(result1.stdout)
-        except:
-            # print(f"❌ Failed to parse follows data")
-            # print(f"   Reason: Invalid JSON format")
-            return False
-
-        # 检查关注列表
-        try:
-            if not data or len(data) == 0:
-                # print(f"❌ Follows list is empty")
-                # print(f"   Reason: No follow records found")
-                # print(f"   Expected: Following '{authorUsername}'")
-                return False
-
-            # 查找用户是否关注了指定博主
-            for follow in data:
-                if (
+        # 查找用户是否关注了指定博主
+        for follow in data:
+            if (
                     follow.get("followerId") == _USER_ID
                     and follow.get("following", {}).get("username") == _AUTHOR_USERNAME
-                ):
-                    # print(f"✓ Successfully followed author '{authorUsername}'")
-                    return True
+            ):
+                return True
 
-            # print(f"❌ Author not followed")
-            # print(f"   Reason: User '{userId}' did not follow '{authorUsername}'")
-            # Show current follows
-            return False
+        return False
 
-        except:
-            # print(f"❌ Error while checking follows")
-            return False
-
+    except:
+        return False
     finally:
         # 释放缓冲区资源
         output_buffer.close()

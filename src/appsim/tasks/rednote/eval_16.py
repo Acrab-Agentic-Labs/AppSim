@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 
 
@@ -10,83 +11,63 @@ def browse_and_interact_check(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _VIEW_COUNT = 2
     _COMMENT_CONTENT = "很精彩"
+
     # 从设备获取浏览历史
+    browsing_file_path = os.path.join(backup_dir, "browsing_history.json") if backup_dir is not None else "browsing_history.json"
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(
-        ["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"],
-    )
-    browsing_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
+    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"])
+    with open(browsing_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
 
     # 从设备获取点赞记录
+    likes_file_path = os.path.join(backup_dir, "likes.json") if backup_dir is not None else "likes.json"
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(
-        ["exec-out", "run-as", "com.example.test05", "cat", "files/likes.json"],
-    )
-    likes_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
+    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/likes.json"])
+    with open(likes_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
 
     # 从设备获取收藏记录
+    collections_file_path = os.path.join(backup_dir, "collections.json") if backup_dir is not None else "collections.json"
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(
-        ["adb", "exec-out", "run-as", "com.example.test05", "cat", "files/collections.json"],
-    )
-    collections_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
+    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/collections.json"])
+    with open(collections_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
 
     # 从设备获取评论记录
+    comments_file_path = os.path.join(backup_dir, "comments.json") if backup_dir is not None else "comments.json"
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(
-        ["exec-out", "run-as", "com.example.test05", "cat", "files/comments.json"],
-    )
-    comments_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
+    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/comments.json"])
+    with open(comments_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
 
-    # 检查命令是否成功执行
-    if browsing_result.returncode != 0 or not browsing_result.stdout:
-        print(" Failed to read browsing history file")
-        print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
-        if browsing_result.stderr:
-            print(f"   Error: {browsing_result.stderr}")
-        return False
-    if likes_result.returncode != 0:
-        print(" Failed to read likes file")
-        print(f"   Reason: ADB command failed (return code: {likes_result.returncode})")
-        return False
-    if collections_result.returncode != 0:
-        print(" Failed to read collections file")
-        print(f"   Reason: ADB command failed (return code: {collections_result.returncode})")
-        return False
-
-    # 解析 JSON
     try:
-        browsing_data = json.loads(browsing_result.stdout.strip()) if browsing_result.stdout.strip() else []
-        likes_data = json.loads(likes_result.stdout.strip()) if likes_result.stdout.strip() else []
-        collections_data = json.loads(collections_result.stdout.strip()) if collections_result.stdout.strip() else []
-        # comments.json 可能不存在，需要容错处理
-        if comments_result.returncode == 0 and comments_result.stdout and comments_result.stdout.strip():
-            comments_data = json.loads(comments_result.stdout.strip())
-        else:
-            comments_data = []
+        with open(browsing_file_path, "r", encoding="utf-8") as f:
+            browsing_data = json.load(f)
+        with open(likes_file_path, "r", encoding="utf-8") as f:
+            likes_data = json.load(f)
+        with open(collections_file_path, "r", encoding="utf-8") as f:
+            collections_data = json.load(f)
+        with open(comments_file_path, "r", encoding="utf-8") as f:
+            comments_data = json.load(f)
     except:
-        print(" Failed to parse JSON data")
-        print("   Reason: Invalid JSON format")
         return False
 
     # 检查浏览、点赞、收藏和评论
     try:
         # 获取用户从首页浏览的笔记
         home_browsing = [
-            item for item in browsing_data if item.get("_USER_ID") == _USER_ID and item.get("sourceType") == "HOME_FEED"
+            item for item in browsing_data if item.get("userId") == _USER_ID and item.get("sourceType") == "HOME_FEED"
         ]
 
         if len(home_browsing) < _VIEW_COUNT:
-            print(" Not enough home feed browsing records")
-            print(f"   Reason: Found {len(home_browsing)} records, expected {_VIEW_COUNT}")
             return False
 
         # 获取最近浏览的N篇笔记
@@ -97,14 +78,14 @@ def browse_and_interact_check(result=None, device_id=None, backup_dir=None):
         success_count = 0
         for note_id in note_ids:
             has_liked = any(
-                like.get("_USER_ID") == _USER_ID
+                like.get("userId") == _USER_ID
                 and like.get("targetId") == note_id
                 and like.get("targetType") == "NOTE"
                 for like in likes_data
             )
 
             has_collected = any(
-                col.get("_USER_ID") == _USER_ID and col.get("noteId") == note_id for col in collections_data
+                col.get("userId") == _USER_ID and col.get("noteId") == note_id for col in collections_data
             )
 
             has_commented = any(
@@ -118,31 +99,11 @@ def browse_and_interact_check(result=None, device_id=None, backup_dir=None):
                 success_count += 1
 
         if success_count >= _VIEW_COUNT:
-            print(f"✓ Successfully browsed {_VIEW_COUNT} notes and interacted with them")
-            print(f"   Liked, collected and commented on {success_count} notes")
             return True
         else:
-            print(" Not all notes have complete interactions")
-            print(f"   Reason: Only {success_count} out of {_VIEW_COUNT} notes have all interactions")
-            # Show details for each note
-            for i, note_id in enumerate(note_ids):
-                has_liked = any(
-                    like.get("_USER_ID") == _USER_ID and like.get("targetId") == note_id for like in likes_data
-                )
-                has_collected = any(
-                    col.get("_USER_ID") == _USER_ID and col.get("noteId") == note_id for col in collections_data
-                )
-                has_commented = any(
-                    comment.get("author", {}).get("id") == _USER_ID and comment.get("noteId") == note_id
-                    for comment in comments_data
-                )
-                print(
-                    f"   Note {i + 1} (ID: {note_id}): Liked={'✓' if has_liked else '✗'}, Collected={'✓' if has_collected else '✗'}, Commented={'✓' if has_commented else '✗'}"
-                )
             return False
 
     except:
-        print(" Error while checking interactions")
         return False
 
 
