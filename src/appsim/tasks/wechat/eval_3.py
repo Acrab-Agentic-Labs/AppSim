@@ -10,10 +10,7 @@ def task3_validate_attendee_count(result=None, device_id=None, backup_dir=None):
     final_msg = result.get("final_message") or ""
 
     if (
-        "10人" in final_msg
-        or "10个" in final_msg
-        or "10位" in final_msg
-        or "十个" in final_msg
+        "十个" in final_msg
         or "十人" in final_msg
         or "十位" in final_msg
         or "10" in final_msg

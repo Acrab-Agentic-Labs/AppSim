@@ -10,9 +10,7 @@ def task10_validate_latest_friend_like_count(result=None, device_id=None, backup
     final_msg = result.get("final_message") or ""
 
     if (
-        "15个" in final_msg
-        or "15人" in final_msg
-        or "十五个" in final_msg
+        "十五个" in final_msg
         or "十五个" in final_msg
         or "15" in final_msg
     ):

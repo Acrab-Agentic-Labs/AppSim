@@ -1,13 +1,13 @@
 # 1、发信息给何凯，说“何老师，请明天早上10点来1118会议室开会”
+import os
+import json
+import subprocess
+
 def task1_friend_message_send_check(
     result=None,
     device_id=None,
     backup_dir=None
 ):
-    import os
-    import json
-    import subprocess
-
     _RECEIVER_ID="user_9_12",
     _SENDER_ID="current_user",
     _MESSAGE_CONTENT="何老师，请明天早上10点来1118会议室开会",

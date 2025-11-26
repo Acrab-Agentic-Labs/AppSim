@@ -1,11 +1,9 @@
 # 6、看看微信好友“同事”发给我的最新消息，阅读他交代我的事情，按他说的做。
-
+import os
+import json
+import subprocess
 
 def task6_validate_forward_message(result=None, device_id=None, backup_dir=None):
-    import os
-    import json
-    import subprocess
-
     def _validate_message_send(receiverId, senderId, message_content, result, device_id, backup_dir):
         try:
             message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'

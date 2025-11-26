@@ -10,9 +10,7 @@ def task8_moments_count(result=None, device_id=None, backup_dir=None):
     final_msg = result.get("final_message") or ""
 
     if (
-        "5个" in final_msg
-        or "5条" in final_msg
-        or "五个" in final_msg
+        "五个" in final_msg
         or "五条" in final_msg
         or "5" in final_msg
     ):

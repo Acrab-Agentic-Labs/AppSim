@@ -1,13 +1,13 @@
 # 2、发信息到工作群，说“GUI Agent最近很火，我觉得挺有意思的”
+import os
+import json
+import subprocess
+
 def task2_group_message_send_check(
     result=None,
     device_id=None,
     backup_dir=None
 ):
-    import os
-    import json
-    import subprocess
-
     _GROUP_ID="group_2",
     _SENDER_ID="current_user",
     _MESSAGE_CONTENT="GUI Agent最近很火，我觉得挺有意思的",

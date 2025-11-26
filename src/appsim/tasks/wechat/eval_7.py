@@ -10,9 +10,7 @@ def task7_stared_moments_count(result=None, device_id=None, backup_dir=None):
     final_msg = result.get("final_message") or ""
 
     if (
-        "4个" in final_msg
-        or "4条" in final_msg
-        or "四个" in final_msg
+        "四个" in final_msg
         or "四条" in final_msg
         or "4" in final_msg
     ):
