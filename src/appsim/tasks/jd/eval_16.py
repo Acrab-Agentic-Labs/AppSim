@@ -52,10 +52,8 @@ def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
         return False
 
     # 验证订单金额是否正确应用了优惠券
-    # 从订单项中获取成交价格
-    expected_total_amount = sum(
-        item.get("price", 0.0) * item.get("quantity", 0) for item in new_iphone_order.get("items", [])
-    )
+    # iPhone 15 原价 5999，使用满3000减50优惠券后应为 5949
+    expected_total_amount = 5949.0
     actual_total_amount = new_iphone_order.get("totalAmount", 0.0)
 
     # 允许微小的浮点数误差
