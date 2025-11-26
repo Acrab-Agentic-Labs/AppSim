@@ -1,24 +1,24 @@
-import json
 import subprocess
+import json
+import os
 
-
-# 验证任务23: 在"我的"-"全部订单"中找到有麻辣烫的订单,进入"订单详情页",点击申请食无忧理赔
+# 验证任务25: 进入"我的"-"我的订单",找到最新已完成订单,点击进入第一个订单详情页,查看"实付"金额明细
 # 关键验证点:
-# 1. 必须进入订单页面
-# 2. 必须找到麻辣烫订单
-# 3. 必须进入食无忧理赔页面
-# 4. 必须申请理赔成功
-def validate_food_insurance_claim(result=None, device_id=None):
+# 1. 必须进入全部订单页(my_orders页面)
+# 2. 必须点击页面第一个订单(进入订单详情页)
+def validate_task_twenty_three(result=None,device_id=None,backup_dir=None):
+    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
+
     # 从设备获取文件
-    cmd = ["adb"]
+    cmd = ['adb']
     if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.myele", "cat", "files/messages.json"])
-    subprocess.run(cmd, stdout=open("messages.json", "w"))
+        cmd.extend(['-s', device_id])
+    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
+    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
 
     # 读取文件
     try:
-        with open("messages.json", "r", encoding="utf-8") as f:
+        with open(message_file_path, 'r', encoding='utf-8') as f:
             all_data = json.load(f)
     except:
         return False
@@ -27,44 +27,56 @@ def validate_food_insurance_claim(result=None, device_id=None):
     if not all_data:
         return False
 
-    # 检测1: 验证进入订单页面 (这个可能已经在其他任务中记录过,所以不是必需的)
-    # 检测2: 验证进入食无忧理赔页面
-    entered_insurance = False
-    found_mala_order = False
 
+    # 检测1: 验证进入全部订单页面(my_orders)
+    enter_orders_page = False
     for record in all_data:
-        if record.get("action") == "enter_food_insurance_page" and record.get("page") == "food_insurance":
-            extra_data = record.get("extra_data", {})
-            restaurant_name = extra_data.get("restaurant_name", "")
-            # 检查是否是麻辣烫订单
-            if "麻辣烫" in restaurant_name:
-                entered_insurance = True
-                found_mala_order = True
+        # 支持两种格式：enter_orders_page/orders 或 navigate/my_orders
+        if (record.get('action') == 'enter_orders_page' and record.get('page') == 'orders') or \
+           (record.get('action') == 'navigate' and record.get('page') == 'my_orders'):
+            extra_data = record.get('extra_data', {})
+            # 检查是否显示全部订单(默认或明确指定tab为"全部"或"all")
+            # 支持两个字段名：selected_tab 或 tab
+            tab = extra_data.get('selected_tab') or extra_data.get('tab', '全部')
+            if tab in ['全部', 'all', 'ALL']:
+                enter_orders_page = True
                 break
 
-    if not entered_insurance:
+    if not enter_orders_page:
         return False
 
-    if not found_mala_order:
-        return False
-
-    # 检测3: 验证申请理赔成功
-    applied_insurance = False
+    # 检测2: 验证点击第一个已送达订单进入订单详情页
+    clicked_first_delivered_order = False
     for record in all_data:
-        if record.get("action") == "apply_food_insurance" and record.get("page") == "food_insurance":
-            extra_data = record.get("extra_data", {})
-            # 检查是否申请成功
-            if extra_data.get("apply_successfully") == True:
-                applied_insurance = True
+        if record.get('action') == 'navigate' and record.get('page') == 'order_detail':
+            extra_data = record.get('extra_data', {})
+            # 验证是否从my_orders页面来的
+            from_page = extra_data.get('from_page', '')
+            # 验证是否是第一个订单(order_index = 0 或 is_first_order = True)
+            order_index = extra_data.get('order_index', -1)
+            is_first_order = extra_data.get('is_first_order', False)
+            # 验证订单状态是否是已送达
+            order_status = extra_data.get('order_status', '')
+
+            if from_page == 'my_orders' and (order_index == 0 or is_first_order) and order_status == '已送达':
+                clicked_first_delivered_order = True
                 break
 
-    if not applied_insurance:
+    if not clicked_first_delivered_order:
         return False
 
-    return True
+    # 检测3: 验证result中是否包含"33"
+    if result is None:
+        return False
+    final_message = result.get("final_message")
+    if not isinstance(final_message, str):
+        return False
+    if 'final_message' in result and '33' in result['final_message']:
+        return True
+    else:
+        return False
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_food_insurance_claim()
+    result = validate_task_twenty_three()
     print(result)

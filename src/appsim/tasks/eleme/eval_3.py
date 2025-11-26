@@ -1,33 +1,18 @@
-# import subprocess
-# import json
+def validate_task_three(result=None,device_id=None,backup_dir=None):
+    # 验证 result 存在
+    if result is None:
+        return False
+    final_message = result.get("final_message")
+    if not isinstance(final_message, str):
+        return False
 
-# def validate_reviews_page(result=None,device_id=None):
-#     cmd = ['adb']
-#     if device_id:
-#         cmd.extend(['-s', device_id])
-#     cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-#     subprocess.run(cmd, stdout=open('messages.json', 'w'))
+    # 检测 result 中的final_messages中是否包含 "冷萃咖啡"
+    if 'final_message' in result and '冷萃咖啡' in result['final_message']:
+        return True
+    else:
+        return False
 
-#     try:
-#         with open('messages.json', 'r', encoding='utf-8') as f:
-#             data = json.load(f)
-#             if isinstance(data, list):
-#                 data = data[-1] if data else {}
-#     except:
-#         return False
+if __name__ == '__main__':
+    result = validate_task_three()
+    print(result)
 
-#     if data.get('action') != 'enter_reviews_page':
-#         return False
-#     if data.get('page') != 'reviews':
-#         return False
-#     if 'extra_data' not in data:
-#         return False
-#     extra_data = data['extra_data']
-#     # 【关键】必须选择"待评价"标签
-#     if extra_data.get('selected_tab') != '待评价':
-#         return False
-#     return True
-
-# if __name__ == '__main__':
-#     result = validate_reviews_page()
-#     print(result)

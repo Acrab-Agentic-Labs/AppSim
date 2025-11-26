@@ -1,40 +1,41 @@
-def validate_addresses_page(result=None, device_id=None):
-    # cmd = ['adb']
-    # if device_id:
-    #     cmd.extend(['-s', device_id])
-    # cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    # subprocess.run(cmd, stdout=open('messages.json', 'w'))
+import subprocess
+import json
+import os
 
-    # try:
-    #     with open('messages.json', 'r', encoding='utf-8') as f:
-    #         data = json.load(f)
-    #         if isinstance(data, list):
-    #             data = data[-1] if data else {}
-    # except:
-    #     return False
+def validate_task_six(result=None,device_id=None,backup_dir=None):
+    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
 
-    # if data.get('action') != 'enter_addresses_page':
-    #     return False
-    # # 【关键】必须进入地址页面
-    # if data.get('page') != 'addresses':
-    #     return False
-    # if result is None:
-    #     return False
+    cmd = ['adb']
+    if device_id:
+        cmd.extend(['-s', device_id])
+    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
+    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
 
-    # 检测 result 中的final_message是否包含"5个"、"5条"、"5项"、"五个"、"五条"、"五项"中的任意一个
-    if "final_message" in result and (
-        "5个" in result["final_message"]
-        or "5条" in result["final_message"]
-        or "5项" in result["final_message"]
-        or "五个" in result["final_message"]
-        or "五条" in result["final_message"]
-        or "五项" in result["final_message"]
-    ):
-        return True
-    else:
+    try:
+        with open(message_file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            if isinstance(data, list):
+                data = data[-1] if data else {}
+    except:
         return False
 
+    if data.get('action') != 'filter':
+        return False
+    if data.get('page') != 'search_result':
+        return False
+    if 'extra_data' not in data:
+        return False
+    extra_data = data['extra_data']
+    # 【关键】搜索关键词必须是"烤鸡"
+    if extra_data.get('keyword') != '烤鸡':
+        return False
+    # 【关键】价格区间必须是0-30
+    if extra_data.get('price_min') != 0:
+        return False
+    if extra_data.get('price_max') != 30:
+        return False
+    return True
 
-if __name__ == "__main__":
-    result = validate_addresses_page()
+if __name__ == '__main__':
+    result = validate_task_six()
     print(result)

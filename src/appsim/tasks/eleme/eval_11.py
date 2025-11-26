@@ -1,41 +1,69 @@
-import json
 import subprocess
+import json
+import os
 
+def validate_task_eleven(result=None,device_id=None,backup_dir=None):
+    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
 
-def validate_cart_checkout(result=None, device_id=None):
-    cmd = ["adb"]
+    # 从设备获取文件
+    cmd = ['adb']
     if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.myele", "cat", "files/messages.json"])
-    subprocess.run(cmd, stdout=open("messages.json", "w"))
+        cmd.extend(['-s', device_id])
+    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
+    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
 
+    # 读取文件
     try:
-        with open("messages.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                data = data[-1] if data else {}
+        with open(message_file_path, 'r', encoding='utf-8') as f:
+            all_data = json.load(f)
     except:
         return False
 
-    if data.get("action") != "cart_checkout_success":
+    # 从数组中找到最后一个change_setting操作，且setting_type为系统消息通知的记录
+    data = None
+    for record in reversed(all_data):
+        if record.get('action') == 'change_setting':
+            extra_data = record.get('extra_data', {})
+            if extra_data.get('setting_type') == '系统消息通知':
+                data = record
+                break
+
+    if data is None:
         return False
-    if data.get("page") != "cart":
+
+    # 检测1: 验证action
+    if data.get('action') != 'change_setting':
         return False
-    if "extra_data" not in data:
+
+    # 检测2: 验证page
+    if data.get('page') != 'settings':
         return False
-    extra_data = data["extra_data"]
-    # 【关键】必须全选
-    if not extra_data.get("select_all", False):
+
+    # 检测3: 验证timestamp
+    if 'timestamp' not in data or not isinstance(data['timestamp'], (int, float)):
         return False
-    # 【关键】必须进入结算页面
-    if not extra_data.get("entered_checkout", False):
+
+    # 检测4: 验证extra_data
+    if 'extra_data' not in data:
         return False
-    # 【关键】必须支付成功
-    if not extra_data.get("payment_success", False):
+
+    extra_data = data['extra_data']
+
+    # 检测5: 验证设置类型
+    if extra_data.get('setting_type') != '系统消息通知':
         return False
+
+    # 检测6: 验证已关闭
+    if extra_data.get('enabled', True):
+        return False
+
+    # 检测7: 验证显示了关闭成功弹窗
+    if not extra_data.get('show_dialog', False):
+        return False
+
     return True
 
-
-if __name__ == "__main__":
-    result = validate_cart_checkout()
+if __name__ == '__main__':
+    # 运行验证并输出结果
+    result = validate_task_eleven()
     print(result)
