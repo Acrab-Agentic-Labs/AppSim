@@ -15,14 +15,19 @@ def validate_task_seven(result=None, device_id=None, backup_dir=None):
 
     try:
         with open(new_messages_file_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+            new_messages = json.load(f)
     except:
         return False
 
-    # 检查消息中是否包含"什么时候发货"
-    content = str(data)
-    if "什么时候发货" in content:
-        return True
+    # 检查是否有用户发送的新消息"什么时候发货？"
+    if not isinstance(new_messages, list):
+        return False
+
+    for message in new_messages:
+        if (message.get("sender") == "USER" and
+                message.get("type") == "TEXT" and
+                "什么时候发货" in message.get("content", "")):
+            return True
 
     return False
 
