@@ -1,75 +1,53 @@
 """
 任务28：搜索一个歌手,在歌手主页选择一个专辑并收藏
 难度：高
-
-人工操作步骤：
-  1. 搜索歌手
-  2. 进入歌手页面
-  3. 选择专辑
-  4. 收藏
-
-验证标准：
-调用task_28_check_collect_album函数进行验证
-
-参数：album_id，默认自动检测最新收藏
 """
 
 import logging
 import sys
 from .verification_functions import read_json_from_device
 
-
-def task_28_check_collect_album(album_id, device_id=None, result=None, backup_dir=None):
+def check_album_is_collected(result=None, device_id=None, backup_dir=None):
     """
-    任务28: 搜索一个歌手,在歌手主页选择一个专辑并收藏
-    验证: 检查collected_items.json中collectedAlbums是否包含指定专辑
-    :param album_id: 收藏的专辑ID
+    任务28: 验证专辑是否被收藏
+    - 从 app_state.json 获取当前查看的专辑ID
+    - 检查该ID是否存在于 collected_items.json 的 collectedAlbums 列表中
     """
-    data = read_json_from_device("autotest/collected_items.json", device_id, result, backup_dir=backup_dir)
-    if data and "collectedAlbums" in data:
-        album_ids = [a.get("albumId") for a in data["collectedAlbums"]]
-        return album_id in album_ids
-    return False
+    # 首先获取当前正在查看的专辑ID
+    app_state = read_json_from_device("autotest/app_state.json", device_id, result, backup_dir)
+    if not app_state or not app_state.get("currentAlbumId"):
+        logging.error("✗ 测试失败 - 任务28未完成：无法从设备状态确定当前查看的专辑ID")
+        return False
+    current_album_id = app_state["currentAlbumId"]
+    logging.info(f"  → 当前查看的专辑ID为: {current_album_id}")
 
-
-def test(album_id=None, result=None, device_id=None, backup_dir=None):
-    # 如果没有指定album_id，自动从collected_items.json获取最新收藏的专辑
-    if album_id is None:
-        collected_data = read_json_from_device("autotest/collected_items.json", device_id=device_id, result=result, backup_dir=backup_dir)
-
-        if collected_data and "collectedAlbums" in collected_data and collected_data["collectedAlbums"]:
-            # 获取最后一个（最新）收藏的专辑
-            latest_album = collected_data["collectedAlbums"][-1]
-            album_id = latest_album.get("albumId")
-        else:
-            logging.debug("✗ 错误：无法检测到已收藏的专辑")
-            return False
-
-    result1 = task_28_check_collect_album(album_id, device_id=device_id, result=result, backup_dir=backup_dir)
-
-    if result1:
-        logging.debug(f"✓ 测试通过 - 专辑 {album_id} 已成功收藏")
-        return True
-    else:
-        logging.debug(f"✗ 测试失败 - 专辑 {album_id} 未在收藏列表中")
+    # 然后检查收藏列表
+    collected_data = read_json_from_device("autotest/collected_items.json", device_id, result, backup_dir)
+    if not collected_data or "collectedAlbums" not in collected_data or not isinstance(collected_data.get("collectedAlbums"), list):
+        logging.error("✗ 测试失败 - 任务28未完成：无法从设备读取收藏列表或数据格式不正确")
         return False
 
+    album_ids = [a.get("albumId") for a in collected_data["collectedAlbums"]]
+    if current_album_id in album_ids:
+        logging.info(f"✓ 测试通过 - 任务28完成：专辑 {current_album_id} 已成功收藏")
+        return True
+    else:
+        logging.error(f"✗ 测试失败 - 任务28未完成：专辑 {current_album_id} 未在收藏列表中找到")
+        return False
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     print("=" * 70)
     print("任务28：搜索一个歌手,在歌手主页选择一个专辑并收藏")
     print("=" * 70)
     print("\n📋 人工操作步骤：")
-    print("  1. 搜索歌手")
-    print("  2. 进入歌手页面")
-    print("  3. 选择专辑")
-    print("  4. 收藏")
+    print("  1. 搜索一位歌手并进入其主页")
+    print("  2. 切换到'专辑'标签页")
+    print("  3. 进入任意一个专辑的详情页")
+    print("  4. 点击收藏按钮")
+    print("\n🔍 开始验证...")
 
-    # 可以通过命令行参数传入album_id
-    # 用法1：python test_task_28.py          # 自动检测最新收藏
-    # 用法2：python test_task_28.py album_002  # 手动指定专辑ID
-    album_id = sys.argv[1] if len(sys.argv) > 1 else None
-    success = test(album_id=album_id)
+    success = check_album_is_collected()
 
-    print(f"任务28验证结果: {success}")
+    print(f"\n任务28验证结果: {'成功' if success else '失败'}")
     sys.exit(0 if success else 1)

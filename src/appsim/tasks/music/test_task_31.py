@@ -1,68 +1,44 @@
 """
 任务31：更改播放器样式
 难度：高
-
-人工操作步骤：
-  1. 进入播放器设置
-  2. 选择样式
-
-验证标准：
-调用task_31_check_change_player_style函数进行验证
-
-参数：style_id，默认自动检测
 """
 
 import logging
 import sys
 from .verification_functions import read_json_from_device
 
+def check_player_style_is_changed(result=None, device_id=None, backup_dir=None):
+    """
+    任务31: 验证播放器样式是否已更改
+    - 检查 player_settings.json 中 playerStyle.styleId 是否不是默认值（例如 'default_style'）
+    """
+    data = read_json_from_device("autotest/player_settings.json", device_id, result, backup_dir)
 
-def task_31_check_change_player_style(style_id, device_id=None, result=None, backup_dir=None):
-    """
-    任务31: 更改播放器样式
-    验证: 检查player_settings.json中playerStyle.styleId是否为指定样式
-    :param style_id: 播放器样式ID
-    """
-    data = read_json_from_device("autotest/player_settings.json", device_id, result, backup_dir=backup_dir)
     if data and "playerStyle" in data:
-        return data["playerStyle"].get("styleId") == style_id
-    return False
-
-
-def test(style_id=None, result=None, device_id=None, backup_dir=None):
-    # 如果没有指定style_id，自动从player_settings.json获取当前播放器样式
-    if style_id is None:
-        settings_data = read_json_from_device("autotest/player_settings.json", device_id=device_id, result=result, backup_dir=backup_dir)
-
-        if settings_data and "playerStyle" in settings_data and settings_data["playerStyle"]:
-            style_id = settings_data["playerStyle"].get("styleId")
+        style_id = data["playerStyle"].get("styleId", "default_style")
+        if style_id != "default_style":
+            logging.info(f"✓ 测试通过 - 任务31完成：播放器样式已更改为 '{style_id}'")
+            return True
         else:
-            logging.debug("✗ 错误：无法检测到当前播放器样式")
+            logging.error("✗ 测试失败 - 任务31未完成：播放器样式仍为默认值")
             return False
 
-    result1 = task_31_check_change_player_style(style_id, device_id=device_id, result=result, backup_dir=backup_dir)
-
-    if result1:
-        logging.debug(f"✓ 测试通过 - 播放器样式已设置为 {style_id}")
-        return True
-    else:
-        logging.debug(f"✗ 测试失败 - 播放器样式未设置为 {style_id}")
-        return False
-
+    logging.error("✗ 测试失败 - 任务31未完成：在设备状态中未找到播放器样式信息")
+    return False
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     print("=" * 70)
     print("任务31：更改播放器样式")
     print("=" * 70)
     print("\n📋 人工操作步骤：")
-    print("  1. 进入播放器设置")
-    print("  2. 选择样式")
+    print("  1. 进入歌曲播放页面")
+    print("  2. 打开更多选项或设置")
+    print("  3. 进入'播放器样式'或'主题'设置")
+    print("  4. 选择一个新的样式")
+    print("\n🔍 开始验证...")
 
-    # 可以通过命令行参数传入style_id
-    # 用法1：python test_task_31.py          # 自动检测当前样式
-    # 用法2：python test_task_31.py style_002  # 手动指定样式ID
-    style_id = sys.argv[1] if len(sys.argv) > 1 else None
-    success = test(style_id=style_id)
+    success = check_player_style_is_changed()
 
-    print(f"任务31验证结果: {success}")
+    print(f"\n任务31验证结果: {'成功' if success else '失败'}")
     sys.exit(0 if success else 1)

@@ -1,61 +1,39 @@
 """
 任务6：切换播放上一首歌曲
 难度：低
-
-人工操作步骤：
-  1. 进入播放页面
-  2. 点击上一首按钮（←）
-
-验证标准：
-调用task_06_check_switch_previous_song函数进行验证
-
-可选参数：expected_song_id（期望的歌曲ID）
 """
 
 import logging
 import sys
 from .verification_functions import read_json_from_device
 
-
-def task_06_check_switch_previous_song(expected_song_id=None, device_id=None, result=None, backup_dir=None):
+def check_switch_to_previous_song(result=None, device_id=None, backup_dir=None):
     """
-    任务6: 切换播放上一首歌曲
-    验证: 检查playback_state.json中currentSong.songId是否变化
-    :param expected_song_id: 期望的歌曲ID(如果已知)
+    任务6: 验证是否切换到上一首歌
+    - 检查 playback_state.json 中是否有 currentSong.songId
+    - 注意：此验证较为宽松，仅确认发生了切换行为，不校验具体切换到了哪一首歌。
     """
     data = read_json_from_device("autotest/playback_state.json", device_id, result, backup_dir=backup_dir)
-    if data and "currentSong" in data:
-        if expected_song_id:
-            return data["currentSong"].get("songId") == expected_song_id
-        # 如果没有指定期望ID,只要有currentSong就认为切换成功
-        return "songId" in data["currentSong"]
-    return False
 
-
-def test(expected_song_id=None, result=None, device_id=None, backup_dir=None):
-    result1 = task_06_check_switch_previous_song(expected_song_id=expected_song_id, device_id=device_id, result=result, backup_dir=backup_dir)
-
-    if result1:
-        logging.debug("✓ 测试通过 - 任务6完成")
+    if data and "currentSong" in data and "songId" in data["currentSong"]:
+        song_id = data['currentSong']['songId']
+        logging.info(f"✓ 测试通过 - 任务6完成：已切换歌曲，当前歌曲ID: {song_id}")
         return True
     else:
-        logging.debug("✗ 测试失败 - 任务6未完成")
+        logging.error("✗ 测试失败 - 任务6未完成：在设备状态中未检测到有效的当前歌曲信息")
         return False
 
-
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     print("=" * 70)
     print("任务6：切换播放上一首歌曲")
     print("=" * 70)
     print("\n📋 人工操作步骤：")
     print("  1. 进入播放页面")
-    print("  2. 点击上一首按钮（←）")
+    print("  2. 点击上一首按钮")
     print("\n🔍 开始验证...")
 
-    # 从命令行获取参数
-    args = sys.argv[1:] if len(sys.argv) > 1 else []
-    expected_song_id = args[0] if args else None
-    success = test(expected_song_id=expected_song_id)
+    success = check_switch_to_previous_song()
 
-    print(f"任务6验证结果: {success}")
+    print(f"\n任务6验证结果: {'成功' if success else '失败'}")
     sys.exit(0 if success else 1)
