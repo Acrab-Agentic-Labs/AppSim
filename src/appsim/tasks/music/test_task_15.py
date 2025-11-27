@@ -1,60 +1,55 @@
 """
-任务15：查看一首歌曲的详细信息
+任务15：点击当前播放的歌曲，查看歌曲详情
 难度：中
-
-人工操作步骤：
-  1. 找到一首歌曲
-  2. 点击进入歌曲详情页面
-
-验证标准：
-调用task_15_check_view_song_detail函数进行验证
-
-参数：song_id（歌曲ID），默认自动检测
 """
 
 import logging
-import os
 import sys
+from .verification_functions import read_json_from_device
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+def check_view_song_detail(result=None, device_id=None, backup_dir=None):
+    """
+    任务15: 验证是否查看了歌曲详情
+    - 从 playback_state.json 获取当前歌曲ID
+    - 检查 app_state.json 中 currentPage 是否为 'song_detail'
+    - 检查 app_state.json 中 currentSongId 是否与当前播放的歌曲ID匹配
+    """
+    # 首先获取当前播放的歌曲ID
+    playback_data = read_json_from_device("autotest/playback_state.json", device_id, result, backup_dir)
+    if not playback_data or not playback_data.get("currentSong") or not playback_data["currentSong"].get("songId"):
+        logging.error("✗ 测试失败 - 任务15未完成：无法从设备状态确定当前播放的歌曲ID")
+        return False
+    current_song_id = playback_data["currentSong"]["songId"]
+    logging.info(f"  → 当前播放的歌曲ID为: {current_song_id}")
 
-from .verification_functions import read_json_from_device, task_15_check_view_song_detail
-
-
-def test15(song_id=None, result=None, device_id=None):
-    # 如果没有指定song_id，自动从app_state.json获取当前查看的歌曲详情
-    if song_id is None:
-        app_state = read_json_from_device("autotest/app_state.json", device_id=device_id, result=result)
-
-        if app_state and app_state.get("currentPage") == "song_detail" and app_state.get("currentSongId"):
-            song_id = app_state.get("currentSongId")
-        else:
-            logging.debug("✗ 错误：无法检测到当前查看的歌曲详情")
-            return False
-
-    result1 = task_15_check_view_song_detail(song_id, device_id=device_id, result=result)
-
-    if result1:
-        logging.debug(f"✓ 测试通过 - 已成功查看歌曲 {song_id} 的详细信息")
-        return True
-    else:
-        logging.debug(f"✗ 测试失败 - 未正确查看歌曲 {song_id} 的详细信息")
+    # 然后检查App状态
+    app_state_data = read_json_from_device("autotest/app_state.json", device_id, result, backup_dir)
+    if not app_state_data:
+        logging.error("✗ 测试失败 - 任务15未完成：无法从设备读取App状态")
         return False
 
+    current_page = app_state_data.get("currentPage")
+    page_song_id = app_state_data.get("currentSongId")
+
+    if current_page == "song_detail" and page_song_id == current_song_id:
+        logging.info(f"✓ 测试通过 - 任务15完成：已进入歌曲'{current_song_id}'的详情页面")
+        return True
+    else:
+        logging.error(f"✗ 测试失败 - 任务15未完成：页面状态不正确。期望页面: 'song_detail', 实际: '{current_page}'。期望SongID: '{current_song_id}', 实际: '{page_song_id}'")
+        return False
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     print("=" * 70)
-    print("任务15：查看一首歌曲的详细信息")
+    print("任务15：点击当前播放的歌曲，查看歌曲详情")
     print("=" * 70)
     print("\n📋 人工操作步骤：")
-    print("  1. 找到一首歌曲")
-    print("  2. 点击进入歌曲详情页面")
+    print("  1. 在App任意位置，确保底部有歌曲在播放")
+    print("  2. 点击底部播放条，进入播放详情页")
+    print("  3. 点击歌曲封面或标题等区域，进入歌曲信息详情页")
+    print("\n🔍 开始验证...")
 
-    # 可以通过命令行参数传入song_id
-    # 用法1：python test_task_15.py          # 自动检测当前歌曲
-    # 用法2：python test_task_15.py song_002  # 手动指定歌曲ID
-    song_id = sys.argv[1] if len(sys.argv) > 1 else None
-    success = test15(song_id=song_id)
+    success = check_view_song_detail()
 
-    print(f"任务15验证结果: {success}")
+    print(f"\n任务15验证结果: {'成功' if success else '失败'}")
     sys.exit(0 if success else 1)

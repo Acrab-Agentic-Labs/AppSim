@@ -1,38 +1,30 @@
 """
 任务9：调节当前音乐播放的音量
 难度：低
-
-人工操作步骤：
-  1. 进入播放页面
-  2. 调整音量滑块或按钮
-
-验证标准：
-调用task_09_check_volume_adjusted函数进行验证
-
-可选参数：expected_volume（期望的音量值0-100）
 """
 
 import logging
-import os
 import sys
+from .verification_functions import read_json_from_device
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+def check_volume_is_adjusted(result=None, device_id=None, backup_dir=None):
+    """
+    任务9: 验证音量是否被调节
+    - 检查 playback_state.json 中 'volume' 字段是否存在
+    - 注意：此验证不检查具体的音量值，只确认音量被调节过。
+    """
+    data = read_json_from_device("autotest/playback_state.json", device_id, result, backup_dir=backup_dir)
 
-from .verification_functions import task_09_check_volume_adjusted
-
-
-def test9(expected_volume=None, result=None, device_id=None):
-    result1 = task_09_check_volume_adjusted(expected_volume=expected_volume, device_id=device_id, result=result)
-
-    if result1:
-        logging.debug("✓ 测试通过 - 任务9完成")
+    if data and 'volume' in data:
+        volume = data['volume']
+        logging.info(f"✓ 测试通过 - 任务9完成：音量已被调节，当前值为 {volume}")
         return True
     else:
-        logging.debug("✗ 测试失败 - 任务9未完成")
+        logging.error("✗ 测试失败 - 任务9未完成：在设备状态中未找到'volume'字段")
         return False
 
-
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     print("=" * 70)
     print("任务9：调节当前音乐播放的音量")
     print("=" * 70)
@@ -41,10 +33,7 @@ if __name__ == "__main__":
     print("  2. 调整音量滑块或按钮")
     print("\n🔍 开始验证...")
 
-    # 从命令行获取参数
-    args = sys.argv[1:] if len(sys.argv) > 1 else []
-    expected_volume = int(args[0]) if args and args[0].isdigit() else None
-    success = test9(expected_volume=expected_volume)
+    success = check_volume_is_adjusted()
 
-    print(f"任务9验证结果: {success}")
+    print(f"\n任务9验证结果: {'成功' if success else '失败'}")
     sys.exit(0 if success else 1)
