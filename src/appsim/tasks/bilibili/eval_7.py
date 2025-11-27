@@ -51,9 +51,6 @@ def CheckFavoriteVideo(result=None,device_id=None,backup_dir=None):
     except subprocess.TimeoutExpired:
         print("验证失败: 读取日志超时")
         return False
-    except Exception as e:
-        print(f"检查收藏操作时发生错误: {str(e)}")
-        return False
     finally:
         # 无论成功失败，最后都清除日志
         try:
@@ -63,8 +60,10 @@ def CheckFavoriteVideo(result=None,device_id=None,backup_dir=None):
             cmd_clear.extend(['logcat', '-c'])
             subprocess.run(cmd_clear, timeout=5)
             print("🔄 已清除日志缓存")
-        except:
-            pass
+        except subprocess.TimeoutExpired:
+            print("⚠️ 清除日志超时")
+        except Exception as e:
+            print(f"⚠️ 清除日志失败: {str(e)}")
 
 if __name__ == "__main__":
     result1 = CheckFavoriteVideo()
