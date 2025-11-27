@@ -1,19 +1,19 @@
 # 3、查看北京大学李老师发给我的信息，看看参会的听众人数是多少，我好提前去订会议室。告诉我数字即可。
 
 
-def Task3_number_count(result=None, device_id=None):
+def task3_validate_attendee_count(result=None, device_id=None, backup_dir=None):
     # 验证 result 存在
     if result is None:
         return False
 
-    if "final_message" in result and (
-        "10人" in result["final_message"]
-        or "10个" in result["final_message"]
-        or "10位" in result["final_message"]
-        or "十个" in result["final_message"]
-        or "十个" in result["final_message"]
-        or "十位" in result["final_message"]
-        or "10" in result["final_message"]
+    # 安全获取 final_message，如果为 None 则默认为空字符串
+    final_msg = result.get("final_message") or ""
+
+    if (
+        "十个" in final_msg
+        or "十人" in final_msg
+        or "十位" in final_msg
+        or "10" in final_msg
     ):
         return True
     else:
@@ -21,5 +21,5 @@ def Task3_number_count(result=None, device_id=None):
 
 
 if __name__ == "__main__":
-    result = Task3_number_count()
+    result = task3_validate_attendee_count()
     print(result)
