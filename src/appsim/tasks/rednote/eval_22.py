@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 
 
@@ -9,47 +10,31 @@ def count_author_notes_check(result=None, device_id=None, backup_dir=None):
     """
     _AUTHOR_USERNAME = "旅行日记"
     _MIN_COUNT = 0
+
     # 从设备获取浏览历史（用于获取笔记信息）
+    browsing_file_path = os.path.join(backup_dir, "browsing_history.json") if backup_dir is not None else "browsing_history.json"
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
     cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"])
-    browsing_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
+    with open(browsing_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
 
     # 从设备获取用户列表
+    users_file_path = os.path.join(backup_dir, "users.json") if backup_dir is not None else "users.json"
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
     cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/users.json"])
-    users_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
+    with open(users_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
 
-    # 检查命令是否成功执行
-    if browsing_result.returncode != 0 or not browsing_result.stdout:
-        print(" Failed to read browsing history file")
-        print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
-        if browsing_result.stderr:
-            print(f"   Error: {browsing_result.stderr}")
-        return False
-    if users_result.returncode != 0 or not users_result.stdout:
-        print(" Failed to read users file")
-        print(f"   Reason: ADB command failed (return code: {users_result.returncode})")
-        return False
-
-    # 解析 JSON
     try:
-        browsing_data = json.loads(browsing_result.stdout.strip()) if browsing_result.stdout.strip() else []
-        users_data = json.loads(users_result.stdout.strip()) if users_result.stdout.strip() else []
-
-        # 从浏览历史中提取笔记信息
-        notes_data = []
-        for item in browsing_data:
-            author_id = item.get("noteAuthor", {}).get("id")
-            notes_data.append(
-                {"id": item.get("noteId"), "title": item.get("noteTitle", ""), "author": {"id": author_id}}
-            )
+        with open(browsing_file_path, "r", encoding="utf-8") as f:
+            browsing_data = json.load(f)
+        with open(users_file_path, "r", encoding="utf-8") as f:
+            users_data = json.load(f)
     except:
-        print(" Failed to parse JSON data")
-        print("   Reason: Invalid JSON format")
         return False
 
     # 统计博主笔记数量
@@ -62,33 +47,20 @@ def count_author_notes_check(result=None, device_id=None, backup_dir=None):
                 break
 
         if not target_author:
-            print(" Author not found")
-            print(f"   Reason: No user with nickname '{_AUTHOR_USERNAME}'")
-            # Show available nicknames
-            available_nicknames = [u.get("nickname", "UNKNOWN") for u in users_data][:10]
-            print(f"   Available nicknames: {available_nicknames}")
             return False
 
         author_id = target_author.get("id")
 
         # 统计该博主的笔记数量
-        author_notes = [note for note in notes_data if note.get("author", {}).get("id") == author_id]
-
+        author_notes = [note for note in browsing_data if note.get("noteAuthor", {}).get("id") == author_id]
         note_count = len(author_notes)
 
         if note_count >= _MIN_COUNT:
-            print("✓ Successfully counted author notes")
-            print(f"   Author: '{_AUTHOR_USERNAME}' (ID: {author_id})")
-            print(f"   Total notes: {note_count}")
             return True
         else:
-            print(" Not enough notes by author")
-            print(f"   Author: '{_AUTHOR_USERNAME}' (ID: {author_id})")
-            print(f"   Found {note_count} notes, expected at least {_MIN_COUNT}")
             return False
 
     except:
-        print(" Error while counting author notes")
         return False
 
 

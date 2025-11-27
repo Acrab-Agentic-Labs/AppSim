@@ -1,19 +1,25 @@
 import json
+import os
 import subprocess
 
 
 def browsing_history_check(result=None, device_id=None, backup_dir=None):
+    message_file_path = os.path.join(backup_dir, "browsing_history.json") if backup_dir is not None else "browsing_history.json"
+
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
     cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"])
-    # 从设备获取文件
-    result1 = subprocess.run(cmd, stdout=open("browsing_history.json", "w"))
-    if result1.returncode != 0 or not result1.stdout:
+
+    # 从设备获取文件并写入备份
+    with open(message_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
+
+    try:
+        with open(message_file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except:
         return False
-    # 读取文件
-    with open("browsing_history.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
 
     # 检查最后一条浏览历史数据
     try:
@@ -22,8 +28,8 @@ def browsing_history_check(result=None, device_id=None, backup_dir=None):
 
         # 检查 noteAuthor.id 和 noteTitle
         if (
-            last_item.get("noteAuthor", {}).get("id") == "user_002"
-            and last_item.get("noteTitle") == "秋冬穿搭指南 | 温暖又时尚的搭配技巧"
+                last_item.get("noteAuthor", {}).get("id") == "user_002"
+                and last_item.get("noteTitle") == "秋冬穿搭指南 | 温暖又时尚的搭配技巧"
         ):
             return True
         else:

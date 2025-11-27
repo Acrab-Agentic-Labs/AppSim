@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 
 
@@ -10,52 +11,38 @@ def search_and_view_check(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _SEARCH_QUERY = "秋冬穿搭"
     _VIEW_COUNT = 3
-    # 从设备获取搜索历史文件
-    cmd = ["adb"]
-    if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/search_history.json"])
 
-    search_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
+    message_file_path_1 = os.path.join(backup_dir, "search_history.json") if backup_dir is not None else "search_history.json"
+    message_file_path_2 = os.path.join(backup_dir,"browsing_history.json") if backup_dir is not None else "browsing_history.json"
 
-    # 从设备获取浏览历史文件
-    cmd = ["adb"]
-    if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"])
-
-    browsing_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
-
-    # 检查命令是否成功执行
-    if search_result.returncode != 0 or not search_result.stdout:
-        # print(f"❌ Failed to read search history file")
-        # print(f"   Reason: ADB command failed (return code: {search_result.returncode})")
-        # if search_result.stderr:
-        # print(f"   Error: {search_result.stderr}")
-        return False
-    if browsing_result.returncode != 0 or not browsing_result.stdout:
-        # print(f"❌ Failed to read browsing history file")
-        # print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
-        # if browsing_result.stderr:
-        # print(f"   Error: {browsing_result.stderr}")
-        return False
-
-    # 解析 JSON
     try:
-        search_data = json.loads(search_result.stdout)
-        browsing_data = json.loads(browsing_result.stdout)
-    except:
-        # print(f"❌ Failed to parse JSON data")
-        # print(f"   Reason: Invalid JSON format")
-        return False
+        # 从设备获取搜索历史文件
+        cmd = ["adb"]
+        if device_id:
+            cmd.extend(["-s", device_id])
+        cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/search_history.json"])
+        with open(message_file_path_1, "w") as f:
+            subprocess.run(cmd, stdout=f)
 
-    # 检查搜索历史和浏览记录
-    try:
-        # 检查是否有搜索记录
+        with open(message_file_path_1, "r", encoding="utf-8") as f:
+            search_data = json.load(f)
+
         if not search_data or len(search_data) == 0:
-            # print(f"❌ Search history is empty")
-            # print(f"   Reason: No search records found")
-            # print(f"   Expected: Search query '{searchQuery}'")
+            return False
+
+        # 从设备获取浏览历史文件
+        cmd = ["adb"]
+        if device_id:
+            cmd.extend(["-s", device_id])
+        cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"])
+
+        with open(message_file_path_2, "w") as f:
+            subprocess.run(cmd, stdout=f)
+
+        with open(message_file_path_2, "r", encoding="utf-8") as f:
+            browsing_data = json.load(f)
+
+        if not browsing_data or len(browsing_data) == 0:
             return False
 
         # 查找最新的搜索记录
@@ -64,11 +51,6 @@ def search_and_view_check(result=None, device_id=None, backup_dir=None):
         ]
 
         if not user_searches:
-            # print(f"❌ Search query not found")
-            # print(f"   Reason: User '{userId}' did not search for '{searchQuery}'")
-            # Show recent searches
-            # if recent_searches:
-            # print(f"   Recent searches: {recent_searches}")
             return False
 
         # 获取最新的搜索记录
@@ -86,16 +68,11 @@ def search_and_view_check(result=None, device_id=None, backup_dir=None):
 
         # 检查浏览数量是否达到预期
         if len(search_browsing) >= _VIEW_COUNT:
-            # print(f"✓ Successfully searched '{searchQuery}' and viewed {viewCount} results")
             return True
         else:
-            # print(f"❌ Not enough search result views")
-            # print(f"   Reason: Found {len(search_browsing)} views, expected {viewCount}")
-            # print(f"   Search query: '{searchQuery}' at {search_time}")
             return False
 
     except:
-        # print(f"❌ Error while checking search and browsing data")
         return False
 
 

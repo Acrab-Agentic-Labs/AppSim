@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 
 
@@ -9,118 +10,78 @@ def note_interaction_check(result=None, device_id=None, backup_dir=None):
     2. likes.json: targetId = "note_002"
     3. comments.json: content = "很实用！", noteId = "note_002"
     """
-
     # 检查浏览历史
-    print("=== Checking browsing_history.json ===")
+    browsing_file_path = os.path.join(backup_dir, "browsing_history.json") if backup_dir is not None else "browsing_history.json"
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
     cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"])
-    browsing_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
-
-    if browsing_result.returncode != 0 or not browsing_result.stdout:
-        print(" Failed to read browsing_history.json")
-        print(f"   Reason: ADB command failed (return code: {browsing_result.returncode})")
-        return False
+    with open(browsing_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
 
     try:
-        browsing_data = json.loads(browsing_result.stdout)
+        with open(browsing_file_path, "r", encoding="utf-8") as f:
+            browsing_data = json.load(f)
         if not browsing_data or len(browsing_data) == 0:
-            print(" Browsing history is empty")
             return False
 
         last_browsing = browsing_data[-1]
         browsing_author_id = last_browsing.get("noteAuthor", {}).get("id", "")
         browsing_title = last_browsing.get("noteTitle", "")
 
-        if browsing_author_id == "user_003" and browsing_title == "AI技术在日常生活中的应用，太实用了！":
-            print("✓ Browsing history check passed")
-            print(f"   Note Author ID: {browsing_author_id}")
-            print(f"   Note Title: {browsing_title}")
-            print(f"   Browsed at: {last_browsing.get('browsedAt', 'Unknown')}")
-        else:
-            print(" Browsing history check failed")
-            print("   Expected: noteAuthor.id='user_003', noteTitle='AI技术在日常生活中的应用，太实用了！'")
-            print(f"   Actual: noteAuthor.id='{browsing_author_id}', noteTitle='{browsing_title}'")
+        if not (browsing_author_id == "user_003" and browsing_title == "AI技术在日常生活中的应用，太实用了！"):
             return False
     except:
         return False
 
     # 检查点赞记录
-    print("\n=== Checking likes.json ===")
-    likes_result = subprocess.run(
-        ["exec-out", "run-as", "com.example.test05", "cat", "files/likes.json"],
-        capture_output=True,
-        encoding="utf-8",
-        errors="replace",
-    )
-
-    if likes_result.returncode != 0 or not likes_result.stdout:
-        print(" Failed to read likes.json")
-        print(f"   Reason: ADB command failed (return code: {likes_result.returncode})")
-        return False
+    likes_file_path = os.path.join(backup_dir, "likes.json") if backup_dir is not None else "likes.json"
+    cmd = ["adb"]
+    if device_id:
+        cmd.extend(["-s", device_id])
+    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/likes.json"])
+    with open(likes_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
 
     try:
-        likes_data = json.loads(likes_result.stdout)
+        with open(likes_file_path, "r", encoding="utf-8") as f:
+            likes_data = json.load(f)
         if not likes_data or len(likes_data) == 0:
-            print(" Likes list is empty")
             return False
 
         last_like = likes_data[-1]
         like_target_id = last_like.get("targetId", "")
 
-        if like_target_id == "note_002":
-            print("✓ Like check passed")
-            print(f"   Target ID: {like_target_id}")
-            print(f"   Liked at: {last_like.get('likedAt', 'Unknown')}")
-        else:
-            print(" Like check failed")
-            print("   Expected: targetId='note_002'")
-            print(f"   Actual: targetId='{like_target_id}'")
+        if like_target_id != "note_002":
             return False
     except:
         return False
 
     # 检查评论记录
-    print("\n=== Checking comments.json ===")
+    comments_file_path = os.path.join(backup_dir, "comments.json") if backup_dir is not None else "comments.json"
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
     cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/comments.json"])
-    comments_result = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
-
-    if comments_result.returncode != 0 or not comments_result.stdout:
-        print(" Failed to read comments.json")
-        print(f"   Reason: ADB command failed (return code: {comments_result.returncode})")
-        return False
+    with open(comments_file_path, "w") as f:
+        subprocess.run(cmd, stdout=f)
 
     try:
-        comments_data = json.loads(comments_result.stdout)
+        with open(comments_file_path, "r", encoding="utf-8") as f:
+            comments_data = json.load(f)
         if not comments_data or len(comments_data) == 0:
-            print(" Comments list is empty")
             return False
 
         last_comment = comments_data[-1]
         comment_content = last_comment.get("content", "")
         comment_note_id = last_comment.get("noteId", "")
 
-        if comment_content == "很实用！" and comment_note_id == "note_002":
-            print("✓ Comment check passed")
-            print(f"   Content: {comment_content}")
-            print(f"   Note ID: {comment_note_id}")
-            print(f"   Created at: {last_comment.get('createdAt', 'Unknown')}")
-        else:
-            print(" Comment check failed")
-            print("   Expected: content='很实用！', noteId='note_002'")
-            print(f"   Actual: content='{comment_content}', noteId='{comment_note_id}'")
+        if not (comment_content == "很实用！" and comment_note_id == "note_002"):
             return False
     except:
         return False
 
     # 所有检查都通过
-    print("\n" + "=" * 50)
-    print("✓ All checks passed!")
-    print("=" * 50)
     return True
 
 
