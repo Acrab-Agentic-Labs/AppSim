@@ -16,10 +16,23 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device, task_08_check_favorite_song
+from .verification_functions import read_json_from_device
 
 
-def test8(song_id=None, result=None, device_id=None, backup_dir=None):
+def task_08_check_favorite_song(song_id, device_id=None, result=None, backup_dir=None):
+    """
+    任务8: 收藏当前歌曲
+    验证: 检查user_favorites.json中是否包含指定歌曲
+    :param song_id: 被收藏的歌曲ID
+    """
+    data = read_json_from_device("autotest/user_favorites.json", device_id, result, backup_dir=backup_dir)
+    if data and "favoriteSongs" in data:
+        song_ids = [song.get("songId") for song in data["favoriteSongs"]]
+        return song_id in song_ids
+    return False
+
+
+def test(song_id=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定song_id，自动从playback_state.json获取当前播放的歌曲
     if song_id is None:
         playback_data = read_json_from_device("autotest/playback_state.json", device_id=device_id, result=result, backup_dir=backup_dir)
@@ -53,7 +66,7 @@ if __name__ == "__main__":
     # 用法1：python test_task_08.py          # 自动检测当前歌曲
     # 用法2：python test_task_08.py song_002  # 手动指定歌曲ID
     song_id = sys.argv[1] if len(sys.argv) > 1 else None
-    success = test8(song_id=song_id)
+    success = test(song_id=song_id)
 
     print(f"任务8验证结果: {success}")
     sys.exit(0 if success else 1)

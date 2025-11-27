@@ -16,10 +16,27 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device, task_24_check_post_comment
+from .verification_functions import read_json_from_device
 
 
-def test24(song_id=None, comment_content=None, result=None, device_id=None, backup_dir=None):
+def task_24_check_post_comment(song_id, comment_content, device_id=None, result=None, backup_dir=None):
+    """
+    任务24: 在歌单中选择一首歌曲并发表评论
+    验证: 检查comments.json中是否有对应歌曲的评论
+    :param song_id: 评论的歌曲ID
+    :param comment_content: 评论内容(可选,用于精确匹配)
+    """
+    data = read_json_from_device("autotest/comments.json", device_id, result, backup_dir=backup_dir)
+    if data and "userComments" in data:
+        for comment in data["userComments"]:
+            if comment.get("songId") == song_id:
+                if comment_content:
+                    return comment.get("content") == comment_content
+                return True
+    return False
+
+
+def test(song_id=None, comment_content=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定song_id，自动从comments.json获取最新发表的评论
     if song_id is None:
         comments_data = read_json_from_device("autotest/comments.json", device_id=device_id, result=result, backup_dir=backup_dir)
@@ -58,7 +75,7 @@ if __name__ == "__main__":
     # 用法3：python test_task_24.py song_002 "很棒"    # 手动指定歌曲ID和内容
     song_id = sys.argv[1] if len(sys.argv) > 1 else None
     comment_content = sys.argv[2] if len(sys.argv) > 2 else None
-    success = test24(song_id=song_id, comment_content=comment_content)
+    success = test(song_id=song_id, comment_content=comment_content)
 
     print(f"任务24验证结果: {success}")
     sys.exit(0 if success else 1)

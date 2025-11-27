@@ -15,10 +15,25 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device, task_27_check_playlist_sort_order
+from .verification_functions import read_json_from_device
 
 
-def test27(playlist_id=None, expected_order=None, result=None, device_id=None, backup_dir=None):
+def task_27_check_playlist_sort_order(playlist_id, expected_order, device_id=None, result=None, backup_dir=None):
+    """
+    任务27: 更改歌单的排序顺序
+    验证: 检查user_playlists.json中指定歌单的sortOrder
+    :param playlist_id: 歌单ID
+    :param expected_order: 期望的排序方式,如"time_desc","name_asc"等
+    """
+    data = read_json_from_device("autotest/user_playlists.json", device_id, result, backup_dir=backup_dir)
+    if data and "playlists" in data:
+        for playlist in data["playlists"]:
+            if playlist.get("playlistId") == playlist_id:
+                return playlist.get("sortOrder") == expected_order
+    return False
+
+
+def test(playlist_id=None, expected_order=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定playlist_id，自动从user_playlists.json获取当前浏览的歌单
     if playlist_id is None or expected_order is None:
         playlists_data = read_json_from_device("autotest/user_playlists.json", device_id=device_id, result=result, backup_dir=backup_dir)
@@ -66,7 +81,7 @@ if __name__ == "__main__":
     # 用法2：python test_task_27.py playlist_001 time_desc  # 手动指定
     playlist_id = sys.argv[1] if len(sys.argv) > 1 else None
     expected_order = sys.argv[2] if len(sys.argv) > 2 else None
-    success = test27(playlist_id=playlist_id, expected_order=expected_order)
+    success = test(playlist_id=playlist_id, expected_order=expected_order)
 
     print(f"任务27验证结果: {success}")
     sys.exit(0 if success else 1)

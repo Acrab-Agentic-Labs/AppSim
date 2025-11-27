@@ -13,10 +13,21 @@
 
 import logging
 import sys
-from .verification_functions import task_04_check_play_song
+from .verification_functions import read_json_from_device
 
 
-def test4(result=None, device_id=None, backup_dir=None):
+def task_04_check_play_song(device_id=None, result=None, backup_dir=None):
+    """
+    任务4: 播放当前暂停的歌曲
+    验证: 检查playback_state.json中isPlaying是否为true
+    """
+    data = read_json_from_device("autotest/playback_state.json", device_id, result, backup_dir=backup_dir)
+    if data:
+        return data.get("isPlaying") == True
+    return False
+
+
+def test(result=None, device_id=None, backup_dir=None):
     result1 = task_04_check_play_song(device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
@@ -39,7 +50,7 @@ if __name__ == "__main__":
 
     # 从命令行获取参数
     args = sys.argv[1:] if len(sys.argv) > 1 else []
-    success = test4(*args)
+    success = test(*args)
 
     print(f"任务4验证结果: {success}")
     sys.exit(0 if success else 1)

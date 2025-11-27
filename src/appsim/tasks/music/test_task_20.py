@@ -15,10 +15,23 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device, task_20_check_collect_playlist
+from .verification_functions import read_json_from_device
 
 
-def test20(playlist_id=None, result=None, device_id=None, backup_dir=None):
+def task_20_check_collect_playlist(playlist_id, device_id=None, result=None, backup_dir=None):
+    """
+    任务20: 在推荐歌单中随机选择一个歌单并收藏
+    验证: 检查collected_items.json中collectedPlaylists是否包含指定歌单
+    :param playlist_id: 收藏的歌单ID
+    """
+    data = read_json_from_device("autotest/collected_items.json", device_id, result, backup_dir=backup_dir)
+    if data and "collectedPlaylists" in data:
+        playlist_ids = [p.get("playlistId") for p in data["collectedPlaylists"]]
+        return playlist_id in playlist_ids
+    return False
+
+
+def test(playlist_id=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定playlist_id，自动从collected_items.json获取最新收藏的歌单
     if playlist_id is None:
         collected_data = read_json_from_device("autotest/collected_items.json", device_id=device_id, result=result, backup_dir=backup_dir)
@@ -54,7 +67,7 @@ if __name__ == "__main__":
     # 用法1：python test_task_20.py          # 自动检测最新收藏
     # 用法2：python test_task_20.py playlist_002  # 手动指定歌单ID
     playlist_id = sys.argv[1] if len(sys.argv) > 1 else None
-    success = test20(playlist_id=playlist_id)
+    success = test(playlist_id=playlist_id)
 
     print(f"任务20验证结果: {success}")
     sys.exit(0 if success else 1)

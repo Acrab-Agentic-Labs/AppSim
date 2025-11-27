@@ -16,10 +16,22 @@
 
 import logging
 import sys
-from .verification_functions import task_17_check_roaming_play
+from .verification_functions import read_json_from_device
 
 
-def test17(scene_name="欢快", result=None, device_id=None, backup_dir=None):
+def task_17_check_stroll_scene_setting(scene_name, device_id=None, result=None, backup_dir=None):
+    """
+    任务17: 漫游播放并设置播放场景为"伪感"
+    验证: 检查player_settings.json中strollMode.scene是否为指定场景
+    :param scene_name: 场景名称,如"伪感"
+    """
+    data = read_json_from_device("autotest/player_settings.json", device_id, result, backup_dir=backup_dir)
+    if data and "strollMode" in data:
+        return data["strollMode"].get("scene") == scene_name
+    return False
+
+
+def test(scene_name="欢快", result=None, device_id=None, backup_dir=None):
     result1 = task_17_check_stroll_scene_setting(scene_name, device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
@@ -45,7 +57,7 @@ if __name__ == "__main__":
     # 可以通过命令行参数传入场景名称
     # 用法：python test_task_17.py 伤感
     # 或：python test_task_17.py 欢快
-    success = test17(scene_name=scene_name)
+    success = test(scene_name=scene_name)
 
     print(f"任务17验证结果: {success}")
     sys.exit(0 if success else 1)

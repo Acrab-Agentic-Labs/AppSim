@@ -16,10 +16,23 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device, task_28_check_collect_album
+from .verification_functions import read_json_from_device
 
 
-def test28(album_id=None, result=None, device_id=None, backup_dir=None):
+def task_28_check_collect_album(album_id, device_id=None, result=None, backup_dir=None):
+    """
+    任务28: 搜索一个歌手,在歌手主页选择一个专辑并收藏
+    验证: 检查collected_items.json中collectedAlbums是否包含指定专辑
+    :param album_id: 收藏的专辑ID
+    """
+    data = read_json_from_device("autotest/collected_items.json", device_id, result, backup_dir=backup_dir)
+    if data and "collectedAlbums" in data:
+        album_ids = [a.get("albumId") for a in data["collectedAlbums"]]
+        return album_id in album_ids
+    return False
+
+
+def test(album_id=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定album_id，自动从collected_items.json获取最新收藏的专辑
     if album_id is None:
         collected_data = read_json_from_device("autotest/collected_items.json", device_id=device_id, result=result, backup_dir=backup_dir)
@@ -56,7 +69,7 @@ if __name__ == "__main__":
     # 用法1：python test_task_28.py          # 自动检测最新收藏
     # 用法2：python test_task_28.py album_002  # 手动指定专辑ID
     album_id = sys.argv[1] if len(sys.argv) > 1 else None
-    success = test28(album_id=album_id)
+    success = test(album_id=album_id)
 
     print(f"任务28验证结果: {success}")
     sys.exit(0 if success else 1)

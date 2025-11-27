@@ -12,10 +12,21 @@
 
 import logging
 import sys
-from .verification_functions import task_10_check_random_playlist
+from .verification_functions import read_json_from_device
 
 
-def test10(result=None, device_id=None, backup_dir=None):
+def task_10_check_enter_playlist(device_id=None, result=None, backup_dir=None):
+    """
+    任务10: 随机进入"我的"中的一个歌单
+    验证: 检查user_playlists.json中currentViewingPlaylist不为null
+    """
+    data = read_json_from_device("autotest/user_playlists.json", device_id, result, backup_dir=backup_dir)
+    if data:
+        return data.get("currentViewingPlaylist") is not None
+    return False
+
+
+def test(result=None, device_id=None, backup_dir=None):
     result1 = task_10_check_enter_playlist(device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
@@ -37,7 +48,7 @@ if __name__ == "__main__":
 
     # 从命令行获取参数
     args = sys.argv[1:] if len(sys.argv) > 1 else []
-    success = test10(*args)
+    success = test(*args)
 
     print(f"任务10验证结果: {success}")
     sys.exit(0 if success else 1)

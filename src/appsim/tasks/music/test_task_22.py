@@ -15,10 +15,22 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device, task_22_check_view_listening_stats
+from .verification_functions import read_json_from_device
 
 
-def test22(stat_type=None, result=None, device_id=None, backup_dir=None):
+def task_22_check_view_listening_stats(stat_type, device_id=None, result=None, backup_dir=None):
+    """
+    任务22: 查看每周、每月听歌时长
+    验证: 检查listening_stats.json中viewedStats的对应字段为true
+    :param stat_type: "weekly"或"monthly"
+    """
+    data = read_json_from_device("autotest/listening_stats.json", device_id, result, backup_dir=backup_dir)
+    if data and "viewedStats" in data:
+        return data["viewedStats"].get(stat_type) == True
+    return False
+
+
+def test(stat_type=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定stat_type，自动从listening_stats.json检测查看过的统计类型
     if stat_type is None:
         stats_data = read_json_from_device("autotest/listening_stats.json", device_id=device_id, result=result, backup_dir=backup_dir)
@@ -66,7 +78,7 @@ if __name__ == "__main__":
     # 用法2：python test_task_22.py weekly   # 手动指定周统计
     # 用法3：python test_task_22.py monthly  # 手动指定月度统计
     stat_type = sys.argv[1] if len(sys.argv) > 1 else None
-    success = test22(stat_type=stat_type)
+    success = test(stat_type=stat_type)
 
     print(f"任务22验证结果: {success}")
     sys.exit(0 if success else 1)

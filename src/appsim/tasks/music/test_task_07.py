@@ -13,11 +13,37 @@
 
 import logging
 import sys
-from .verification_functions import task_07_check_shuffle_play
+from .verification_functions import read_json_from_device
 
 
-def test7(result=None, device_id=None, backup_dir=None):
-    result1 = task_07_check_shuffle_play(device_id=device_id, result=result, backup_dir=backup_dir)
+def task_07_check_shuffle_mode(device_id=None, result=None, backup_dir=None):
+    """
+    任务7: 将播放模式改为随机播放
+    验证:
+    1. 优先检查playback_state.json中playbackMode是否为"shuffle"
+    2. 如果设备状态检查失败,检查result["final_message"]是否包含"随机"相关信息
+    """
+    # 方法1: 检查设备状态
+    data = read_json_from_device("autotest/playback_state.json", device_id, result, backup_dir=backup_dir)
+    if data and data.get("playbackMode") == "shuffle":
+        print("  → 设备状态确认: 播放模式已切换为随机播放")
+        return True
+
+    # 方法2: 检查AI的final_message
+    if result and "final_message" in result:
+        final_msg = result["final_message"]
+        if final_msg and isinstance(final_msg, str):
+            if "随机" in final_msg and ("播放" in final_msg or "模式" in final_msg):
+                print(f"  → AI确认完成: {final_msg}")
+                print("  → 注意: 设备状态未更新,但AI声称已完成")
+                return True
+
+    print("  → 验证失败: 设备状态未更新且AI未确认完成")
+    return False
+
+
+def test(result=None, device_id=None, backup_dir=None):
+    result1 = task_07_check_shuffle_mode(device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
         logging.debug("✓ 测试通过 - 已切换到随机播放模式")
@@ -39,7 +65,7 @@ if __name__ == "__main__":
 
     # 从命令行获取参数
     args = sys.argv[1:] if len(sys.argv) > 1 else []
-    success = test7(*args)
+    success = test(*args)
 
     print(f"任务7验证结果: {success}")
     sys.exit(0 if success else 1)

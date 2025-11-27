@@ -15,10 +15,25 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device, task_21_check_delete_song_from_playlist
+from .verification_functions import read_json_from_device
 
 
-def test21(playlist_id=None, expected_count=None, result=None, device_id=None, backup_dir=None):
+def task_21_check_delete_song_from_playlist(playlist_id, expected_count, device_id=None, result=None, backup_dir=None):
+    """
+    任务21: 删除歌单中的第一首歌
+    验证: 检查user_playlists.json中指定歌单的songCount是否减少
+    :param playlist_id: 歌单ID
+    :param expected_count: 删除后期望的歌曲数量
+    """
+    data = read_json_from_device("autotest/user_playlists.json", device_id, result, backup_dir=backup_dir)
+    if data and "playlists" in data:
+        for playlist in data["playlists"]:
+            if playlist.get("playlistId") == playlist_id:
+                return playlist.get("songCount") == expected_count
+    return False
+
+
+def test(playlist_id=None, expected_count=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定playlist_id，自动从user_playlists.json获取当前浏览的歌单
     if playlist_id is None or expected_count is None:
         playlists_data = read_json_from_device("autotest/user_playlists.json", device_id=device_id, result=result, backup_dir=backup_dir)
@@ -66,7 +81,7 @@ if __name__ == "__main__":
     # 用法2：python test_task_21.py playlist_001 5    # 手动指定
     playlist_id = sys.argv[1] if len(sys.argv) > 1 else None
     expected_count = int(sys.argv[2]) if len(sys.argv) > 2 else None
-    success = test21(playlist_id=playlist_id, expected_count=expected_count)
+    success = test(playlist_id=playlist_id, expected_count=expected_count)
 
     print(f"任务21验证结果: {success}")
     sys.exit(0 if success else 1)

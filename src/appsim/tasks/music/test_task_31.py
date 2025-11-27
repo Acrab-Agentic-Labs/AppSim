@@ -14,10 +14,22 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device, task_31_check_change_player_style
+from .verification_functions import read_json_from_device
 
 
-def test31(style_id=None, result=None, device_id=None, backup_dir=None):
+def task_31_check_change_player_style(style_id, device_id=None, result=None, backup_dir=None):
+    """
+    任务31: 更改播放器样式
+    验证: 检查player_settings.json中playerStyle.styleId是否为指定样式
+    :param style_id: 播放器样式ID
+    """
+    data = read_json_from_device("autotest/player_settings.json", device_id, result, backup_dir=backup_dir)
+    if data and "playerStyle" in data:
+        return data["playerStyle"].get("styleId") == style_id
+    return False
+
+
+def test(style_id=None, result=None, device_id=None, backup_dir=None):
     # 如果没有指定style_id，自动从player_settings.json获取当前播放器样式
     if style_id is None:
         settings_data = read_json_from_device("autotest/player_settings.json", device_id=device_id, result=result, backup_dir=backup_dir)
@@ -50,7 +62,7 @@ if __name__ == "__main__":
     # 用法1：python test_task_31.py          # 自动检测当前样式
     # 用法2：python test_task_31.py style_002  # 手动指定样式ID
     style_id = sys.argv[1] if len(sys.argv) > 1 else None
-    success = test31(style_id=style_id)
+    success = test(style_id=style_id)
 
     print(f"任务31验证结果: {success}")
     sys.exit(0 if success else 1)

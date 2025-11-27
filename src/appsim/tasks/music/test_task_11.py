@@ -1,4 +1,3 @@
-
 """
 任务11：播放"每日推荐"中的第一首歌曲
 难度：中
@@ -15,10 +14,22 @@
 
 import logging
 import sys
-from .verification_functions import task_11_check_play_first_recommended_song
+from .verification_functions import read_json_from_device
 
 
-def test11(result=None, device_id=None, backup_dir=None):
+def task_11_check_daily_recommend_third_song(device_id=None, result=None, backup_dir=None):
+    """
+    任务11: 播放"每日推荐"中的第一首歌曲
+    验证: 检查playback_state.json中currentSong.source是否为"daily_recommend"且sourceDetail包含"第1首"
+    """
+    data = read_json_from_device("autotest/playback_state.json", device_id, result, backup_dir=backup_dir)
+    if data and "currentSong" in data:
+        song = data["currentSong"]
+        return song.get("source") == "daily_recommend" and "第1首" in song.get("sourceDetail", "")
+    return False
+
+
+def test(result=None, device_id=None, backup_dir=None):
     result1 = task_11_check_daily_recommend_third_song(device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
@@ -41,7 +52,7 @@ if __name__ == "__main__":
 
     # 从命令行获取参数
     args = sys.argv[1:] if len(sys.argv) > 1 else []
-    success = test11(*args)
+    success = test(*args)
 
     print(f"任务11验证结果: {success}")
     sys.exit(0 if success else 1)

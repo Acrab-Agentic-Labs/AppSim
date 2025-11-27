@@ -16,10 +16,19 @@
 
 import logging
 import sys
-from .verification_functions import task_26_check_song_recognition
+from .verification_functions import read_json_from_device
 
 
-def test26(result=None, device_id=None, backup_dir=None):
+def task_26_check_song_recognition(device_id=None, result=None, backup_dir=None):
+    """
+    任务26: 听歌识曲(比如打开B站并识别正在播放的视频的BGM)
+    验证: 跨应用功能难以验证,返回False表示不支持
+    """
+    # 无法验证跨应用识曲功能
+    return False
+
+
+def test(result=None, device_id=None, backup_dir=None):
     result1 = task_26_check_song_recognition(device_id=device_id, result=result, backup_dir=backup_dir)
 
     if result1:
@@ -45,7 +54,7 @@ if __name__ == "__main__":
 
     # 从命令行获取参数
     args = sys.argv[1:] if len(sys.argv) > 1 else []
-    success = test26(*args)
+    success = test(*args)
 
     print(f"任务26验证结果: {success}")
     sys.exit(0 if success else 1)
