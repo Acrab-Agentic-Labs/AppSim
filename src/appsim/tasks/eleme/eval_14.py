@@ -1,80 +1,40 @@
-import subprocess
-import json
-import os
+from appsim.utils import read_json_from_device
+
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_ENTER_ORDERS_PAGE = "enter_orders_page"
+ACTION_NAVIGATE_TO_STORE = "navigate_to_store"
+ACTION_SHARE_STORE = "share_store"
+PAGE_ORDERS = "orders"
+PAGE_STORE_PAGE = "store_page"
+KEYWORD_MALATANG = "麻辣烫"
+PLATFORM_VALUE = "微信"
 
 def validate_task_fourteen(result=None,device_id=None,backup_dir=None):
-    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
-
-    # 从设备获取文件
-    cmd = ['adb']
-    if device_id:
-        cmd.extend(['-s', device_id])
-    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
-
-    # 读取文件
     try:
-        with open(message_file_path, 'r', encoding='utf-8') as f:
-            all_data = json.load(f)
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
-        all_data = []
+        return False
 
-    # 检测1: 验证是否进入了全部订单页面
-    found_orders_page = False
-    for record in all_data:
-        if record.get('action') == 'enter_orders_page' and record.get('page') == 'orders':
-            found_orders_page = True
-            break
-
+    found_orders_page = any(r.get('action') == ACTION_ENTER_ORDERS_PAGE and r.get('page') == PAGE_ORDERS for r in all_data)
     if not found_orders_page:
         return False
 
-    # 检测2: 验证是否点击了商家名进入商家详情页，且商家名包含"麻辣烫"
-    found_navigate_to_malatang_store = False
-    for record in all_data:
-        if record.get('action') == 'navigate_to_store' and record.get('page') == 'store_page':
-            page_info = record.get('page_info', {})
-            restaurant_name = page_info.get('restaurant_name', '')
-
-            # 检查商家名是否包含"麻辣烫"
-            if '麻辣烫' in restaurant_name:
-                found_navigate_to_malatang_store = True
-                break
-
+    found_navigate_to_malatang_store = any(
+        r.get('action') == ACTION_NAVIGATE_TO_STORE and
+        r.get('page') == PAGE_STORE_PAGE and
+        KEYWORD_MALATANG in r.get('page_info', {}).get('restaurant_name', '')
+        for r in all_data
+    )
     if not found_navigate_to_malatang_store:
         return False
 
-    # 检测3: 从数组中找到最后一个分享商家的记录
-    share_record = None
-    for record in reversed(all_data):
-        if record.get('action') == 'share_store':
-            share_record = record
-            break
-
-    # 检测4: 验证分享操作存在
-    if share_record is None:
+    share_record = next((r for r in reversed(all_data) if r.get('action') == ACTION_SHARE_STORE), None)
+    if share_record is None or share_record.get('page') != PAGE_STORE_PAGE:
         return False
-
-    # 检测5: 验证page
-    if share_record.get('page') != 'store_page':
+    if share_record.get('extra_data', {}).get('platform') != PLATFORM_VALUE:
         return False
-
-    # 检测6: 验证extra_data存在且分享平台是微信
-    if 'extra_data' not in share_record:
-        return False
-
-    extra_data = share_record['extra_data']
-    if extra_data.get('platform') != '微信':
-        return False
-
-    # 检测7: 验证page_info包含restaurant_name且包含"麻辣烫"
-    if 'page_info' not in share_record:
-        return False
-
-    page_info = share_record['page_info']
-    restaurant_name = page_info.get('restaurant_name', '')
-
-    if '麻辣烫' not in restaurant_name:
+    if KEYWORD_MALATANG not in share_record.get('page_info', {}).get('restaurant_name', ''):
         return False
 
     return True

@@ -1,65 +1,27 @@
-import subprocess
-import json
-import os
+from appsim.utils import read_json_from_device
+
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_ADD_ADDRESS = "add_address"
+PAGE_ADDRESS = "address"
+ADDRESS_KEYWORD = "华中师范大学元宝山学生公寓二期"
+NAME_VALUE = "于骁"
+PHONE_VALUE = "13022222222"
+TAG_VALUE = "学校"
+DETAIL_ADDRESS_KEYWORD = "613"
 
 def validate_task_fifteen(result=None,device_id=None,backup_dir=None):
-    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
-
-    # 从设备获取文件
-    cmd = ['adb']
-    if device_id:
-        cmd.extend(['-s', device_id])
-    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
-
-    # 读取文件
     try:
-        with open(message_file_path, 'r', encoding='utf-8') as f:
-            all_data = json.load(f)
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
-        all_data = []
-
-    # 从数组中找到最后一个添加地址的记录
-    add_record = None
-    for record in reversed(all_data):
-        if record.get('action') == 'add_address':
-            add_record = record
-            break
-
-    # 检测1: 验证添加地址操作存在
-    if add_record is None:
         return False
 
-    # 检测2: 验证page
-    if add_record.get('page') != 'address':
+    add_record = next((r for r in reversed(all_data) if r.get('action') == ACTION_ADD_ADDRESS), None)
+    if add_record is None or add_record.get('page') != PAGE_ADDRESS:
         return False
 
-    # 检测3: 验证extra_data存在
-    if 'extra_data' not in add_record:
-        return False
-
-    extra_data = add_record['extra_data']
-
-    # 检测4: 【关键】验证详细地址
-    address = extra_data.get('address', '')
-    if '华中师范大学元宝山学生公寓二期' not in address:
-        return False
-
-    # 检测5: 【关键】验证姓名
-    if extra_data.get('name') != '于骁':
-        return False
-
-    # 检测6: 【关键】验证手机号
-    if extra_data.get('phone') != '13022222222':
-        return False
-
-    # 检测7: 【关键】验证标签为学校
-    if extra_data.get('tag') != '学校':
-        return False
-
-    # 检测8: 【关键】验证门牌号为613
-    detail_address = extra_data.get('detail_address', '')
-    if '613' not in detail_address:
+    extra_data = add_record.get('extra_data', {})
+    if ADDRESS_KEYWORD not in extra_data.get('address', '') or extra_data.get('name') != NAME_VALUE or extra_data.get('phone') != PHONE_VALUE or extra_data.get('tag') != TAG_VALUE or DETAIL_ADDRESS_KEYWORD not in extra_data.get('detail_address', ''):
         return False
 
     return True

@@ -1,79 +1,47 @@
-import subprocess
-import json
-import os
+from appsim.utils import read_json_from_device
 
-# 验证任务25: 进入"我的"-"我的订单",找到最新已完成订单,点击进入第一个订单详情页,查看"实付"金额明细
-# 关键验证点:
-# 1. 必须进入全部订单页(my_orders页面)
-# 2. 必须点击页面第一个订单(进入订单详情页)
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_ENTER_ORDERS_PAGE = "enter_orders_page"
+ACTION_NAVIGATE = "navigate"
+PAGE_ORDERS = "orders"
+PAGE_MY_ORDERS = "my_orders"
+PAGE_ORDER_DETAIL = "order_detail"
+ORDER_STATUS_DELIVERED = "已送达"
+
 def validate_task_twenty_three(result=None,device_id=None,backup_dir=None):
-    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
-
-    # 从设备获取文件
-    cmd = ['adb']
-    if device_id:
-        cmd.extend(['-s', device_id])
-    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
-
-    # 读取文件
     try:
-        with open(message_file_path, 'r', encoding='utf-8') as f:
-            all_data = json.load(f)
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
         return False
 
-    # 检查是否有数据
     if not all_data:
         return False
 
-
-    # 检测1: 验证进入全部订单页面(my_orders)
-    enter_orders_page = False
-    for record in all_data:
-        # 支持两种格式：enter_orders_page/orders 或 navigate/my_orders
-        if (record.get('action') == 'enter_orders_page' and record.get('page') == 'orders') or \
-           (record.get('action') == 'navigate' and record.get('page') == 'my_orders'):
-            extra_data = record.get('extra_data', {})
-            # 检查是否显示全部订单(默认或明确指定tab为"全部"或"all")
-            # 支持两个字段名：selected_tab 或 tab
-            tab = extra_data.get('selected_tab') or extra_data.get('tab', '全部')
-            if tab in ['全部', 'all', 'ALL']:
-                enter_orders_page = True
-                break
-
+    enter_orders_page = any(
+        (r.get('action') == ACTION_ENTER_ORDERS_PAGE and r.get('page') == PAGE_ORDERS) or
+        (r.get('action') == ACTION_NAVIGATE and r.get('page') == PAGE_MY_ORDERS)
+        for r in all_data
+        if (r.get('extra_data', {}).get('selected_tab') or r.get('extra_data', {}).get('tab', '全部')) in ['全部', 'all', 'ALL']
+    )
     if not enter_orders_page:
         return False
 
-    # 检测2: 验证点击第一个已送达订单进入订单详情页
-    clicked_first_delivered_order = False
-    for record in all_data:
-        if record.get('action') == 'navigate' and record.get('page') == 'order_detail':
-            extra_data = record.get('extra_data', {})
-            # 验证是否从my_orders页面来的
-            from_page = extra_data.get('from_page', '')
-            # 验证是否是第一个订单(order_index = 0 或 is_first_order = True)
-            order_index = extra_data.get('order_index', -1)
-            is_first_order = extra_data.get('is_first_order', False)
-            # 验证订单状态是否是已送达
-            order_status = extra_data.get('order_status', '')
-
-            if from_page == 'my_orders' and (order_index == 0 or is_first_order) and order_status == '已送达':
-                clicked_first_delivered_order = True
-                break
-
+    clicked_first_delivered_order = any(
+        r.get('action') == ACTION_NAVIGATE and
+        r.get('page') == PAGE_ORDER_DETAIL and
+        r.get('extra_data', {}).get('from_page', '') == PAGE_MY_ORDERS and
+        (r.get('extra_data', {}).get('order_index', -1) == 0 or r.get('extra_data', {}).get('is_first_order', False)) and
+        r.get('extra_data', {}).get('order_status', '') == ORDER_STATUS_DELIVERED
+        for r in all_data
+    )
     if not clicked_first_delivered_order:
         return False
 
-    # 检测3: 验证result中是否包含"33"
     if result is None:
         return False
     final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    if 'final_message' in result and '33' in result['final_message']:
-        return True
-    else:
+    if not isinstance(final_message, str) or '33' not in final_message:
         return False
 
 if __name__ == '__main__':
