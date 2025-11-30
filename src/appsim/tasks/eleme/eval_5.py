@@ -1,33 +1,32 @@
-import subprocess
-import json
-import os
+from appsim.utils import read_json_from_device
+
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_ENTER_ORDERS_PAGE = "enter_orders_page"
+PAGE_ORDERS = "orders"
+EXTRA_DATA_KEY = "extra_data"
+EXTRA_DATA_SELECTED_TAB_KEY = "selected_tab"
+EXTRA_DATA_SELECTED_TAB_VALUE = "全部"
 
 def validate_task_five(result=None,device_id=None,backup_dir=None):
-    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
-
-    cmd = ['adb']
-    if device_id:
-        cmd.extend(['-s', device_id])
-    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
-
     try:
-        with open(message_file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                data = data[-1] if data else {}
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
+        if isinstance(all_data, list):
+            data = all_data[-1] if all_data else {}
+        else:
+            data = all_data
     except:
         return False
 
-    if data.get('action') != 'enter_orders_page':
+    if data.get('action') != ACTION_ENTER_ORDERS_PAGE:
         return False
-    if data.get('page') != 'orders':
+    if data.get('page') != PAGE_ORDERS:
         return False
-    if 'extra_data' not in data:
+    if EXTRA_DATA_KEY not in data:
         return False
-    extra_data = data['extra_data']
+    extra_data = data[EXTRA_DATA_KEY]
     # 【关键】必须选择"全部"标签
-    if extra_data.get('selected_tab') != '全部':
+    if extra_data.get(EXTRA_DATA_SELECTED_TAB_KEY) != EXTRA_DATA_SELECTED_TAB_VALUE:
         return False
     if result is None:
         return False

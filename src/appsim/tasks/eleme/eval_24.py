@@ -1,49 +1,25 @@
-import subprocess
-import json
-import os
+from appsim.utils import read_json_from_device
 
-# 验证任务26: 点击搜索框,在搜索历史页面找到"清除历史"按钮并点击
-# 关键验证点:
-# 1. 必须进入搜索页面(search页面)
-# 2. 必须点击删除历史记录按钮
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_NAVIGATE = "navigate"
+ACTION_CLEAR_SEARCH_HISTORY = "clear_search_history"
+PAGE_SEARCH = "search"
+
 def validate_task_twenty_four(result=None,device_id=None,backup_dir=None):
-    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
-
-    # 从设备获取文件
-    cmd = ['adb']
-    if device_id:
-        cmd.extend(['-s', device_id])
-    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
-
-    # 读取文件
     try:
-        with open(message_file_path, 'r', encoding='utf-8') as f:
-            all_data = json.load(f)
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
         return False
 
-    # 检查是否有数据
     if not all_data:
         return False
 
-    # 检测1: 验证进入搜索页面
-    entered_search = False
-    for record in all_data:
-        if record.get('action') == 'navigate' and record.get('page') == 'search':
-            entered_search = True
-            break
-
+    entered_search = any(r.get('action') == ACTION_NAVIGATE and r.get('page') == PAGE_SEARCH for r in all_data)
     if not entered_search:
         return False
 
-    # 检测2: 验证点击清除历史记录按钮
-    clicked_clear_history = False
-    for record in all_data:
-        if record.get('action') == 'clear_search_history' and record.get('page') == 'search':
-            clicked_clear_history = True
-            break
-
+    clicked_clear_history = any(r.get('action') == ACTION_CLEAR_SEARCH_HISTORY and r.get('page') == PAGE_SEARCH for r in all_data)
     if not clicked_clear_history:
         return False
 

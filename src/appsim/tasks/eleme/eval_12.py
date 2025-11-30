@@ -1,63 +1,28 @@
-import subprocess
-import json
-import os
+from appsim.utils import read_json_from_device
+
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_COMPLETE_ORDER = "complete_order"
+PAGE_CHECKOUT = "checkout"
+SEARCH_QUERY_VALUE = "肯德基"
 
 def validate_task_twelve(result=None,device_id=None,backup_dir=None):
-    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
-
-    # 从设备获取文件
-    cmd = ['adb']
-    if device_id:
-        cmd.extend(['-s', device_id])
-    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
-
-    # 读取文件
     try:
-        with open(message_file_path, 'r', encoding='utf-8') as f:
-            all_data = json.load(f)
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
         return False
 
-    # 从数组中找到最后一个完成订单的记录
     order_record = None
     for record in reversed(all_data):
-        if record.get('action') == 'complete_order':
+        if record.get('action') == ACTION_COMPLETE_ORDER:
             order_record = record
             break
 
-    # 检测1: 验证完成订单操作存在
-    if order_record is None:
+    if order_record is None or order_record.get('page') != PAGE_CHECKOUT:
         return False
 
-    # 检测2: 验证page
-    if order_record.get('page') != 'checkout':
-        return False
-
-    # 检测3: 验证extra_data存在
-    if 'extra_data' not in order_record:
-        return False
-
-    extra_data = order_record['extra_data']
-
-    # 检测4: 【关键】验证搜索了"肯德基"
-    if extra_data.get('search_query') != '肯德基':
-        return False
-
-    # 检测5: 【关键】验证加入了购物车
-    if not extra_data.get('added_to_cart', False):
-        return False
-
-    # 检测6: 【关键】验证使用了优惠券
-    if not extra_data.get('used_coupon', False):
-        return False
-
-    # 检测7: 【关键】验证选择了最大的优惠券
-    if not extra_data.get('selected_max_coupon', False):
-        return False
-
-    # 检测8: 【关键】验证支付成功
-    if not extra_data.get('payment_success', False):
+    extra_data = order_record.get('extra_data', {})
+    if extra_data.get('search_query') != SEARCH_QUERY_VALUE or not extra_data.get('added_to_cart', False) or not extra_data.get('used_coupon', False) or not extra_data.get('selected_max_coupon', False) or not extra_data.get('payment_success', False):
         return False
 
     return True

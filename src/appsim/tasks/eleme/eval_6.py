@@ -1,38 +1,41 @@
-import subprocess
-import json
-import os
+from appsim.utils import read_json_from_device
+
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_FILTER = "filter"
+PAGE_SEARCH_RESULT = "search_result"
+EXTRA_DATA_KEY = "extra_data"
+KEYWORD_KEY = "keyword"
+KEYWORD_VALUE = "烤鸡"
+PRICE_MIN_KEY = "price_min"
+PRICE_MIN_VALUE = 0
+PRICE_MAX_KEY = "price_max"
+PRICE_MAX_VALUE = 30
 
 def validate_task_six(result=None,device_id=None,backup_dir=None):
-    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
-
-    cmd = ['adb']
-    if device_id:
-        cmd.extend(['-s', device_id])
-    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
-
     try:
-        with open(message_file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                data = data[-1] if data else {}
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
+        if isinstance(all_data, list):
+            data = all_data[-1] if all_data else {}
+        else:
+            data = all_data
     except:
         return False
 
-    if data.get('action') != 'filter':
+    if data.get('action') != ACTION_FILTER:
         return False
-    if data.get('page') != 'search_result':
+    if data.get('page') != PAGE_SEARCH_RESULT:
         return False
-    if 'extra_data' not in data:
+    if EXTRA_DATA_KEY not in data:
         return False
-    extra_data = data['extra_data']
+    extra_data = data[EXTRA_DATA_KEY]
     # 【关键】搜索关键词必须是"烤鸡"
-    if extra_data.get('keyword') != '烤鸡':
+    if extra_data.get(KEYWORD_KEY) != KEYWORD_VALUE:
         return False
     # 【关键】价格区间必须是0-30
-    if extra_data.get('price_min') != 0:
+    if extra_data.get(PRICE_MIN_KEY) != PRICE_MIN_VALUE:
         return False
-    if extra_data.get('price_max') != 30:
+    if extra_data.get(PRICE_MAX_KEY) != PRICE_MAX_VALUE:
         return False
     return True
 
