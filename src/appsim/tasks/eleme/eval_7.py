@@ -1,39 +1,22 @@
-import subprocess
-import json
-import os
+from appsim.utils import read_json_from_device
+
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_CANCEL_ORDER = "cancel_order"
+PAGE_ORDER = "order"
+ORDER_STATUS_VALUE = "待接单"
 
 def validate_task_seven(result=None,device_id=None,backup_dir=None):
-    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
-
-    cmd = ['adb']
-    if device_id:
-        cmd.extend(['-s', device_id])
-    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
-
     try:
-        with open(message_file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                data = data[-1] if data else {}
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
+        data = all_data[-1] if isinstance(all_data, list) and all_data else all_data
     except:
         return False
 
-    if data.get('action') != 'cancel_order':
+    if data.get('action') != ACTION_CANCEL_ORDER or data.get('page') != PAGE_ORDER:
         return False
-    if data.get('page') != 'order':
-        return False
-    if 'extra_data' not in data:
-        return False
-    extra_data = data['extra_data']
-    # 【关键】订单状态必须是"待接单"
-    if extra_data.get('order_status') != '待接单':
-        return False
-    # 【关键】必须选择取消原因
-    if not extra_data.get('cancel_reason'):
-        return False
-    # 【关键】必须显示弹窗
-    if not extra_data.get('show_dialog', True):
+    extra_data = data.get('extra_data', {})
+    if extra_data.get('order_status') != ORDER_STATUS_VALUE or not extra_data.get('cancel_reason') or not extra_data.get('show_dialog', True):
         return False
     return True
 

@@ -1,28 +1,24 @@
-import subprocess
-import json
-import os
+from appsim.utils import read_json_from_device
+
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_ENTER_ADDRESSES_PAGE = "enter_addresses_page"
+PAGE_ADDRESSES = "addresses"
 
 def validate_task_four(result=None,device_id=None,backup_dir=None):
-    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
-
-    cmd = ['adb']
-    if device_id:
-        cmd.extend(['-s', device_id])
-    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
-
     try:
-        with open(message_file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                data = data[-1] if data else {}
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
+        if isinstance(all_data, list):
+            data = all_data[-1] if all_data else {}
+        else:
+            data = all_data
     except:
         return False
 
-    if data.get('action') != 'enter_addresses_page':
+    if data.get('action') != ACTION_ENTER_ADDRESSES_PAGE:
         return False
     # 【关键】必须进入地址页面
-    if data.get('page') != 'addresses':
+    if data.get('page') != PAGE_ADDRESSES:
         return False
     if result is None:
         return False

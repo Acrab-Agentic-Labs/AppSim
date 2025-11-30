@@ -1,98 +1,45 @@
-import subprocess
-import json
-import os
+from appsim.utils import read_json_from_device
+
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_APPLY_FILTER = "apply_filter"
+ACTION_COMPLETE_ORDER = "complete_order"
+PAGE_TAKEOUT = "takeout"
+PAGE_CHECKOUT = "checkout"
+FILTER_CROSS_DAY = "跨天预订"
+DELIVERY_TYPE_SCHEDULED = "scheduled"
+DELIVERY_DATE_TOMORROW = "明日"
+NOON_HOUR_MIN = 11
+NOON_HOUR_MAX = 13
 
 def validate_task_eighteen(result=None,device_id=None,backup_dir=None):
-    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
-
-    # 从设备获取文件
-    cmd = ['adb']
-    if device_id:
-        cmd.extend(['-s', device_id])
-    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
-
-    # 读取文件
     try:
-        with open(message_file_path, 'r', encoding='utf-8') as f:
-            all_data = json.load(f)
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
-        all_data = []
-
-    # 检测1: 查找筛选记录，验证选择了跨天预定
-    filter_record = None
-    for record in reversed(all_data):
-        if record.get('action') == 'apply_filter':
-            filter_record = record
-            break
-
-    if filter_record is None:
         return False
 
-    # 检测2: 验证筛选页面是外卖页面
-    if filter_record.get('page') != 'takeout':
+    filter_record = next((r for r in reversed(all_data) if r.get('action') == ACTION_APPLY_FILTER), None)
+    if filter_record is None or filter_record.get('page') != PAGE_TAKEOUT:
+        return False
+    if FILTER_CROSS_DAY not in filter_record.get('extra_data', {}).get('filters', []):
         return False
 
-    # 检测3: 验证筛选选项中包含跨天预定
-    if 'extra_data' not in filter_record:
+    order_record = next((r for r in reversed(all_data) if r.get('action') == ACTION_COMPLETE_ORDER), None)
+    if order_record is None or order_record.get('page') != PAGE_CHECKOUT:
         return False
 
-    filter_extra = filter_record['extra_data']
-    filters = filter_extra.get('filters', [])
-
-    # 检查是否选择了跨天预定
-    if '跨天预订' not in filters:
+    extra_data = order_record.get('extra_data', {})
+    if extra_data.get('from_page') != PAGE_TAKEOUT or not extra_data.get('payment_success', False):
+        return False
+    if extra_data.get('delivery_type') != DELIVERY_TYPE_SCHEDULED or extra_data.get('delivery_date') != DELIVERY_DATE_TOMORROW:
         return False
 
-    # 检测4: 从数组中找到最后一个完成订单的记录
-    order_record = None
-    for record in reversed(all_data):
-        if record.get('action') == 'complete_order':
-            order_record = record
-            break
-
-    # 检测5: 验证完成订单操作存在
-    if order_record is None:
-        return False
-
-    # 检测6: 验证page
-    if order_record.get('page') != 'checkout':
-        return False
-
-    # 检测7: 验证extra_data存在
-    if 'extra_data' not in order_record:
-        return False
-
-    extra_data = order_record['extra_data']
-
-    # 检测8: 【关键】验证来自外卖页面
-    if extra_data.get('from_page') != 'takeout':
-        return False
-
-    # 检测9: 【关键】验证支付成功
-    if not extra_data.get('payment_success', False):
-        return False
-
-    # 检测10: 【关键】验证选择了预约配送
-    if extra_data.get('delivery_type') != 'scheduled':
-        return False
-
-    # 检测11: 【关键】验证选择了明日
-    if extra_data.get('delivery_date') != '明日':
-        return False
-
-    # 检测12: 验证选择了时间段（中午时间段应该是11:xx-13:xx之间）
     delivery_time_slot = extra_data.get('delivery_time_slot', '')
     if not delivery_time_slot:
         return False
-
-    # 验证时间段是否在中午范围（11:00-13:00）
-    # 时间段格式如 "11:30-11:50"
     try:
-        start_time = delivery_time_slot.split('-')[0]
-        hour = int(start_time.split(':')[0])
-        # 中午时间段应该在11点到13点之间
-        if hour < 11 or hour >= 13:
+        hour = int(delivery_time_slot.split('-')[0].split(':')[0])
+        if hour < NOON_HOUR_MIN or hour >= NOON_HOUR_MAX:
             return False
     except:
         return False

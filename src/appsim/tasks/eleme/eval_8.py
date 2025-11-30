@@ -1,39 +1,22 @@
-import subprocess
-import json
-import os
+from appsim.utils import read_json_from_device
+
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_CHANGE_SETTING = "change_setting"
+PAGE_SETTINGS = "settings"
+SETTING_TYPE_VALUE = "免密支付"
 
 def validate_task_eight(result=None,device_id=None,backup_dir=None):
-    message_file_path = os.path.join(backup_dir, 'messages.json') if backup_dir else 'messages.json'
-
-    cmd = ['adb']
-    if device_id:
-        cmd.extend(['-s', device_id])
-    cmd.extend(['exec-out', 'run-as', 'com.example.myele', 'cat', 'files/messages.json'])
-    subprocess.run(cmd, stdout=open(message_file_path, 'w'))
-
     try:
-        with open(message_file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                data = data[-1] if data else {}
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
+        data = all_data[-1] if isinstance(all_data, list) and all_data else all_data
     except:
         return False
 
-    if data.get('action') != 'change_setting':
+    if data.get('action') != ACTION_CHANGE_SETTING or data.get('page') != PAGE_SETTINGS:
         return False
-    if data.get('page') != 'settings':
-        return False
-    if 'extra_data' not in data:
-        return False
-    extra_data = data['extra_data']
-    # 【关键】设置类型必须是"免密支付"
-    if extra_data.get('setting_type') != '免密支付':
-        return False
-    # 【关键】必须开启
-    if not extra_data.get('enabled', False):
-        return False
-    # 【关键】必须显示弹窗
-    if not extra_data.get('show_dialog', False):
+    extra_data = data.get('extra_data', {})
+    if extra_data.get('setting_type') != SETTING_TYPE_VALUE or not extra_data.get('enabled', False) or not extra_data.get('show_dialog', False):
         return False
     return True
 
