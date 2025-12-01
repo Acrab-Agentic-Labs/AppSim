@@ -1,14 +1,10 @@
+# eval_18.py
 import json
 import os
 import subprocess
 
 
 def publish_and_self_interact_check(result=None, device_id=None, backup_dir=None):
-    """
-    检查用户是否发布了指定笔记并对其进行点赞和收藏
-    任务18: 点击底部栏的"+"号，点击添加图片，并输入文字"今天也要加油呀"，
-           进入下一步，添加标题为"今日分享"，笔记设为"公开可见"，最后发布笔记并对这篇笔记进行点赞、收藏
-    """
     _USER_ID = "user_current"
     _NOTE_TITLE = "今日分享"
 
@@ -46,38 +42,33 @@ def publish_and_self_interact_check(result=None, device_id=None, backup_dir=None
             likes_data = json.load(f)
         with open(collections_file_path, "r", encoding="utf-8") as f:
             collections_data = json.load(f)
-    except:
+    except (FileNotFoundError, json.JSONDecodeError):
         return False
 
-    # 检查笔记发布和互动
-    try:
-        # 查找用户发布的匹配笔记
-        user_notes = [item for item in browsing_data if item.get("noteAuthor", {}).get("id") == _USER_ID and item.get("noteTitle") == _NOTE_TITLE]
+    # 查找用户发布的匹配笔记
+    user_notes = [item for item in browsing_data if item.get("noteAuthor", {}).get("id") == _USER_ID and item.get("noteTitle") == _NOTE_TITLE]
 
-        if not user_notes:
-            return False
+    if not user_notes:
+        return False
 
-        # 获取最新匹配的笔记
-        target_note = user_notes[-1]
-        note_id = target_note.get("noteId")
+    # 获取最新匹配的笔记
+    target_note = user_notes[-1]
+    note_id = target_note.get("noteId")
 
-        # 检查是否点赞
-        has_liked = any(
-            like.get("userId") == _USER_ID and like.get("targetId") == note_id and like.get("targetType") == "NOTE"
-            for like in likes_data
-        )
+    # 检查是否点赞
+    has_liked = any(
+        like.get("userId") == _USER_ID and like.get("targetId") == note_id and like.get("targetType") == "NOTE"
+        for like in likes_data
+    )
 
-        # 检查是否收藏
-        has_collected = any(
-            col.get("userId") == _USER_ID and col.get("noteId") == note_id for col in collections_data
-        )
+    # 检查是否收藏
+    has_collected = any(
+        col.get("userId") == _USER_ID and col.get("noteId") == note_id for col in collections_data
+    )
 
-        if has_liked and has_collected:
-            return True
-        else:
-            return False
-
-    except:
+    if has_liked and has_collected:
+        return True
+    else:
         return False
 
 

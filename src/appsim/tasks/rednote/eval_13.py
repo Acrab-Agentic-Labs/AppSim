@@ -1,3 +1,4 @@
+# eval_13.py
 import json
 import os
 import subprocess
@@ -5,17 +6,13 @@ from io import StringIO
 
 
 def share_note_check(result=None, device_id=None, backup_dir=None):
-    """
-    检查用户是否分享了首页第一篇笔记
-    任务13: 在首页第一篇笔记详情页点击右上角"分享"按钮
-    """
-    # 使用StringIO捕获输出，避免修改全局stdout
     output_buffer = StringIO()
     _USER_ID = "user_current"
     _NOTE_ID = "note_001"
-    # 从设备获取分享记录
-    message_file_path = os.path.join(backup_dir, "shares.json") if backup_dir else "shares.json"
+
     try:
+        # 从设备获取分享记录
+        message_file_path = os.path.join(backup_dir, "shares.json") if backup_dir else "shares.json"
         cmd = ["adb"]
         if device_id:
             cmd.extend(["-s", device_id])
@@ -23,14 +20,13 @@ def share_note_check(result=None, device_id=None, backup_dir=None):
         with open(message_file_path, "w") as f:
             subprocess.run(cmd, stdout=f)
 
-        with open(message_file_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        try:
+            with open(message_file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            return False
 
-        # 检查分享记录
         if not data or len(data) == 0:
-            print(" Shares list is empty")
-            print("   Reason: No share records found")
-            print(f"   Expected: At least one share record for user '{_USER_ID}'")
             return False
 
         # 查找用户的分享记录
@@ -40,25 +36,12 @@ def share_note_check(result=None, device_id=None, backup_dir=None):
         if user_shares:
             # 按时间排序，获取最新的分享
             latest_share = sorted(user_shares, key=lambda x: x.get("sharedAt", ""), reverse=True)[0]
-            shared__NOTE_ID = latest_share.get("noteId", "Unknown")
-            shared_at = latest_share.get("sharedAt", "Unknown")
-            if shared__NOTE_ID == _NOTE_ID:
-                print("Successfully shared a note")
-                print(f"   Note ID: {shared__NOTE_ID}")
-                print(f"   Shared at: {shared_at}")
+            shared_note_id = latest_share.get("noteId", "Unknown")
+            if shared_note_id == _NOTE_ID:
                 return True
             else:
                 return False
 
-        print(" No share records for user")
-        print(f"   Reason: User '{_USER_ID}' has not shared any notes")
-        print("   Expected: At least one share record")
-        print(f"   Total share records in system: {len(data)}")
-        return False
-
-    except Exception as e:
-        print(" Error while checking share records")
-        print(f"   Reason: {e}")
         return False
 
     finally:

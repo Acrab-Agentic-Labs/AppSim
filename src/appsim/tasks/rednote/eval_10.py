@@ -1,13 +1,10 @@
+# eval_10.py
 import json
 import os
 import subprocess
 
 
 def set_password_check(result=None, device_id=None, backup_dir=None):
-    """
-    检查用户是否设置了登录密码
-    任务10: 在"我"打开编辑资料右侧的设置按钮，找到"账号与安全"选项，设置登录密码为123456
-    """
     _USER_ID = "user_current"
     _EXPECTED_PASSWORD = "123456"
 
@@ -25,28 +22,23 @@ def set_password_check(result=None, device_id=None, backup_dir=None):
     try:
         with open(message_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-    except:
+    except (FileNotFoundError, json.JSONDecodeError):
         return False
 
-    # 检查密码设置
-    try:
-        if not data or len(data) == 0:
-            return False
-
-        # 查找当前用户
-        for user in data:
-            if user.get("id") == _USER_ID:
-                # 检查是否设置了密码（简化处理：检查password字段）
-                password = user.get("password", "")
-                if password == _EXPECTED_PASSWORD:
-                    return True
-                else:
-                    return False
-
+    if not data or len(data) == 0:
         return False
 
-    except:
-        return False
+    # 查找当前用户
+    for user in data:
+        if user.get("id") == _USER_ID:
+            # 检查是否设置了密码（简化处理：检查password字段）
+            password = user.get("password", "")
+            if password == _EXPECTED_PASSWORD:
+                return True
+            else:
+                return False
+
+    return False
 
 
 if __name__ == "__main__":

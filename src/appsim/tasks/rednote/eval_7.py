@@ -1,3 +1,4 @@
+# eval_7.py
 import json
 import os
 import subprocess
@@ -18,23 +19,19 @@ def browsing_history_check(result=None, device_id=None, backup_dir=None):
     try:
         with open(message_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-    except:
+    except (FileNotFoundError, json.JSONDecodeError):
         return False
 
-    # 检查最后一条浏览历史数据
-    try:
-        # 获取最后一条数据
-        last_item = data[-1]
+    # 获取最后一条数据
+    last_item = data[-1]
 
-        # 检查 noteAuthor.id 和 noteTitle
-        if (
-                last_item.get("noteAuthor", {}).get("id") == "user_002"
-                and last_item.get("noteTitle") == "秋冬穿搭指南 | 温暖又时尚的搭配技巧"
-        ):
-            return True
-        else:
-            return False
-    except:
+    # 检查 noteAuthor.id 和 noteTitle
+    if (
+            last_item.get("noteAuthor", {}).get("id") == "user_002"
+            and last_item.get("noteTitle") == "秋冬穿搭指南 | 温暖又时尚的搭配技巧"
+    ):
+        return True
+    else:
         return False
 
 
