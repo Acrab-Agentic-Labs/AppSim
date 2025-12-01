@@ -1,5 +1,5 @@
 """
-任务17：漫游播放并设置播放场景为"伪感"
+任务17：漫游播放并设置播放场景为"欢快"
 难度：中
 """
 
@@ -7,12 +7,12 @@ import logging
 import sys
 from .verification_functions import read_json_from_device
 
-SCENE_NAME = "伪感"
+SCENE_NAME = "欢快"
 
 def check_stroll_scene_is_set(result=None, device_id=None, backup_dir=None):
     """
-    任务17: 验证漫游播放场景是否已设置为'伪感'
-    - 检查 player_settings.json 中 strollMode.scene 是否为 '伪感'
+    任务17: 验证漫游播放场景是否已设置为'欢快'
+    - 检查 player_settings.json 中 strollMode.scene 是否为 '欢快'
     """
     data = read_json_from_device("autotest/player_settings.json", device_id, result, backup_dir=backup_dir)
 
