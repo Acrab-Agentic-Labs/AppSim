@@ -1,13 +1,10 @@
+# eval_16.py
 import json
 import os
 import subprocess
 
 
 def browse_and_interact_check(result=None, device_id=None, backup_dir=None):
-    """
-    检查用户是否浏览了首页前N篇笔记并进行了点赞、收藏和评论
-    任务16: 进入首页，浏览前2篇推荐笔记点击进入笔记详情，对笔记进行点赞、收藏、发送评论"很精彩"
-    """
     _USER_ID = "user_current"
     _VIEW_COUNT = 2
     _COMMENT_CONTENT = "很精彩"
@@ -57,53 +54,48 @@ def browse_and_interact_check(result=None, device_id=None, backup_dir=None):
             collections_data = json.load(f)
         with open(comments_file_path, "r", encoding="utf-8") as f:
             comments_data = json.load(f)
-    except:
+    except (FileNotFoundError, json.JSONDecodeError):
         return False
 
-    # 检查浏览、点赞、收藏和评论
-    try:
-        # 获取用户从首页浏览的笔记
-        home_browsing = [
-            item for item in browsing_data if item.get("userId") == _USER_ID and item.get("sourceType") == "HOME_FEED"
-        ]
+    # 获取用户从首页浏览的笔记
+    home_browsing = [
+        item for item in browsing_data if item.get("userId") == _USER_ID and item.get("sourceType") == "HOME_FEED"
+    ]
 
-        if len(home_browsing) < _VIEW_COUNT:
-            return False
+    if len(home_browsing) < _VIEW_COUNT:
+        return False
 
-        # 获取最近浏览的N篇笔记
-        recent_browsing = sorted(home_browsing, key=lambda x: x.get("browsedAt", ""), reverse=True)[:_VIEW_COUNT]
-        note_ids = [item.get("noteId") for item in recent_browsing]
+    # 获取最近浏览的N篇笔记
+    recent_browsing = sorted(home_browsing, key=lambda x: x.get("browsedAt", ""), reverse=True)[:_VIEW_COUNT]
+    note_ids = [item.get("noteId") for item in recent_browsing]
 
-        # 检查这些笔记是否都被点赞、收藏和评论
-        success_count = 0
-        for note_id in note_ids:
-            has_liked = any(
-                like.get("userId") == _USER_ID
-                and like.get("targetId") == note_id
-                and like.get("targetType") == "NOTE"
-                for like in likes_data
-            )
+    # 检查这些笔记是否都被点赞、收藏和评论
+    success_count = 0
+    for note_id in note_ids:
+        has_liked = any(
+            like.get("userId") == _USER_ID
+            and like.get("targetId") == note_id
+            and like.get("targetType") == "NOTE"
+            for like in likes_data
+        )
 
-            has_collected = any(
-                col.get("userId") == _USER_ID and col.get("noteId") == note_id for col in collections_data
-            )
+        has_collected = any(
+            col.get("userId") == _USER_ID and col.get("noteId") == note_id for col in collections_data
+        )
 
-            has_commented = any(
-                comment.get("author", {}).get("id") == _USER_ID
-                and comment.get("noteId") == note_id
-                and comment.get("content") == _COMMENT_CONTENT
-                for comment in comments_data
-            )
+        has_commented = any(
+            comment.get("author", {}).get("id") == _USER_ID
+            and comment.get("noteId") == note_id
+            and comment.get("content") == _COMMENT_CONTENT
+            for comment in comments_data
+        )
 
-            if has_liked and has_collected and has_commented:
-                success_count += 1
+        if has_liked and has_collected and has_commented:
+            success_count += 1
 
-        if success_count >= _VIEW_COUNT:
-            return True
-        else:
-            return False
-
-    except:
+    if success_count >= _VIEW_COUNT:
+        return True
+    else:
         return False
 
 

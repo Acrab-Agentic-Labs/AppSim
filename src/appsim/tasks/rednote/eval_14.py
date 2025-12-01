@@ -1,14 +1,10 @@
+# eval_14.py
 import json
 import os
 import subprocess
 
 
 def send_message_check(result=None, device_id=None, backup_dir=None):
-    """
-    检查最后一条消息是否符合条件：
-    - content = "催更"
-    - receiver.id = "user_002"
-    """
     # 从设备获取消息记录
     message_file_path = os.path.join(backup_dir, "messages.json") if backup_dir is not None else "messages.json"
     cmd = ["adb"]
@@ -23,27 +19,22 @@ def send_message_check(result=None, device_id=None, backup_dir=None):
     try:
         with open(message_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-    except:
+    except (FileNotFoundError, json.JSONDecodeError):
         return False
 
-    # 检查最后一条消息
-    try:
-        if not data or len(data) == 0:
-            return False
+    if not data or len(data) == 0:
+        return False
 
-        # 获取最后一条消息
-        last_message = data[-1]
+    # 获取最后一条消息
+    last_message = data[-1]
 
-        # 检查 content 和 receiver.id
-        content = last_message.get("content", "")
-        receiver_id = last_message.get("receiver", {}).get("id", "")
+    # 检查 content 和 receiver.id
+    content = last_message.get("content", "")
+    receiver_id = last_message.get("receiver", {}).get("id", "")
 
-        if content == "催更" and receiver_id == "user_002":
-            return True
-        else:
-            return False
-
-    except:
+    if content == "催更" and receiver_id == "user_002":
+        return True
+    else:
         return False
 
 

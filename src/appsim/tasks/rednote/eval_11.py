@@ -1,13 +1,10 @@
+# eval_11.py
 import json
 import os
 import subprocess
 
 
 def change_nickname_check(result=None, device_id=None, backup_dir=None):
-    """
-    检查用户是否修改了昵称
-    任务11: 在"我"打开"编辑资料"，修改自己的名字为"111"
-    """
     _USER_ID = "user_current"
     _EXPECTED_NICKNAME = "111"
 
@@ -25,28 +22,23 @@ def change_nickname_check(result=None, device_id=None, backup_dir=None):
     try:
         with open(message_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-    except:
+    except (FileNotFoundError, json.JSONDecodeError):
         return False
 
-    # 检查昵称修改
-    try:
-        if not data or len(data) == 0:
-            return False
-
-        # 查找当前用户
-        for user in data:
-            if user.get("id") == _USER_ID:
-                # 检查昵称是否已修改
-                nickname = user.get("nickname", "")
-                if nickname == _EXPECTED_NICKNAME:
-                    return True
-                else:
-                    return False
-
+    if not data or len(data) == 0:
         return False
 
-    except:
-        return False
+    # 查找当前用户
+    for user in data:
+        if user.get("id") == _USER_ID:
+            # 检查昵称是否已修改
+            nickname = user.get("nickname", "")
+            if nickname == _EXPECTED_NICKNAME:
+                return True
+            else:
+                return False
+
+    return False
 
 
 if __name__ == "__main__":

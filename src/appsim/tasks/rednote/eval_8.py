@@ -1,13 +1,10 @@
+# eval_8.py
 import json
 import os
 import subprocess
 
 
 def dislike_note_check(result=None, device_id=None, backup_dir=None):
-    """
-    检查用户是否对首页指定位置的笔记点击了"不喜欢"
-    任务8: 对首页第二篇笔记进入详情，点击右上角的图标，选择"不喜欢"
-    """
     _USER_ID = "user_current"
     _NOTE_ID = "note_002"
 
@@ -25,25 +22,20 @@ def dislike_note_check(result=None, device_id=None, backup_dir=None):
     try:
         with open(message_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-    except:
+    except (FileNotFoundError, json.JSONDecodeError):
         return False
 
-    # 检查不喜欢记录
-    try:
-        if not data or len(data) == 0:
-            return False
-
-        # 查找用户的不喜欢记录
-        user_dislikes = [item for item in data if item.get("userId") == _USER_ID and item.get("noteId")== _NOTE_ID]
-
-        # 检查是否有最新的不喜欢记录
-        if user_dislikes:
-            return True
-
+    if not data or len(data) == 0:
         return False
 
-    except:
-        return False
+    # 查找用户的不喜欢记录
+    user_dislikes = [item for item in data if item.get("userId") == _USER_ID and item.get("noteId")== _NOTE_ID]
+
+    # 检查是否有最新的不喜欢记录
+    if user_dislikes:
+        return True
+
+    return False
 
 
 if __name__ == "__main__":
