@@ -4,7 +4,7 @@ import subprocess
 
 
 def validate_task_thirty(result=None, device_id=None, backup_dir=None):
-    """验证任务三十：进入Apple产品京东自营旗舰店选择价格最高的商品规格加入购物车并结算，选择赵六的地址。"""
+    """验证任务三十：进入Apple官方旗舰店选择价格最高的商品规格加入购物车并结算，选择赵六的地址。"""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
     cmd = ["adb"]

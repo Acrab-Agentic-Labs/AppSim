@@ -4,7 +4,7 @@ import subprocess
 
 
 def validate_task_seven(result=None, device_id=None, backup_dir=None):
-    """验证任务七：给Apple产品京东自营旗舰店发消息问手机什么时候发货"""
+    """验证任务七：给Apple官方旗舰店发消息问手机什么时候发货"""
     new_messages_file_path = os.path.join(backup_dir, "new_messages.json") if backup_dir else "new_messages.json"
 
     cmd = ["adb"]

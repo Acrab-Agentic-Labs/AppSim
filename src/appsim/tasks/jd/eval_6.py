@@ -4,7 +4,7 @@ import subprocess
 
 
 def validate_task_six(result=None, device_id=None, backup_dir=None):
-    """验证任务六：结算我的第一个待付款订单"""
+    """验证任务六：结算我的第一个待付款订单后再确认收货。"""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
     cmd = ["adb"]
@@ -19,12 +19,13 @@ def validate_task_six(result=None, device_id=None, backup_dir=None):
     except:
         return False
 
-    # 检查第一个订单的状态
-    if orders_data:
-        first_order = orders_data[0]
-        if first_order.get("id") == "order_008" and first_order.get("status") in ["PENDING_SHIPMENT", "PENDING_RECEIPT"]:
-            return True
+    # 检查订单 order_008 的状态，即第一个待付款订单
+    for order in orders_data:
+        if order.get("id") == "order_008":
+            # 判断该订单的状态是否为 "PENDING_SHIPMENT"（待发货）
+            return order.get("status") == "PENDING_SHIPMENT"
 
+    # 如果没有找到 order_008 订单，返回 False
     return False
 
 
