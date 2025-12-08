@@ -1,6 +1,3 @@
-import json
-import os
-import subprocess
 
 def validate_task_thirty_three(result=None, device_id=None, backup_dir=None):
     """ 验证任务三十三：比较Apple官方旗舰店和华为官方旗舰店的粉丝数，告诉我粉丝量更高的店铺名。 """

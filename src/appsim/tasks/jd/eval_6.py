@@ -10,7 +10,7 @@ def validate_task_six(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/orders.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/orders.json"])
     subprocess.run(cmd, stdout=open(orders_file_path, "w"))
 
     try:
@@ -22,7 +22,7 @@ def validate_task_six(result=None, device_id=None, backup_dir=None):
     # 检查订单 order_008 的状态，即第一个待付款订单
     for order in orders_data:
         if order.get("id") == "order_008":
-            # 判断该订单的状态是否为 "PENDING_SHIPMENT"（待发货）
+            # 判断该订单的状态是否为 "PENDING_SHIPMENT"（待使用）
             return order.get("status") == "PENDING_SHIPMENT"
 
     # 如果没有找到 order_008 订单，返回 False

@@ -13,14 +13,14 @@ def validate_task_three(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/orders.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/orders.json"])
     subprocess.run(cmd, stdout=open(orders_file_path, "w"))
 
     # Pull running_status.log
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/running_status.log"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/running_status.log"])
     subprocess.run(cmd, stdout=open(log_file_path, "w"))
 
     try:

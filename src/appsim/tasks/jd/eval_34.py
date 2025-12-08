@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 
+
 def validate_task_thirty_four(result=None, device_id=None, backup_dir=None):
     """ 验证任务三十四：将陈七地址详情中的电话号码改成18972746987。 """
 
@@ -11,7 +12,7 @@ def validate_task_thirty_four(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/addresses.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/addresses.json"])
 
     try:
         with open(addresses_file_path, "w", encoding="utf-8") as f:

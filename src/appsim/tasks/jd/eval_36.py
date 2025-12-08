@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 
+
 def validate_task_thirty_six(result=None, device_id=None, backup_dir=None):
     """ 验证任务三十六：将首页所有华为手机商品的最小的内存版本加入购物车。 """
     cart_items_file_path = os.path.join(backup_dir, "cart_items.json") if backup_dir else "cart_items.json"
@@ -10,7 +11,7 @@ def validate_task_thirty_six(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/cart_items.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/cart_items.json"])
 
     try:
         with open(cart_items_file_path, "w", encoding="utf-8") as f:

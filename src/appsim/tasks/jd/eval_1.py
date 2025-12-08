@@ -10,7 +10,7 @@ def validate_task_one(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/task_one_logs.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/task_one_logs.json"])
     subprocess.run(cmd, stdout=open(task_one_logs_file_path, "w"))
 
     try:
@@ -34,7 +34,7 @@ def validate_task_one(result=None, device_id=None, backup_dir=None):
         return False
 
     # 检查查看的商品名称是否为iPhone 15 Pro Max 256GB
-    if details.get("viewedProductName") != "iPhone 15 Pro Max 256GB":
+    if details.get("viewedProductName") != "iPhone 15":
         return False
 
     return True

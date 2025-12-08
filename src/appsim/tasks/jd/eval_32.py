@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 
+
 def validate_task_thirty_two(result=None, device_id=None, backup_dir=None):
     """ 验证任务三十二：找到首页中价格最低的手机，选择其最便宜的规格购买。 """
 
@@ -11,7 +12,7 @@ def validate_task_thirty_two(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/orders.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/orders.json"])
 
     try:
         with open(orders_file_path, "w", encoding="utf-8") as f:
