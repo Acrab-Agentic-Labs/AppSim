@@ -5,13 +5,13 @@ import subprocess
 
 
 def validate_task_twenty_five(result=None, device_id=None, backup_dir=None):
-    """验证任务二十五：统计首页前10个商品中不是手机商品的平均评分,保留2位小数。"""
+    """验证任务：统计首页前10个商品中不是手机商品的平均评分,保留2位小数。"""
     json_path = os.path.join(backup_dir, "products.json") if backup_dir else "products.json"
 
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/products.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/products.json"])
 
     try:
         with open(json_path, "w", encoding="utf-8") as f:

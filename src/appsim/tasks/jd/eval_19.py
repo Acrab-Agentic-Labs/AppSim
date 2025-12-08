@@ -10,7 +10,7 @@ def validate_task_nineteen(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/addresses.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/addresses.json"])
     subprocess.run(cmd, stdout=open(addresses_file_path, "w"))
 
     try:

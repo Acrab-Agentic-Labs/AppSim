@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 
+
 def validate_task_thirty_seven(result=None, device_id=None, backup_dir=None):
     """ 验证任务三十七：购买首页华为商品中买家评价最多的商品。 """
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
@@ -10,7 +11,7 @@ def validate_task_thirty_seven(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/orders.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/orders.json"])
 
     try:
         with open(orders_file_path, "w", encoding="utf-8") as f:

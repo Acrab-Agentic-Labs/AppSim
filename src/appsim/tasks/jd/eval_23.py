@@ -5,13 +5,13 @@ import subprocess
 
 
 def validate_task_twenty_three(result=None, device_id=None, backup_dir=None):
-    """验证任务二十三：计算Apple产品京东自营旗舰店评分大于4.7的商品的平均价格，保留一位小数。"""
+    """验证任务二十三：计算Apple官方旗舰店评分大于4.7的商品的平均价格，保留一位小数。"""
     json_path = os.path.join(backup_dir, "shop_data.json") if backup_dir else "shop_data.json"
 
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.MyJD", "cat", "files/persistent_data/shop_data.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/shop_data.json"])
 
     try:
         with open(json_path, "w", encoding="utf-8") as f:
@@ -55,3 +55,4 @@ def validate_task_twenty_three(result=None, device_id=None, backup_dir=None):
 
 if __name__ == "__main__":
     pass
+ 
