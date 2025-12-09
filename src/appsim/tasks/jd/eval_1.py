@@ -34,7 +34,7 @@ def validate_task_one(result=None, device_id=None, backup_dir=None):
         return False
 
     # 检查查看的商品名称是否为iPhone 15 Pro Max 256GB
-    if details.get("viewedProductName") != "iPhone 15":
+    if details.get("viewedProductName") != "Apple iPhone 15 (A3092) 128GB 蓝色 支持移动联通电信5G 双卡双待手机":
         return False
 
     return True
