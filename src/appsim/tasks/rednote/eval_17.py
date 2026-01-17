@@ -14,7 +14,7 @@ def search_result_count_check(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/search_history.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.rednote_sim", "cat", "files/search_history.json"])
     with open(search_file_path, "w") as f:
         subprocess.run(cmd, stdout=f)
 
@@ -23,7 +23,7 @@ def search_result_count_check(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.rednote_sim", "cat", "files/browsing_history.json"])
     with open(browsing_file_path, "w") as f:
         subprocess.run(cmd, stdout=f)
 
