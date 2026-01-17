@@ -10,7 +10,7 @@ def note_interaction_check(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.rednote_sim", "cat", "files/browsing_history.json"])
     with open(browsing_file_path, "w") as f:
         subprocess.run(cmd, stdout=f)
 
@@ -35,7 +35,7 @@ def note_interaction_check(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/likes.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.rednote_sim", "cat", "files/likes.json"])
     with open(likes_file_path, "w") as f:
         subprocess.run(cmd, stdout=f)
 
@@ -59,7 +59,7 @@ def note_interaction_check(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/comments.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.rednote_sim", "cat", "files/comments.json"])
     with open(comments_file_path, "w") as f:
         subprocess.run(cmd, stdout=f)
 

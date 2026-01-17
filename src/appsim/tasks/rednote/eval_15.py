@@ -12,7 +12,7 @@ def like_comment_check(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/likes.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.rednote_sim", "cat", "files/likes.json"])
 
     # 将数据写入备份文件
     with open(message_file_path, "w") as f:

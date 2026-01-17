@@ -14,7 +14,7 @@ def view_and_comment_notes_check(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.rednote_sim", "cat", "files/browsing_history.json"])
 
     try:
         with open(browsing_file_path, "w") as f:
@@ -44,7 +44,7 @@ def view_and_comment_notes_check(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/comments.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.rednote_sim", "cat", "files/comments.json"])
 
     try:
         with open(comments_file_path, "w") as f:

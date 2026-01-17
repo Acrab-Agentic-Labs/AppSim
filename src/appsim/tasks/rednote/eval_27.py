@@ -13,7 +13,7 @@ def find_tie_method(result=None, device_id=None, backup_dir=None):
     if device_id:
         cmd.extend(["-s", device_id])
     cmd.extend(
-        ["exec-out", "run-as", "com.example.test05", "cat", "files/browsing_history.json"],
+        ["exec-out", "run-as", "com.example.rednote_sim", "cat", "files/browsing_history.json"],
     )
     result1 = subprocess.run(cmd, capture_output=True, encoding="utf-8", errors="replace")
 
