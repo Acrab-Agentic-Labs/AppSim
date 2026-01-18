@@ -29,8 +29,21 @@ from .eval_24 import validate_task_twenty_four
 from .eval_25 import validate_task_twenty_five
 from .eval_26 import validate_task_twenty_six
 from .eval_27 import validate_task_twenty_seven
+from .eval_28 import validate_task_twenty_eight
+from .eval_29 import validate_task_twenty_nine
+from .eval_30 import validate_task_thirty
+from .eval_31 import validate_task_thirty_one
+from .eval_32 import validate_task_thirty_two
+from .eval_33 import validate_task_thirty_three
+from .eval_34 import validate_task_thirty_four
+from .eval_35 import validate_task_thirty_five
+from .eval_36 import validate_task_thirty_six
+from .eval_37 import validate_task_thirty_seven
+from .eval_38 import validate_task_thirty_eight
+from .eval_39 import validate_task_thirty_nine
+from .eval_40 import validate_task_forty
 
-# 所有测试指令列表（共27条，instruct 完全匹配需求描述）
+# 所有测试指令列表（共40条，instruct 完全匹配需求描述）
 ELEME_TASKS = AppTasks(
     package_name="com.example.myele",
     task_items=[
@@ -193,6 +206,84 @@ ELEME_TASKS = AppTasks(
         TaskItem(
             instruction="饿了么首页推荐的前十家店铺，免配送费的有几家？",
             verify_func=validate_task_twenty_seven,
+            human_steps=4,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="看一下订单里面前五个订单，有几个订单的收货人是于骁。",
+            verify_func=validate_task_twenty_eight,
+            human_steps=19,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="看一下首页推荐的前20个商家中，月销量超过4000的有几家。",
+            verify_func=validate_task_twenty_nine,
+            human_steps=4,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="看一下我订单里面前五个订单，有几个订单是周丹奎送的。",
+            verify_func=validate_task_thirty,
+            human_steps=19,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="看一下我十月点了多少次外卖。",
+            verify_func=validate_task_thirty_one,
+            human_steps=4,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="看一下周账单吃湘菜花了多少钱。",
+            verify_func=validate_task_thirty_two,
+            human_steps=3,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="看下我能用的最大的红包是多少。",
+            verify_func=validate_task_thirty_three,
+            human_steps=5,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="看下指定瑞幸能用的券有几张。",
+            verify_func=validate_task_thirty_four,
+            human_steps=5,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="看下账单中九月我消费最多的商家",
+            verify_func=validate_task_thirty_five,
+            human_steps=4,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="看下首页推荐店铺的前20家中，起送费低于30元的有几家。",
+            verify_func=validate_task_thirty_six,
+            human_steps=4,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="看下首页推荐店铺的前23家中，距离我最近的店铺的名字叫什么。",
+            verify_func=validate_task_thirty_seven,
+            human_steps=5,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="粤式早茶所有商品销量最高的是哪个。",
+            verify_func=validate_task_thirty_eight,
+            human_steps=10,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="主页推荐店铺的前20家中，哪个饮品店配送费加起送费最低且离我最近。",
+            verify_func=validate_task_thirty_nine,
+            human_steps=4,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="主页推荐店铺的前20家中，哪个饮品店送达最快。",
+            verify_func=validate_task_forty,
             human_steps=4,
             is_reasoning=True,
         ),

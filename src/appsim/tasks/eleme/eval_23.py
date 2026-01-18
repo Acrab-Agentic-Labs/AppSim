@@ -31,7 +31,7 @@ def validate_task_twenty_three(result=None,device_id=None,backup_dir=None):
         r.get('action') == ACTION_NAVIGATE and
         r.get('page') == PAGE_ORDER_DETAIL and
         r.get('extra_data', {}).get('from_page', '') == PAGE_MY_ORDERS and
-        (r.get('extra_data', {}).get('order_index', -1) == 0 or r.get('extra_data', {}).get('is_first_order', False)) and
+        (r.get('extra_data', {}).get('order_index', -1) == 2 or r.get('extra_data', {}).get('is_first_order', False)) and
         r.get('extra_data', {}).get('order_status', '') == ORDER_STATUS_DELIVERED
         for r in all_data
     )
