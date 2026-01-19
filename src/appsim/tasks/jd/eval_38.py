@@ -13,7 +13,7 @@ def validate_task_thirty_eight(result=None, device_id=None, backup_dir=None):
     cmd = ["adb"]
     if device_id:
         cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/task_thirty_eight_logs.json"])
+    cmd.extend(["exec-out", "run-as", "com.example.jd_sim", "cat", "files/persistent_data/orders.json"])
 
     # Give the system some time to write the order to the file
     time.sleep(2)
@@ -73,4 +73,5 @@ def validate_task_thirty_eight(result=None, device_id=None, backup_dir=None):
     return True
 
 if __name__ == "__main__":
-    pass
+    result = validate_task_thirty_eight()
+    print(f"__result__:{result}")

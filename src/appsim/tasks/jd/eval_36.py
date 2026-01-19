@@ -36,7 +36,7 @@ def validate_task_thirty_six(result=None, device_id=None, backup_dir=None):
     expected_items = [
         {"productId": "huawei_nova11_001", "storage": "128GB"},
         {"productId": "huawei_mate60_001", "storage": "256GB"},
-        {"productId": "huawei_p60_001", "storage": "256GB"},
+        {"productId": "huawei_p60_001", "storage": "128GB"},
     ]
 
     found_count = 0
@@ -64,4 +64,5 @@ def validate_task_thirty_six(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    pass
+    result = validate_task_thirty_six()
+    print(f"__result__:{result}")

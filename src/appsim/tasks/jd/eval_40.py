@@ -35,12 +35,11 @@ def validate_task_forty(result=None, device_id=None, backup_dir=None):
     for required in required_items:
         for item in cart_items:
             if isinstance(item, dict):
-                product = item.get("product", {})
-                product_id = product.get("id", "")
-                product_price = product.get("price", 0.0)
+                product_id = item.get("productId", "")
+                product_price = item.get("price", 0.0)
 
                 # 检查商品ID和价格是否匹配（允许微小的浮点数误差）
-                if product_id == required["productId"] and abs(product_price - required["price"]) < 0.01:
+                if product_id == required["productId"] and product_price == required["price"]:
                     found_items.append(required)
                     print(f"Found item: {product_id} with price {product_price}")
                     break
