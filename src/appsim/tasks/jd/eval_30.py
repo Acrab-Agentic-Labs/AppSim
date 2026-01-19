@@ -23,7 +23,7 @@ def validate_task_thirty(result=None, device_id=None, backup_dir=None):
         return False
 
     # Assuming the new order is the last one in the list
-    new_order = orders_data[-1]
+    new_order = orders_data[0]
 
     # Validation logic
     # Check that items list exists and is not empty

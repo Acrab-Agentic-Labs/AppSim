@@ -62,4 +62,5 @@ def validate_task_thirty_five(result=None, device_id=None, backup_dir=None):
     return True
 
 if __name__ == "__main__":
-    pass
+    result = validate_task_thirty_five()
+    print(f"__result__:{result}")
