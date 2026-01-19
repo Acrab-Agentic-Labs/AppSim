@@ -1,29 +1,33 @@
-import json
-import subprocess
+from appsim.utils import read_json_from_device
 
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_COMPLETE_ORDER = "complete_order"
+PAGE_CHECKOUT = "checkout"
+SEARCH_QUERY_VALUE = "肯德基"
 
-def validate_change_phone(result=None, device_id=None):
-    cmd = ["adb"]
-    if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.myele", "cat", "files/messages.json"])
-    subprocess.run(cmd, stdout=open("messages.json", "w"))
-
+def validate_task_twelve(result=None,device_id=None,backup_dir=None):
     try:
-        with open("messages.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                data = data[-1] if data else {}
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
         return False
 
-    if data.get("action") != "enter_change_phone_page":
+    order_record = None
+    for record in reversed(all_data):
+        if record.get('action') == ACTION_COMPLETE_ORDER:
+            order_record = record
+            break
+
+    if order_record is None or order_record.get('page') != PAGE_CHECKOUT:
         return False
-    if data.get("page") != "change_phone":
+
+    extra_data = order_record.get('extra_data', {})
+    if extra_data.get('search_query') != SEARCH_QUERY_VALUE or not extra_data.get('added_to_cart', False) or not extra_data.get('used_coupon', False) or not extra_data.get('selected_max_coupon', False) or not extra_data.get('payment_success', False):
         return False
+
     return True
 
-
-if __name__ == "__main__":
-    result = validate_change_phone()
+if __name__ == '__main__':
+    # 运行验证并输出结果
+    result = validate_task_twelve()
     print(result)

@@ -1,68 +1,30 @@
-import json
-import subprocess
+from appsim.utils import read_json_from_device
 
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_SEND_MESSAGE = "send_message"
+PAGE_CHAT = "chat"
+RECIPIENT_TYPE_RIDER = "rider"
+MESSAGE_VALUE = "出了什么情况，怎么还没到"
+ORDER_STATUS_DELIVERING = "配送中"
 
-def validate_close_notification(result=None, device_id=None):
-    # 从设备获取文件
-    cmd = ["adb"]
-    if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.myele", "cat", "files/messages.json"])
-    subprocess.run(cmd, stdout=open("messages.json", "w"))
-
-    # 读取文件
+def validate_task_thirteen(result=None,device_id=None,backup_dir=None):
     try:
-        with open("messages.json", "r", encoding="utf-8") as f:
-            all_data = json.load(f)
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
         return False
 
-    # 从数组中找到最后一个change_setting操作，且setting_type为系统消息通知的记录
-    data = None
-    for record in reversed(all_data):
-        if record.get("action") == "change_setting":
-            extra_data = record.get("extra_data", {})
-            if extra_data.get("setting_type") == "系统消息通知":
-                data = record
-                break
-
-    if data is None:
+    message_record = next((r for r in reversed(all_data) if r.get('action') == ACTION_SEND_MESSAGE), None)
+    if message_record is None or message_record.get('page') != PAGE_CHAT:
         return False
 
-    # 检测1: 验证action
-    if data.get("action") != "change_setting":
-        return False
-
-    # 检测2: 验证page
-    if data.get("page") != "settings":
-        return False
-
-    # 检测3: 验证timestamp
-    if "timestamp" not in data or not isinstance(data["timestamp"], (int, float)):
-        return False
-
-    # 检测4: 验证extra_data
-    if "extra_data" not in data:
-        return False
-
-    extra_data = data["extra_data"]
-
-    # 检测5: 验证设置类型
-    if extra_data.get("setting_type") != "系统消息通知":
-        return False
-
-    # 检测6: 验证已关闭
-    if extra_data.get("enabled", True):
-        return False
-
-    # 检测7: 验证显示了关闭成功弹窗
-    if not extra_data.get("show_dialog", False):
+    extra_data = message_record.get('extra_data', {})
+    if extra_data.get('recipient_type') != RECIPIENT_TYPE_RIDER or extra_data.get('message') != MESSAGE_VALUE or extra_data.get('order_status') != ORDER_STATUS_DELIVERING:
         return False
 
     return True
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_close_notification()
+    result = validate_task_thirteen()
     print(result)

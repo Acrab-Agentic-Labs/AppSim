@@ -1,59 +1,32 @@
-import json
-import subprocess
+from appsim.utils import read_json_from_device
 
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_ADD_ADDRESS = "add_address"
+PAGE_ADDRESS = "address"
+ADDRESS_KEYWORD = "华中师范大学元宝山学生公寓二期"
+NAME_VALUE = "于骁"
+PHONE_VALUE = "13022222222"
+TAG_VALUE = "学校"
+DETAIL_ADDRESS_KEYWORD = "613"
 
-def validate_contact_rider(result=None, device_id=None):
-    # 从设备获取文件
-    cmd = ["adb"]
-    if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.myele", "cat", "files/messages.json"])
-    subprocess.run(cmd, stdout=open("messages.json", "w"))
-
-    # 读取文件
+def validate_task_fifteen(result=None,device_id=None,backup_dir=None):
     try:
-        with open("messages.json", "r", encoding="utf-8") as f:
-            all_data = json.load(f)
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
         return False
 
-    # 从数组中找到最后一个发送消息的记录
-    message_record = None
-    for record in reversed(all_data):
-        if record.get("action") == "send_message":
-            message_record = record
-            break
-
-    # 检测1: 验证发送消息操作存在
-    if message_record is None:
+    add_record = next((r for r in reversed(all_data) if r.get('action') == ACTION_ADD_ADDRESS), None)
+    if add_record is None or add_record.get('page') != PAGE_ADDRESS:
         return False
 
-    # 检测2: 验证page
-    if message_record.get("page") != "chat":
-        return False
-
-    # 检测3: 验证extra_data存在
-    if "extra_data" not in message_record:
-        return False
-
-    extra_data = message_record["extra_data"]
-
-    # 检测4: 【关键】验证收件人类型是骑手（不能是商家）
-    if extra_data.get("recipient_type") != "rider":
-        return False
-
-    # 检测5: 【关键】验证发送了正确的消息
-    if extra_data.get("message") != "出了什么情况，怎么还没到":
-        return False
-
-    # 检测6: 【关键】验证订单状态为"配送中"（不能是"已完成"、"待接单"等其他状态）
-    if extra_data.get("order_status") != "配送中":
+    extra_data = add_record.get('extra_data', {})
+    if ADDRESS_KEYWORD not in extra_data.get('address', '') or extra_data.get('name') != NAME_VALUE or extra_data.get('phone') != PHONE_VALUE or extra_data.get('tag') != TAG_VALUE or DETAIL_ADDRESS_KEYWORD not in extra_data.get('detail_address', ''):
         return False
 
     return True
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_contact_rider()
+    result = validate_task_fifteen()
     print(result)

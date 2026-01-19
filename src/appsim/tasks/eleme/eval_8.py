@@ -1,40 +1,25 @@
-import json
-import subprocess
+from appsim.utils import read_json_from_device
 
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_CHANGE_SETTING = "change_setting"
+PAGE_SETTINGS = "settings"
+SETTING_TYPE_VALUE = "免密支付"
 
-def validate_search_and_filter(result=None, device_id=None):
-    cmd = ["adb"]
-    if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.myele", "cat", "files/messages.json"])
-    subprocess.run(cmd, stdout=open("messages.json", "w"))
-
+def validate_task_eight(result=None,device_id=None,backup_dir=None):
     try:
-        with open("messages.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                data = data[-1] if data else {}
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
+        data = all_data[-1] if isinstance(all_data, list) and all_data else all_data
     except:
         return False
 
-    if data.get("action") != "filter":
+    if data.get('action') != ACTION_CHANGE_SETTING or data.get('page') != PAGE_SETTINGS:
         return False
-    if data.get("page") != "search_result":
-        return False
-    if "extra_data" not in data:
-        return False
-    extra_data = data["extra_data"]
-    # 【关键】搜索关键词必须是"烤鸡"
-    if extra_data.get("keyword") != "烤鸡":
-        return False
-    # 【关键】价格区间必须是0-30
-    if extra_data.get("price_min") != 0:
-        return False
-    if extra_data.get("price_max") != 30:
+    extra_data = data.get('extra_data', {})
+    if extra_data.get('setting_type') != SETTING_TYPE_VALUE or not extra_data.get('enabled', False) or not extra_data.get('show_dialog', False):
         return False
     return True
 
-
-if __name__ == "__main__":
-    result = validate_search_and_filter()
+if __name__ == '__main__':
+    result = validate_task_eight()
     print(result)

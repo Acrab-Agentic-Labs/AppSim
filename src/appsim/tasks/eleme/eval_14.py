@@ -1,67 +1,45 @@
-import json
-import subprocess
+from appsim.utils import read_json_from_device
 
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_ENTER_ORDERS_PAGE = "enter_orders_page"
+ACTION_NAVIGATE_TO_STORE = "navigate_to_store"
+ACTION_SHARE_STORE = "share_store"
+PAGE_ORDERS = "orders"
+PAGE_STORE_PAGE = "store_page"
+KEYWORD_MALATANG = "麻辣烫"
+PLATFORM_VALUE = "微信"
 
-def validate_kfc_order(result=None, device_id=None):
-    # 从设备获取文件
-    cmd = ["adb"]
-    if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.myele", "cat", "files/messages.json"])
-    subprocess.run(cmd, stdout=open("messages.json", "w"))
-
-    # 读取文件
+def validate_task_fourteen(result=None,device_id=None,backup_dir=None):
     try:
-        with open("messages.json", "r", encoding="utf-8") as f:
-            all_data = json.load(f)
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
         return False
 
-    # 从数组中找到最后一个完成订单的记录
-    order_record = None
-    for record in reversed(all_data):
-        if record.get("action") == "complete_order":
-            order_record = record
-            break
-
-    # 检测1: 验证完成订单操作存在
-    if order_record is None:
+    found_orders_page = any(r.get('action') == ACTION_ENTER_ORDERS_PAGE and r.get('page') == PAGE_ORDERS for r in all_data)
+    if not found_orders_page:
         return False
 
-    # 检测2: 验证page
-    if order_record.get("page") != "checkout":
+    found_navigate_to_malatang_store = any(
+        r.get('action') == ACTION_NAVIGATE_TO_STORE and
+        r.get('page') == PAGE_STORE_PAGE and
+        KEYWORD_MALATANG in r.get('page_info', {}).get('restaurant_name', '')
+        for r in all_data
+    )
+    if not found_navigate_to_malatang_store:
         return False
 
-    # 检测3: 验证extra_data存在
-    if "extra_data" not in order_record:
+    share_record = next((r for r in reversed(all_data) if r.get('action') == ACTION_SHARE_STORE), None)
+    if share_record is None or share_record.get('page') != PAGE_STORE_PAGE:
         return False
-
-    extra_data = order_record["extra_data"]
-
-    # 检测4: 【关键】验证搜索了"肯德基"
-    if extra_data.get("search_query") != "肯德基":
+    if share_record.get('extra_data', {}).get('platform') != PLATFORM_VALUE:
         return False
-
-    # 检测5: 【关键】验证加入了购物车
-    if not extra_data.get("added_to_cart", False):
-        return False
-
-    # 检测6: 【关键】验证使用了优惠券
-    if not extra_data.get("used_coupon", False):
-        return False
-
-    # 检测7: 【关键】验证选择了最大的优惠券
-    if not extra_data.get("selected_max_coupon", False):
-        return False
-
-    # 检测8: 【关键】验证支付成功
-    if not extra_data.get("payment_success", False):
+    if KEYWORD_MALATANG not in share_record.get('page_info', {}).get('restaurant_name', ''):
         return False
 
     return True
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_kfc_order()
+    result = validate_task_fourteen()
     print(result)

@@ -1,41 +1,21 @@
-import json
-import subprocess
+from appsim.utils import read_json_from_device
 
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_ENTER_CHANGE_PHONE_PAGE = "enter_change_phone_page"
+PAGE_CHANGE_PHONE = "change_phone"
 
-def validate_payment_setting(result=None, device_id=None):
-    cmd = ["adb"]
-    if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.myele", "cat", "files/messages.json"])
-    subprocess.run(cmd, stdout=open("messages.json", "w"))
-
+def validate_task_ten(result=None,device_id=None,backup_dir=None):
     try:
-        with open("messages.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                data = data[-1] if data else {}
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
+        data = all_data[-1] if isinstance(all_data, list) and all_data else all_data
     except:
         return False
 
-    if data.get("action") != "change_setting":
-        return False
-    if data.get("page") != "settings":
-        return False
-    if "extra_data" not in data:
-        return False
-    extra_data = data["extra_data"]
-    # 【关键】设置类型必须是"免密支付"
-    if extra_data.get("setting_type") != "免密支付":
-        return False
-    # 【关键】必须开启
-    if not extra_data.get("enabled", False):
-        return False
-    # 【关键】必须显示弹窗
-    if not extra_data.get("show_dialog", False):
+    if data.get('action') != ACTION_ENTER_CHANGE_PHONE_PAGE or data.get('page') != PAGE_CHANGE_PHONE:
         return False
     return True
 
-
-if __name__ == "__main__":
-    result = validate_payment_setting()
+if __name__ == '__main__':
+    result = validate_task_ten()
     print(result)

@@ -1,70 +1,50 @@
-import json
-import subprocess
+from appsim.utils import read_json_from_device
 
+PACKAGE_NAME = "com.example.myele"
+DEVICE_FILE_PATH = "files/messages.json"
+ACTION_ENTER_ORDERS_PAGE = "enter_orders_page"
+ACTION_NAVIGATE = "navigate"
+PAGE_ORDERS = "orders"
+PAGE_MY_ORDERS = "my_orders"
+PAGE_ORDER_DETAIL = "order_detail"
+ORDER_STATUS_DELIVERED = "已送达"
 
-# 验证任务23: 在"我的"-"全部订单"中找到有麻辣烫的订单,进入"订单详情页",点击申请食无忧理赔
-# 关键验证点:
-# 1. 必须进入订单页面
-# 2. 必须找到麻辣烫订单
-# 3. 必须进入食无忧理赔页面
-# 4. 必须申请理赔成功
-def validate_food_insurance_claim(result=None, device_id=None):
-    # 从设备获取文件
-    cmd = ["adb"]
-    if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(["exec-out", "run-as", "com.example.myele", "cat", "files/messages.json"])
-    subprocess.run(cmd, stdout=open("messages.json", "w"))
-
-    # 读取文件
+def validate_task_twenty_three(result=None,device_id=None,backup_dir=None):
     try:
-        with open("messages.json", "r", encoding="utf-8") as f:
-            all_data = json.load(f)
+        all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
         return False
 
-    # 检查是否有数据
     if not all_data:
         return False
 
-    # 检测1: 验证进入订单页面 (这个可能已经在其他任务中记录过,所以不是必需的)
-    # 检测2: 验证进入食无忧理赔页面
-    entered_insurance = False
-    found_mala_order = False
-
-    for record in all_data:
-        if record.get("action") == "enter_food_insurance_page" and record.get("page") == "food_insurance":
-            extra_data = record.get("extra_data", {})
-            restaurant_name = extra_data.get("restaurant_name", "")
-            # 检查是否是麻辣烫订单
-            if "麻辣烫" in restaurant_name:
-                entered_insurance = True
-                found_mala_order = True
-                break
-
-    if not entered_insurance:
+    enter_orders_page = any(
+        (r.get('action') == ACTION_ENTER_ORDERS_PAGE and r.get('page') == PAGE_ORDERS) or
+        (r.get('action') == ACTION_NAVIGATE and r.get('page') == PAGE_MY_ORDERS)
+        for r in all_data
+        if (r.get('extra_data', {}).get('selected_tab') or r.get('extra_data', {}).get('tab', '全部')) in ['全部', 'all', 'ALL']
+    )
+    if not enter_orders_page:
         return False
 
-    if not found_mala_order:
+    clicked_first_delivered_order = any(
+        r.get('action') == ACTION_NAVIGATE and
+        r.get('page') == PAGE_ORDER_DETAIL and
+        r.get('extra_data', {}).get('from_page', '') == PAGE_MY_ORDERS and
+        (r.get('extra_data', {}).get('order_index', -1) == 2 or r.get('extra_data', {}).get('is_first_order', False)) and
+        r.get('extra_data', {}).get('order_status', '') == ORDER_STATUS_DELIVERED
+        for r in all_data
+    )
+    if not clicked_first_delivered_order:
         return False
 
-    # 检测3: 验证申请理赔成功
-    applied_insurance = False
-    for record in all_data:
-        if record.get("action") == "apply_food_insurance" and record.get("page") == "food_insurance":
-            extra_data = record.get("extra_data", {})
-            # 检查是否申请成功
-            if extra_data.get("apply_successfully") == True:
-                applied_insurance = True
-                break
-
-    if not applied_insurance:
+    if result is None:
+        return False
+    final_message = result.get("final_message")
+    if not isinstance(final_message, str) or '33' not in final_message:
         return False
 
-    return True
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_food_insurance_claim()
+    result = validate_task_twenty_three()
     print(result)

@@ -16,7 +16,7 @@ def share_note_check(result=None, device_id=None, backup_dir=None):
         cmd = ["adb"]
         if device_id:
             cmd.extend(["-s", device_id])
-        cmd.extend(["exec-out", "run-as", "com.example.test05", "cat", "files/shares.json"])
+        cmd.extend(["exec-out", "run-as", "com.example.rednote_sim", "cat", "files/shares.json"])
         with open(message_file_path, "w") as f:
             subprocess.run(cmd, stdout=f)
 
