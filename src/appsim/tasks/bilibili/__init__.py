@@ -36,7 +36,7 @@ from .eval_31 import validate_task_31
 
 # 所有测试指令列表
 BILIBILI_TASKS = AppTasks(
-    package_name="com.example.bilibili",
+    package_name="bilibili_sim",
     task_items=[
         TaskItem(instruction='查看我的观看历史。', verify_func=CheckWatchHistory,human_steps=2,is_reasoning=False),
         TaskItem(instruction='看一下私信智能拦截的开启状态。', verify_func=validate_task_2,human_steps=4,is_reasoning=True),
