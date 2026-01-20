@@ -27,7 +27,7 @@ def note_interaction_check(result=None, device_id=None, backup_dir=None):
     browsing_author_id = last_browsing.get("noteAuthor", {}).get("id", "")
     browsing_title = last_browsing.get("noteTitle", "")
 
-    if not (browsing_author_id == "user_003" and browsing_title == "AI技术在日常生活中的应用，太实用了！"):
+    if not (browsing_author_id == "user_009" and browsing_title == "健康饮食 | 低卡又美味，轻松拥有好身材！"):
         return False
 
     # 检查点赞记录
@@ -51,7 +51,7 @@ def note_interaction_check(result=None, device_id=None, backup_dir=None):
     last_like = likes_data[-1]
     like_target_id = last_like.get("targetId", "")
 
-    if like_target_id != "note_002":
+    if like_target_id != "note_009":
         return False
 
     # 检查评论记录
@@ -76,7 +76,7 @@ def note_interaction_check(result=None, device_id=None, backup_dir=None):
     comment_content = last_comment.get("content", "")
     comment_note_id = last_comment.get("noteId", "")
 
-    if not (comment_content == "很实用！" and comment_note_id == "note_002"):
+    if not (comment_content == "很实用！" and comment_note_id == "note_009"):
         return False
 
     # 所有检查都通过
