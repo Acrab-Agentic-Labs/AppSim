@@ -6,7 +6,7 @@ import subprocess
 
 def dislike_note_check(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
-    _NOTE_ID = "note_002"
+    _NOTE_ID = "note_006"
 
     # 从设备获取不喜欢记录
     message_file_path = os.path.join(backup_dir, "dislikes.json") if backup_dir is not None else "dislikes.json"

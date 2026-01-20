@@ -3,7 +3,7 @@ import os
 import subprocess
 
 def eval_28(result=None, device_id=None, backup_dir=None):
-    USER_ID="user_001"
+    _USER_ID="user_001"
     message_file_path = os.path.join(backup_dir, "users.json") if backup_dir is not None else "users.json"
 
     try:
@@ -23,7 +23,7 @@ def eval_28(result=None, device_id=None, backup_dir=None):
         return False
 
     for u in data:
-        if u.get("id") == USER_ID:
+        if u.get("id") == _USER_ID:
             if result==u.get("userNum"):
                 return  True
 

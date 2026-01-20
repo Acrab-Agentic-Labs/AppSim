@@ -53,7 +53,7 @@ RED_NOTE_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="搜索并打开一篇标题含'穿搭'的笔记，对其进行收藏并评论'很有用！'",
+            instruction="搜索并打开一篇标题含'穿搭'的笔记，对其进行点赞、收藏并评论'很有用！'",
             verify_func=like_collect_comment_check,
             human_steps=9,
             is_reasoning=False,

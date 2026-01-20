@@ -28,7 +28,7 @@ def browsing_history_check(result=None, device_id=None, backup_dir=None):
     # 检查 noteAuthor.id 和 noteTitle
     if (
             last_item.get("noteAuthor", {}).get("id") == "user_002"
-            and last_item.get("noteTitle") == "秋冬穿搭指南 | 温暖又时尚的搭配技巧"
+            and last_item.get("noteTitle") == "穿搭灵感 | 秋冬穿搭必备单品清单，照着买不出错！"
     ):
         return True
     else:

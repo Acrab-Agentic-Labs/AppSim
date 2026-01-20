@@ -34,7 +34,7 @@ def view_and_comment_notes_check(result=None, device_id=None, backup_dir=None):
     # 获取最后三条浏览历史
     last_three_browsing = browsing_data[-3:]
     browsing_note_ids = [item.get("noteId", "") for item in last_three_browsing]
-    expected_browsing_ids = ["note_010", "note_011", "note_012"]
+    expected_browsing_ids = ["note_055", "note_001", "note_006"]
 
     if browsing_note_ids != expected_browsing_ids:
         return False
@@ -66,7 +66,7 @@ def view_and_comment_notes_check(result=None, device_id=None, backup_dir=None):
 
     # 检查每条评论的 content 和 noteId
     expected_content = "很实用！"
-    expected_note_ids = ["note_010", "note_011", "note_012"]
+    expected_note_ids = ["note_055", "note_001", "note_006"]
 
     all_match = True
     for i, comment in enumerate(last_three_comments):
