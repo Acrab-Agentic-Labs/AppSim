@@ -18,7 +18,7 @@ def validate_task_24(result=None, device_id=None, backup_dir=None):
         cmd = ["adb"]
         if device_id:
             cmd.extend(["-s", device_id])
-        cmd.extend(["exec-out", "run-as", "com.example.bilibili",
+        cmd.extend(["exec-out", "run-as", "bilibili_sim",
                    "cat", "files/favorites.json"])
 
         result_data = subprocess.run(
