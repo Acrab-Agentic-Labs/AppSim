@@ -10,7 +10,8 @@ from .verification_functions import read_json_from_device
 def check_play_first_daily_recommendation(result=None, device_id=None, backup_dir=None):
     """
     任务11: 验证是否播放了"每日推荐"的第一首歌
-    - 检查 playback_state.json 中 currentSong.source 是否为 "daily_recommend"
+    - 检查 playback_state.json 中 currentSon
+    g.source 是否为 "daily_recommend"
     - 检查 currentSong.sourceDetail 是否包含 "第1首"
     """
     data = read_json_from_device("autotest/playback_state.json", device_id, result, backup_dir=backup_dir)
