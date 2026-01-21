@@ -4,7 +4,7 @@ import subprocess
 
 
 def validate_task_thirty_two(result=None, device_id=None, backup_dir=None):
-    """ 验证任务三十二：找到首页中价格最低的手机，选择其最便宜的规格购买。 """
+    """ 验证任务三十二：找到首页前十个商品中价格最低的手机，选择其最便宜的规格购买。 """
 
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 

@@ -4,7 +4,7 @@ import subprocess
 
 
 def validate_task_thirty_nine(result=None, device_id=None, backup_dir=None):
-    """验证任务三十九：选择首页电脑中价格最高规格立即购买，送到张三的地址。"""
+    """验证任务三十九：选择首页联想电脑中价格最高规格立即购买，送到张三的地址。"""
 
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 

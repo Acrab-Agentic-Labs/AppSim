@@ -4,7 +4,7 @@ import subprocess
 
 
 def validate_task_forty(result=None, device_id=None, backup_dir=None):
-    """验证任务四十：找到首页评分为4.7的所有电子商品，选择他们价格最高的规格加入购物车。"""
+    """验证任务四十：找到首页前十个商品中评分为4.7的电子商品，选择他们价格最高的规格加入购物车。"""
 
     cart_items_file_path = os.path.join(backup_dir, "cart_items.json") if backup_dir else "cart_items.json"
 
