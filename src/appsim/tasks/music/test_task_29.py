@@ -1,5 +1,5 @@
 """
-任务29：将关注列表中的一位歌手删除
+任务29：将关注列表中的一位关注人删除
 难度：高
 """
 
@@ -9,7 +9,7 @@ from .verification_functions import read_json_from_device
 
 def check_artist_is_unfollowed(result=None, device_id=None, backup_dir=None):
     """
-    任务29: 验证是否已取消关注歌手
+    任务29: 验证是否已取消关注
     - 检查 followed_artists.json 中的 recentUnfollowedArtist 字段是否存在且不为空
     - 这是一个简化的验证，只检查最近有取消关注的行为发生。
     """
@@ -26,11 +26,11 @@ def check_artist_is_unfollowed(result=None, device_id=None, backup_dir=None):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(message)s')
     print("=" * 70)
-    print("任务29：将关注列表中的一位歌手删除")
+    print("任务29：将关注列表中的一位关注人删除")
     print("=" * 70)
     print("\n📋 人工操作步骤：")
     print("  1. 进入'我的'页面，找到'关注'列表")
-    print("  2. 在关注的歌手列表中，选择一位并取消关注")
+    print("  2. 在关注的列表中，选择一位并取消关注")
     print("\n🔍 开始验证...")
 
     success = check_artist_is_unfollowed()

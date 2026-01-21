@@ -10,9 +10,14 @@ from .verification_functions import read_json_from_device
 def check_volume_is_adjusted(result=None, device_id=None, backup_dir=None):
     """
     任务9: 验证音量是否被调节
-    - 检查 playback_state.json 中 'volume' 字段是否存在
-    - 注意：此验证不检查具体的音量值，只确认音量被调节过。
+    - 首先检查任务是否成功完成（无错误）
+    - 然后检查 playback_state.json 中 'volume' 字段是否存在
     """
+    # 首先检查任务是否成功完成
+    if result and result.get("error"):
+        logging.error(f"✗ 测试失败 - 任务9未完成：{result['error']}")
+        return False
+
     data = read_json_from_device("autotest/playback_state.json", device_id, result, backup_dir=backup_dir)
 
     if data and 'volume' in data:
