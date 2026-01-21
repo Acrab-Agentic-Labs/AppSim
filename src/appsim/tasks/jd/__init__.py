@@ -122,7 +122,7 @@ JD_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
-            instruction="查看首页华为商品评论数最多的为多少条,给出一个阿拉伯数字即可。",
+            instruction="查看首页前十个商品中华为商品评论数最多的为多少条，给出一个阿拉伯数字即可。",
             verify_func=validate_task_fourteen,
             human_steps=8,
             is_reasoning=False,
@@ -230,7 +230,7 @@ JD_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
-            instruction="找到首页中价格最低的手机，选择其最便宜的规格购买。",
+            instruction="找到首页前十个商品中价格最低的手机，选择其最便宜的规格购买。",
             verify_func=validate_task_thirty_two,
             human_steps=7,
             is_reasoning=True,
@@ -260,7 +260,7 @@ JD_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
-            instruction="购买首页华为商品中买家评价最多的商品。",
+            instruction="购买首页前十个商品中买家评价最多的华为商品。",
             verify_func=validate_task_thirty_seven,
             human_steps=15,
             is_reasoning=True,
@@ -272,13 +272,13 @@ JD_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
-            instruction="选择首页电脑中价格最高规格立即购买，送到张三的地址。",
+            instruction="选择首页联想电脑中价格最高规格立即购买，送到张三的地址。",
             verify_func=validate_task_thirty_nine,
             human_steps=12,
             is_reasoning=True,
         ),
         TaskItem(
-            instruction="找到首页评分为4.7的所有电子商品，选择他们价格最高的规格加入购物车。",
+            instruction="找到首页前十个商品中评分为4.7的电子商品，选择他们价格最高的规格加入购物车。",
             verify_func=validate_task_forty,
             human_steps=15,
             is_reasoning=True,
