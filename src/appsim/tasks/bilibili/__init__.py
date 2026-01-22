@@ -36,7 +36,7 @@ from .eval_31 import validate_task_31
 
 # 所有测试指令列表
 BILIBILI_TASKS = AppTasks(
-    package_name="bilibili_sim",
+    package_name="com.example.bilibili_sim",
     task_items=[
         TaskItem(instruction='查看我的观看历史。', verify_func=CheckWatchHistory,human_steps=2,is_reasoning=False),
         TaskItem(instruction='看一下私信智能拦截的开启状态。', verify_func=validate_task_2,human_steps=4,is_reasoning=True),
@@ -54,9 +54,9 @@ BILIBILI_TASKS = AppTasks(
         TaskItem(instruction='查看关注动态中所有动态的点赞数加播放量一共多少。', verify_func=validate_task_14,human_steps=2,is_reasoning=True),
         TaskItem(instruction='数一下关注列表有几个已互粉的up主。', verify_func=validate_task_15,human_steps=2,is_reasoning=True),
         TaskItem(instruction='对首页第一条视频评论，点击回复，输入"谢谢分享！"并发送。', verify_func=CheckReplyComment,human_steps=5,is_reasoning=False),
-        TaskItem(instruction='看第一个视频，不算我点的赞，看看评论区所有赞加起来有多少。', verify_func=validate_task_17,human_steps=3,is_reasoning=True),
+        TaskItem(instruction='看第一个视频，不算我点的赞，看看评论区前3条评论所有赞加起来有多少。', verify_func=validate_task_17,human_steps=3,is_reasoning=True),
         TaskItem(instruction='看一下接收消息通知总开关的状态。', verify_func=validate_task_18,human_steps=4,is_reasoning=True),
-        TaskItem(instruction='在首页推荐第一个视频评论页面，查看等级最低的那个人的被回复评论的点赞数。', verify_func=validate_task_19,human_steps=3,is_reasoning=True),
+        TaskItem(instruction='在首页推荐第一个视频评论页面，查看前5条评论等级最低的那个人的被回复评论的点赞数', verify_func=validate_task_19,human_steps=3,is_reasoning=True),
         TaskItem(instruction='搜索游戏解说，查看本次搜索共找到多少个结果。', verify_func=CheckSearchGame1,human_steps=4,is_reasoning=True),
         TaskItem(instruction='看第一个视频，查看相关视频有几个。', verify_func=validate_task_21,human_steps=2,is_reasoning=True),
         TaskItem(instruction='搜索视频"游戏解说"，播放搜索出的第一个视频并点赞。', verify_func=CheckSearchPlayLike,human_steps=6,is_reasoning=False),
@@ -68,7 +68,7 @@ BILIBILI_TASKS = AppTasks(
         TaskItem(instruction='在设置中，查看当前定时关闭状态。', verify_func=validate_task_28,human_steps=4,is_reasoning=True),
         TaskItem(instruction='在直播推荐页面，查看直播人数最少的两个的在线观看人数一共多少。', verify_func=validate_task_29,human_steps=2,is_reasoning=True),
         TaskItem(instruction='看一下会员购里的商品一共卖了多少件。。', verify_func=validate_task_30,human_steps=1,is_reasoning=True),
-        TaskItem(instruction='查看大会员还有多久到期。', verify_func=validate_task_31,human_steps=3,is_reasoning=True),
+        TaskItem(instruction='查看大会员是否到期。', verify_func=validate_task_31,human_steps=3,is_reasoning=True),
     ]
 )
 

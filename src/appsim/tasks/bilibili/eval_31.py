@@ -6,8 +6,7 @@ from datetime import datetime
 
 def validate_task_31(result=None, device_id=None, backup_dir=None):
     """
-    任务31: 查看大会员还有多久到期
-    改进: 从APP配置中读取会员到期时间并计算剩余天数
+    任务31: 查看大会员是否到期
     """
     if result is None:
         return False
@@ -19,7 +18,7 @@ def validate_task_31(result=None, device_id=None, backup_dir=None):
         cmd = ["adb"]
         if device_id:
             cmd.extend(["-s", device_id])
-        cmd.extend(["exec-out", "run-as", "bilibili_sim",
+        cmd.extend(["exec-out", "run-as", "com.example.bilibili_sim",
                    "cat", "files/user_profile.json"])
 
         result_data = subprocess.run(
