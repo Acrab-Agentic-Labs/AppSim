@@ -1,77 +1,173 @@
 """
-功能: 检查播放上一场会议回放时,是否能正确找到上一场已结束的会议
-数据库位置: meetings.json
+功能: 验证会议列表中的会议数目
+验证目标: 检查meetings.json中的会议总数是否与期望值匹配
+数据来源: meetings.json
 """
 
-import json
-import subprocess
+import os
+import logging
 
 
-def check_previous_meeting_playback(expected_meeting_id=None, result=None, device_id=None):
+# ============================================================================
+# 常量定义 - 每个脚本独立定义
+# ============================================================================
+
+PACKAGE_NAME = "com.example.tencent_meeting_sim"
+
+# 任务特定常量
+EXPECTED_COUNT = 50
+
+# 数据文件常量
+MEETINGS_FILE = "meetings.json"
+USERS_FILE = "users.json"
+MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
+PERSONAL_MEETING_ROOMS_FILE = "personal_meeting_rooms.json"
+MESSAGES_FILE = "messages.json"
+HAND_RAISE_RECORDS_FILE = "hand_raise_records.json"
+MEETING_INVITATIONS_FILE = "meeting_invitations.json"
+
+# JSON字段名常量
+MEETING_ID_KEY = "meetingId"
+USER_ID_KEY = "userId"
+MEETING_STATUS_KEY = "status"
+MEETING_TYPE_KEY = "meetingType"
+PARTICIPANT_IDS_KEY = "participantIds"
+IS_MUTED_KEY = "isMuted"
+IS_CAMERA_ON_KEY = "isCameraOn"
+IS_SHARING_SCREEN_KEY = "isSharingScreen"
+IS_HAND_RAISED_KEY = "isHandRaised"
+
+# 业务常量
+MEETING_STATUS_UPCOMING = "UPCOMING"
+MEETING_STATUS_ONGOING = "ONGOING"
+MEETING_STATUS_ENDED = "ENDED"
+MEETING_TYPE_INSTANT = "INSTANT"
+MEETING_TYPE_SCHEDULED = "SCHEDULED"
+MEETING_TYPE_PERSONAL = "PERSONAL"
+
+
+# ============================================================================
+# 工具函数 - read_json_from_device 内联实现
+# ============================================================================
+
+def read_json_from_device(
+    device_id: str,
+    package_name: str,
+    device_json_path: str,
+    backup_dir: str
+) -> dict or list or None:
     """
-    查找上一场(最近一场)已结束的会议,用于播放回放
+    从Android设备读取JSON文件并返回解析后的数据。
+
+    此函数是appsim.utils.read_json_from_device的独立实现，
+    确保每个脚本完全自包含，无外部依赖。
 
     参数:
-        expected_meeting_id: 期望的会议ID (可选,用于验证查找结果是否正确)
+        device_id (str): Android设备ID（adb设备序列号）
+        package_name (str): 应用包名
+        device_json_path (str): 设备上JSON文件的相对路径（相对于app私有目录）
+        backup_dir (str): 本地备份目录路径
 
     返回:
-        如果提供了expected_meeting_id: 返回bool (True表示找到的会议ID匹配期望值)
-        如果未提供expected_meeting_id: 返回上一场会议的完整信息或None
+        dict/list/None: 解析后的JSON数据，失败返回None
     """
-    # 从Android模拟器获取文件
-    cmd = ["adb"]
-    if device_id:
-        cmd.extend(["-s", device_id])
-    cmd.extend(
-        ["exec-out", "run-as", "com.example.tencentmeeting", "cat", "files/meetings.json"],
-    )
-    result1 = subprocess.run(cmd, stdout=open("meetings.json", "w"), stderr=subprocess.PIPE)
+    import subprocess
+    import pathlib
+    import json
 
-    # 检查ADB命令是否成功
-    if result1.returncode != 0:
-        print(f"ADB命令执行失败: {result1.stderr.decode('utf-8', errors='ignore')}")
-        return None if expected_meeting_id is None else False
+    # 创建备份目录
+    pathlib.Path(backup_dir).mkdir(parents=True, exist_ok=True)
 
-    # 读取文件
+    # 本地文件路径
+    local_file_path = os.path.join(backup_dir, pathlib.Path(device_json_path).name)
+
     try:
-        with open("meetings.json", "r", encoding="utf-8") as f:
-            content = f.read()
-            if not content.strip():
-                print("错误: 文件为空,可能ADB命令未正确执行或文件在模拟器中不存在")
-                return None if expected_meeting_id is None else False
-            data = json.loads(content)
-    except json.JSONDecodeError as e:
-        print(f"JSON解析错误: {e}")
-        return None if expected_meeting_id is None else False
+        # 检查设备文件是否存在
+        _NO_FILE_STR = "No such file or directory"
+        cmd_ls = ["adb", "-s", device_id, "exec-out", "run-as", package_name, "ls", device_json_path]
+        result_ls = subprocess.run(cmd_ls, encoding="utf-8", capture_output=True, check=False)
+
+        if _NO_FILE_STR in result_ls.stdout or result_ls.returncode != 0:
+            logging.error(
+                f"文件在设备上不存在: {device_id}:{package_name}:{device_json_path}. "
+                f"Stderr: {result_ls.stderr.strip()}"
+            )
+            raise FileNotFoundError(
+                f"File not found: {device_id}:{package_name}:{device_json_path}"
+            )
+
+        # 拉取文件
+        cmd_cat = ["adb", "-s", device_id, "exec-out", "run-as", package_name, "cat", device_json_path]
+        with open(local_file_path, "w", encoding="utf-8") as fw:
+            result_cat = subprocess.run(cmd_cat, stdout=fw, stderr=subprocess.PIPE, check=False)
+
+        if result_cat.returncode != 0:
+            logging.error(f"ADB cat命令执行失败: {device_json_path}. Stderr: {result_cat.stderr.strip()}")
+            raise Exception(f"ADB cat command failed for {device_json_path}")
+
+        # 解析JSON
+        with open(local_file_path, "r", encoding="utf-8") as fr:
+            data = json.load(fr)
+
+        logging.info(f"成功从设备读取JSON: {device_json_path}")
+        return data
+
     except FileNotFoundError:
-        print("错误: 文件未找到")
-        return None if expected_meeting_id is None else False
-
-    try:
-        # 筛选出所有已结束的会议
-        ended_meetings = [m for m in data if m["status"] == "ENDED" and m["endTime"] is not None]
-
-        if not ended_meetings:
-            return None if expected_meeting_id is None else False
-
-        # 按结束时间排序,获取最近结束的会议
-        previous_meeting = max(ended_meetings, key=lambda x: x["endTime"])
-
-        # 如果提供了期望的会议ID,进行验证
-        if expected_meeting_id is not None:
-            return previous_meeting["meetingId"] == expected_meeting_id
-
-        # 否则返回会议完整信息
-        return previous_meeting
-
+        logging.error(f"设备文件不存在: {device_json_path}")
+        return None
+    except json.JSONDecodeError as e:
+        logging.error(f"JSON解析失败: {local_file_path}, 错误: {e}")
+        return None
     except Exception as e:
-        print(f"Error: {e}")
-        return None if expected_meeting_id is None else False
+        logging.error(f"读取设备JSON文件时发生未知错误: {e}")
+        return None
 
 
-if __name__ == "__main__":
-    # 测试示例: 查找上一场会议
-    previous_meeting = check_previous_meeting_playback()
-    if previous_meeting:
-        print(f"上一场会议ID: {previous_meeting['meetingId']}")
-        print(f"会议主题: {previous_meeting['topic']}")
+# ============================================================================
+# 验证函数 - 核心业务逻辑
+# ============================================================================
+
+def verify_meeting_count(
+    result=None,
+    device_id=None,
+    backup_dir=None,
+) -> bool:
+    """
+    验证会议列表中的会议数目是否与预期匹配。
+
+    参数:
+        result: Agent执行结果对象（包含executed_actions等信息）
+        device_id (str, optional): Android设备的ID. Defaults to None.
+        backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
+                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_31").
+
+    返回:
+        bool: 如果实际会议数目与期望数目匹配则返回True，否则返回False。
+    """
+    # 使用常量
+    expected_count = EXPECTED_COUNT
+
+    if backup_dir is None:
+        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_31")
+
+    meetings_data = read_json_from_device(
+        device_id=device_id,
+        package_name=PACKAGE_NAME,
+        device_json_path=f"files/{MEETINGS_FILE}",
+        backup_dir=backup_dir,
+    )
+
+    if meetings_data is None:
+        print(f"错误: 无法从设备读取或解析 {MEETINGS_FILE}。")
+        return False
+
+    actual_count = len(meetings_data)
+    if actual_count == expected_count:
+        return True
+    else:
+        logging.error(f"验证失败：会议总数 '{actual_count}' 与期望的 '{expected_count}' 不匹配。")
+        return False
+
+
+if __name__ == '__main__':
+    print(verify_meeting_count())

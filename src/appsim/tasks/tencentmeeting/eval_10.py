@@ -1,7 +1,7 @@
 """
-功能: 验证未开始会议的数目
-验证目标: 检查status为UPCOMING的会议数量
-数据来源: meetings.json
+功能: 验证指定会议的参会人数
+验证目标: 检查meeting_participants.json中指定会议的参与者数量
+数据来源: meeting_participants.json
 """
 
 import os
@@ -15,7 +15,8 @@ import logging
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-EXPECTED_COUNT = 16
+MEETING_ID = "meeting_3d7e91"
+EXPECTED_COUNT = 3
 
 # 数据文件常量
 MEETINGS_FILE = "meetings.json"
@@ -127,47 +128,51 @@ def read_json_from_device(
 # 验证函数 - 核心业务逻辑
 # ============================================================================
 
-def verify_not_started_meeting_count(
+def verify_participant_count_in_meeting(
     result=None,
     device_id=None,
     backup_dir=None,
 ) -> bool:
     """
-    验证未开始会议的数目是否与预期匹配。
+    验证指定会议的参会人数是否与预期匹配。
 
     参数:
-        expected_count (int): 期望的未开始会议数目。
+        meeting_id (str): 会议ID。
+        expected_count (int): 期望的参会人数。
         device_id (str, optional): Android设备的ID. Defaults to None.
         backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
                                      os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_reasoning_tasks")。
 
     返回:
-        bool: 如果实际未开始会议数目与期望数目匹配则返回True，否则返回False。
+        bool: 如果实际参会人数与期望数目匹配则返回True，否则返回False。
     """
 
     # 使用常量
+    meeting_id = MEETING_ID
     expected_count = EXPECTED_COUNT
 
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_34")
+        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_33")
 
-    meetings_data = read_json_from_device(
+    participants_data = read_json_from_device(
         device_id=device_id,
         package_name=PACKAGE_NAME,
-        device_json_path=f"files/{MEETINGS_FILE}",
+        device_json_path=f"files/{MEETING_PARTICIPANTS_FILE}",
         backup_dir=backup_dir,
     )
 
-    if meetings_data is None:
-        print(f"错误: 无法从设备读取或解析 {MEETINGS_FILE}。")
+    if participants_data is None:
+        print(f"错误: 无法从设备读取或解析 {MEETING_PARTICIPANTS_FILE}。")
         return False
 
-    actual_count = len([m for m in meetings_data if m.get(MEETING_STATUS_KEY) == "UPCOMING"])
-    if actual_count == expected_count:
-        return True
-    else:
-        logging.error(f"验证失败：未开始的会议总数 '{actual_count}' 与期望的 '{expected_count}' 不匹配。")
-        return False
+    # 统计指定会议的参会人数
+    actual_participants_in_meeting = set()
+    for participant in participants_data:
+        if participant.get(MEETING_ID_KEY) == meeting_id:
+            actual_participants_in_meeting.add(participant.get(USER_ID_KEY))
+
+    actual_count = len(actual_participants_in_meeting)
+    return actual_count == expected_count
 
 
 
