@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_playlist_sort_order_is_changed(result=None, device_id=None, backup_dir=None):
     """
@@ -35,17 +35,5 @@ def check_playlist_sort_order_is_changed(result=None, device_id=None, backup_dir
     return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务27：更改歌单的排序顺序")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 进入任意一个歌单")
-    print("  2. 点击排序按钮（例如，按添加时间、按歌曲名等）")
-    print("  3. 选择一个新的排序方式")
-    print("\n🔍 开始验证...")
 
-    success = check_playlist_sort_order_is_changed()
-
-    print(f"\n任务27验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_playlist_sort_order_is_changed())

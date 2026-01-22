@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_album_is_collected(result=None, device_id=None, backup_dir=None):
     """
@@ -36,18 +36,5 @@ def check_album_is_collected(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务28：搜索一个歌手,在歌手主页选择一个专辑并收藏")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 搜索一位歌手并进入其主页")
-    print("  2. 切换到'专辑'标签页")
-    print("  3. 进入任意一个专辑的详情页")
-    print("  4. 点击收藏按钮")
-    print("\n🔍 开始验证...")
 
-    success = check_album_is_collected()
-
-    print(f"\n任务28验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_album_is_collected())

@@ -26,22 +26,5 @@ def check_song_recognition_is_attempted(result=None, device_id=None, backup_dir=
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务26：使用听歌识曲功能识别一首歌曲")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 打开音乐APP")
-    print("  2. 找到并点击'听歌识曲'功能")
-    print("  3. 在外部播放一首歌曲以供识别")
-    print("  4. 等待识别结果")
-    print("\n⚠️  注意：此功能为跨应用交互，无法自动验证，默认通过。")
-    print("\n🔍 开始验证...")
 
-    mock_result = {
-        "final_message": "正在努力识别歌曲..."
-    }
-    success = check_song_recognition_is_attempted(result=mock_result)
-
-    print(f"\n任务26验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_song_recognition_is_attempted())

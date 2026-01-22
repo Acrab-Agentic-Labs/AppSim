@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 PLAYLIST_NAME_FEATURED = "精选歌单"
 
@@ -63,14 +63,5 @@ def check_featured_playlist_song_count(result=None, device_id=None, backup_dir=N
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务38：数一下“精选歌单”里有多少首歌曲")
-    print("=" * 70)
-    print("\n🔍 开始验证...")
 
-    mock_result = { "final_message": "这个精选歌单里有 50 首歌。" }
-    success = check_featured_playlist_song_count(result=mock_result)
-
-    print(f"\n任务38验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_featured_playlist_song_count())

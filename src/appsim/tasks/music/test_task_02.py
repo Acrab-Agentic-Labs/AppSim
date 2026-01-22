@@ -6,7 +6,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def find_playlist_with_most_songs(result=None, device_id=None, backup_dir=None):
     """
@@ -45,21 +45,10 @@ def find_playlist_with_most_songs(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务2：找出歌曲数量最多的歌单")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 打开音乐APP，进入'我的'页面")
-    print("  2. 查看所有歌单及其歌曲数量")
-    print("  3. 找出数量最多的歌单并返回其名称")
-    print("\n🔍 开始验证...")
 
     mock_result = {
         "final_message": "歌曲数量最多的歌单是'热歌榜'。"
     }
     # 注意: 独立运行时，需要一个 autotest/user_playlists.json 文件且其中'热歌榜'歌曲最多
-    success = find_playlist_with_most_songs(result=mock_result)
+    print(find_playlist_with_most_songs(result=mock_result))
 
-    print(f"\n任务2验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)

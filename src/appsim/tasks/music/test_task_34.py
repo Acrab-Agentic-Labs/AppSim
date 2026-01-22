@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 PLAYLIST_NAME_DAILY = "每日推荐"
 PLAYLIST_NAME_HOT = "热歌榜"
@@ -70,14 +70,5 @@ def check_playlist_song_sum(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务34：计算“每日推荐”和“热歌榜”的歌曲总数")
-    print("=" * 70)
-    print("\n🔍 开始验证...")
 
-    mock_result = { "final_message": "这两个歌单总共有 88 首歌。" }
-    success = check_playlist_song_sum(result=mock_result)
-
-    print(f"\n任务34验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_playlist_song_sum())

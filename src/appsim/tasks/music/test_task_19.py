@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 # 根据 playlists.json 定义所有属于“排行榜”性质的歌单名称
 RANKING_PLAYLIST_NAMES = [
@@ -35,7 +35,7 @@ def check_play_from_rank_list(result=None, device_id=None, backup_dir=None):
     logging.info(f"  → 最新播放的歌曲ID是: '{played_song_id}'")
 
     # 2. 从设备获取所有排行榜歌单中的歌曲ID
-    playlists_data = read_json_from_device("data/playlists.json", device_id, result, backup_dir)
+    playlists_data = read_json_from_device("playlists.json", device_id, result, backup_dir)
     if not playlists_data:
         logging.error("✗ 测试失败 - 任务19未完成：无法从设备读取歌单数据(playlists.json)")
         return False
@@ -60,17 +60,5 @@ def check_play_from_rank_list(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务19：在排行榜中打开一个榜单并播放第一首歌曲")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 打开音乐APP，进入'排行榜'页面")
-    print("  2. 选择任意一个榜单")
-    print("  3. 点击第一首歌曲进行播放")
-    print("\n🔍 开始验证...")
 
-    success = check_play_from_rank_list()
-
-    print(f"\n任务19验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_play_from_rank_list())

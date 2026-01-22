@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_mv_is_playing(result=None, device_id=None, backup_dir=None):
     """
@@ -24,17 +24,5 @@ def check_mv_is_playing(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务30：搜索一位歌手，进入歌手主页播放一个MV")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 搜索一位歌手并进入其主页")
-    print("  2. 切换到'MV'标签页")
-    print("  3. 点击任意一个MV进行播放")
-    print("\n🔍 开始验证...")
 
-    success = check_mv_is_playing()
-
-    print(f"\n任务30验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_mv_is_playing())

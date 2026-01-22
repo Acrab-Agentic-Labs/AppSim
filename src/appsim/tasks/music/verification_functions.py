@@ -8,7 +8,7 @@ import os
 import subprocess
 
 # App包名
-APP_PACKAGE = "com.example.mymusic"
+APP_PACKAGE = "com.example.netease_cloud_music_sim"
 
 
 def read_json_from_device(file_path, device_id=None, result=None, backup_dir=None):

@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_search_artist_and_play(result=None, device_id=None, backup_dir=None):
     """
@@ -26,18 +26,5 @@ def check_search_artist_and_play(result=None, device_id=None, backup_dir=None):
     return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务14：搜索一个歌手，进入歌手主页，播放第一首歌")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 打开音乐APP")
-    print("  2. 点击搜索按钮并输入歌手名称")
-    print("  3. 点击搜索结果中的歌手，进入歌手主页")
-    print("  4. 在歌手主页中点击第一首歌曲播放")
-    print("\n🔍 开始验证...")
 
-    success = check_search_artist_and_play()
-
-    print(f"\n任务14验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_search_artist_and_play())

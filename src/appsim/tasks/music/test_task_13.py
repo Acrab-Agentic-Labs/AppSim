@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 SEARCH_QUERY = "稻香"
 
@@ -27,18 +27,5 @@ def check_search_and_play_song(result=None, device_id=None, backup_dir=None):
     return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print(f"任务13：搜索'{SEARCH_QUERY}'并播放第一首搜索结果")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 打开音乐APP")
-    print("  2. 点击搜索按钮")
-    print(f"  3. 输入'{SEARCH_QUERY}'")
-    print("  4. 点击第一首搜索结果并播放")
-    print("\n🔍 开始验证...")
 
-    success = check_search_and_play_song()
-
-    print(f"\n任务13验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_search_and_play_song())

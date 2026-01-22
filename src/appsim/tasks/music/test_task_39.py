@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 ARTIST_NAME_JAY_CHOU = "周杰伦"
 
@@ -58,14 +58,5 @@ def check_artist_song_count(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务39：搜索歌手“周杰伦”，计算他的歌曲总数")
-    print("=" * 70)
-    print("\n🔍 开始验证...")
 
-    mock_result = { "final_message": "周杰伦的歌曲总数是 258 首。" }
-    success = check_artist_song_count(result=mock_result)
-
-    print(f"\n任务39验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_artist_song_count())
