@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_comment_is_posted(result=None, device_id=None, backup_dir=None):
     """
@@ -28,17 +28,5 @@ def check_comment_is_posted(result=None, device_id=None, backup_dir=None):
     return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务24：在歌单中选择一首歌曲并发表评论")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 进入任意歌曲的播放或详情页面")
-    print("  2. 滑动到评论区，点击'发表评论'")
-    print("  3. 输入评论内容并点击'发表'")
-    print("\n🔍 开始验证...")
 
-    success = check_comment_is_posted()
-
-    print(f"\n任务24验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_comment_is_posted())

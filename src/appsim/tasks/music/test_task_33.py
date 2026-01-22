@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_favorite_song_count(result=None, device_id=None, backup_dir=None):
     """
@@ -52,14 +52,5 @@ def check_favorite_song_count(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务33：数一下“我喜欢的音乐”里有几首歌曲")
-    print("=" * 70)
-    print("\n🔍 开始验证...")
 
-    mock_result = { "final_message": "您喜欢的音乐歌单里一共有 58 首歌曲。" }
-    success = check_favorite_song_count(result=mock_result)
-
-    print(f"\n任务33验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_favorite_song_count())

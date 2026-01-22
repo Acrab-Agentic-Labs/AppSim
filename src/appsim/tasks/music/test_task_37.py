@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 PLAYLIST_NAME_HOT = "热歌榜"
 
@@ -63,14 +63,5 @@ def check_hot_rank_song_count(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务37：数一下“热歌榜”里有多少首歌曲")
-    print("=" * 70)
-    print("\n🔍 开始验证...")
 
-    mock_result = { "final_message": "热歌榜里一共有 100 首歌。" }
-    success = check_hot_rank_song_count(result=mock_result)
-
-    print(f"\n任务37验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_hot_rank_song_count())

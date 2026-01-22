@@ -42,7 +42,7 @@ from .test_task_39 import check_artist_song_count
 
 # 所有指令
 MUSIC_TASKS = AppTasks(
-    package_name="music.sim",
+    package_name="com.example.netease_cloud_music_sim",
     task_items=[
         TaskItem(
             instruction="进入‘我的’页面中‘我喜欢的音乐’这个歌单",

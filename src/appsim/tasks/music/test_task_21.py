@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_song_is_deleted_from_playlist(result=None, device_id=None, backup_dir=None):
     """
@@ -26,17 +26,5 @@ def check_song_is_deleted_from_playlist(result=None, device_id=None, backup_dir=
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务21：删除歌单中的第一首歌")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 进入任意一个包含多首歌曲的歌单")
-    print("  2. 点击编辑或管理按钮")
-    print("  3. 选中第一首歌曲并点击删除")
-    print("\n🔍 开始验证...")
 
-    success = check_song_is_deleted_from_playlist()
-
-    print(f"\n任务21验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_song_is_deleted_from_playlist())

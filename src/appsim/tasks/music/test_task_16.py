@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_lyrics_are_shown(result=None, device_id=None, backup_dir=None):
     """
@@ -24,16 +24,5 @@ def check_lyrics_are_shown(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务16：查看一首歌曲的歌词")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 进入歌曲播放页面")
-    print("  2. 点击歌曲封面或歌词显示区域以展开歌词")
-    print("\n🔍 开始验证...")
 
-    success = check_lyrics_are_shown()
-
-    print(f"\n任务16验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_lyrics_are_shown())

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for file in test_task_08.py test_task_09.py test_task_10.py test_task_11.py test_task_12.py test_task_13.py test_task_14.py test_task_15.py test_task_16.py test_task_17.py test_task_18.py test_task_19.py test_task_20.py test_task_21.py test_task_22.py test_task_23.py test_task_24.py test_task_25.py test_task_26.py test_task_27.py test_task_28.py test_task_29.py test_task_30.py test_task_31.py test_task_32.py test_task_33.py test_task_34.py test_task_35.py test_task_36.py test_task_37.py test_task_38.py test_task_39.py)",
+      "Bash(do if [ -f \"$file\" ])",
+      "Bash(then echo \"$file\")",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(python:*)",
+      "Bash(del:*)"
+    ]
+  }
+}

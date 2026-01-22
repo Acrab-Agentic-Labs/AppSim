@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 # 歌单名称，直接从任务指令中获取
 PLAYLIST_NAME_HOT = "热歌榜"
@@ -45,6 +45,7 @@ def check_delete_song_from_hot_playlist(result=None, device_id=None, backup_dir=
         logging.warning(f"  → 设备状态警告: 找到了删除记录,但没有来自'{PLAYLIST_NAME_HOT}'的记录")
     else:
         logging.warning("  → 设备状态警告: 未找到任何歌曲删除记录")
+        return False
 
     # 3. 如果设备状态检查失败, 检查final_message作为后备
     if result and "final_message" in result:
@@ -57,14 +58,6 @@ def check_delete_song_from_hot_playlist(result=None, device_id=None, backup_dir=
     return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务3：删除‘我的’页面中热歌榜歌单的第一首歌曲")
-    print("=" * 70)
-    print("\n🔍 开始验证...")
 
     mock_result = { "final_message": "已成功删除歌曲。" }
-    success = check_delete_song_from_hot_playlist(result=mock_result)
-
-    print(f"\n任务3验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_delete_song_from_hot_playlist(result=mock_result))

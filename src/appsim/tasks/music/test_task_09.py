@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_volume_is_adjusted(result=None, device_id=None, backup_dir=None):
     """
@@ -29,16 +29,5 @@ def check_volume_is_adjusted(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务9：调节当前音乐播放的音量")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 进入播放页面")
-    print("  2. 调整音量滑块或按钮")
-    print("\n🔍 开始验证...")
 
-    success = check_volume_is_adjusted()
-
-    print(f"\n任务9验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_volume_is_adjusted())

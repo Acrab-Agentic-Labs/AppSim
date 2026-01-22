@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_view_song_detail(result=None, device_id=None, backup_dir=None):
     """
@@ -39,17 +39,5 @@ def check_view_song_detail(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务15：点击当前播放的歌曲，查看歌曲详情")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 在App任意位置，确保底部有歌曲在播放")
-    print("  2. 点击底部播放条，进入播放详情页")
-    print("  3. 点击歌曲封面或标题等区域，进入歌曲信息详情页")
-    print("\n🔍 开始验证...")
 
-    success = check_view_song_detail()
-
-    print(f"\n任务15验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_view_song_detail())

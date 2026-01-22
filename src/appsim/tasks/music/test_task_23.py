@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_song_is_unfavorited(result=None, device_id=None, backup_dir=None):
     """
@@ -24,18 +24,5 @@ def check_song_is_unfavorited(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务23：取消收藏第一首歌曲")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 进入'我喜欢的音乐'歌单")
-    print("  2. 点击歌曲后的菜单按钮")
-    print("  3. 选择'取消收藏'或类似选项")
-    print("  (或者进入播放页面，再次点击爱心按钮取消收藏)")
-    print("\n🔍 开始验证...")
 
-    success = check_song_is_unfavorited()
-
-    print(f"\n任务23验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_song_is_unfavorited())

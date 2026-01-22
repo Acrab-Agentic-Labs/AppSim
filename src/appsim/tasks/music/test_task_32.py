@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 SONG_NAME_FOR_TASK = "晴天"
 
@@ -78,15 +78,5 @@ def check_comment_count(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务32：数一下歌曲《晴天》的评论数目")
-    print("=" * 70)
-    print("\n🔍 开始验证...")
 
-    mock_result = { "final_message": "这首歌有 50 条评论。" }
-
-    success = check_comment_count(result=mock_result)
-
-    print(f"\n任务32验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_comment_count())

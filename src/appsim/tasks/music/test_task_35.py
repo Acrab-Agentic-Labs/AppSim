@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 PLAYLIST_NAME_DAILY_RECOMMEND = "每日推荐"
 
@@ -63,14 +63,5 @@ def check_daily_recommendation_song_count(result=None, device_id=None, backup_di
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务35：数一下首页“每日推荐”中有多少首歌曲")
-    print("=" * 70)
-    print("\n🔍 开始验证...")
 
-    mock_result = { "final_message": "首页每日推荐有 30 首歌曲。" }
-    success = check_daily_recommendation_song_count(result=mock_result)
-
-    print(f"\n任务35验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_daily_recommendation_song_count())

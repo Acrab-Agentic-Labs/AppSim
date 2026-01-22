@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_enter_any_playlist(result=None, device_id=None, backup_dir=None):
     """
@@ -23,16 +23,5 @@ def check_enter_any_playlist(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务10：随机进入'我的'中的一个歌单")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 进入'我的'页面")
-    print("  2. 点击任意一个歌单")
-    print("\n🔍 开始验证...")
 
-    success = check_enter_any_playlist()
-
-    print(f"\n任务10验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_enter_any_playlist())

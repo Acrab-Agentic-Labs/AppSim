@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from verification_functions import read_json_from_device
 
 def check_create_playlist_and_add_song(result=None, device_id=None, backup_dir=None):
     """
@@ -43,17 +43,5 @@ def check_create_playlist_and_add_song(result=None, device_id=None, backup_dir=N
     return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    print("=" * 70)
-    print("任务12：创建一个新的歌单,并添加首音乐")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 进入'我的'页面")
-    print("  2. 点击创建歌单并命名")
-    print("  3. 向新歌单中添加至少一首歌曲")
-    print("\n🔍 开始验证...")
 
-    success = check_create_playlist_and_add_song()
-
-    print(f"\n任务12验证结果: {'成功' if success else '失败'}")
-    sys.exit(0 if success else 1)
+    print(check_create_playlist_and_add_song())
