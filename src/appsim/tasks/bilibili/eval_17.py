@@ -18,7 +18,7 @@ def validate_task_17(result=None, device_id=None, backup_dir=None):
         cmd = ["adb"]
         if device_id:
             cmd.extend(["-s", device_id])
-        cmd.extend(["exec-out", "run-as", "bilibili_sim",
+        cmd.extend(["exec-out", "run-as", "com.example.bilibili_sim",
                    "cat", "files/video_comments.json"])
 
         result_data = subprocess.run(
@@ -39,14 +39,14 @@ def validate_task_17(result=None, device_id=None, backup_dir=None):
         # 检查命令是否成功执行
         if result_data.returncode != 0 or not result_data.stdout:
             print("⚠️ 无法读取评论数据，回退验证")
-            return '9700' in final_msg
+            return '4696' in final_msg
 
         # 2. 解析JSON数据
         try:
             data = json.loads(result_data.stdout)
         except json.JSONDecodeError:
             print("⚠️ 评论数据格式错误，回退验证")
-            return '9700' in final_msg
+            return '4696' in final_msg
 
         # 3. 计算评论区所有点赞数的总和（不包括当前用户点的赞）
         comments_list = data.get("comments", [])
@@ -68,10 +68,10 @@ def validate_task_17(result=None, device_id=None, backup_dir=None):
 
     except subprocess.TimeoutExpired:
         print("⚠️ ADB命令超时，回退验证")
-        return '9700' in final_msg
+        return '4696' in final_msg
     except Exception as e:
         print(f"⚠️ 验证过程出错: {str(e)}, 回退验证")
-        return '9700' in final_msg
+        return '4696' in final_msg
 
 if __name__ == '__main__':
     result = validate_task_17()
