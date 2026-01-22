@@ -1,12 +1,11 @@
 """
-功能: 验证未开始会议的数目
-验证目标: 检查status为UPCOMING的会议数量
-数据来源: meetings.json
+功能: 验证邀请链接复制功能
+验证目标: 检查个人会议室的邀请链接是否正确复制
+数据来源: personal_meeting_rooms.json
 """
 
 import os
 import logging
-
 
 # ============================================================================
 # 常量定义 - 每个脚本独立定义
@@ -15,36 +14,9 @@ import logging
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-EXPECTED_COUNT = 16
-
-# 数据文件常量
-MEETINGS_FILE = "meetings.json"
-USERS_FILE = "users.json"
-MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
-PERSONAL_MEETING_ROOMS_FILE = "personal_meeting_rooms.json"
-MESSAGES_FILE = "messages.json"
-HAND_RAISE_RECORDS_FILE = "hand_raise_records.json"
-MEETING_INVITATIONS_FILE = "meeting_invitations.json"
-
-# JSON字段名常量
-MEETING_ID_KEY = "meetingId"
-USER_ID_KEY = "userId"
-MEETING_STATUS_KEY = "status"
-MEETING_TYPE_KEY = "meetingType"
-PARTICIPANT_IDS_KEY = "participantIds"
-IS_MUTED_KEY = "isMuted"
-IS_CAMERA_ON_KEY = "isCameraOn"
-IS_SHARING_SCREEN_KEY = "isSharingScreen"
-IS_HAND_RAISED_KEY = "isHandRaised"
-
-# 业务常量
-MEETING_STATUS_UPCOMING = "UPCOMING"
-MEETING_STATUS_ONGOING = "ONGOING"
-MEETING_STATUS_ENDED = "ENDED"
-MEETING_TYPE_INSTANT = "INSTANT"
-MEETING_TYPE_SCHEDULED = "SCHEDULED"
-MEETING_TYPE_PERSONAL = "PERSONAL"
-
+MEETING_ID = "4157555988"
+EXPECTED_LINK = "meeting.tencent.com/p/4157555988"
+ROOMS_FILE = "personal_meeting_rooms.json"
 
 # ============================================================================
 # 工具函数 - read_json_from_device 内联实现
@@ -122,55 +94,62 @@ def read_json_from_device(
         logging.error(f"读取设备JSON文件时发生未知错误: {e}")
         return None
 
-
 # ============================================================================
 # 验证函数 - 核心业务逻辑
 # ============================================================================
 
-def verify_not_started_meeting_count(
+def verify_invitation_link_copied(
     result=None,
     device_id=None,
     backup_dir=None,
 ) -> bool:
     """
-    验证未开始会议的数目是否与预期匹配。
+    验证复制的邀请链接是否正确。
+
+    该函数内联了check_contact_and_invitation_link的实现逻辑，
+    确保脚本完全独立，无函数间调用。
 
     参数:
-        expected_count (int): 期望的未开始会议数目。
+        meeting_id (str): 个人会议室的会议ID。
+        expected_link (str): 期望的邀请链接。
         device_id (str, optional): Android设备的ID. Defaults to None.
-        backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
-                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_reasoning_tasks")。
+        backup_dir (str, optional): 备份文件存放的目录。
 
     返回:
-        bool: 如果实际未开始会议数目与期望数目匹配则返回True，否则返回False。
+        bool: 如果获取到的链接与期望的链接匹配则返回True, 否则返回False。
     """
 
     # 使用常量
-    expected_count = EXPECTED_COUNT
+    meeting_id = MEETING_ID
+    expected_link = EXPECTED_LINK
 
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_34")
+        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_14")
 
-    meetings_data = read_json_from_device(
+    # 读取个人会议室数据
+    rooms = read_json_from_device(
         device_id=device_id,
         package_name=PACKAGE_NAME,
-        device_json_path=f"files/{MEETINGS_FILE}",
+        device_json_path=f"files/{ROOMS_FILE}",
         backup_dir=backup_dir,
     )
 
-    if meetings_data is None:
-        print(f"错误: 无法从设备读取或解析 {MEETINGS_FILE}。")
+    if rooms is None:
+        logging.error(f"错误: 无法从设备读取或解析 {ROOMS_FILE}。")
         return False
 
-    actual_count = len([m for m in meetings_data if m.get(MEETING_STATUS_KEY) == "UPCOMING"])
-    if actual_count == expected_count:
-        return True
-    else:
-        logging.error(f"验证失败：未开始的会议总数 '{actual_count}' 与期望的 '{expected_count}' 不匹配。")
+    try:
+        # 查找指定会议ID的邀请链接并验证
+        for room in rooms:
+            if room.get("meetingId") == meeting_id:
+                if room.get("meetingLink") == expected_link:
+                    return True
+
+        logging.error(f"未找到会议 {meeting_id} 的邀请链接，或者链接不匹配。")
         return False
-
-
-
+    except Exception as e:
+        logging.error(f"处理数据时发生错误: {e}")
+        return False
 
 
 if __name__ == '__main__':
