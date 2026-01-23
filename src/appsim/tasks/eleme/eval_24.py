@@ -1,6 +1,6 @@
 from appsim.utils import read_json_from_device
 
-PACKAGE_NAME = "com.example.myele_sim"
+PACKAGE_NAME = "com.example.eleme_sim"
 DEVICE_FILE_PATH = "files/messages.json"
 ACTION_NAVIGATE = "navigate"
 ACTION_CLEAR_SEARCH_HISTORY = "clear_search_history"

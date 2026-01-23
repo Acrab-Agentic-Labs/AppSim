@@ -1,6 +1,6 @@
 from appsim.utils import read_json_from_device
 
-PACKAGE_NAME = "com.example.myele_sim"
+PACKAGE_NAME = "com.example.eleme_sim"
 DEVICE_FILE_PATH = "files/messages.json"
 ACTION_ENTER_FOOD_INSURANCE_PAGE = "enter_food_insurance_page"
 ACTION_APPLY_FOOD_INSURANCE = "apply_food_insurance"
