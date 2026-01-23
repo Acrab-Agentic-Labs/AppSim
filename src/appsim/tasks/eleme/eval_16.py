@@ -1,6 +1,6 @@
 from appsim.utils import read_json_from_device
 
-PACKAGE_NAME = "com.example.myele_sim"
+PACKAGE_NAME = "com.example.eleme_sim"
 DEVICE_FILE_PATH = "files/messages.json"
 ACTION_SEND_MESSAGE = "send_message"
 PAGE_CHAT = "chat"

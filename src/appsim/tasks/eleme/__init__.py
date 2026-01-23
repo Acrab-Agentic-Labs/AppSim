@@ -90,7 +90,7 @@ ELEME_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="开启免密支付。",
+            instruction="开启支付宝免密支付。",
             verify_func=validate_task_eight,
             human_steps=4,
             is_reasoning=False,
