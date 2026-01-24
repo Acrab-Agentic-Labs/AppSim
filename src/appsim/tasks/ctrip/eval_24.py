@@ -2,6 +2,7 @@ import json
 import re
 import subprocess
 from datetime import date
+import os
 
 # 任务24：进入 "机票" 页面，查10月21日从北京飞广州的机票，统计下最便宜的 3 趟航班的平均价格
 # 检查条件：智能体计算的平均价格是否与真实的平均价格一致
@@ -161,12 +162,13 @@ def check_flight_search_price_avg(result=None, device_id=None):
         return False
 
 
-def check_from_search_params_file(device_id=None):
+def check_from_search_params_file(device_id=None, backup_dir=None):
     """
     从search_params.json文件中检查是否记录了正确的搜索参数
     """
     app_package = "com.example.Ctrip"
     phone_file_path = "files/search_params.json"
+    local_file_path = os.path.join(backup_dir, 'search_params.json') if backup_dir else 'search_params.json'
 
     # 1. 通过ADB获取文件内容
     try:
@@ -176,19 +178,14 @@ def check_from_search_params_file(device_id=None):
             cmd.extend(["-s", device_id])
         cmd.extend(["exec-out", "run-as", app_package, "cat", phone_file_path])
 
-        result = subprocess.run(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, encoding="utf-8", check=True
-        )
-        file_content = result.stdout
-    except subprocess.CalledProcessError:
-        return False
-    except Exception:
-        return False
+        with open(local_file_path, "w", encoding="utf-8") as f:
+            subprocess.run(cmd, stdout=f)
 
-    # 2. 解析JSON内容
-    try:
-        data = json.loads(file_content)
-    except json.JSONDecodeError:
+        # 2. 解析JSON内容
+        with open(local_file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+    except subprocess.CalledProcessError:
         return False
     except Exception:
         return False

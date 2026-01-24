@@ -1,15 +1,17 @@
 import json
 import subprocess
+import os
 
 # 任务5：点击"行程"按钮
 # 检查条件：icon="行程", page="行程页面"
 
 
-def check_click_itinerary(result=None, device_id=None):
+def check_click_itinerary(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.Ctrip"
     phone_file_path = "files/click_history.json"
+    local_file_path = os.path.join(backup_dir, 'click_history.json') if backup_dir else 'click_history.json'
 
-    # 1. 通过ADB获取文件内容（指定编码为UTF-8，避免解码错误）
+    # 1. 通过ADB获取文件内容
     try:
         # 构建adb命令，如果提供了device_id就添加设备选择参数
         cmd = ["adb"]
@@ -17,25 +19,14 @@ def check_click_itinerary(result=None, device_id=None):
             cmd.extend(["-s", device_id])
         cmd.extend(["exec-out", "run-as", app_package, "cat", phone_file_path])
 
-        # 使用stdout=subprocess.PIPE，配合universal_newlines和encoding参数处理编码
-        result1 = subprocess.run(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,  # 启用文本模式
-            encoding="utf-8",  # 强制指定UTF-8编码解析输出
-            check=True,
-        )
-        file_content = result1.stdout
-    except subprocess.CalledProcessError:
-        return False
-    except Exception:
-        return False
+        with open(local_file_path, "w", encoding="utf-8") as f:
+            subprocess.run(cmd, stdout=f)
 
-    # 2. 解析JSON内容
-    try:
-        data = json.loads(file_content)
-    except json.JSONDecodeError:
+        # 2. 解析JSON内容
+        with open(local_file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+    except subprocess.CalledProcessError:
         return False
     except Exception:
         return False

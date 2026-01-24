@@ -1,18 +1,16 @@
-def validate_task_fourteen(result=None, device_id=None):
-    """验证任务十四：查看首页iPhone15商品共有多少条评论"""
+import re
 
-    # 检查result中的final_message是否包含数字300的各种表达形式
-    if result and "final_message" in result:
+def validate_task_fourteen(result=None, device_id=None, backup_dir=None):
+    """验证任务十四：查看首页前十个商品中华为商品评论数最多的为多少条，给出一个阿拉伯数字即可。"""
+    if result and "final_message" in result and result["final_message"] is not None:
         message = result["final_message"]
-        # 支持：300或三百
-        patterns = ["300", "三百"]
-        for pattern in patterns:
-            if pattern in message:
-                return True
+        numbers = re.findall(r"\d+", message)
+        # Check if any of the found numbers is exactly ''
+        if '3200' in numbers:
+            return True
 
     return False
 
 
 if __name__ == "__main__":
-    result = validate_task_fourteen()
-    print(result)
+    pass
