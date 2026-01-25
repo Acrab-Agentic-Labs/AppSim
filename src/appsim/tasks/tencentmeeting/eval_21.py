@@ -41,6 +41,7 @@ def get_latest_ended_meeting_details(
     # 使用常量
     expected_topic = EXPECTED_TOPIC
     expected_duration_minutes = EXPECTED_DURATION_MINUTES
+    duration_tolerance_minutes = DEFAULT_DURATION_TOLERANCE_MINUTES
 
     if backup_dir is None:
         backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_13")

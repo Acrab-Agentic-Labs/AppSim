@@ -8,6 +8,7 @@ PACKAGE_NAME = "com.example.tencent_meeting_sim"
 # 任务特定常量
 MEETING_ID = "meeting_3d7e91"
 USER_ID = "user001"
+EXPECTED_STATUS = True
 MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
 IS_CAMERA_ON_KEY = "isCameraOn"
 
@@ -33,6 +34,7 @@ def check_camera_enabled(
     # 使用常量
     meeting_id = MEETING_ID
     user_id = USER_ID
+    expected_status = EXPECTED_STATUS
 
     if backup_dir is None:
         backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_2")

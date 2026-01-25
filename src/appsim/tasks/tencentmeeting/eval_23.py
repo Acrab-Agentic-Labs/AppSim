@@ -7,6 +7,8 @@ PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
 USER_ID = "user001"
+EXPECTED_WAITING_ROOM_STATUS = True
+EXPECTED_IN_MEETING_STATUS = True
 PERSONAL_MEETING_ROOMS_FILE = "personal_meeting_rooms.json"
 MEETINGS_FILE = "meetings.json"
 INVITATIONS_FILE = "meeting_invitations.json"
@@ -46,6 +48,8 @@ def check_personal_meeting_room_waiting_room_status(
 
     # 使用常量
     user_id = USER_ID
+    expected_waiting_room_status = EXPECTED_WAITING_ROOM_STATUS
+    expected_in_meeting_status = EXPECTED_IN_MEETING_STATUS
 
     if backup_dir is None:
         backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_29")

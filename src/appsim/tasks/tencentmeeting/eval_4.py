@@ -8,6 +8,7 @@ PACKAGE_NAME = "com.example.tencent_meeting_sim"
 # 任务特定常量
 MEETING_ID = "meeting_3d7e91"
 USER_ID = "user001"
+EXPECTED_SHARING_STATUS = True
 MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
 
 # 常量定义
@@ -36,6 +37,7 @@ def check_screen_sharing(
     # 使用常量
     meeting_id = MEETING_ID
     user_id = USER_ID
+    expected_sharing_status = EXPECTED_SHARING_STATUS
     if backup_dir is None:
         backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_11")
 

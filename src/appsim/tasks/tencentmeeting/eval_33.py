@@ -12,6 +12,8 @@ PACKAGE_NAME = "com.example.tencent_meeting_sim"
 # 任务特定常量
 USER_ID = "user001"
 EXPECTED_PASSWORD = "888888"
+EXPECTED_WAITING_ROOM = False  # 不检查等候室设置
+EXPECTED_MUTE_ON_ENTRY = False  # 不检查静音入会设置
 PMR_FILE = "personal_meeting_rooms.json"
 
 def check_personal_room_advanced_settings(
@@ -38,6 +40,8 @@ def check_personal_room_advanced_settings(
     # 使用常量
     user_id = USER_ID
     expected_password = EXPECTED_PASSWORD
+    expected_waiting_room = EXPECTED_WAITING_ROOM
+    expected_mute_on_entry = EXPECTED_MUTE_ON_ENTRY
 
     if backup_dir is None:
         backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_38")

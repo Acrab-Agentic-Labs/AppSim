@@ -47,12 +47,10 @@ def check_quick_meeting_created(
 
     # 使用常量
     user_id = USER_ID
+    expected_settings = DEFAULT_QUICK_MEETING_SETTINGS
 
     if backup_dir is None:
         backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_6")
-
-    if expected_settings is None:
-        expected_settings = DEFAULT_QUICK_MEETING_SETTINGS
 
     data = read_json_from_device(
         device_id=device_id,
