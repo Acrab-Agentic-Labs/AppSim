@@ -45,7 +45,7 @@ from .eval_40 import validate_task_forty
 
 # 所有测试指令列表（共40条，instruct 完全匹配需求描述）
 ELEME_TASKS = AppTasks(
-    package_name="com.example.myele",
+    package_name="com.example.eleme_sim",
     task_items=[
         TaskItem(
             instruction="看看红包卡券里的红包还能帮我省多少钱，计算红包的总价值",
