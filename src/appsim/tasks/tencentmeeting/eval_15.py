@@ -8,30 +8,30 @@ PACKAGE_NAME = "com.example.tencent_meeting_sim"
 # 任务特定常量
 MEETING_ID = "meeting_3d7e91"
 USER_ID = "user001"
+EXPECTED_STATUS = True
 MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
 IS_MUTED_KEY = "isMuted"
 
 def check_mic_enabled(
-    meeting_id: str,
-    user_id: str,
-    expected_status: bool = True,  # True for mic enabled, False for mic disabled (muted)
-    device_id: str = None,
-    backup_dir: str = None,
-    **kwargs,
+    result=None,
+    device_id=None,
+    backup_dir=None,
 ) -> bool:
     """
     检查指定会议中特定用户的麦克风状态。
 
     参数:
-        meeting_id (str): 会议ID。
-        user_id (str): 用户ID。
-        expected_status (bool): 期望的麦克风状态 (True为打开, False为关闭)。
+        result: Agent执行结果对象（包含executed_actions等信息）
         device_id (str, optional): Android设备的ID. Defaults to None.
         backup_dir (str, optional): 备份文件存放的目录。
 
     返回:
         bool: 如果麦克风状态符合预期，返回True，否则返回False。
     """
+    # 使用常量
+    meeting_id = MEETING_ID
+    user_id = USER_ID
+    expected_status = EXPECTED_STATUS
     if backup_dir is None:
         backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_1")
 
