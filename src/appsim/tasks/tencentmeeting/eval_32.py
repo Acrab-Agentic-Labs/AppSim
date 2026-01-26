@@ -10,7 +10,7 @@ from appsim.utils import read_json_from_device
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-EXPECTED_TOPIC = "明天上午10点会议"
+EXPECTED_TOPIC = "新产品发布"
 MEETINGS_FILE = "meetings.json"
 USERS_FILE = "users.json"
 

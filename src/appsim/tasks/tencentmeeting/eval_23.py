@@ -81,8 +81,8 @@ def check_personal_meeting_room_waiting_room_status(
     if not personal_room_found:
         logging.error(f"未在 {PERSONAL_MEETING_ROOMS_FILE} 中找到用户 {user_id} 的个人会议室信息或等候室状态不符。实际状态可能与期望的 {expected_waiting_room_status} 不一致。")
         # 如果通过数据文件验证失败，则检查 Agent 是否尝试执行了开启等候室和进入会议室操作
-        if "result" in kwargs:
-            executed_actions = kwargs["result"].get("executed_actions", [])
+        if result is not None:
+            executed_actions = result.get("executed_actions", [])
 
             # 辅助函数：检查坐标是否接近（允许±50像素误差）
             def is_point_near(point_str, target_x, target_y, tolerance=50):
@@ -142,8 +142,8 @@ def check_personal_meeting_room_waiting_room_status(
         return False
 
     # 如果meetings.json中未找到会议记录，检查Agent是否执行了进入会议室操作
-    if not meeting_record_found and "result" in kwargs:
-        executed_actions = kwargs["result"].get("executed_actions", [])
+    if not meeting_record_found and result is not None:
+        executed_actions = result.get("executed_actions", [])
 
         # 辅助函数：检查坐标是否接近（允许±50像素误差）
         def is_point_near(point_str, target_x, target_y, tolerance=50):

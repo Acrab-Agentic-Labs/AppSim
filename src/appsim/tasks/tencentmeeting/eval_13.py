@@ -15,7 +15,7 @@ import logging
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-EXPECTED_COUNT = 10
+EXPECTED_COUNT = 40
 
 # 数据文件常量
 MEETINGS_FILE = "meetings.json"
