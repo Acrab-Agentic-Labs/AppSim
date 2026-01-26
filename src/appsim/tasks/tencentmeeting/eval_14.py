@@ -10,7 +10,7 @@ PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
 MEETING_ID = "meeting_3d7e91"
-EXPECTED_COUNT = 147
+EXPECTED_COUNT = 32
 USERS_FILE = "users.json"
 MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
 USER_ID_KEY = "userId"

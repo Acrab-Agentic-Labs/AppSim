@@ -48,6 +48,7 @@ def check_quick_meeting_created(
     # 使用常量
     user_id = USER_ID
     expected_settings = DEFAULT_QUICK_MEETING_SETTINGS
+    expected_topic = DEFAULT_QUICK_MEETING_TOPIC
 
     if backup_dir is None:
         backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_6")

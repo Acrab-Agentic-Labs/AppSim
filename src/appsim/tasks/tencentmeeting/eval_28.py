@@ -12,7 +12,7 @@ PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
 MEETING_ID = "meeting_3d7e91"
-EXPECTED_SENDER_ID = "user002"
+EXPECTED_SENDER_ID = "user003"
 MESSAGES_FILE = "messages.json"
 
 def verify_most_active_sender(

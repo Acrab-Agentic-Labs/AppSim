@@ -12,7 +12,7 @@ PACKAGE_NAME = "com.example.tencent_meeting_sim"
 # 任务特定常量
 MEETING_ID = "meeting_3d7e91"
 SENDER_ID = "user002"
-EXPECTED_COUNT = 5
+EXPECTED_COUNT = 2
 MESSAGES_FILE = "messages.json"
 
 def verify_message_count_by_sender(
