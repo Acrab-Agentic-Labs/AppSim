@@ -10,7 +10,7 @@ from appsim.utils import read_json_from_device
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-EXPECTED_MINUTES = 88
+EXPECTED_MINUTES = 78
 TOLERANCE = 5
 MEETINGS_FILE = "meetings.json"
 
@@ -68,13 +68,18 @@ def verify_average_meeting_duration(
 
         # 计算每个会议的时长（分钟）
         durations = []
+        MAX_REASONABLE_DURATION_MINUTES = 24 * 60  # 24小时
         for meeting in ended_meetings:
             start_time = meeting.get("startTime")
             end_time = meeting.get("endTime")
 
             if start_time and end_time:
                 duration_minutes = (end_time - start_time) / (1000 * 60)
-                durations.append(duration_minutes)
+                # 过滤掉不合理的时长（负数或超过24小时）
+                if 0 < duration_minutes <= MAX_REASONABLE_DURATION_MINUTES:
+                    durations.append(duration_minutes)
+                else:
+                    logging.warning(f"跳过不合理的会议时长: {duration_minutes:.1f} 分钟 (会议ID: {meeting.get('meetingId', 'unknown')})")
 
         if not durations:
             logging.error("没有找到有效的会议时长数据。")

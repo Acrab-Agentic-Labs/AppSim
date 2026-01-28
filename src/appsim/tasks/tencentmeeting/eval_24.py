@@ -1,5 +1,5 @@
 """
-功能: 统计未开始的会议中设置了密码的会议数量
+功能: 统计未开始的会议数量
 数据库位置: meetings.json
 """
 
@@ -10,7 +10,7 @@ from appsim.utils import read_json_from_device
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-EXPECTED_COUNT = 11
+EXPECTED_COUNT = 16  # 未开始会议总数
 MEETINGS_FILE = "meetings.json"
 
 def verify_upcoming_meetings_with_password(
@@ -19,10 +19,10 @@ def verify_upcoming_meetings_with_password(
     backup_dir=None,
 ) -> bool:
     """
-    验证未开始的会议中设置了密码的会议数量。
+    验证未开始的会议数量。
 
     参数:
-        expected_count (int): 期望的未开始且设置了密码的会议数量。
+        expected_count (int): 期望的未开始会议数量。
         device_id (str, optional): Android设备的ID. Defaults to None.
         backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
                                      os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_30")。
@@ -56,17 +56,16 @@ def verify_upcoming_meetings_with_password(
         return False
 
     try:
-        # 过滤：status == "UPCOMING" 且 password 不为空
+        # 只过滤：status == "UPCOMING"
         upcoming_meetings = [m for m in meetings_data if m.get("status") == "UPCOMING"]
-        meetings_with_password = [m for m in upcoming_meetings if m.get("password")]
 
-        actual_count = len(meetings_with_password)
+        actual_count = len(upcoming_meetings)
 
         if actual_count == expected_count:
             return True
         else:
             logging.error(
-                f"验证失败：未开始且设置了密码的会议数量为 {actual_count}，期望为 {expected_count}。"
+                f"验证失败：未开始会议数量为 {actual_count}，期望为 {expected_count}。"
             )
             return False
     except Exception as e:

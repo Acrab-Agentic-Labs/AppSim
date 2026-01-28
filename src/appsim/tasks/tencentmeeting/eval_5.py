@@ -99,8 +99,8 @@ def check_hand_raise(
         logging.error(f"验证失败：在 {HAND_RAISE_RECORDS_FILE} 中，未找到用户 {user_id} 在会议 {meeting_id} 中正在进行的举手记录（'{LOWER_TIME_KEY}' 为 None）。")
 
     # 如果通过数据文件验证失败，则检查 Agent 是否尝试执行了举手操作
-    if not (participant_raised and record_exists) and "result" in kwargs:
-        executed_actions = kwargs["result"].get("executed_actions", [])
+    if not (participant_raised and record_exists) and result is not None:
+        executed_actions = result.get("executed_actions", [])
         # 检查 Agent 是否点击了举手按钮（坐标可能需要调整）
         hand_raise_clicked_by_agent = any(
             a.get("action") == "click" and "举手" in str(a.get("description", ""))

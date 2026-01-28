@@ -46,8 +46,8 @@ def check_scheduled_meeting_with_all_friends(
     if backup_dir is None:
         backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_7")
 
-    expected_start_timestamp_ms = kwargs.get("expected_start_time")
-    expected_all_user_ids = set(kwargs.get("expected_participants", []))
+    expected_start_timestamp_ms = expected_start_time
+    expected_all_user_ids = set(expected_participants)
 
     if expected_start_timestamp_ms is None:
         logging.error("错误: 未提供 expected_start_time 参数给 check_scheduled_meeting_with_all_friends。")
