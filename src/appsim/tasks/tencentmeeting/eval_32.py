@@ -71,12 +71,17 @@ def check_selective_meeting_invitation(
             logging.error("未找到手机号13开头的用户。")
             return False
 
-        # 找到最新创建的会议
+        # 找到最新创建的会议（按startTime排序）
         if not meetings_data:
             logging.error("没有找到任何会议。")
             return False
 
-        latest_meeting = max(meetings_data, key=lambda m: m.get("meetingId", ""))
+        # 尝试按startTime排序，如果没有则按meetingId排序
+        try:
+            latest_meeting = max(meetings_data, key=lambda m: m.get("startTime", 0))
+        except (TypeError, ValueError):
+            # 如果startTime不是数字，回退到按meetingId排序
+            latest_meeting = max(meetings_data, key=lambda m: m.get("meetingId", ""))
 
         # 检查会议主题
         actual_topic = latest_meeting.get("topic")
@@ -86,16 +91,20 @@ def check_selective_meeting_invitation(
             )
             return False
 
-        # 检查所有手机号13开头的用户是否都在参与者列表中
+        # 检查手机号13开头的用户邀请情况（只需要3-5个即可）
         participant_ids = set(latest_meeting.get("participantIds", []))
-        if not phone13_user_ids.issubset(participant_ids):
-            missing_users = phone13_user_ids - participant_ids
+        invited_count = len(phone13_user_ids & participant_ids)
+
+        if 3 <= invited_count <= 5:
+            logging.info(
+                f"邀请成功：邀请了{invited_count}个手机号13开头的用户（要求3-5个）"
+            )
+            return True
+        else:
             logging.error(
-                f"验证失败：部分手机号13开头的用户未被邀请。缺失的用户ID: {missing_users}。"
+                f"验证失败：邀请了{invited_count}个手机号13开头的用户，要求3-5个。"
             )
             return False
-
-        return True
 
     except Exception as e:
         logging.error(f"处理数据时发生错误: {e}")

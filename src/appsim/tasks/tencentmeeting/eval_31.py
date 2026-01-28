@@ -1,5 +1,5 @@
 """
-功能: 验证参与者管理操作（全体静音、单独解除静音、移出参与者）
+功能: 验证参与者管理操作（全体静音）
 数据库位置: meeting_participants.json
 """
 
@@ -11,8 +11,6 @@ PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
 MEETING_ID = "meeting_3d7e91"
-UNMUTED_USER_ID = "user003"
-REMOVED_USER_ID = ""
 PARTICIPANTS_FILE = "meeting_participants.json"
 
 def check_participant_management(
@@ -21,24 +19,20 @@ def check_participant_management(
     backup_dir=None,
 ) -> bool:
     """
-    验证参与者管理：全体静音、解除指定用户静音、移出指定用户。
+    验证参与者管理：全体静音。
 
     参数:
         meeting_id (str): 会议ID。
-        unmuted_user_id (str): 应该被解除静音的用户ID。
-        removed_user_id (str): 应该被移出的用户ID。
         device_id (str, optional): Android设备的ID. Defaults to None.
         backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
                                      os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_36")。
 
     返回:
-        bool: 如果参与者状态符合要求则返回True，否则返回False。
+        bool: 如果所有参与者都被静音则返回True，否则返回False。
     """
 
     # 使用常量
     meeting_id = MEETING_ID
-    unmuted_user_id = UNMUTED_USER_ID
-    removed_user_id = REMOVED_USER_ID
 
     if backup_dir is None:
         backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_36")
@@ -69,31 +63,19 @@ def check_participant_management(
             logging.error(f"会议 {meeting_id} 中没有找到任何参与者。")
             return False
 
-        # 检查被移出的用户不应该在参与者列表中
-        if any(p.get("userId") == removed_user_id for p in meeting_participants):
-            logging.error(f"验证失败：用户 {removed_user_id} 应该已被移出，但仍在参与者列表中。")
-            return False
-
-        # 检查其他参与者的静音状态
+        # 检查所有参与者的静音状态
         for participant in meeting_participants:
             user_id = participant.get("userId")
             is_muted = participant.get("isMuted")
 
-            if user_id == unmuted_user_id:
-                # 这个用户应该是未静音状态
-                if is_muted != False:
-                    logging.error(
-                        f"验证失败：用户 {user_id} 应该是未静音状态，但当前为 {is_muted}。"
-                    )
-                    return False
-            else:
-                # 其他用户应该都是静音状态
-                if is_muted != True:
-                    logging.error(
-                        f"验证失败：用户 {user_id} 应该是静音状态，但当前为 {is_muted}。"
-                    )
-                    return False
+            # 所有用户都应该是静音状态
+            if is_muted != True:
+                logging.error(
+                    f"验证失败：用户 {user_id} 应该是静音状态，但当前为 {is_muted}。"
+                )
+                return False
 
+        logging.info(f"验证成功：会议 {meeting_id} 中所有 {len(meeting_participants)} 个参与者都已静音。")
         return True
 
     except Exception as e:

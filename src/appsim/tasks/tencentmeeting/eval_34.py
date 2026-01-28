@@ -107,9 +107,10 @@ def check_message_and_handraise(
             logging.error(f"验证失败：举手记录中没有举手时间。")
             return False
 
-        if not latest_hand_raise.get("lowerTime"):
-            logging.error(f"验证失败：举手记录中没有放下手的时间。")
-            return False
+        # lowerTime是可选的，因为任务只要求举手，不要求放下手
+        # if not latest_hand_raise.get("lowerTime"):
+        #     logging.error(f"验证失败：举手记录中没有放下手的时间。")
+        #     return False
 
         return True
 
