@@ -48,7 +48,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_recent_ended_meeting,
             human_steps=1,
             is_reasoning=False,
-            skip=True,
         ),
         # 2
         TaskItem(
@@ -56,7 +55,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_previous_meeting_playback,
             human_steps=3,
             is_reasoning=False,
-            skip=True,
         ),
         # 3
         TaskItem(
@@ -64,7 +62,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_join_meeting_with_password,
             human_steps=6,
             is_reasoning=False,
-            skip=True,
         ),
         # 4
         TaskItem(
@@ -72,7 +69,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_screen_sharing,
             human_steps=2,
             is_reasoning=False,
-            skip=True,
         ),
         # 5
         TaskItem(
@@ -80,7 +76,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_hand_raise,
             human_steps=2,
             is_reasoning=False,
-            skip=True,
         ),
         # 6
         TaskItem(
@@ -88,7 +83,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_search_user_by_phone,
             human_steps=4,
             is_reasoning=True,
-            skip=True,
         ),
         # 7
         TaskItem(
@@ -96,7 +90,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_invitation_link_copied,
             human_steps=3,
             is_reasoning=False,
-            skip=True,
         ),
         # 8
         TaskItem(
@@ -104,7 +97,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_meeting_count,
             human_steps=1,
             is_reasoning=True,
-            skip=True,
         ),
         # 9
         TaskItem(
@@ -112,7 +104,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_contact_count,
             human_steps=3,
             is_reasoning=True,
-            skip=True,
         ),
         # 10
         TaskItem(
@@ -120,7 +111,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_participant_count_in_meeting,
             human_steps=5,
             is_reasoning=True,
-            skip=True,
         ),
         # 11
         TaskItem(
@@ -128,7 +118,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_not_started_meeting_count,
             human_steps=1,
             is_reasoning=True,
-            skip=True,
         ),
         # 12
         TaskItem(
@@ -136,7 +125,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_surname_zhou_count,
             human_steps=3,
             is_reasoning=True,
-            skip=True,
         ),
         # 13
         TaskItem(
@@ -144,7 +132,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_phone_13_count,
             human_steps=3,
             is_reasoning=True,
-            skip=True,
         ),
         # 14
         TaskItem(
@@ -152,7 +139,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_invitable_people_count,
             human_steps=5,
             is_reasoning=True,
-            skip=True,
         ),
         # 15
         TaskItem(
@@ -160,7 +146,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_mic_enabled,
             human_steps=2,
             is_reasoning=False,
-            skip=True,
         ),
         # 16
         TaskItem(
@@ -168,7 +153,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_camera_enabled,
             human_steps=2,
             is_reasoning=False,
-            skip=True,
         ),
         # 17
         TaskItem(
@@ -176,7 +160,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_all_mics_muted,
             human_steps=3,
             is_reasoning=False,
-            skip=True,
         ),
         # 18
         TaskItem(
@@ -184,7 +167,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_message_content,
             human_steps=3,
             is_reasoning=False,
-            skip=True,
         ),
         # 19
         TaskItem(
@@ -192,7 +174,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_quick_meeting_created,
             human_steps=3,
             is_reasoning=False,
-            skip=True,
         ),
         # 20
         TaskItem(
@@ -207,7 +188,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=get_latest_ended_meeting_details,
             human_steps=3,
             is_reasoning=True,
-            skip=True,
         ),
         # 22
         TaskItem(
@@ -215,7 +195,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_screen_sharing_active,
             human_steps=3,
             is_reasoning=False,
-            skip=True,
         ),
         # 23
         TaskItem(
@@ -223,7 +202,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_personal_meeting_room_waiting_room_status,
             human_steps=4,
             is_reasoning=False,
-            skip=True,
         ),
         # 24
         TaskItem(
@@ -231,7 +209,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_upcoming_meetings_with_password,
             human_steps=3,
             is_reasoning=True,
-            skip=True,
         ),
         # 25
         TaskItem(
@@ -239,7 +216,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_chensiyuan_max_participants_meeting,
             human_steps=5,
             is_reasoning=True,
-            skip=True,
         ),
         # 26
         TaskItem(
@@ -247,7 +223,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_message_count_by_sender,
             human_steps=5,
             is_reasoning=True,
-            skip=True,
         ),
         # 27
         TaskItem(
@@ -255,7 +230,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_average_meeting_duration,
             human_steps=3,
             is_reasoning=True,
-            skip=True,
         ),
         # 28
         TaskItem(
@@ -263,7 +237,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_most_active_sender,
             human_steps=5,
             is_reasoning=True,
-            skip=True,
         ),
         # 29
         TaskItem(
@@ -271,7 +244,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_personal_meeting_room_settings,
             human_steps=5,
             is_reasoning=False,
-            skip=True,
         ),
         # 30
         TaskItem(
@@ -279,7 +251,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_personal_room_invitation,
             human_steps=20,
             is_reasoning=False,
-            skip=True,
         ),
         # 31
         TaskItem(
@@ -287,7 +258,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_participant_management,
             human_steps=6,
             is_reasoning=False,
-            skip=True,
         ),
         # 32
         TaskItem(
@@ -295,7 +265,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_selective_meeting_invitation,
             human_steps=5,
             is_reasoning=True,
-            skip=True,
         ),
         # 33
         TaskItem(
@@ -303,7 +272,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_personal_room_advanced_settings,
             human_steps=5,
             is_reasoning=False,
-            skip=True,
         ),
         # 34
         TaskItem(
@@ -311,7 +279,6 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_message_and_handraise,
             human_steps=5,
             is_reasoning=False,
-            skip=True,
         ),
     ],
 )
