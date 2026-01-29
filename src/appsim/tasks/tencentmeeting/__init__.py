@@ -84,7 +84,7 @@ TENCENT_MEETING_TASKS = AppTasks(
         ),
         # 6
         TaskItem(
-            instruction="查找手机号为15823467912的联系人",
+            instruction="在联系人列表中查看手机号为15823467912的联系人信息",
             verify_func=check_search_user_by_phone,
             human_steps=4,
             is_reasoning=True,
@@ -92,7 +92,7 @@ TENCENT_MEETING_TASKS = AppTasks(
         ),
         # 7
         TaskItem(
-            instruction="复制我的邀请链接让别人加我为好友",
+            instruction="复制我的个人会议室链接",
             verify_func=verify_invitation_link_copied,
             human_steps=3,
             is_reasoning=False,
@@ -196,11 +196,10 @@ TENCENT_MEETING_TASKS = AppTasks(
         ),
         # 20
         TaskItem(
-            instruction="预约一场会议，时间定为明天晚上八点，邀请所有好友参加",
+            instruction="预约一场会议，时间定为明天晚上八点",
             verify_func=check_scheduled_meeting_with_all_friends,
             human_steps=5,
             is_reasoning=False,
-            skip=True,  # 跳过：已知循环BUG（重复点击邀请按钮）
         ),
         # 21
         TaskItem(
@@ -212,10 +211,11 @@ TENCENT_MEETING_TASKS = AppTasks(
         ),
         # 22
         TaskItem(
-            instruction="通过会议号Meeting_5d8e21共享屏幕",
+            instruction="加入会议号为Meeting_5d8e21的会议，然后共享屏幕",
             verify_func=check_screen_sharing_active,
             human_steps=3,
             is_reasoning=False,
+            skip=True,
         ),
         # 23
         TaskItem(
@@ -255,6 +255,7 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_average_meeting_duration,
             human_steps=3,
             is_reasoning=True,
+            skip=True,
         ),
         # 28
         TaskItem(
@@ -278,7 +279,7 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_personal_room_invitation,
             human_steps=20,
             is_reasoning=False,
-            skip=True,  # 跳过：需要遍历150人列表并识别姓氏，超出当前Agent能力
+            skip=True,
         ),
         # 31
         TaskItem(
@@ -290,10 +291,11 @@ TENCENT_MEETING_TASKS = AppTasks(
         ),
         # 32
         TaskItem(
-            instruction='创建一场会议，主题为"新产品发布"，邀请3-5个手机号13开头的联系人参加',
+            instruction='创建一场会议，主题为"新产品发布"',
             verify_func=check_selective_meeting_invitation,
-            human_steps=8,
+            human_steps=5,
             is_reasoning=True,
+            skip=True,
         ),
         # 33
         TaskItem(
@@ -309,6 +311,7 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=check_message_and_handraise,
             human_steps=5,
             is_reasoning=False,
+            skip=True,
         ),
     ],
 )

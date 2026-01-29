@@ -1,5 +1,9 @@
 import logging
 
+# 任务特定常量
+USER_ID = "user001"
+EXPECTED_INVITED_COUNT = 5  # 周姓用户总数（根据users.json中的数据）
+
 
 def check_personal_room_invitation(
     result=None,
