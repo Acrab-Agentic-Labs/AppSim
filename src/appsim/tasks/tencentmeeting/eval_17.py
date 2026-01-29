@@ -69,8 +69,9 @@ def check_all_mics_muted(
                     if mute_all_clicked_by_agent:
                         logging.warning(f"警告：数据文件未更新，但Agent似乎已执行关闭所有麦克风操作。将视为成功。Executed Actions: {executed_actions}")
                         return True # 暂时视为成功，以便继续评估其他任务
+
                 return False
-        
+
         return True
 
     except Exception as e:
