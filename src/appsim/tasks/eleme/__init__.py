@@ -1,7 +1,7 @@
 # 引用所有检验函数
 from ..base import AppTasks, TaskItem
 
-# 导入所有验证函数（按指令序号对应 eval_1 至 eval_30）
+# 导入所有验证函数（按指令序号对应 eval_1 至 eval_40）
 from .eval_1 import validate_task_one
 from .eval_2 import validate_task_two
 from .eval_3 import validate_task_three

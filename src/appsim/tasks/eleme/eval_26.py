@@ -7,7 +7,10 @@ def validate_task_twenty_six(result=None,device_id=None,backup_dir=None):
         return False
 
     # 检测整个 result 中是否包含 "0.75"
-    if 'final_message' in result and '0.75' in result['final_message']:
+    if 'final_message' in result and (
+            '0.75' in result['final_message'] or
+            '零点七五' in result['final_message']
+    ):
         return True
     else:
         return False
