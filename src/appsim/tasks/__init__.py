@@ -41,6 +41,7 @@ class AppEnum(Enum):
 
 APP_TASKS_MAP = {
     AppEnum.BILIBILI: BILIBILI_TASKS,
+    AppEnum.BOOKING: BOOKING_TASKS,
     AppEnum.CTRIP: CTRIP_TASKS,
     AppEnum.ELEME: ELEME_TASKS,
     AppEnum.GAODE: GAODE_TASKS,
