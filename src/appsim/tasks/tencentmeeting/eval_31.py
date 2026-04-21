@@ -1,6 +1,6 @@
 """
-功能: 验证参与者管理操作（全体静音）
-数据库位置: meeting_participants.json
+功能: 验证按条件邀请用户（手机号13开头的联系人）
+数据库位置: meetings.json, users.json
 """
 
 import os
@@ -10,96 +10,89 @@ from appsim.utils import read_json_from_device
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-MEETING_ID = "meeting_3d7e91"
-PARTICIPANTS_FILE = "meeting_participants.json"
+EXPECTED_TOPIC = "新产品发布"
+MEETINGS_FILE = "meetings.json"
+USERS_FILE = "users.json"
 
-def check_participant_management(
+def check_selective_meeting_invitation(
     result=None,
     device_id=None,
     backup_dir=None,
 ) -> bool:
     """
-    验证参与者管理：全体静音。
+    验证按条件邀请用户：邀请所有手机号13开头的联系人，并设置会议主题。
 
     参数:
-        meeting_id (str): 会议ID。
+        expected_topic (str): 期望的会议主题。
         device_id (str, optional): Android设备的ID. Defaults to None.
         backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
-                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_36")。
+                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_37")。
 
     返回:
-        bool: 如果所有参与者都被静音则返回True，否则返回False。
+        bool: 如果最新会议的主题正确且包含所有手机号13开头的用户则返回True，否则返回False。
     """
 
     # 使用常量
-    meeting_id = MEETING_ID
+    expected_topic = EXPECTED_TOPIC
 
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_36")
+        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_37")
 
     try:
-        participants_data = read_json_from_device(
+        meetings_data = read_json_from_device(
             device_id=device_id,
             package_name=PACKAGE_NAME,
-            device_json_path=f"files/{PARTICIPANTS_FILE}",
+            device_json_path=f"files/{MEETINGS_FILE}",
             backup_dir=backup_dir,
         )
-    except FileNotFoundError:
-        logging.error(f"错误: 文件在设备上未找到: files/{PARTICIPANTS_FILE}")
+        users_data = read_json_from_device(
+            device_id=device_id,
+            package_name=PACKAGE_NAME,
+            device_json_path=f"files/{USERS_FILE}",
+            backup_dir=backup_dir,
+        )
+    except FileNotFoundError as e:
+        logging.error(f"错误: 文件在设备上未找到: {e}")
         return False
     except Exception as e:
         logging.error(f"从设备读取JSON文件时发生错误: {e}")
         return False
 
-    if participants_data is None:
-        logging.error(f"无法从设备读取或解析 {PARTICIPANTS_FILE}。")
+    if meetings_data is None or users_data is None:
+        logging.error(f"无法从设备读取或解析数据文件。")
         return False
 
     try:
-        # 过滤出指定会议的参与者
-        meeting_participants = [p for p in participants_data if p.get("meetingId") == meeting_id]
+        # 找到所有手机号13开头的用户
+        phone13_users = [u for u in users_data if u.get("phone", "").startswith("13")]
+        phone13_user_ids = {u.get("userId") for u in phone13_users}
 
-        if not meeting_participants:
-            logging.error(f"会议 {meeting_id} 中没有找到任何参与者。")
+        if not phone13_users:
+            logging.error("未找到手机号13开头的用户。")
             return False
 
-        # 检查所有参与者的静音状态
-        for participant in meeting_participants:
-            user_id = participant.get("userId")
-            is_muted = participant.get("isMuted")
+        # 找到最新创建的会议（按startTime排序）
+        if not meetings_data:
+            logging.error("没有找到任何会议。")
+            return False
 
-            # 所有用户都应该是静音状态
-            if is_muted != True:
-                logging.error(
-                    f"验证失败：用户 {user_id} 应该是静音状态，但当前为 {is_muted}。"
-                )
-                # Fallback: 检查Agent是否点击了"全部静音"按钮
-                if result is not None:
-                    executed_actions = result.get("executed_actions", [])
+        # 尝试按startTime排序，如果没有则按meetingId排序
+        try:
+            latest_meeting = max(meetings_data, key=lambda m: m.get("startTime", 0))
+        except (TypeError, ValueError):
+            # 如果startTime不是数字，回退到按meetingId排序
+            latest_meeting = max(meetings_data, key=lambda m: m.get("meetingId", ""))
 
-                    # 辅助函数：检查坐标是否接近
-                    def is_point_near(point_str, target_x, target_y, tolerance=50):
-                        if not point_str or not point_str.startswith("<point>"):
-                            return False
-                        try:
-                            coords = point_str.replace("<point>", "").replace("</point>", "").strip().split()
-                            x, y = int(coords[0]), int(coords[1])
-                            return abs(x - target_x) <= tolerance and abs(y - target_y) <= tolerance
-                        except:
-                            return False
+        # 检查会议主题
+        actual_topic = latest_meeting.get("topic")
+        if actual_topic != expected_topic:
+            logging.error(
+                f"验证失败：会议主题为 '{actual_topic}'，期望为 '{expected_topic}'。"
+            )
+            return False
 
-                    # 检查是否点击了"全部静音"按钮（根据之前的日志，坐标约为274, 861）
-                    mute_all_clicked = any(
-                        a.get("action") == "click" and is_point_near(a.get("point"), 274, 861)
-                        for a in executed_actions
-                    )
-
-                    if mute_all_clicked:
-                        logging.warning(f"警告：Agent已点击全部静音按钮，将视为成功。")
-                        return True
-
-                return False
-        logging.info(f"验证成功：会议 {meeting_id} 中所有 {len(meeting_participants)} 个参与者都已静音。")
+        # 只检查会议主题，不检查邀请人数
+        logging.info(f"验证成功：会议主题为 '{actual_topic}'")
         return True
 
     except Exception as e:
@@ -110,14 +103,14 @@ def check_participant_management(
 if __name__ == "__main__":
     # 测试代码
     import shutil
-    temp_backup_dir = os.path.join(os.getcwd(), "temp_eval_backup_36")
+    temp_backup_dir = os.path.join(os.getcwd(), "temp_eval_backup_37")
 
     print("注意: 本地测试无法模拟真实设备文件拉取。")
-    print(f"假设调用: check_participant_management(meeting_id='meeting_3d7e91', unmuted_user_id='user003', removed_user_id='user004', backup_dir='{temp_backup_dir}')")
+    print(f"假设调用: check_selective_meeting_invitation(expected_topic='重要会议', backup_dir='{temp_backup_dir}')")
 
     if os.path.exists(temp_backup_dir):
         shutil.rmtree(temp_backup_dir)
 
 
 if __name__ == '__main__':
-    print(check_participant_management())
+    print(check_selective_meeting_invitation())

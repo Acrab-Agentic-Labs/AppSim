@@ -1,8 +1,8 @@
-# 所有指令 - 文件编号与任务序号一致
+# 所有指令
 from ..base import AppTasks, TaskItem
 
 # ============================================================================
-# 任务1-34的导入 (eval_1.py to eval_34.py)
+# 任务导入
 # ============================================================================
 from .eval_1 import check_recent_ended_meeting
 from .eval_2 import check_previous_meeting_playback
@@ -27,17 +27,16 @@ from .eval_20 import check_scheduled_meeting_with_all_friends
 from .eval_21 import get_latest_ended_meeting_details
 from .eval_22 import check_screen_sharing_active
 from .eval_23 import check_personal_meeting_room_waiting_room_status
-from .eval_24 import verify_upcoming_meetings_with_password
-from .eval_25 import verify_chensiyuan_max_participants_meeting
-from .eval_26 import verify_message_count_by_sender
-from .eval_27 import verify_average_meeting_duration
-from .eval_28 import verify_most_active_sender
-from .eval_29 import check_personal_meeting_room_settings
-from .eval_30 import check_personal_room_invitation
-from .eval_31 import check_participant_management
-from .eval_32 import check_selective_meeting_invitation
-from .eval_33 import check_personal_room_advanced_settings
-from .eval_34 import check_message_and_handraise
+from .eval_24 import verify_chensiyuan_max_participants_meeting
+from .eval_25 import verify_message_count_by_sender
+from .eval_26 import verify_average_meeting_duration
+from .eval_27 import verify_most_active_sender
+from .eval_28 import check_personal_meeting_room_settings
+from .eval_29 import check_personal_room_invitation
+from .eval_30 import check_participant_management
+from .eval_31 import check_selective_meeting_invitation
+from .eval_32 import check_personal_room_advanced_settings
+from .eval_33 import check_message_and_handraise
 
 TENCENT_MEETING_TASKS = AppTasks(
     package_name="com.example.tencent_meeting_sim",
@@ -205,75 +204,68 @@ TENCENT_MEETING_TASKS = AppTasks(
         ),
         # 24
         TaskItem(
-            instruction="数一下未开始会议的数目",
-            verify_func=verify_upcoming_meetings_with_password,
-            human_steps=3,
-            is_reasoning=True,
-        ),
-        # 25
-        TaskItem(
             instruction="帮我查看一下，陈思远创建的所有会议中，参与人数最多的会议主题是什么？",
             verify_func=verify_chensiyuan_max_participants_meeting,
             human_steps=5,
             is_reasoning=True,
         ),
-        # 26
+        # 25
         TaskItem(
             instruction="帮我统计一下，技术讨论会议中，陈思远发送了多少条消息？",
             verify_func=verify_message_count_by_sender,
             human_steps=5,
             is_reasoning=True,
         ),
-        # 27
+        # 26
         TaskItem(
             instruction="帮我计算一下，所有已结束会议的平均时长是多少分钟？",
             verify_func=verify_average_meeting_duration,
             human_steps=3,
             is_reasoning=True,
         ),
-        # 28
+        # 27
         TaskItem(
             instruction="帮我看看，技术讨论会议中，谁发送的消息最多？",
             verify_func=verify_most_active_sender,
             human_steps=5,
             is_reasoning=True,
         ),
-        # 29
+        # 28
         TaskItem(
             instruction='设置我的个人会议室，设置会议密码为"648723"，启用等候室，将成员入会时静音设置为"始终关闭"',
             verify_func=check_personal_meeting_room_settings,
             human_steps=5,
             is_reasoning=False,
         ),
-        # 30
+        # 29
         TaskItem(
             instruction='进入个人会议室，邀请所有周姓好友参加',
             verify_func=check_personal_room_invitation,
             human_steps=20,
             is_reasoning=False,
         ),
-        # 31
+        # 30
         TaskItem(
             instruction="进入会议号为meeting_3d7e91的会议，将所有参与者静音",
             verify_func=check_participant_management,
             human_steps=6,
             is_reasoning=False,
         ),
-        # 32
+        # 31
         TaskItem(
             instruction='创建一场会议，主题为"新产品发布"',
             verify_func=check_selective_meeting_invitation,
             human_steps=5,
             is_reasoning=True,
         ),
-        # 33
+        # 32
         TaskItem(
             instruction='进入个人会议室设置，修改会议密码为"888888"',
             verify_func=check_personal_room_advanced_settings,
             human_steps=5,
             is_reasoning=False,
         ),
-        # 34
+        # 33
         TaskItem(
             instruction='进入技术讨论会议，发送消息"我有问题"，然后举手发言',
             verify_func=check_message_and_handraise,
