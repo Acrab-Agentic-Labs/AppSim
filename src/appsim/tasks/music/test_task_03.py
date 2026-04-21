@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from verification_functions import read_json_from_device
+from .verification_functions import read_json_from_device
 
 # 歌单名称，直接从任务指令中获取
 PLAYLIST_NAME_HOT = "热歌榜"

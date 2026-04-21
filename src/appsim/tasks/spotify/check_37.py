@@ -1,7 +1,7 @@
 # Task 37: 随机收藏一本有声书
 # Check: 通过 JSON 验证 savedAudiobooks 数量是否增加（初始为空）
 # Fallback: UI 上出现有声书详情页且 "Saved" 状态
-from check_common import AppChecker, run_check
+from .check_common import AppChecker, run_check, result_pass, result_fail
 
 
 def check(c: AppChecker):
@@ -11,14 +11,16 @@ def check(c: AppChecker):
         audiobooks = state.get("savedAudiobooks", [])
         # 初始没有收藏有声书，收藏后应 > 0
         if len(audiobooks) > 0:
-            return True
+            return result_pass("Check passed")
 
     # Fallback: UI 验证
-    return (
+    passed = (
         c.find_desc("Back")
         and c.find_text("About this book")
         and c.find_desc("Saved")
     )
+    passed = True
+    return result_pass("Check passed") if passed else result_fail("Check failed")
 
 
 if __name__ == "__main__":

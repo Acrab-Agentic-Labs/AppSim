@@ -1,25 +1,25 @@
 """
-检测脚本 #9: 转发第一个帖子
-难度: 1 (简单)
-检测方式: 检查是否出现转发成功提示（Reposted toast）
+Check Script #9: 转发第一个帖子
+Difficulty: 1 (Easy)
+Check Method: Check if repost success prompt appeared (Reposted toast)
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from common import *
+from .common import *
 
 
 def check(adb, ui):
-    # 转发操作后应该出现 "Reposted" toast/snackbar
+    # After repost action should show "Reposted" toast/snackbar
     if ui.has_text("Reposted"):
-        return result_pass("帖子已成功转发（Reposted提示已出现）")
+        return result_pass("Post successfully reposted (Reposted toast appeared)")
 
-    # 检查是否在首页且转发按钮存在（备选检查）
+    # Check if on首页且转发按钮存在（备选检查）
     if ui.has_text("Instagram"):
         descs = ui.get_all_descs()
         if "Repost" in descs:
-            return result_fail("转发按钮存在但未检测到转发成功提示")
+            return result_fail("Repost button exists but success not detected")
 
-    return result_fail("未检测到转发成功状态")
+    return result_fail("Repost success not detected")
 
 
 if __name__ == "__main__":

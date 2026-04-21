@@ -1,19 +1,19 @@
 """
-检测脚本 #3: 告诉我当前消息页面有几个联系人
-难度: 1 (简单)
-检测方式: 检查是否在Messages页面，统计联系人/会话数量
+Check Script #3: Tell me how many contacts are on the current messages page
+Difficulty: 1 (Easy)
+Check Method: Check if on Messages page, count contacts/conversations
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from common import *
+from .common import *
 
 
 def check(adb, ui):
-    # 检查是否在Messages页面
+    # Check if on Messages page
     if not ui.has_text("Messages"):
-        return result_fail("当前不在消息页面")
+        return result_fail("Not on Messages page")
 
-    # 统计会话列表中的用户项
+    # Count user items in conversation list
     all_texts = ui.get_all_texts()
     system_texts = {"Messages", "Requests", "Search", "", "messages", "New message"}
     contact_count = 0
@@ -21,19 +21,19 @@ def check(adb, ui):
         if text and text not in system_texts and not text.startswith("@"):
             contact_count += 1
 
-    # 使用content-desc来统计用户头像数量
+    # Use content-desc to count user avatar count
     descs = ui.get_all_descs()
     avatar_count = sum(1 for d in descs if d and d not in ["Search", "New message", "Switch", "Messages", "Back", ""])
 
-    # 取两种方式中较大的作为联系人数（文本包含用户名+最后消息，所以除以2）
+    # Take larger of two methods as contact count (text contains username+last message, so divide by 2)
     estimated = max(contact_count // 2, avatar_count)
     if estimated > 0:
-        return result_pass(f"消息页面约有 {estimated} 个联系人/会话")
+        return result_pass(f"Messages page has approximately {estimated} contacts/conversations")
 
     if contact_count > 0:
-        return result_pass(f"消息页面约有 {contact_count} 个联系人相关文本")
+        return result_pass(f"Messages page has approximately {contact_count} contact-related texts")
 
-    return result_fail("无法统计联系人数量")
+    return result_fail("Unable to count contacts")
 
 
 if __name__ == "__main__":

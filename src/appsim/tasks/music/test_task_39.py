@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from verification_functions import read_json_from_device
+from .verification_functions import read_json_from_device
 
 ARTIST_NAME_JAY_CHOU = "周杰伦"
 

@@ -1,11 +1,11 @@
 """
-检测脚本 #28: 随机添加一位亲密好友
-难度: 2 (中等)
-检测方式: 读取 user_state.json 验证 closeFriends 不为空
+Check Script #28: 随机添加一位亲密好友
+Difficulty: 2 (Medium)
+Check Method: Read user_state.json to verify closeFriends not empty
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from common import *
+from .common import *
 
 
 def check(adb, ui):
@@ -14,14 +14,14 @@ def check(adb, ui):
     if user:
         close_friends = user.get("closeFriends", [])
         if close_friends:
-            return result_pass(f"已添加亲密好友: {close_friends} (JSON验证)")
-        return result_fail("closeFriends 为空，未添加任何亲密好友")
+            return result_pass(f"Added close friends: {close_friends} (JSON验证)")
+        return result_fail("closeFriends is empty, no close friends added")
 
     # Fallback: UI check
     if ui.has_text("Close friends") and ui.has_text("Remove"):
-        return result_pass("已成功添加亲密好友（显示Remove按钮）")
+        return result_pass("Successfully added close friend (Remove button shown)")
 
-    return result_fail("未检测到亲密好友添加操作")
+    return result_fail("Close friend add action not detected")
 
 
 if __name__ == "__main__":

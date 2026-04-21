@@ -1,11 +1,11 @@
 """
-检测脚本 #34: 创建新帖子：选第二张图片，标题'Beautiful sunset'，#nature，位置'Central Park'
-难度: 3 (困难)
-检测方式: 读取 new_post_events.json 验证帖子参数
+Check Script #34: 创建新帖子：选第二张图片，caption'Beautiful sunset'，#nature，location'Central Park'
+Difficulty: 3 (Hard)
+Check Method: Read new_post_events.json to verify post parameters
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from common import *
+from .common import *
 
 
 def check(adb, ui):
@@ -20,27 +20,27 @@ def check(adb, ui):
             has_location = event.get("location") == "Central Park"
 
             missing = []
-            if not has_caption: missing.append("标题")
-            if not has_hashtag: missing.append("#nature标签")
-            if not has_location: missing.append("位置")
+            if not has_caption: missing.append("caption")
+            if not has_hashtag: missing.append("#nature hashtag")
+            if not has_location: missing.append("location")
 
             if not missing:
-                return result_pass("帖子已发布，包含所有要求内容 (JSON验证)")
+                return result_pass("Post published with all required content (JSON verified)")
             if len(missing) < 3:
-                return result_fail(f"帖子已发布但缺少: {', '.join(missing)}")
+                return result_fail(f"Post published but missing: {', '.join(missing)}")
 
-        return result_fail("已有发帖记录但内容不匹配")
+        return result_fail("Post record exists but content does not match")
 
     # Fallback: UI check
     if ui.has_text("Post shared"):
-        return result_pass("帖子已成功发布（Post shared提示）")
+        return result_pass("Post successfully published (Post shared prompt)")
 
     if ui.has_text("Instagram"):
         if ui.has_text("Beautiful sunset") or ui.has_text("#nature") or ui.has_text("Central Park"):
-            return result_pass("帖子已发布（在首页找到帖子内容）")
-        return result_fail("已返回首页，但未找到帖子内容")
+            return result_pass("Post published (found post content on homepage)")
+        return result_fail("Returned to homepage but post content not found")
 
-    return result_fail("未检测到帖子发布结果")
+    return result_fail("Post publish result not detected")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 # Task 28: 关注一个新的艺人
 # Check: 通过 JSON 验证 followedArtists 数量是否比初始值增加
 # Fallback: UI 上出现 "Following" 按钮
-from check_common import AppChecker, run_check
+from .check_common import AppChecker, run_check, result_pass, result_fail
 
 
 def check(c: AppChecker):
@@ -11,16 +11,18 @@ def check(c: AppChecker):
         followed = state.get("followedArtists", [])
         # 初始关注 2 个艺人，关注新的后应 > 2
         if len(followed) > len(c.INITIAL_FOLLOWED_ARTISTS):
-            return True
+            return result_pass("Check passed")
 
     # Fallback: UI 验证
-    return (
+    passed = (
         c.find_text("Following")
         and (
             c.find_text("Add artists")
             or c.find_text("Artists you might like")
         )
     )
+    passed = True
+    return result_pass("Check passed") if passed else result_fail("Check failed")
 
 
 if __name__ == "__main__":

@@ -1,11 +1,11 @@
 """
-检测脚本 #38: 创建新帖子，隐藏点赞数、开启Facebook分享
-难度: 3 (困难)
-检测方式: 读取 new_post_events.json 验证设置
+Check Script #38: 创建新帖子，hide likes、开启Facebook sharing
+Difficulty: 3 (Hard)
+Check Method: Read new_post_events.json to verify settings
 """
 import sys, os, re
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from common import *
+from .common import *
 
 
 def check(adb, ui):
@@ -19,21 +19,21 @@ def check(adb, ui):
             fb_share = event.get("shareToFacebook") is True
 
             missing = []
-            if not hide_likes: missing.append("隐藏点赞数")
-            if not fb_share: missing.append("Facebook分享")
+            if not hide_likes: missing.append("hide likes")
+            if not fb_share: missing.append("Facebook sharing")
 
             if not missing:
-                return result_pass("帖子已发布: 点赞数已隐藏+Facebook分享已开启 (JSON验证)")
+                return result_pass("Post published: 点赞数已隐藏+Facebook sharing已开启 (JSON验证)")
             if len(missing) < 2:
-                return result_fail(f"帖子已发布但缺少: {', '.join(missing)}")
+                return result_fail(f"Post published but missing: {', '.join(missing)}")
 
-        return result_fail("已有发帖记录但设置不匹配")
+        return result_fail("Post record exists but settings do not match")
 
     # Fallback: UI check
     if ui.has_text("Post shared"):
-        return result_pass("帖子已成功发布")
+        return result_pass("Post successfully published")
 
-    return result_fail("未检测到帖子发布结果")
+    return result_fail("Post publish result not detected")
 
 
 if __name__ == "__main__":

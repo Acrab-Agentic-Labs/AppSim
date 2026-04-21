@@ -1,11 +1,11 @@
 """
-检测脚本 #39: 创建新帖子：标题+标签+位置+隐藏点赞+关闭评论
-难度: 3 (困难)
-检测方式: 读取 new_post_events.json 验证所有设置
+Check Script #39: 创建新帖子：caption+标签+location+hide likes+turn off comments
+Difficulty: 3 (Hard)
+Check Method: Read new_post_events.json to verify all settings
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from common import *
+from .common import *
 
 
 def check(adb, ui):
@@ -16,32 +16,32 @@ def check(adb, ui):
             if event.get("isReel"):
                 continue
             checks = {
-                "标题": "Beautiful sunset" in (event.get("caption") or ""),
-                "#nature标签": "nature" in (event.get("hashtags") or []),
-                "位置": event.get("location") == "Central Park",
-                "隐藏点赞": event.get("hideLikesAndViews") is True,
-                "关闭评论": event.get("turnOffComments") is True,
+                "caption": "Beautiful sunset" in (event.get("caption") or ""),
+                "#nature hashtag": "nature" in (event.get("hashtags") or []),
+                "location": event.get("location") == "Central Park",
+                "hide likes": event.get("hideLikesAndViews") is True,
+                "turn off comments": event.get("turnOffComments") is True,
             }
             missing = [k for k, v in checks.items() if not v]
 
             if not missing:
-                return result_pass("帖子已发布，包含所有要求设置 (JSON验证)")
+                return result_pass("Post published with all required settings (JSON verified)")
             if len(missing) < len(checks):
                 passed = [k for k, v in checks.items() if v]
-                return result_fail(f"帖子已发布，已完成: {passed}，缺少: {missing}")
+                return result_fail(f"Post published, completed: {passed}, missing: {missing}")
 
-        return result_fail("已有发帖记录但内容不匹配")
+        return result_fail("Post record exists but content does not match")
 
     # Fallback: UI check
     if ui.has_text("Post shared"):
-        return result_pass("帖子已成功发布")
+        return result_pass("Post successfully published")
 
     if ui.has_text("Instagram"):
         if ui.has_text("Beautiful sunset") or ui.has_text("Central Park"):
-            return result_pass("帖子已发布，在首页找到帖子内容")
-        return result_fail("已返回首页，但未找到帖子内容")
+            return result_pass("Post published, found post content on homepage")
+        return result_fail("Returned to homepage but post content not found")
 
-    return result_fail("未检测到帖子发布结果")
+    return result_fail("Post publish result not detected")
 
 
 if __name__ == "__main__":

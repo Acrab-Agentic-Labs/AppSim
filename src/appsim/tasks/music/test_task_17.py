@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from verification_functions import read_json_from_device
+from .verification_functions import read_json_from_device
 
 SCENE_NAME = "欢快"
 

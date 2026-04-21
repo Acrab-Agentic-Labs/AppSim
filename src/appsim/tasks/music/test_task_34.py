@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from verification_functions import read_json_from_device
+from .verification_functions import read_json_from_device
 
 PLAYLIST_NAME_DAILY = "每日推荐"
 PLAYLIST_NAME_HOT = "热歌榜"

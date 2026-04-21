@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from verification_functions import read_json_from_device
+from .verification_functions import read_json_from_device
 
 def check_search_artist_and_play(result=None, device_id=None, backup_dir=None):
     """

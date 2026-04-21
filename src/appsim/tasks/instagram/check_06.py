@@ -1,11 +1,11 @@
 """
-检测脚本 #6: 收藏首页中第一条帖子
-难度: 1 (简单)
-检测方式: 读取 posts_state.json 验证第一条帖子的 savedBy 包含 user_self
+Check Script #6: 收藏首页中第一条帖子
+Difficulty: 1 (Easy)
+Check Method: Read posts_state.json to verify first post savedBy contains user_self
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from common import *
+from .common import *
 
 
 def check(adb, ui):
@@ -16,18 +16,18 @@ def check(adb, ui):
         if original_posts:
             first_post = original_posts[0]
             if "user_self" in first_post.get("savedBy", []):
-                return result_pass(f"帖子 {first_post['postId']} 已被收藏 (JSON验证)")
-            return result_fail(f"帖子 {first_post['postId']} 的 savedBy 中没有 user_self")
+                return result_pass(f"Post {first_post['postId']} is saved (JSON verified)")
+            return result_fail(f"Post {first_post['postId']} savedBy does not contain user_self")
 
     # Fallback: UI check
     if not ui.has_text("Instagram"):
-        return result_fail("当前不在首页")
+        return result_fail("Not on homepage")
 
     descs = ui.get_all_descs()
     if "Unsave" in descs:
-        return result_pass("帖子已成功收藏（找到Unsave按钮）")
+        return result_pass("Post successfully saved (Unsave button found)")
 
-    return result_fail("未检测到收藏成功状态")
+    return result_fail("Save success not detected")
 
 
 if __name__ == "__main__":

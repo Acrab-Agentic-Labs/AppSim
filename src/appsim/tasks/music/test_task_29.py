@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from verification_functions import read_json_from_device
+from .verification_functions import read_json_from_device
 
 def check_artist_is_unfollowed(result=None, device_id=None, backup_dir=None):
     """
