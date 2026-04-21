@@ -6,7 +6,7 @@
 
 import logging
 import sys
-from verification_functions import read_json_from_device
+from .verification_functions import read_json_from_device
 
 RANK_NAME_NEW_SONGS = "新歌榜"
 

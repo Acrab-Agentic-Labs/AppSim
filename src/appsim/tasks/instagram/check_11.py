@@ -1,27 +1,27 @@
 """
-检测脚本 #11: 编辑个人主页性别为female
-难度: 2 (中等)
-检测方式: 检查Edit Profile页面Gender字段是否为Female
+Check Script #11: 编辑个人主页性别为female
+Difficulty: 2 (Medium)
+Check Method: Check if Gender field on Edit Profile page is Female
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from common import *
+from .common import *
 
 
 def check(adb, ui):
-    # 检查是否在编辑资料页面
+    # Check if on 编辑资料 page
     if ui.has_text("Edit profile"):
-        # 检查Gender字段是否设置为Female
+        # Check if Gender field set to Female
         if ui.has_text("Female") or ui.has_text("female"):
-            return result_pass("性别已成功设置为Female")
+            return result_pass("Gender successfully set to Female")
 
-        # 检查Gender字段是否存在
+        # Check if Gender field exists
         if ui.has_text("Gender"):
-            return result_fail("Gender字段存在但未设置为Female")
+            return result_fail("Gender field exists but not set to Female")
 
-        return result_fail("在编辑资料页面但未找到Gender字段")
+        return result_fail("On Edit Profile page but Gender field not found")
 
-    return result_fail("当前不在编辑资料页面")
+    return result_fail("Not on Edit Profile page")
 
 
 if __name__ == "__main__":

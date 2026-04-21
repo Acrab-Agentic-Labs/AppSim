@@ -5,7 +5,7 @@ Check Method: Read posts_state.json to verify first post has user_self in likedB
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from common import *
+from .common import *
 
 
 def check(adb, ui):
@@ -16,8 +16,8 @@ def check(adb, ui):
         if original_posts:
             first_post = original_posts[0]
             if "user_self" in first_post.get("likedBy", []):
-                return result_pass(f"帖子 {first_post['postId']} 已被点赞 (JSON验证)")
-            return result_fail(f"帖子 {first_post['postId']} 的 likedBy 中没有 user_self")
+                return result_pass(f"Post {first_post['postId']} is liked (JSON verified)")
+            return result_fail(f"Post {first_post['postId']} likedBy does not contain user_self")
 
     # Fallback: UI check
     if not ui.has_text("Instagram"):

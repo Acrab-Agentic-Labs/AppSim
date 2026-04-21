@@ -1,22 +1,22 @@
 """
-检测脚本 #7: 打开通知页面
-难度: 1 (简单)
-检测方式: 检查当前是否在Notifications页面
+Check Script #7: 打开通知页面
+Difficulty: 1 (Easy)
+Check Method: Check if currently on Notifications page
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from common import *
+from .common import *
 
 
 def check(adb, ui):
-    # 检查是否在通知页面
+    # Check if on 通知 page
     if ui.has_text("Notifications"):
-        # 进一步确认页面特征
+        # Further确认页面特征
         if ui.has_text("Follow requests") or ui.has_text("This month") or ui.has_text("Earlier"):
-            return result_pass("已成功打开通知页面（含完整通知内容）")
-        return result_pass("已成功打开通知页面")
+            return result_pass("Successfully opened notifications page (with full content)")
+        return result_pass("Successfully opened notifications page")
 
-    return result_fail("当前不在通知页面")
+    return result_fail("Not on notifications page")
 
 
 if __name__ == "__main__":

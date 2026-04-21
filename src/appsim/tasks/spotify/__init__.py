@@ -1,13 +1,13 @@
 from ..base import AppTasks, TaskItem
-from .check_01 import check as check_01
-from .check_02 import check as check_02
-from .check_03 import check as check_03
-from .check_04 import check as check_04
-from .check_05 import check as check_05
-from .check_06 import check as check_06
-from .check_07 import check as check_07
-from .check_08 import check as check_08
-from .check_09 import check as check_09
+from .check_1 import check as check_1
+from .check_2 import check as check_2
+from .check_3 import check as check_3
+from .check_4 import check as check_4
+from .check_5 import check as check_5
+from .check_6 import check as check_6
+from .check_7 import check as check_7
+from .check_8 import check as check_8
+from .check_9 import check as check_9
 from .check_10 import check as check_10
 from .check_11 import check as check_11
 from .check_12 import check as check_12
@@ -43,258 +43,257 @@ from .check_40 import check as check_40
 def validate_task(task_id):
     """Wrapper to convert check function to validate function signature"""
     def wrapper(result=None, device_id=None, backup_dir=None):
-        from .common import get_adb, get_ui
-        adb = get_adb(device_id)
-        ui = get_ui(adb)
-        check_func = globals()[f'check_{task_id:02d}']
+        from .check_common import AppChecker
+        checker = AppChecker(device_id)
+        check_func = globals()[f'check_{task_id}']
         try:
-            passed = check_func(adb, ui)
+            passed = check_func(checker)
             return passed
         except Exception:
             return False
     return wrapper
 
-INSTAGRAM_TASKS = AppTasks(
-    package_name="com.example.myinstagram",
+SPOTIFY_TASKS = AppTasks(
+    package_name="com.example.myspotify",
     task_items=[
         TaskItem(
-            instruction="Tell me how many likes the first post on the homepage has",
+            instruction="查看当前用户名称",
             verify_func=validate_task(1),
-            human_steps=2,
-            is_reasoning=True,
-        ),
-        TaskItem(
-            instruction="Tell me how many likes the currently playing short video has",
-            verify_func=validate_task(2),
-            human_steps=2,
-            is_reasoning=True,
-        ),
-        TaskItem(
-            instruction="Tell me how many contacts are on the current messages page",
-            verify_func=validate_task(3),
-            human_steps=2,
-            is_reasoning=True,
-        ),
-        TaskItem(
-            instruction="Tell me the username of the current user",
-            verify_func=validate_task(4),
             human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Like the first post on the homepage",
+            instruction="当前播放歌曲的名称",
+            verify_func=validate_task(2),
+            human_steps=2,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="数一下搜索页面共有多少种分类",
+            verify_func=validate_task(3),
+            human_steps=3,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="查看我的歌单数量",
+            verify_func=validate_task(4),
+            human_steps=2,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="告诉我播客页面第一条播客的标题",
             verify_func=validate_task(5),
             human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Favorite the first post on the homepage",
+            instruction="查看我关注的艺人数量",
             verify_func=validate_task(6),
             human_steps=2,
-            is_reasoning=False,
+            is_reasoning=True,
         ),
         TaskItem(
-            instruction="Open the notifications page",
+            instruction="查看我喜欢的歌曲数量",
             verify_func=validate_task(7),
             human_steps=2,
-            is_reasoning=False,
+            is_reasoning=True,
         ),
         TaskItem(
-            instruction="Go to the author profile of the first post on the homepage",
+            instruction="播放我的第一个歌单",
             verify_func=validate_task(8),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Repost the first post",
+            instruction="搜索歌曲'Shape of You'",
             verify_func=validate_task(9),
-            human_steps=2,
+            human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Swipe to view the next short video",
+            instruction="关注艺人'Taylor Swift'",
             verify_func=validate_task(10),
-            human_steps=2,
+            human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Edit gender on profile to female",
+            instruction="给当前播放的歌曲点赞",
             verify_func=validate_task(11),
+            human_steps=3,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="创建一个新歌单，名称为'My Favorites'",
+            verify_func=validate_task(12),
             human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Search for content related to 'happy' on the search page",
-            verify_func=validate_task(12),
-            human_steps=3,
-            is_reasoning=False,
-        ),
-        TaskItem(
-            instruction="Open the first conversation on the messages page",
+            instruction="将当前播放的歌曲添加到'My Favorites'歌单",
             verify_func=validate_task(13),
-            human_steps=3,
+            human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Show me the first comment of the first post on the homepage",
+            instruction="播放艺人'Ed Sheeran'的热门歌曲",
             verify_func=validate_task(14),
-            human_steps=3,
-            is_reasoning=True,
+            human_steps=4,
+            is_reasoning=False,
         ),
         TaskItem(
-            instruction="Share the first post on the homepage",
+            instruction="查看'Today's Top Hits'歌单",
             verify_func=validate_task(15),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Share my personal QR code",
+            instruction="将'Shape of You'添加到'My Favorites'歌单",
             verify_func=validate_task(16),
-            human_steps=3,
+            human_steps=5,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Mark the first post on the homepage as 'Not Interested'",
+            instruction="播放播客'How AI is Changing Music'",
             verify_func=validate_task(17),
+            human_steps=4,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction="取消关注艺人'Taylor Swift'",
+            verify_func=validate_task(18),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Check my number of followers",
-            verify_func=validate_task(18),
-            human_steps=2,
-            is_reasoning=True,
-        ),
-        TaskItem(
-            instruction="Like the currently playing short video",
+            instruction="从'My Favorites'歌单中移除一首歌",
             verify_func=validate_task(19),
-            human_steps=2,
+            human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Check how many items are in my favorites collection",
+            instruction="搜索并播放专辑'Divide'",
             verify_func=validate_task(20),
-            human_steps=2,
-            is_reasoning=True,
+            human_steps=4,
+            is_reasoning=False,
         ),
         TaskItem(
-            instruction="Comment 'Nice!' under the second post on the homepage",
+            instruction="查看我的播放历史",
             verify_func=validate_task(21),
-            human_steps=4,
+            human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Open a chat and send the message 'Hello, how are you?'",
+            instruction="开启随机播放模式",
             verify_func=validate_task(22),
-            human_steps=4,
+            human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Set my account to private",
+            instruction="设置播放模式为单曲循环",
             verify_func=validate_task(23),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Set daily usage time limit to 60 minutes",
+            instruction="调整音量到50%",
             verify_func=validate_task(24),
-            human_steps=4,
+            human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Change my username to 'zhou'",
+            instruction="跳到下一首歌",
             verify_func=validate_task(25),
-            human_steps=3,
+            human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Follow the author of the third post on the homepage",
+            instruction="返回上一首歌",
             verify_func=validate_task(26),
-            human_steps=3,
+            human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Randomly select a user and block them",
+            instruction="暂停当前播放",
             verify_func=validate_task(27),
-            human_steps=3,
+            human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Randomly add a close friend",
+            instruction="继续播放",
             verify_func=validate_task(28),
-            human_steps=3,
+            human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Remove a follower",
+            instruction="查看当前歌曲的歌词",
             verify_func=validate_task(29),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Enable Sleep Mode",
+            instruction="分享当前播放的歌曲",
             verify_func=validate_task(30),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="View the first video on my profile",
+            instruction="查看推荐的歌曲",
             verify_func=validate_task(31),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Log out of the current account",
+            instruction="播放'Discover Weekly'歌单",
             verify_func=validate_task(32),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Create a new collection named 'Favorites'",
+            instruction="搜索并关注播客'The Daily'",
             verify_func=validate_task(33),
             human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Create a new post: select the second picture from the album, set title 'Beautiful sunset', add hashtag #nature, add location 'Central Park', then post",
+            instruction="查看我的下载内容",
             verify_func=validate_task(34),
-            human_steps=8,
+            human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Create a new post: select any picture, enter a title, add a poll with question 'Which is better?' and options 'Option A' and 'Option B', then post",
+            instruction="开启离线模式",
             verify_func=validate_task(35),
-            human_steps=8,
+            human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Create a new post: select any picture, enter a title, add a music track by search, set audience to 'Close Friends', then post",
+            instruction="查看最近播放的艺人",
             verify_func=validate_task(36),
-            human_steps=8,
+            human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Send 'I like your post!' to an unfollowed user",
+            instruction="将当前歌曲添加到队列",
             verify_func=validate_task(37),
-            human_steps=5,
+            human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Create a new post, hide like count, enable Facebook sharing",
+            instruction="清空播放队列",
             verify_func=validate_task(38),
-            human_steps=6,
+            human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Create a new post: select the second picture from the album, set title 'Beautiful sunset', add hashtag #nature, add location 'Central Park', hide like count, disable comments, then post",
+            instruction="查看我的听歌统计",
             verify_func=validate_task(39),
-            human_steps=10,
-            is_reasoning=False,
+            human_steps=3,
+            is_reasoning=True,
         ),
         TaskItem(
-            instruction="Post a short video",
+            instruction="修改歌单'My Favorites'的名称为'Best Songs'",
             verify_func=validate_task(40),
-            human_steps=5,
+            human_steps=4,
             is_reasoning=False,
         ),
     ],

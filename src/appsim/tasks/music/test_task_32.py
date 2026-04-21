@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from verification_functions import read_json_from_device
+from .verification_functions import read_json_from_device
 
 SONG_NAME_FOR_TASK = "晴天"
 

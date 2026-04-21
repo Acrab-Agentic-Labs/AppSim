@@ -1,30 +1,30 @@
 """
-检测脚本 #13: 查看消息页面的第一个会话
-难度: 2 (中等)
-检测方式: 检查是否进入了聊天详情页面
+Check Script #13: 查看消息页面的第一个会话
+Difficulty: 2 (Medium)
+Check Method: Check if entered chat detail page
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from common import *
+from .common import *
 
 
 def check(adb, ui):
-    # ChatDetailScreen 特征: 有Back按钮、Message...输入框
+    # ChatDetailScreen features: has Back button, Message... input box
     has_back = "Back" in ui.get_all_descs()
     has_message_input = ui.has_text("Message...")
 
     if has_back and has_message_input:
-        return result_pass("已成功打开第一个聊天会话")
+        return result_pass("Successfully opened first chat conversation")
 
-    # 备选: 检查Send按钮
+    # Alternative: 检查Send按钮
     if has_message_input:
-        return result_pass("已进入聊天详情页面")
+        return result_pass("Entered chat detail page")
 
-    # 检查是否还在消息列表
+    # Check if still on messages list
     if ui.has_text("Messages") and not has_message_input:
-        return result_fail("仍在消息列表页面，未进入会话详情")
+        return result_fail("Still on messages list, not in conversation detail")
 
-    return result_fail("未检测到聊天详情页面")
+    return result_fail("Chat detail page not detected")
 
 
 if __name__ == "__main__":

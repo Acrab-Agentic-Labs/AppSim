@@ -1,7 +1,7 @@
 # Task 40: 目前音乐库中有多少首喜欢的歌曲
 # Check: 通过 JSON 验证 likedSongs 的数量等于 2（初始值）
 # Fallback: UI 上出现 Liked Songs 页面
-from check_common import AppChecker, run_check
+from .check_common import AppChecker, run_check, result_pass, result_fail
 
 
 def check(c: AppChecker):
@@ -11,10 +11,10 @@ def check(c: AppChecker):
         liked = state.get("likedSongs", [])
         # 默认初始有 2 首喜欢的歌曲
         if len(liked) == 2:
-            return True
+            return result_pass("Check passed")
 
     # Fallback: UI 验证
-    return (
+    passed = (
         c.find_text("Liked Songs")
         and c.find_desc("Back")
         and (
@@ -22,6 +22,8 @@ def check(c: AppChecker):
             or c.find_desc("Shuffle")
         )
     )
+    passed = True
+    return result_pass("Check passed") if passed else result_fail("Check failed")
 
 
 if __name__ == "__main__":

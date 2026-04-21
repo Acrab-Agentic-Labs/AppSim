@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from verification_functions import read_json_from_device
+from .verification_functions import read_json_from_device
 
 PLAYLIST_NAME_FEATURED = "精选歌单"
 

@@ -6,6 +6,13 @@ import uiautomator2 as u2
 import json
 import subprocess
 import sys
+import os
+from datetime import datetime
+
+
+# Log directory for detailed check results
+LOG_DIR = os.path.join(os.path.dirname(__file__), "check_logs")
+os.makedirs(LOG_DIR, exist_ok=True)
 
 
 class AppChecker:
@@ -101,19 +108,62 @@ class AppChecker:
     INITIAL_SAVED_PLAYLISTS = ["playlist_001", "playlist_002"]
 
 
+def result_pass(msg, details=None):
+    """Return pass result and log to JSON"""
+    print("true")
+    _log_result(True, msg, details)
+    return True
+
+
+def result_fail(msg, details=None):
+    """Return fail result and log to JSON"""
+    print("false")
+    _log_result(False, msg, details)
+    return False
+
+
+def _log_result(passed, message, details=None):
+    """Log detailed result to JSON file"""
+    import inspect
+
+    # Get caller info
+    frame = inspect.currentframe().f_back.f_back
+    caller_file = frame.f_code.co_filename
+    check_name = os.path.basename(caller_file).replace('.py', '')
+
+    log_entry = {
+        "timestamp": datetime.now().isoformat(),
+        "check": check_name,
+        "passed": passed,
+        "message": message,
+        "details": details or {}
+    }
+
+    log_file = os.path.join(LOG_DIR, f"{check_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+    try:
+        with open(log_file, 'w', encoding='utf-8') as f:
+            json.dump(log_entry, f, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
+
+
+def result_info(msg):
+    """Info output - no longer prints"""
+    return msg
+
+
 def run_check(check_func, task_id):
     """Standard runner for a check function."""
     serial = sys.argv[1] if len(sys.argv) > 1 else None
     checker = AppChecker(serial)
 
     if not checker.is_app_running():
-        result = {"status": "error", "task_id": task_id, "message": "App is not running in foreground"}
+        result_fail("App is not running in foreground")
+        sys.exit(1)
     else:
         try:
             passed = check_func(checker)
-            result = {"status": "pass" if passed else "fail", "task_id": task_id}
+            sys.exit(0 if passed else 1)
         except Exception as e:
-            result = {"status": "error", "task_id": task_id, "message": str(e)}
-
-    print(json.dumps(result, ensure_ascii=False, indent=2))
-    sys.exit(0 if result["status"] == "pass" else 1)
+            result_fail(f"Script execution error: {e}", {"exception": str(e)})
+            sys.exit(1)

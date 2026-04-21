@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from verification_functions import read_json_from_device
+from .verification_functions import read_json_from_device
 
 # 根据 playlists.json 定义所有属于“排行榜”性质的歌单名称
 RANKING_PLAYLIST_NAMES = [

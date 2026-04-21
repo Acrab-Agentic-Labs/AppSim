@@ -7,7 +7,7 @@
 import logging
 import sys
 import re
-from verification_functions import read_json_from_device
+from .verification_functions import read_json_from_device
 
 def check_fan_count(result=None, device_id=None, backup_dir=None):
     """

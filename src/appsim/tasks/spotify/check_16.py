@@ -1,15 +1,16 @@
 # Task 16: 设置定时器时间为15min
 # Check: Sleep timer has been set, back on playing view or timer menu
-from check_common import AppChecker, run_check
+from .check_common import AppChecker, run_check, result_pass, result_fail
 
 
 def check(c: AppChecker):
     # After setting timer, user is back on playing view or menu shows active timer
-    return (
+    passed = (
         c.find_text("Now Playing")
         or c.find_text("Sleep timer")
         or c.find_text_contains("15 minutes")
     )
+    return result_pass("Check passed") if passed else result_fail("Check failed")
 
 
 if __name__ == "__main__":
