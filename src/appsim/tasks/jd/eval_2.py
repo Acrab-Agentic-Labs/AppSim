@@ -21,15 +21,14 @@ def validate_task_two(result=None, device_id=None, backup_dir=None):
     except:
         return False
 
-    # 检查购物车中是否包含"Apple/苹果 iPhone 15 (A3092) 128GB"
-    for item in items:
-        if isinstance(item, dict):
-            product_name = item.get("productName", "")
-            # 检查是否匹配完整商品名称
-            if "iPhone 15 128GB" in product_name:
-                return True
+    if not items:
+        return False
 
-    return False
+    last_item = items[-1]
+    if not isinstance(last_item, dict):
+        return False
+
+    return last_item.get("productName") == "iPhone 15 128GB"
 
 
 if __name__ == "__main__":
