@@ -9,7 +9,7 @@ def check_click_train(result=None, device_id=None, backup_dir=None):
     检验方法: 维护点击记录存储
     """
     # 定义APP包名和存储点击记录的文件路径
-    app_package = "com.example.Ctrip"
+    app_package = "com.example.ctrip_sim"
     phone_file_path = "files/click_history.json"
     local_file_path = os.path.join(backup_dir, 'click_history.json') if backup_dir else 'click_history.json'
 

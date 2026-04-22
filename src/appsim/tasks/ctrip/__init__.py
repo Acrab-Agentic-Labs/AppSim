@@ -40,7 +40,7 @@ from .eval_35 import check_booking_batch_flight
 
 # 所有测试指令列表（共35条，与上述导入函数一一对应）
 CTRIP_TASKS = AppTasks(
-    package_name="com.example.Ctrip",
+    package_name="com.example.ctrip_sim",
     task_items=[
         TaskItem(
             instruction="进入酒店预订。",
@@ -169,7 +169,7 @@ CTRIP_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="帮我筛选北京评分最高的前 3 家酒店的平均价。",
+            instruction="帮我计算北京评分最高的前 3 家酒店的平均价。",
             verify_func=check_hotel_search_beijing_top3_avg_price,
             human_steps=5,
             is_reasoning=True,
