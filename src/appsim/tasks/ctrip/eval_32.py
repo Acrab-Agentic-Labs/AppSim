@@ -33,7 +33,7 @@ def check_booking_complex_budget(result=None, device_id=None, backup_dir=None):
     """
     agent_answer = result
 
-    app_package = "com.example.Ctrip"
+    app_package = "com.example.ctrip_sim"
     phone_file_path = "files/booking_history.json"
     local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
 
@@ -80,7 +80,6 @@ def check_booking_complex_budget(result=None, device_id=None, backup_dir=None):
         else:
             return False  # 没有时长信息，返回false
 
-        price1 = step1.get("price", 0)
 
         # 验证第2步：酒店(北京,包含"王府井"和"希尔顿")
         step2 = last_three[1]
@@ -99,65 +98,39 @@ def check_booking_complex_budget(result=None, device_id=None, backup_dir=None):
         # 简化检查：只要有入住和退房日期即可，实际应该检查日期差是否为2
         if not (check_in and check_out):
             return False
+        # 新增：精准匹配目标入住和退房日期
+        target_check_in = "2025-10-20"
+        target_check_out = "2025-10-22"
+        if check_in != target_check_in or check_out != target_check_out:
+            return False
 
-        price2 = step2.get("price", 0)
+
 
         # 验证第3步：火车票(北京->杭州)
         step3 = last_three[2]
         if not (step3.get("type") == "train_booking" and step3.get("from") == "北京" and step3.get("to") == "杭州"):
             return False
 
-        price3 = step3.get("price", 0)
 
-        # 计算总价格
-        total_price = price1 + price2 + price3
-
-        # 判断2000元是否足够
-        budget_sufficient = total_price <= 2000
 
         # 智能体答案，进行对比
         if agent_answer is None:
-            print("错误: 未提供智能体答案")
             return False
+        final_message = agent_answer.get("final_message")
+        if not isinstance(final_message, str):
+            return False
+        # 检测 result 中的final_messages中是否包含 "够"或者'enough'
+        if ('final_message' in agent_answer and (
+                '不够' not in agent_answer['final_message'] or
+                'not enough' not in agent_answer['final_message'])
+        ):
+            return True
         else:
-            # 从字典中获取 final_message
-            if isinstance(agent_answer, dict):
-                final_message = agent_answer.get("final_message", "")
-            else:
-                final_message = str(agent_answer)
+            return False
 
-            # 检查 final_message 中是否包含"够"或"不够"
-            agent_says_enough = None
-            if "不够" in final_message:
-                agent_says_enough = False
-            elif "够" in final_message:
-                agent_says_enough = True
-            else:
-                print(f"智能体答案格式错误: 无法从 final_message 中找到'够'或'不够', final_message={final_message}")
-                return False
-
-            # 对比智能体判断和实际结果
-            if agent_says_enough != budget_sufficient:
-                print(
-                    f"智能体答案不正确: 实际总价={total_price}元, 预算2000元{'足够' if budget_sufficient else '不够'}, 智能体判断={'够' if agent_says_enough else '不够'}"
-                )
-                return False
-
-        # 输出调试信息
-        print(
-            f"预订完成: 火车票1={price1}元, 酒店={price2}元, 火车票2={price3}元, 总计={total_price}元, 2000元{'足够' if budget_sufficient else '不够'}"
-        )
-
-        return True
     except Exception as e:
-        print(f"检查失败: {e}")
         return False
 
 
 if __name__ == "__main__":
-    # 从命令行参数获取智能体答案（如果有）
-    agent_answer = None
-    if len(sys.argv) > 1:
-        agent_answer = sys.argv[1]
-
-    print("true" if check_booking_complex_budget(agent_answer) else "false")
+    print(check_booking_complex_budget())

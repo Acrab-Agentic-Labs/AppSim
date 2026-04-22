@@ -7,7 +7,7 @@ import os
 
 
 def check_train_search_bj_sh_date(result=None, device_id=None, backup_dir=None):
-    app_package = "com.example.Ctrip"
+    app_package = "com.example.ctrip_sim"
     phone_file_path = "files/search_params.json"
     local_file_path = os.path.join(backup_dir, 'search_params.json') if backup_dir else 'search_params.json'
 

@@ -21,7 +21,7 @@ def parse_duration(duration_str):
 
 
 def check_booking_batch_train(result=None, device_id=None, backup_dir=None):
-    app_package = "com.example.Ctrip"
+    app_package = "com.example.ctrip_sim"
     phone_file_path = "files/booking_history.json"
     local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
 
