@@ -1,6 +1,5 @@
 import json
 import os
-import re
 import subprocess
 
 
@@ -22,17 +21,24 @@ def validate_task_three(result=None, device_id=None, backup_dir=None):
     except:
         orders = []
 
-    paid_iphone_order_ids = set()
-    for order in orders:
-        if isinstance(order, dict):
-            items = order.get("items", [])
-            status = order.get("status", "")
-            for item in items:
-                if isinstance(item, dict):
-                    product = item.get("product", {})
-                    product_name = product.get("name", "") if isinstance(product, dict) else ""
-                    if "iPhone 15" in product_name and status != "PENDING_PAYMENT":
-                        return True
+    if not isinstance(orders, list) or not orders:
+        return False
+
+    first_order = orders[0]
+    if not isinstance(first_order, dict):
+        return False
+
+    if first_order.get("id") != "order_048":
+        return False
+
+    status = first_order.get("status", "")
+    items = first_order.get("items", [])
+    for item in items:
+        if isinstance(item, dict):
+            product = item.get("product", {})
+            product_name = product.get("name", "") if isinstance(product, dict) else ""
+            if "iPhone 15" in product_name and status != "PENDING_PAYMENT":
+                return True
 
     return False
 
