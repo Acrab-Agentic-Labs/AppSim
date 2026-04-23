@@ -32,7 +32,7 @@ from .eval_29 import eval_29
 
 # 所有指令
 RED_NOTE_TASKS = AppTasks(
-    package_name="com.example.test05",
+    package_name="com.example.rednote_sim",
     task_items=[
         TaskItem(
             instruction='给博主"小红薯美妆达人"发消息"你好"',

@@ -147,6 +147,9 @@ Desktop.ini
 *.tmp
 temp_*.json
 
+# Claude Code
+.claude/
+
 3rdparty/
 results/
 
