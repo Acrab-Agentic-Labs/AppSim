@@ -1,4 +1,26 @@
-# 项目介绍
+# AppSim 项目文档
+
+## 📑 目录
+
+- [项目介绍](#项目介绍)
+- [设备环境](#设备环境)
+  - [AVD模拟器](#avd模拟器)
+    - [Windows & MacOS](#windows--macos)
+    - [Linux服务器](#linux服务器)
+- [评测环境](#评测环境)
+  - [准备工作](#准备工作)
+  - [使用说明](#使用说明)
+    - [1. 基础用法](#1-基础用法)
+    - [2. 参数说明](#2-参数说明)
+    - [3. 批量评测脚本](#3-批量评测脚本)
+    - [4. 特别说明](#4-特别说明)
+    - [5. 扩展Agent类型](#5-扩展agent类型)
+
+---
+
+## 项目介绍
+
+AppSim 是一个用于评测 GUI Agent 在移动应用上的自动化测试框架。
 
 ## 设备环境
 
@@ -63,11 +85,11 @@ avdmanager --verbose create avd --force --name "testavd" --package "system-image
 ```
 
 ##### 启动模拟器
-```
+```bash
 # 启动模拟器
 # 如果遇到检查的ANDROID_SDK_ROOT路径不对
-# 修改 vi ~/.android/avd/testavd2.avd/config.ini 中 image.sysdir.1 的路径为绝对路径或相对 $ANDROID_SDK_ROOT 的路径
-emualtor @testavd -no-boot-anim -netdelay none -accel on -no-snapshot -wipe-data -no-window -port 5554
+# 修改 vi ~/.android/avd/testavd.avd/config.ini 中 image.sysdir.1 的路径为绝对路径或相对 $ANDROID_SDK_ROOT 的路径
+emulator @testavd -no-boot-anim -netdelay none -accel on -no-snapshot -wipe-data -no-window -port 5554
 ```
 
 ##### 利用 scrcpy 查看界面内容(可选)
@@ -86,7 +108,7 @@ ufw allow 5555/tcp
 
 2. 本地电脑连接
 
-```
+```bash
 # adb 连接目标端口
 adb connect server_ip:5555
 
@@ -98,27 +120,35 @@ scrcpy
 
 ### 准备工作
 
-```py
+```bash
+# 创建虚拟环境
 uv venv --python=3.11
-pip install -r requirments.txt
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 安装项目
 pip install -e .
 ```
 
 ### 使用说明
 
 #### 1. 基础用法
+
+**单个应用评测**：
+
 ```bash
 python scripts/eval_appsim.py \
     --agent-name UI-TARS-1.5 \
     --task BILIBILI \
     --device-id emulator-5554 \
     --output-dir results/UI-TARS-1.5/
-
 ```
 
 #### 2. 参数说明
 
 ##### 命令行参数
+
 - `--agent-name`: Agent 名称，可选值：
   - `Seed-1.5-VL`
   - `UI-TARS-1.5`（默认推荐）
@@ -135,7 +165,15 @@ python scripts/eval_appsim.py \
   - `MUSIC` - 网易云音乐
   - `RED_NOTE` - 小红书
   - `TENCENT_MEETING` - 腾讯会议
+  - `UBEREATS` - Uber Eats
   - `WECHAT` - 微信
+  - `YOUTUBE` - YouTube
+  - `AMAZON` - Amazon
+  - `WHATSAPP` - WhatsApp
+  - `BOOKING` - Booking.com
+  - `ZOOM` - Zoom
+  - `SPOTIFY` - Spotify
+  - `INSTAGRAM` - Instagram
 
 - `--device-id`: 设备ID（adb地址），例如：
   - `emulator-5554` - 模拟器
@@ -149,43 +187,155 @@ python scripts/eval_appsim.py \
 
 - `--verbose`: 设置时显示详细的log信息(等同于logging.DEBUG)
 
-#### 环境变量
 ##### 环境变量
 
+在运行评测前，需要配置以下环境变量：
+
 ```bash
-export API_BASE='https://ark.cn-beijing.volces.com/api/v3'
+export API_BASE='https://your-api-endpoint.com/api/v3'
 export API_KEY='your-api-key-here'
-export MODEL_NAME='doubao-1-5-ui-tars-250428'              # 设置使用的模型名，跟AgentName是两个概念
+export MODEL_NAME='your-model-name'
 ```
 
-#### 3. 使用 `eval.sh` 或 `eval.bat`
+#### 3. 批量评测脚本
 
-在 `eval.sh`  和 `eval.bat`（For Windows CMD） 中提供了测试脚本的示例用法：
+项目提供了批量评测脚本，可以在多个设备上并行运行所有应用的评测。
+
+##### 使用 `eval.sh` (Linux/MacOS)
+
+**步骤 1：配置脚本**
+
+编辑 `scripts/eval.sh` 文件，配置以下信息：
+
+```bash
+# API 配置
+API_BASE="${API_BASE:-https://your-api-endpoint.com/api/v3}"
+API_KEY="${API_KEY:-your-api-key-here}"
+
+# 模型配置（每个设备使用不同的模型以避免限流）
+MODEL_NAMES=(
+  "your-model-name-1"  # 设备 1 使用
+  "your-model-name-2"  # 设备 2 使用
+  "your-model-name-3"  # 设备 3 使用
+  "your-model-name-4"  # 设备 4 使用
+)
+
+# 设备配置
+DEVICE_IDS=(
+  "device-1-host:port"
+  "device-2-host:port"
+  "device-3-host:port"
+  "device-4-host:port"
+)
+```
+
+**步骤 2：运行脚本**
+
+```bash
+cd scripts
+bash eval.sh
+```
+
+**特性**：
+- ✅ 自动在 4 个设备上并行运行
+- ✅ 每个设备使用独立的模型端点（避免 API 限流）
+- ✅ Round-robin 方式分配应用到设备
+- ✅ 实时保存结果到 JSONL 文件
+- ✅ 自动生成带时间戳的结果目录
+
+**输出结构**：
+```
+scripts/results/
+└── UI-TARS-1.5/
+    └── 20260423_001257/          # 运行时间戳
+        ├── 122.228.230.214_10454/
+        │   ├── BILIBILI/
+        │   │   ├── eval_details_Bilibili_*.jsonl
+        │   │   ├── run.log
+        │   │   └── screenshots/
+        │   ├── MUSIC/
+        │   └── ...
+        ├── 122.228.230.214_10455/
+        └── console_errors.log
+```
+
+##### 使用 `eval.bat` (Windows)
+
+Windows 用户可以使用 `eval.bat` 脚本，配置方式类似。
+
+##### 自定义配置
+
+可以通过环境变量覆盖默认配置：
+
+```bash
+# 自定义 Agent 名称
+export AGENT_NAME="GPT-5"
+
+# 自定义结果目录
+export RESULT_ROOT="./my_results/"
+
+# 自定义运行标签
+export RUN_TAG="experiment_001"
+
+# 运行脚本
+bash eval.sh
+```
 
 #### 4. 特别说明
+
 - 使用 `UI-TARS-1.5` Agent 时，模型输出的坐标使用 1000x1000 坐标系
 - 如果使用其他模型，请确保模型输出的坐标格式符合要求（1000x1000 坐标系，整数坐标）
 - 评估结果会实时保存到输出目录的 JSONL 文件中，文件名包含时间戳
 
+##### UI-TARS 官方 API 提供的手机 GUI 任务处理场景动作表
 
-##### UITARS官方API提供的手机GUI任务处理场景动作表
-> 记录UI-TARS模型的官方API提供的Action
-模型会输出类似于`click(point='<point>500 257</point>')`这样的一段动作，我们按照下表展示的规则去解析模型输出的内容。
+> 记录 UI-TARS 模型的官方 API 提供的 Action
+
+模型会输出类似于 `click(point='<point>500 257</point>')` 这样的一段动作，我们按照下表展示的规则去解析模型输出的内容。
 
 | Action 名称 | 动作类型 | 参数                | 输出示例                                                                 |
 |-------------|----------|---------------------|--------------------------------------------------------------------------|
-| click       | 点击     | point               | JSON<br>`click(point='<point>x1 y1</point>')`                            |
-| long_press  | 长按     | point               | JSON<br>`long_press(point='<point>x1 y1</point>')`                       |
-| type        | 输入     | content             | JSON<br>`type(content='文本内容\\n')`                                    |
-| scroll      | 滚动     | point、direction    | JSON<br>`scroll(point='<point>x1 y1</point>', direction='down')`         |
-| open_app    | 打开应用 | app_name            | JSON<br>`open_app(app_name='微信')`                                      |
-| drag        | 拖拽     | start_point、end_point | JSON<br>`drag(start_point='<point>x1 y1</point>', end_point='<point>x2 y2</point>')` |
-| press_home  | 返回主屏幕 | 无                  | JSON<br>`press_home()`                                                   |
-| press_back  | 返回     | 无                  | JSON<br>`press_back()`                                                   |
-| finished    | 完成     | content             | JSON<br>`finished(content='操作完成信息')`                                |
+| click       | 点击     | point               | `click(point='<point>x1 y1</point>')`                            |
+| long_press  | 长按     | point               | `long_press(point='<point>x1 y1</point>')`                       |
+| type        | 输入     | content             | `type(content='文本内容\\n')`                                    |
+| scroll      | 滚动     | point、direction    | `scroll(point='<point>x1 y1</point>', direction='down')`         |
+| open_app    | 打开应用 | app_name            | `open_app(app_name='微信')`                                      |
+| drag        | 拖拽     | start_point、end_point | `drag(start_point='<point>x1 y1</point>', end_point='<point>x2 y2</point>')` |
+| press_home  | 返回主屏幕 | 无                  | `press_home()`                                                   |
+| press_back  | 返回     | 无                  | `press_back()`                                                   |
+| finished    | 完成     | content             | `finished(content='操作完成信息')`                                |
 
+#### 5. 扩展Agent类型
 
-### 5. 扩展Agent类型 
 项目支持多种 Agent，通过 `--agent-name` 参数切换。不同的 Agent 对应不同的模型和配置，具体实现位于 `scripts/agent_factory/agent_factory.py`。
 
 如果需要添加新的 Agent 或修改模型配置，请编辑 `scripts/agent_factory/agent_factory.py` 文件。
+
+---
+
+## 常见问题
+
+### Q: 如何查看评测进度？
+
+A: 评测过程中会实时输出日志，可以通过以下方式查看：
+- 控制台输出：实时显示当前执行状态
+- `run.log`：每个应用的详细执行日志
+- `console_errors.log`：所有错误信息汇总
+
+### Q: 评测失败如何排查？
+
+A: 按以下步骤排查：
+1. 检查 `run.log` 查看具体错误信息
+2. 确认设备连接正常：`adb devices`
+3. 确认 API 配置正确（API_BASE, API_KEY, MODEL_NAME）
+4. 查看 `console_errors.log` 了解全局错误
+
+### Q: 如何只测试部分应用？
+
+A: 编辑 `eval.sh` 中的 `APPS` 数组，只保留需要测试的应用名称。
+
+---
+
+## 许可证
+
+[添加许可证信息]

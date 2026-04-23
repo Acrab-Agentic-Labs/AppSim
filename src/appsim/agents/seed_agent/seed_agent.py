@@ -686,3 +686,36 @@ class SeedAgent(BaseAgent):
             self.logger.error(f"获取屏幕尺寸失败: {e}")
 
         return None
+
+    def close(self):
+        """
+        关闭 Agent，清理资源
+
+        清理内容：
+        - 关闭 OpenAI 客户端连接
+        - 清理 uiautomator2 设备连接
+        - 清空对话历史
+        """
+        try:
+            # 关闭 OpenAI 客户端
+            if hasattr(self, 'client') and self.client:
+                try:
+                    self.client.close()
+                    self.logger.debug("已关闭 OpenAI 客户端")
+                except Exception as e:
+                    self.logger.warning(f"关闭 OpenAI 客户端时出错: {e}")
+
+            # 清理 uiautomator2 设备连接（u2 不需要显式关闭，但可以清空引用）
+            if hasattr(self, 'u2_device') and self.u2_device:
+                self.u2_device = None
+                self.logger.debug("已清理 uiautomator2 设备连接")
+
+            # 清空对话历史
+            if hasattr(self, 'conversation_messages'):
+                self.conversation_messages.clear()
+                self.logger.debug("已清空对话历史")
+
+            self.logger.info("Agent 资源清理完成")
+
+        except Exception as e:
+            self.logger.error(f"关闭 Agent 时出错: {e}")
