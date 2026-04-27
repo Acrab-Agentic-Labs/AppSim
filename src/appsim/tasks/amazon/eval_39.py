@@ -4,7 +4,7 @@ import subprocess
 
 
 def validate_task_thirty_nine(result=None, device_id=None, backup_dir=None):
-    """Validate task 39: search for 'food', find the best-selling product, add its highest-priced option to the cart, and check out."""
+    """Validate task 39: Search for 'food', find the product with the highest sales volume, immediately purchase the highest-priced specification of it and complete the checkout."""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
     cmd = ["adb"]

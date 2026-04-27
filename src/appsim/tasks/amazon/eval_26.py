@@ -4,7 +4,7 @@ import subprocess
 
 
 def validate_task_twenty_six(result=None, device_id=None, backup_dir=None):
-    """Validate task 26: search for 'Dyson', open the first product detail page, add it to the cart, then select it in the cart and check out using Sarah Davis's address."""
+    """Validate task 26: Search for 'Dyson', open the first product detail page and purchase immediately. Then, check out using Sarah Davis's address."""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
     cmd = ["adb"]
