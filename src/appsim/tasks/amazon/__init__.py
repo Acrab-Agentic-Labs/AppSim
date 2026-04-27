@@ -62,7 +62,7 @@ AMAZON_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
-            instruction="Send 'Hello' to customer service.",
+            instruction="Send 'Hello, I have some questions about Dyson products.' to customer service.",
             verify_func=validate_task_four,
             human_steps=4,
             is_reasoning=False,
@@ -194,7 +194,7 @@ AMAZON_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
-            instruction="Search for 'Dyson', open the first product detail page, add it to the cart, then select it in the cart and check out using Sarah Davis's address.",
+            instruction="Search for 'Dyson', open the first product detail page and purchase immediately. Then, check out using Sarah Davis's address.",
             verify_func=validate_task_twenty_six,
             human_steps=14,
             is_reasoning=False,
@@ -230,13 +230,13 @@ AMAZON_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
-            instruction="Add 1 'Apple MacBook Air 13-inch with M4 Chip, Silver, M4 / 16GB / 256GB', 2 'Apple MacBook Air 13-inch with M4 Chip, Midnight, M4 / 16GB / 512GB', and 3 'Apple MacBook Air 13-inch with M4 Chip, Starlight, M4 / 16GB / 1TB' to the cart.",
+            instruction="Add 1 'Apple MacBook Air 13-inch with M4 Chip, Silver, M4 / 16GB / 256GB', 2 'Apple MacBook Air 13-inch with M4 Chip, Midnight, M4 / 16GB / 512GB', and 3 'Apple MacBook Air 13-inch with M4 Chip, Starlight, M4 / 24GB / 1TB' to the cart.",
             verify_func=validate_task_thirty_two,
             human_steps=16,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Send the following messages to customer service: 'Hi', 'I have a question about my order', and 'I want to cancel'. Tell me how many customer service replies you received, and return only an Arabic numeral.",
+            instruction="Send 'Hi', 'I have a question about my order', and 'I want to cancel' to the customer service one by one. Let me know how many customer service responses you have received in total, excluding the initial greeting message from the customer service. Please return the number in Arabic numerals only.",
             verify_func=validate_task_thirty_three,
             human_steps=11,
             is_reasoning=False,
@@ -272,9 +272,9 @@ AMAZON_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Search for 'food', find the best-selling product, add its highest-priced option to the cart, and check out.",
+            instruction="Search for 'food', find the product with the highest sales volume, immediately purchase the highest-priced specification of it and complete the checkout.",
             verify_func=validate_task_thirty_nine,
-            human_steps=13,
+            human_steps=12,
             is_reasoning=True,
         ),
         TaskItem(

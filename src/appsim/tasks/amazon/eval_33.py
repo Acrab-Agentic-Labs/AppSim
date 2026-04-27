@@ -4,7 +4,7 @@ import subprocess
 
 
 def validate_task_thirty_three(result=None, device_id=None, backup_dir=None):
-    """Validate task 33: send 'Hi', 'I have a question about my order', and 'I want to cancel' to customer service, then report how many customer service replies were received."""
+    """Validate task 33: Send 'Hi', 'I have a question about my order', and 'I want to cancel' to the customer service one by one. Let me know how many customer service responses you have received in total, excluding the initial greeting message from the customer service. Please return the number in Arabic numerals only."""
     # Check final_message contains "3"
     message_answer_ok = False
     if result and "final_message" in result and result["final_message"] is not None:
