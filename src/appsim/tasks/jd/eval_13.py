@@ -37,7 +37,7 @@ def validate_task_thirteen(result=None, device_id=None, backup_dir=None):
     if result and "final_message" in result and result["final_message"] is not None:
         message = result["final_message"]
         # Find all sequences of digits in the message
-        numbers = re.findall(r"\\d+", message)
+        numbers = re.findall(r"\d+", message)
         # Check if the found number is exactly the expected count
         if str(expected_count) in numbers:
             return True

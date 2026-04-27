@@ -236,7 +236,7 @@ JD_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
-            instruction="比较Apple官方旗舰店和华为官方旗舰店的粉丝数，告诉我粉丝量更高的店铺名。",
+            instruction="比较Apple官方旗舰店和华为官方旗舰店的粉丝数，直接告诉我粉丝量更高的店铺名。",
             verify_func=validate_task_thirty_three,
             human_steps=8,
             is_reasoning=True,
