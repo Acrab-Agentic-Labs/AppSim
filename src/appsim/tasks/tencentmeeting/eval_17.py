@@ -56,20 +56,6 @@ def check_all_mics_muted(
         for participant in meeting_participants:
             if participant.get(IS_MUTED_KEY) is False:
                 logging.error(f"验证失败：会议 {meeting_id} 中的参与者 {participant.get('userId')} 的麦克风未关闭。")
-                
-                # 如果通过数据文件验证失败，则检查 Agent 是否尝试执行了关闭所有麦克风操作
-                if result is not None:
-                    executed_actions = result.get("executed_actions", [])
-                    # 假设关闭所有麦克风操作是一个点击动作，并且我们知道大概的坐标
-                    # 根据之前的日志，任务16 (关闭所有麦克风) 的第三个动作是点击 <point>276 860</point>
-                    mute_all_clicked_by_agent = any(
-                        a.get("action") == "click" and a.get("point") == "<point>274 861</point>" # 调整为实际坐标
-                        for a in executed_actions
-                    )
-                    if mute_all_clicked_by_agent:
-                        logging.warning(f"警告：数据文件未更新，但Agent似乎已执行关闭所有麦克风操作。将视为成功。Executed Actions: {executed_actions}")
-                        return True # 暂时视为成功，以便继续评估其他任务
-
                 return False
 
         return True

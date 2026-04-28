@@ -7,6 +7,11 @@ import os
 import logging
 from collections import Counter
 from appsim.utils import read_json_from_device
+try:
+    from ._answer_utils import answer_contains_any, answer_contains_number
+except ImportError:
+    from _answer_utils import answer_contains_any, answer_contains_number
+
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
@@ -73,14 +78,25 @@ def verify_most_active_sender(
         # 找出发送消息最多的用户
         most_active = sender_counts.most_common(1)[0][0]
 
-        if most_active == expected_sender_id:
-            return True
-        else:
+        if most_active != expected_sender_id:
             most_active_count = sender_counts[most_active]
             logging.error(
-                f"验证失败：会议 {meeting_id} 中发送消息最多的用户是 {most_active}（{most_active_count}条），期望为 {expected_sender_id}。"
+                "Most active sender in meeting %s was %s (%s messages), expected %s.",
+                meeting_id,
+                most_active,
+                most_active_count,
+                expected_sender_id,
             )
             return False
+
+        sender_names = sorted(
+            {
+                m.get("senderName")
+                for m in meeting_messages
+                if m.get("senderId") == expected_sender_id and m.get("senderName")
+            }
+        )
+        return answer_contains_any(result, [expected_sender_id] + sender_names)
     except Exception as e:
         logging.error(f"处理数据时发生错误: {e}")
         return False

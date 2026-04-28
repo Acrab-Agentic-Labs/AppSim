@@ -2,6 +2,11 @@ import os
 import json
 import logging
 from appsim.utils import read_json_from_device
+try:
+    from ._answer_utils import answer_contains_any, answer_contains_number
+except ImportError:
+    from _answer_utils import answer_contains_any, answer_contains_number
+
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
@@ -86,10 +91,23 @@ def get_latest_ended_meeting_details(
         duration_match = abs(actual_duration_minutes - expected_duration_minutes) <= duration_tolerance_minutes
 
         if not (topic_match and duration_match):
-            logging.error(f"最近结束会议的主题或时长不符合预期。实际主题: {actual_topic}, 期望主题: {expected_topic}. 实际时长: {actual_duration_minutes}分钟, 期望时长: {expected_duration_minutes}分钟 (容差: {duration_tolerance_minutes}分钟).")
+            logging.error(
+                "Latest ended meeting details mismatch: topic=%r expected_topic=%r duration=%s expected_duration=%s tolerance=%s.",
+                actual_topic,
+                expected_topic,
+                actual_duration_minutes,
+                expected_duration_minutes,
+                duration_tolerance_minutes,
+            )
             return False
 
-        return True
+        details_evidence = [
+            actual_topic,
+            recent_meeting.get("meetingId"),
+            end_time_ms,
+        ]
+        return answer_contains_any(result, details_evidence) or answer_contains_number(result, actual_duration_minutes)
+
 
     except Exception as e:
         logging.error(f"处理数据时发生错误: {e}")

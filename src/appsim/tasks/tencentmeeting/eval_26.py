@@ -6,6 +6,11 @@
 import os
 import logging
 from appsim.utils import read_json_from_device
+try:
+    from ._answer_utils import answer_contains_any, answer_contains_number
+except ImportError:
+    from _answer_utils import answer_contains_any, answer_contains_number
+
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
@@ -89,13 +94,16 @@ def verify_average_meeting_duration(
         avg_duration = sum(durations) / len(durations)
 
         # 检查是否在容差范围内
-        if abs(avg_duration - expected_minutes) <= tolerance:
-            return True
-        else:
+        if abs(avg_duration - expected_minutes) > tolerance:
             logging.error(
-                f"验证失败：已结束会议的平均时长为 {avg_duration:.1f} 分钟，期望为 {expected_minutes} 分钟（容差±{tolerance}分钟）。"
+                "Average ended-meeting duration was %.1f minutes, expected %s within tolerance %s.",
+                avg_duration,
+                expected_minutes,
+                tolerance,
             )
             return False
+
+        return answer_contains_number(result, round(avg_duration)) or answer_contains_number(result, round(avg_duration, 1))
     except Exception as e:
         logging.error(f"处理数据时发生错误: {e}")
         return False

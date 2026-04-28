@@ -7,6 +7,11 @@
 import os
 import logging
 
+try:
+    from ._answer_utils import answer_contains_any, answer_contains_number
+except ImportError:
+    from _answer_utils import answer_contains_any, answer_contains_number
+
 
 # ============================================================================
 # 常量定义 - 每个脚本独立定义
@@ -163,14 +168,11 @@ def verify_phone_13_count(
         return False
 
     actual_count = len([u for u in users_data if u.get("phone", "").startswith("13")])
-    if actual_count == expected_count:
-        return True
-    else:
-        logging.error(f"验证失败：手机号13开头的联系人总数 '{actual_count}' 与期望的 '{expected_count}' 不匹配。")
+    if actual_count != expected_count:
+        logging.error("Phone-prefix count %s did not match expected %s.", actual_count, expected_count)
         return False
 
-
-
+    return answer_contains_number(result, actual_count)
 
 
 if __name__ == '__main__':
