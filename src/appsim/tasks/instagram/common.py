@@ -231,7 +231,7 @@ def read_device_json(adb, file_path):
     """
     cmd = adb.base_cmd + ["exec-out", "run-as", APP_PACKAGE, "cat", file_path]
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=10, encoding='utf-8', errors='replace')
         if result.returncode != 0 or "No such file" in result.stderr:
             return None
         return json.loads(result.stdout)

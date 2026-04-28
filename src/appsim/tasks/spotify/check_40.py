@@ -1,20 +1,18 @@
 # Task 40: 目前音乐库中有多少首喜欢的歌曲
-# Check: 通过 JSON 验证 likedSongs 的数量等于 2（初始值）
-# Fallback: UI 上出现 Liked Songs 页面
+# Check: 通过 JSON 读取实际 likedSongs 数量，并验证答案是否正确
 from .check_common import AppChecker, run_check, result_pass, result_fail
 
 
-def check(c: AppChecker):
-    # 优先使用 JSON 验证
+def check(c: AppChecker, result=None):
     state = c.get_user_state()
-    if state:
-        liked = state.get("likedSongs", [])
-        # 默认初始有 2 首喜欢的歌曲
-        if len(liked) == 2:
-            return result_pass("Check passed")
+    if not state:
+        return result_fail("Check failed: unable to read user_state.json")
 
-    # Fallback: UI 验证
-    passed = (
+    liked = state.get("likedSongs", [])
+    expected_count = len(liked)
+
+    # 检查 UI 是否在 Liked Songs 页面
+    ui_passed = (
         c.find_text("Liked Songs")
         and c.find_desc("Back")
         and (
@@ -22,8 +20,21 @@ def check(c: AppChecker):
             or c.find_desc("Shuffle")
         )
     )
-    passed = True
-    return result_pass("Check passed") if passed else result_fail("Check failed")
+
+    if not ui_passed:
+        return result_fail("UI check failed: Liked Songs page not visible")
+
+    # 检查 AI 回答是否包含正确的数量
+    if result and "final_message" in result:
+        final_msg = str(result["final_message"])
+        # 正确答案应该包含实际数量
+        if str(expected_count) in final_msg:
+            return result_pass(f"Check passed: UI correct and answer contains {expected_count}")
+
+    return result_fail(
+        f"Answer check failed: final_message does not contain correct count ({expected_count})",
+        {"likedSongs": liked, "expectedCount": expected_count},
+    )
 
 
 if __name__ == "__main__":

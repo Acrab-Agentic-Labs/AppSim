@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from .verification_functions import read_json_from_device
+from .verification_functions import is_daily_recommend_context, is_daily_recommend_song, is_in_daily_recommend_context, read_json_from_device
 
 def check_is_playing(result=None, device_id=None, backup_dir=None):
     """
@@ -31,10 +31,14 @@ def check_is_playing(result=None, device_id=None, backup_dir=None):
         logging.error("✗ 测试失败 - 任务4未完成：没有当前播放的歌曲信息")
         return False
 
-    source = current_song.get("source", "")
-    if source != "daily_recommend":
-        logging.error(f"✗ 测试失败 - 任务4未完成：播放的歌曲不是来自每日推荐。当前来源: '{source}'")
-        logging.info(f"  提示: 请从'每日推荐'页面点击歌曲播放")
+    # 检查歌曲来源或当前查看的页面/歌单上下文
+    playlists_data = read_json_from_device("autotest/user_playlists.json", device_id, result, backup_dir=backup_dir)
+    is_daily_context = is_in_daily_recommend_context(data) or is_daily_recommend_context(playlists_data)
+    if not is_daily_recommend_song(current_song) and not is_daily_context:
+        logging.error(f"✗ 测试失败 - 任务4未完成：播放来源不是每日推荐。当前歌曲信息: {current_song}")
+        logging.info(f"  当前播放状态: {data}")
+        logging.info(f"  当前歌单状态: {playlists_data}")
+        logging.info("  提示: 需要从'每日推荐'页面点击歌曲播放")
         return False
 
     # 所有检查通过

@@ -184,7 +184,7 @@ INSTAGRAM_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Open a chat and send the message 'Hello, how are you?'",
+            instruction="Open a chat with deepak.patel and send the message 'Hello, how are you?'",
             verify_func=validate_task(22),
             human_steps=4,
             is_reasoning=False,
@@ -226,7 +226,7 @@ INSTAGRAM_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Remove a follower",
+            instruction="Remove a follower named deepak.patel",
             verify_func=validate_task(29),
             human_steps=3,
             is_reasoning=False,

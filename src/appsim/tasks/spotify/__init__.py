@@ -47,7 +47,7 @@ def validate_task(task_id):
         checker = AppChecker(device_id)
         check_func = globals()[f'check_{task_id}']
         try:
-            passed = check_func(checker)
+            passed = check_func(checker, result)
             return passed
         except Exception:
             return False
@@ -159,22 +159,22 @@ SPOTIFY_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="View the lyrics of the currently playing song",
+            instruction="View the lyrics of IRIS OUT and tell me the first line",
             verify_func=validate_task(18),
             human_steps=3,
-            is_reasoning=False,
+            is_reasoning=True,
         ),
         TaskItem(
-            instruction="View the credits of the current song",
+            instruction="View the credits of Style and tell me who is the lyricist",
             verify_func=validate_task(19),
             human_steps=4,
-            is_reasoning=False,
+            is_reasoning=True,
         ),
         TaskItem(
-            instruction="View the artist information of the current song",
+            instruction="View the artist information of Style and tell me the first sentence of the introduction",
             verify_func=validate_task(20),
             human_steps=4,
-            is_reasoning=False,
+            is_reasoning=True,
         ),
         TaskItem(
             instruction="Search for the song 'Shape of You'",
