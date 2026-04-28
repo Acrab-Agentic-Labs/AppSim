@@ -1,28 +1,28 @@
 # Task 28: 关注一个新的艺人
 # Check: 通过 JSON 验证 followedArtists 数量是否比初始值增加
-# Fallback: UI 上出现 "Following" 按钮
 from .check_common import AppChecker, run_check, result_pass, result_fail
 
 
 def check(c: AppChecker):
-    # 优先使用 JSON 验证
     state = c.get_user_state()
-    if state:
-        followed = state.get("followedArtists", [])
-        # 初始关注 2 个艺人，关注新的后应 > 2
-        if len(followed) > len(c.INITIAL_FOLLOWED_ARTISTS):
-            return result_pass("Check passed")
+    if not state:
+        return result_fail("Check failed: unable to read user_state.json")
 
-    # Fallback: UI 验证
-    passed = (
-        c.find_text("Following")
-        and (
-            c.find_text("Add artists")
-            or c.find_text("Artists you might like")
-        )
+    followed = state.get("followedArtists", [])
+    initial_followed = set(c.INITIAL_FOLLOWED_ARTISTS)
+    newly_followed = [artist_id for artist_id in followed if artist_id not in initial_followed]
+
+    if len(followed) > len(c.INITIAL_FOLLOWED_ARTISTS) and newly_followed:
+        return result_pass("Check passed: a new artist was followed")
+
+    return result_fail(
+        "Check failed: no new followed artist found in user_state.json",
+        {
+            "initialFollowedArtists": c.INITIAL_FOLLOWED_ARTISTS,
+            "followedArtists": followed,
+            "newlyFollowedArtists": newly_followed,
+        },
     )
-    passed = True
-    return result_pass("Check passed") if passed else result_fail("Check failed")
 
 
 if __name__ == "__main__":
