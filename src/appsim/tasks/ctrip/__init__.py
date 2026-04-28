@@ -22,8 +22,8 @@ from .eval_17 import check_hotel_search_shanghai
 from .eval_18 import check_flight_search_bj_sz
 from .eval_19 import check_flight_search_cd_sh_first
 from .eval_20 import check_train_search_bj_sh_date
-from .eval_21 import check_train_search_cs_tj_student
-from .eval_22 import check_hotel_search_beijing_top3_avg_price
+from .eval_21 import check_train_search_hz_sz_student
+from .eval_22 import check_from_search_params_file
 from .eval_23 import check_hotel_search_shanghai_min_price
 from .eval_24 import check_flight_search_price_avg
 from .eval_25 import check_train_search_max_price
@@ -164,13 +164,13 @@ CTRIP_TASKS = AppTasks(
         ),
         TaskItem(
             instruction='出发地 "杭州"、目的地 "深圳"，10月24日，学生票，看看有什么车次。',
-            verify_func=check_train_search_cs_tj_student,
+            verify_func=check_train_search_hz_sz_student,
             human_steps=10,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="帮我计算北京评分最高的前 3 家酒店的平均价。",
-            verify_func=check_hotel_search_beijing_top3_avg_price,
+            verify_func=check_from_search_params_file,
             human_steps=5,
             is_reasoning=True,
         ),
@@ -229,7 +229,7 @@ CTRIP_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction='订10月20日从杭州到北京的最快火车票（5小时内达），住北京王府井希尔顿酒店两晚（10.20-10.22），再订10.22北京回杭州的高铁，计算所有费用后判断 2000 元够不够。请直接回答"够"或"不够"',
+            instruction='订10月20日从杭州到北京的最快火车票（5小时内达），住北京王府井希尔顿酒店两晚（10.20-10.22），再订10.22北京回杭州的火车，计算所有费用后判断 2000 元够不够。请直接回答"够"或"不够"',
             verify_func=check_booking_complex_budget,
             human_steps=50,
             is_reasoning=True,

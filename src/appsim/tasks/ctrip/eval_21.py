@@ -1,12 +1,12 @@
 import json
-import subprocess
 import os
+import subprocess
 
-# 任务21：进入"火车票"页面，选择出发地"长沙"、目的地"天津"、选择日期1月18日，选择学生票，得到车次列表
-# 检查条件：type="train_search", from="长沙", to="天津", date="2026-01-18", ticketType="学生票"
+# 任务21：进入"火车票"页面，选择出发地"杭州"、目的地"深圳"、选择日期10月24日，选择学生票，得到车次列表
+# 检查条件：type="train_search", from="杭州", to="深圳", date="2025-10-24", ticketType="学生票"
 
 
-def check_train_search_cs_tj_student(result=None, device_id=None, backup_dir=None):
+def check_train_search_hz_sz_student(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/search_params.json"
     local_file_path = os.path.join(backup_dir, 'search_params.json') if backup_dir else 'search_params.json'
@@ -46,4 +46,4 @@ def check_train_search_cs_tj_student(result=None, device_id=None, backup_dir=Non
 
 
 if __name__ == "__main__":
-    print("true" if check_train_search_cs_tj_student() else "false")
+    print("true" if check_train_search_hz_sz_student() else "false")

@@ -65,7 +65,7 @@ YOUTUBE_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction='Turn on the subscriptions button',
+            instruction='Turn on the notification subscription button',
             verify_func=validate_task_five,
             human_steps=4,
             is_reasoning=False,

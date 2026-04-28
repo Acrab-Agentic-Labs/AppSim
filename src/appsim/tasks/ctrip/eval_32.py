@@ -1,45 +1,24 @@
 import json
-import subprocess
-import sys
 import os
+import re
+import subprocess
 
-# 任务32：订10月20日从杭州到北京最快火车票（5小时内到达），住北京王府井希尔顿酒店两晚（10.20-10.22），再订10.22北京回杭州的高铁，最后分析计算所有花费后判断2000元够不够
-# 检查条件：最后3条记录依次是：火车票(杭州->北京,5小时内)、酒店(北京,王府井希尔顿,2晚)、火车票(北京->杭州)
-# 计算总价格，判断2000元是否足够，并与智能体答案对比
-
-
-def parse_duration(duration_str):
-    """
-    解析时长字符串，如 "4时55分" -> 295分钟
-    """
-    import re
-
-    hour_match = re.search(r"(\d+)时", duration_str)
-    minute_match = re.search(r"(\d+)分", duration_str)
-
-    hours = int(hour_match.group(1)) if hour_match else 0
-    minutes = int(minute_match.group(1)) if minute_match else 0
-
-    return hours * 60 + minutes
+# 任务32：订10月20日从杭州到北京最快火车票（5小时内达），住北京王府井希尔顿酒店两晚（10.20-10.22），再订10.22北京回杭州的火车，计算所有费用后判断2000元够不够
+# 检查条件：最后3条记录依次是火车票(杭州->北京, 2025-10-20, 最快且5小时内)、酒店(北京, 王府井希尔顿, 10.20-10.22)、火车票(北京->杭州, 2025-10-22)
 
 
-def check_booking_complex_budget(result=None, device_id=None, backup_dir=None):
-    """
-    检查复杂预订任务（含预算判断）
-
-    Args:
-        agent_answer: 智能体的答案，应为"enough"或"not_enough"
-        device_id: 设备ID（可选）
-    """
-    agent_answer = result
+def check_booking_complex_budget(agent_answer=None, device_id=None, backup_dir=None):
+    if agent_answer is None:
+        return False
+    final_message = agent_answer.get("final_message")
+    if not isinstance(final_message, str):
+        return False
 
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/booking_history.json"
-    local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
+    local_file_path = os.path.join(backup_dir, "booking_history.json") if backup_dir else "booking_history.json"
 
-    # 1. 通过ADB获取文件内容
     try:
-        # 构建adb命令,如果提供了device_id就添加设备选择参数
         cmd = ["adb"]
         if device_id:
             cmd.extend(["-s", device_id])
@@ -48,89 +27,69 @@ def check_booking_complex_budget(result=None, device_id=None, backup_dir=None):
         with open(local_file_path, "w", encoding="utf-8") as f:
             subprocess.run(cmd, stdout=f)
 
-        # 2. 解析JSON内容
         with open(local_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-
     except subprocess.CalledProcessError:
         return False
     except Exception:
         return False
 
-    # 3. 检查最后3条预订记录
     try:
         booking_events = data.get("booking_events", [])
         if len(booking_events) < 3:
             return False
 
-        # 获取最后3条记录
-        last_three = booking_events[-3:]
+        first_train = booking_events[-3]
+        hotel_booking = booking_events[-2]
+        third_train = booking_events[-1]
 
-        # 验证第1步：火车票(杭州->北京)，且5小时内到达
-        step1 = last_three[0]
-        if not (step1.get("type") == "train_booking" and step1.get("from") == "杭州" and step1.get("to") == "北京"):
-            return False
-
-        # 检查时长是否5小时内
-        duration1 = step1.get("duration", "")
-        if duration1:
-            duration_minutes = parse_duration(duration1)
-            if duration_minutes > 300:  # 5小时 = 300分钟
-                return False
-        else:
-            return False  # 没有时长信息，返回false
-
-
-        # 验证第2步：酒店(北京,包含"王府井"和"希尔顿")
-        step2 = last_three[1]
-        hotel_name = step2.get("hotelName", "")
         if not (
-            step2.get("type") == "hotel_booking"
-            and step2.get("city") == "北京"
-            and "王府井" in hotel_name
-            and "希尔顿" in hotel_name
+            first_train.get("type") == "train_booking"
+            and first_train.get("from") == "杭州"
+            and first_train.get("to") == "北京"
+            and first_train.get("date") == "2025-10-20"
         ):
             return False
 
-        # 检查是否是2晚（10.20-10.22）
-        check_in = step2.get("checkIn", "")
-        check_out = step2.get("checkOut", "")
-        # 简化检查：只要有入住和退房日期即可，实际应该检查日期差是否为2
-        if not (check_in and check_out):
-            return False
-        # 新增：精准匹配目标入住和退房日期
-        target_check_in = "2025-10-20"
-        target_check_out = "2025-10-22"
-        if check_in != target_check_in or check_out != target_check_out:
-            return False
+        duration_str = first_train.get("duration", "")
+        hour_match = re.search(r"(\d+)时", duration_str)
+        minute_match = re.search(r"(\d+)分", duration_str)
+        hours = int(hour_match.group(1)) if hour_match else 0
+        minutes = int(minute_match.group(1)) if minute_match else 0
+        duration_minutes = hours * 60 + minutes
 
-
-
-        # 验证第3步：火车票(北京->杭州)
-        step3 = last_three[2]
-        if not (step3.get("type") == "train_booking" and step3.get("from") == "北京" and step3.get("to") == "杭州"):
+        # 当前任务里“最快且5小时内”的正确记录应为 4时0分。
+        if duration_minutes != 240:
             return False
 
-
-
-        # 智能体答案，进行对比
-        if agent_answer is None:
+        if not (
+            hotel_booking.get("type") == "hotel_booking"
+            and hotel_booking.get("city") == "北京"
+            and hotel_booking.get("checkIn") == "2025-10-20"
+            and hotel_booking.get("checkOut") == "2025-10-22"
+            and "王府井希尔顿" in hotel_booking.get("hotelName", "")
+        ):
             return False
-        final_message = agent_answer.get("final_message")
-        if not isinstance(final_message, str):
+
+        if not (
+            third_train.get("type") == "train_booking"
+            and third_train.get("from") == "北京"
+            and third_train.get("to") == "杭州"
+            and third_train.get("date") == "2025-10-22"
+        ):
             return False
-        # 检测 result 中的final_messages中是否包含 "够"或者'enough'
-        if ('final_message' in agent_answer and (
-                '不够' not in agent_answer['final_message'] or
-                'not enough' not in agent_answer['final_message'])
+
+        if "final_message" in agent_answer and (
+            "足够" in agent_answer["final_message"]
+            or ("够" in agent_answer["final_message"] and "不够" not in agent_answer["final_message"])
+            or ("enough" in agent_answer["final_message"].lower() and "not enough" not in agent_answer["final_message"].lower())
         ):
             return True
         else:
             return False
-
-    except Exception as e:
+    except Exception:
         return False
 
 
 if __name__ == "__main__":
-    print(check_booking_complex_budget())
+    print("true" if check_booking_complex_budget() else "false")

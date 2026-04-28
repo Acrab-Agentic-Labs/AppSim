@@ -1,9 +1,9 @@
 import json
-import subprocess
 import os
+import subprocess
 
-# 任务17：进入"酒店"页面，城市选上海，入住时间任意天，退房时间任意天，房间选择2间、成人选择2位、儿童选择0位，得到酒店列表
-# 检查条件：type="hotel_search", city="上海", rooms=2, adults=2, children=0, 日期动态
+# 任务17：进入"酒店"页面，城市选上海，入住时间今天、退房时间明天，房间选择2间、成人选择2位、儿童选择0位，得到酒店列表
+# 检查条件：type="hotel_search", city="上海", checkIn="2025-10-20", checkOut="2025-10-21", rooms=2, adults=2, children=0
 
 
 def check_hotel_search_shanghai(result=None, device_id=None, backup_dir=None):
@@ -37,6 +37,8 @@ def check_hotel_search_shanghai(result=None, device_id=None, backup_dir=None):
         return (
             latest_event.get("type") == "hotel_search"
             and latest_event.get("city") == "上海"
+            and latest_event.get("checkIn") == "2025-10-20"
+            and latest_event.get("checkOut") == "2025-10-21"
             and latest_event.get("rooms") == 2
             and latest_event.get("adults") == 2
             and latest_event.get("children") == 0
