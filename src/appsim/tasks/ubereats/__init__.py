@@ -34,8 +34,6 @@ from .eval_31 import validate_task_thirty_one
 from .eval_32 import validate_task_thirty_two
 from .eval_33 import validate_task_thirty_three
 from .eval_34 import validate_task_thirty_four
-from .eval_35 import validate_task_thirty_five
-
 
 UBEREATS_TASKS = AppTasks(
     package_name="com.example.ubereats_sim",
@@ -242,12 +240,6 @@ UBEREATS_TASKS = AppTasks(
             instruction="Add a work office address as jiedaokou, and add a home house address as jianghanlu.",
             verify_func=validate_task_thirty_four,
             human_steps=13,
-            is_reasoning=False,
-        ),
-        TaskItem(
-            instruction="Turn on the Live location sharing with couriers option.",
-            verify_func=validate_task_thirty_five,
-            human_steps=5,
             is_reasoning=False,
         ),
     ],
