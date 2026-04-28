@@ -7,6 +7,11 @@
 import os
 import logging
 
+try:
+    from ._answer_utils import answer_contains_any, answer_contains_number
+except ImportError:
+    from _answer_utils import answer_contains_any, answer_contains_number
+
 
 # ============================================================================
 # 常量定义 - 每个脚本独立定义
@@ -162,11 +167,11 @@ def verify_meeting_count(
         return False
 
     actual_count = len(meetings_data)
-    if actual_count == expected_count:
-        return True
-    else:
-        logging.error(f"验证失败：会议总数 '{actual_count}' 与期望的 '{expected_count}' 不匹配。")
+    if actual_count != expected_count:
+        logging.error("Meeting count %s did not match expected %s.", actual_count, expected_count)
         return False
+
+    return answer_contains_number(result, actual_count)
 
 
 if __name__ == '__main__':

@@ -5,6 +5,11 @@
 import logging
 import os
 from appsim.utils import read_json_from_device
+try:
+    from ._answer_utils import answer_contains_any, answer_contains_number
+except ImportError:
+    from _answer_utils import answer_contains_any, answer_contains_number
+
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
@@ -66,11 +71,11 @@ def verify_invitable_people_count(
 
     # 可邀请人数 = 总用户数 - 已在会议中的用户数
     actual_count = len(all_user_ids - current_meeting_participant_ids)
-    if actual_count == expected_count:
-        return True
-    else:
-        logging.error(f"验证失败：可邀请的联系人总数 '{actual_count}' 与期望的 '{expected_count}' 不匹配。")
+    if actual_count != expected_count:
+        logging.error("Invitable count %s did not match expected %s.", actual_count, expected_count)
         return False
+
+    return answer_contains_number(result, actual_count)
 
 
 if __name__ == '__main__':

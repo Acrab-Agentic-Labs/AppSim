@@ -7,6 +7,11 @@
 import os
 import logging
 
+try:
+    from ._answer_utils import answer_contains_any, answer_contains_number
+except ImportError:
+    from _answer_utils import answer_contains_any, answer_contains_number
+
 
 # ============================================================================
 # 常量定义 - 每个脚本独立定义
@@ -162,11 +167,12 @@ def verify_surname_zhou_count(
         print(f"错误: 无法从设备读取或解析 {USERS_FILE}。")
         return False
 
-    actual_count = len([u for u in users_data if u.get("username", "").startswith("周")])
-    return actual_count == expected_count
+    actual_count = len([u for u in users_data if u.get("username", "").startswith("\u5468")])
+    if actual_count != expected_count:
+        logging.error("Zhou surname count %s did not match expected %s.", actual_count, expected_count)
+        return False
 
-
-
+    return answer_contains_number(result, actual_count)
 
 
 if __name__ == '__main__':

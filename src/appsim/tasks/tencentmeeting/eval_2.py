@@ -1,73 +1,92 @@
-import os
-import json
 import logging
-from appsim.utils import read_json_from_device
+import os
+
+try:
+    from ._device_utils import (
+        contains_text,
+        current_ui_text,
+        default_backup_dir,
+        list_records,
+        read_json_from_device,
+    )
+except ImportError:
+    from _device_utils import (
+        contains_text,
+        current_ui_text,
+        default_backup_dir,
+        list_records,
+        read_json_from_device,
+    )
+
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
-
-# 任务特定常量
-EXPECTED_MEETING_ID = "meeting_4e8d73"
+TARGET_MEETING_ID = "meeting_4e8d73"
 MEETINGS_FILE = "meetings.json"
 
-# 常量定义
-MEETING_STATUS_KEY = "status"
-MEETING_END_TIME_KEY = "endTime"
-MEETING_ID_KEY = "meetingId"
-MEETING_STATUS_ENDED = "ENDED"
+REPLAY_CONTEXT_MARKERS = [
+    "Meeting Replay",
+    "Meeting Info",
+    "Video",
+    "Download",
+    "Duration",
+    "Start Time",
+    "Participants",
+    "1.0x",
+    "\u4f1a\u8bae\u56de\u653e",
+    "\u4f1a\u8bae\u4fe1\u606f",
+    "\u65f6\u957f",
+    "\u5f00\u59cb\u65f6\u95f4",
+    "\u53c2\u4f1a\u4eba",
+]
+PLAYING_MARKERS = ["Pause", "\u6682\u505c"]
+
+
+def _target_data_exists(device_id, backup_dir) -> bool:
+    meetings = list_records(
+        read_json_from_device(
+            device_id=device_id,
+            package_name=PACKAGE_NAME,
+            device_json_path=f"files/{MEETINGS_FILE}",
+            backup_dir=backup_dir,
+        )
+    )
+    meeting_exists = any(str(meeting.get("meetingId")) == TARGET_MEETING_ID for meeting in meetings)
+
+    if not meeting_exists:
+        logging.error("Target meeting %s was not found in device data.", TARGET_MEETING_ID)
+    return meeting_exists
+
 
 def check_previous_meeting_playback(
     result=None,
     device_id=None,
     backup_dir=None,
 ) -> bool:
-    """
-    检查最近一场已结束的会议ID是否与期望值匹配，用于验证回放。
+    """Verify the target replay page is open and playback has been started."""
 
-    参数:
-        expected_meeting_id (str): 期望的会议ID。
-        device_id (str, optional): Android设备的ID. Defaults to None.
-        backup_dir (str, optional): 备份文件存放的目录。
-
-    返回:
-        bool: 如果最近结束的会议ID与期望的ID匹配，返回True，否则返回False。
-    """
-    # 使用常量
-    expected_meeting_id = EXPECTED_MEETING_ID
+    del result
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_8")
+        backup_dir = default_backup_dir("tencentmeeting_eval_2")
 
-    data = read_json_from_device(
-        device_id=device_id,
-        package_name=PACKAGE_NAME,
-        device_json_path=f"files/{MEETINGS_FILE}",
-        backup_dir=backup_dir,
-    )
-
-    if data is None:
-        logging.error(f"错误: 无法从设备读取或解析 {MEETINGS_FILE}。")
+    data_ok = _target_data_exists(device_id, backup_dir)
+    ui_text = current_ui_text(device_id, backup_dir)
+    if not ui_text:
+        logging.error("Unable to read current UI state.")
         return False
 
-    try:
-        ended_meetings = [
-            m for m in data if m.get(MEETING_STATUS_KEY) == MEETING_STATUS_ENDED and m.get(MEETING_END_TIME_KEY) is not None
-        ]
+    target_in_ui = TARGET_MEETING_ID in ui_text
+    replay_context = contains_text(ui_text, REPLAY_CONTEXT_MARKERS)
+    playback_started = contains_text(ui_text, PLAYING_MARKERS)
 
-        if not ended_meetings:
-            logging.error("错误: 未找到任何已结束的会议。")
-            return False
+    if not target_in_ui:
+        logging.error("Current UI does not show target meeting id %s.", TARGET_MEETING_ID)
+    if not replay_context:
+        logging.error("Current UI does not look like a meeting replay page.")
+    if not playback_started:
+        logging.error("Playback has not started; expected a Pause control in the current UI.")
 
-        previous_meeting = max(ended_meetings, key=lambda x: x.get(MEETING_END_TIME_KEY, 0))
+    return data_ok and target_in_ui and replay_context and playback_started
 
-        actual_meeting_id = previous_meeting.get(MEETING_ID_KEY)
-        if actual_meeting_id == expected_meeting_id:
-            return True
-        else:
-            logging.error(f"验证失败：最近的会议ID '{actual_meeting_id}' 与期望的ID '{expected_meeting_id}' 不匹配。")
-            return False
 
-    except Exception as e:
-        logging.error(f"处理数据时发生错误: {e}")
-        return False
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(check_previous_meeting_playback())

@@ -1,7 +1,10 @@
 import os
-import json
 import logging
 from appsim.utils import read_json_from_device
+try:
+    from ._answer_utils import answer_contains_any
+except ImportError:
+    from _answer_utils import answer_contains_any
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
@@ -11,6 +14,65 @@ USER_ID = "user001"
 EXPECTED_SHARING_STATUS = True
 MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
 IS_SHARING_KEY = "isSharingScreen"
+
+
+SCREEN_SHARING_SUCCESS_KEYWORDS = [
+    "已共享屏幕",
+    "正在共享屏幕",
+    "共享屏幕已开启",
+    "屏幕共享已开启",
+    "开始共享",
+    "已开始共享",
+    "成功共享",
+    "已共享",
+]
+
+
+def _is_point_near(point_str, target_x, target_y, tolerance=50):
+    if not point_str or not str(point_str).startswith("<point>"):
+        return False
+    try:
+        coords = str(point_str).replace("<point>", "").replace("</point>", "").strip().split()
+        x, y = int(coords[0]), int(coords[1])
+        return abs(x - target_x) <= tolerance and abs(y - target_y) <= tolerance
+    except (ValueError, IndexError):
+        return False
+
+
+def _action_text(action):
+    if not isinstance(action, dict):
+        return ""
+    text_fields = ["text", "content", "label", "description", "element_text", "target", "name"]
+    return " ".join(str(action.get(key, "")) for key in text_fields)
+
+
+def _has_screen_sharing_action_evidence(result) -> bool:
+    if not isinstance(result, dict):
+        return False
+
+    executed_actions = result.get("executed_actions", [])
+    for action in executed_actions:
+        if not isinstance(action, dict) or action.get("action") != "click":
+            continue
+
+        if "共享屏幕" in _action_text(action):
+            return True
+
+        if _is_point_near(action.get("point"), 608, 910) or _is_point_near(action.get("point"), 500, 900):
+            return True
+
+    return False
+
+
+def _has_screen_sharing_result_evidence(result) -> bool:
+    if not isinstance(result, dict):
+        return False
+
+    if _has_screen_sharing_action_evidence(result):
+        return True
+
+    return answer_contains_any(result, SCREEN_SHARING_SUCCESS_KEYWORDS)
+
 
 def check_screen_sharing_active(
     result=None,
@@ -51,58 +113,27 @@ def check_screen_sharing_active(
         return False
 
     try:
+        matching_participant = None
         for participant in data:
             if participant.get("meetingId") == meeting_id and participant.get("userId") == user_id:
-                actual_sharing_status = participant.get(IS_SHARING_KEY)
-                if actual_sharing_status != expected_sharing_status:
-                    logging.error(f"会议 {meeting_id} 中用户 {user_id} 的屏幕共享状态不符合预期。实际状态: {actual_sharing_status}, 期望状态: {expected_sharing_status}。")
+                matching_participant = participant
+                break
 
-                    # 如果数据库状态检查失败，检查Agent是否执行了共享屏幕操作
-                    if result is not None and expected_sharing_status:
-                        executed_actions = result.get("executed_actions", [])
-
-                        # 辅助函数：检查坐标是否接近（允许±50像素误差）
-                        def is_point_near(point_str, target_x, target_y, tolerance=50):
-                            if not point_str or not point_str.startswith("<point>"):
-                                return False
-                            try:
-                                coords = point_str.replace("<point>", "").replace("</point>", "").strip().split()
-                                x, y = int(coords[0]), int(coords[1])
-                                return abs(x - target_x) <= tolerance and abs(y - target_y) <= tolerance
-                            except:
-                                return False
-
-                        # 检查是否有接近"共享屏幕"按钮坐标的点击（608, 910附近或500, 900附近）
-                        screen_sharing_clicked = any(
-                            a.get("action") == "click" and (
-                                is_point_near(a.get("point"), 608, 910) or
-                                is_point_near(a.get("point"), 500, 900)
-                            )
-                            for a in executed_actions
-                        )
-
-                        if screen_sharing_clicked:
-                            logging.warning(f"警告：数据库中屏幕共享状态未更新，但Agent似乎已执行共享屏幕操作。将视为成功。Executed Actions: {executed_actions}")
-                            return True
-
-                    return False
+        if matching_participant is not None:
+            actual_sharing_status = matching_participant.get(IS_SHARING_KEY)
+            if actual_sharing_status == expected_sharing_status:
                 return True
 
-        logging.error(f"未在 {MEETING_PARTICIPANTS_FILE} 中找到会议 {meeting_id} 的参与者 {user_id}。")
-
-        # Fallback: 检查Agent是否至少输入了会议号
-        if result is not None:
-            executed_actions = result.get("executed_actions", [])
-
-            # 检查是否输入了会议号
-            meeting_id_typed = any(
-                a.get("action") == "type" and meeting_id in str(a.get("content", ""))
-                for a in executed_actions
+            logging.error(
+                f"会议 {meeting_id} 中用户 {user_id} 的屏幕共享状态不符合预期。"
+                f"实际状态: {actual_sharing_status}, 期望状态: {expected_sharing_status}。"
             )
+        else:
+            logging.error(f"未在 {MEETING_PARTICIPANTS_FILE} 中找到会议 {meeting_id} 的参与者 {user_id}。")
 
-            if meeting_id_typed:
-                logging.warning(f"警告：Agent已输入会议号{meeting_id}，将视为成功。")
-                return True
+        if expected_sharing_status and _has_screen_sharing_result_evidence(result):
+            logging.warning("数据库中屏幕共享状态未更新，但Agent结果提供了明确的共享屏幕证据，视为成功。")
+            return True
 
         return False
     except Exception as e:

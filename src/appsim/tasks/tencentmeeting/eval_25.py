@@ -6,6 +6,11 @@
 import os
 import logging
 from appsim.utils import read_json_from_device
+try:
+    from ._answer_utils import answer_contains_any, answer_contains_number
+except ImportError:
+    from _answer_utils import answer_contains_any, answer_contains_number
+
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
@@ -70,13 +75,17 @@ def verify_message_count_by_sender(
 
         actual_count = len(sender_messages)
 
-        if actual_count == expected_count:
-            return True
-        else:
+        if actual_count != expected_count:
             logging.error(
-                f"验证失败：用户 {sender_id} 在会议 {meeting_id} 中发送了 {actual_count} 条消息，期望为 {expected_count}。"
+                "Sender %s in meeting %s sent %s messages, expected %s.",
+                sender_id,
+                meeting_id,
+                actual_count,
+                expected_count,
             )
             return False
+
+        return answer_contains_number(result, actual_count)
     except Exception as e:
         logging.error(f"处理数据时发生错误: {e}")
         return False

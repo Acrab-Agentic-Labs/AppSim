@@ -2,12 +2,18 @@ import os
 import json
 import logging
 from appsim.utils import read_json_from_device
+try:
+    from ._answer_utils import answer_contains_any, answer_contains_number
+except ImportError:
+    from _answer_utils import answer_contains_any, answer_contains_number
+
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
 MEETING_ID = "meeting_3d7e91"
 EXPECTED_CONTENT = "大家好"
+CURRENT_USER_ID = "user001"
 MESSAGES_FILE = "messages.json"
 MESSAGE_CONTENT_KEY = "content"
 MESSAGE_TIMESTAMP_KEY = "timestamp"
@@ -51,11 +57,11 @@ def check_message_content(
     try:
         latest_message = None
         latest_timestamp = -1
-        
+
         meeting_messages = [msg for msg in data if msg.get("meetingId") == meeting_id]
 
         if not meeting_messages:
-            logging.error(f"会议 {meeting_id} 中没有任何消息。")
+            logging.error("Meeting %s has no messages.", meeting_id)
             return False
 
         for message in meeting_messages:
@@ -63,19 +69,34 @@ def check_message_content(
             if current_timestamp > latest_timestamp:
                 latest_timestamp = current_timestamp
                 latest_message = message
-        
-        if latest_message:
-            actual_content = latest_message.get(MESSAGE_CONTENT_KEY, "")
-            if expected_content in actual_content:
-                return True
-            else:
-                logging.error(f"验证失败：最新消息内容 '{actual_content}' 不包含期望内容 '{expected_content}'。")
-                return False
-        
-        return False
-        
+
+        if latest_message is None:
+            return False
+
+        actual_content = latest_message.get(MESSAGE_CONTENT_KEY, "")
+        actual_sender = latest_message.get("senderId")
+        if actual_sender != CURRENT_USER_ID or expected_content not in actual_content:
+            logging.error(
+                "Latest message sender/content mismatch: sender=%r content=%r expected_sender=%r expected_content=%r.",
+                actual_sender,
+                actual_content,
+                CURRENT_USER_ID,
+                expected_content,
+            )
+            return False
+
+        return answer_contains_any(
+            result,
+            [
+                expected_content,
+                "\u5df2\u53d1\u9001",
+                "\u53d1\u9001\u6210\u529f",
+                "\u6210\u529f\u53d1\u9001",
+            ],
+        )
+
     except Exception as e:
-        logging.error(f"处理数据时发生错误: {e}")
+        logging.error(f"Error while processing data: {e}")
         return False
 
 

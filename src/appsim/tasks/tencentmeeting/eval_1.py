@@ -1,63 +1,97 @@
-import os
-import json
 import logging
-from appsim.utils import read_json_from_device
+import os
 
-PACKAGE_NAME = "com.example.tencent_meeting_sim"
-MEETINGS_FILE = "meetings.json"
+try:
+    from ._device_utils import contains_text, current_ui_text, default_backup_dir
+except ImportError:
+    from _device_utils import contains_text, current_ui_text, default_backup_dir
 
-# 常量定义
-MEETING_STATUS_KEY = "status"
-MEETING_END_TIME_KEY = "endTime"
-MEETING_STATUS_ENDED = "ENDED"
+
+HISTORY_TITLES = [
+    "Historical Meetings",
+    "\u5386\u53f2\u4f1a\u8bae",
+    "\u5386\u53f2\u4f1a\u8bae\u8bb0\u5f55",
+]
+HISTORY_SEARCH_PLACEHOLDERS = [
+    "Meeting name, notes, ID, host",
+    "Meeting name, notes, meeting ID, host",
+    "\u4f1a\u8bae\u540d\u79f0\u3001\u4f1a\u8bae\u5907\u6ce8\u3001\u4f1a\u8bae\u53f7\u3001\u53d1\u8d77\u4eba",
+    "\u4f1a\u8bae\u540d\u79f0\u3001\u4f1a\u8bae\u5907\u6ce8\u3001ID\u3001\u53d1\u8d77\u4eba",
+    "\u4f1a\u8bae\u540d\u79f0\u3001\u4f1a\u8bae\u5907\u6ce8\u3001\u4f1a\u8bae\u53f7\u3001\u4e3b\u6301\u4eba",
+    "\u4f1a\u8bae\u540d\u79f0\u3001\u4f1a\u8bae\u5907\u6ce8\u3001ID\u3001\u4e3b\u6301\u4eba",
+]
+HISTORY_EMPTY_MARKERS = [
+    "No historical meetings",
+    "No meeting history",
+    "No history meetings",
+    "\u6682\u65e0\u5386\u53f2\u4f1a\u8bae",
+    "\u6682\u65e0\u4f1a\u8bae\u8bb0\u5f55",
+    "\u6ca1\u6709\u5386\u53f2\u4f1a\u8bae",
+]
+HISTORY_HOST_MARKERS = [
+    "Host:",
+    "Host",
+    "\u53d1\u8d77\u4eba",
+    "\u4e3b\u6301\u4eba",
+]
+HISTORY_TIME_MARKERS = [
+    "Time:",
+    "Meeting time",
+    "End Time",
+    "\u4f1a\u8bae\u65f6\u95f4",
+    "\u7ed3\u675f\u65f6\u95f4",
+    "\u65f6\u95f4",
+]
+HOME_PAGE_MARKERS = [
+    "Meeting List",
+    "Join Meeting",
+    "Quick Meeting",
+    "Scheduled Meeting",
+    "\u4f1a\u8bae\u5217\u8868",
+    "\u52a0\u5165\u4f1a\u8bae",
+    "\u5feb\u901f\u4f1a\u8bae",
+    "\u9884\u5b9a\u4f1a\u8bae",
+]
+
+
+def _has_history_page_evidence(ui_text: str) -> bool:
+    has_search_placeholder = contains_text(ui_text, HISTORY_SEARCH_PLACEHOLDERS)
+    has_empty_state = contains_text(ui_text, HISTORY_EMPTY_MARKERS)
+    has_ended_card_fields = contains_text(ui_text, HISTORY_HOST_MARKERS) and contains_text(
+        ui_text, HISTORY_TIME_MARKERS
+    )
+    return has_search_placeholder or has_empty_state or has_ended_card_fields
+
 
 def check_recent_ended_meeting(
     result=None,
     device_id=None,
     backup_dir=None,
 ) -> bool:
-    """
-    检查是否成功获取到最近结束的会议记录。
+    """Pass only when the current UI is the historical meetings page."""
 
-    参数:
-        device_id (str, optional): Android设备的ID. Defaults to None.
-        backup_dir (str, optional): 备份文件存放的目录。
-
-    返回:
-        bool: 如果成功获取到至少一个最近结束的会议记录，返回True，否则返回False。
-    """
+    del result
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_3")
+        backup_dir = default_backup_dir("tencentmeeting_eval_1")
 
-    data = read_json_from_device(
-        device_id=device_id,
-        package_name=PACKAGE_NAME,
-        device_json_path=f"files/{MEETINGS_FILE}",
-        backup_dir=backup_dir,
-    )
-
-    if data is None:
-        logging.error(f"错误: 无法从设备读取或解析 {MEETINGS_FILE}。")
+    ui_text = current_ui_text(device_id, backup_dir)
+    if not ui_text:
+        logging.error("Unable to read current UI state.")
         return False
 
-    try:
-        ended_meetings = [
-            m for m in data if m.get(MEETING_STATUS_KEY) == MEETING_STATUS_ENDED and m.get(MEETING_END_TIME_KEY) is not None
-        ]
+    has_history_title = contains_text(ui_text, HISTORY_TITLES)
+    has_history_content = _has_history_page_evidence(ui_text)
+    has_home_context = contains_text(ui_text, HOME_PAGE_MARKERS)
 
-        if not ended_meetings:
-            logging.error("错误: 未找到任何已结束的会议。")
-            return False # 没有找到任何已结束的会议
-
-        # 找到最近结束的会议 (即使不返回具体ID，只要能找到就认为是成功)
-        _ = max(ended_meetings, key=lambda x: x[MEETING_END_TIME_KEY])
-
-        return True # 成功获取到最近结束的会议记录
-
-    except Exception as e:
-        logging.error(f"处理数据时发生错误: {e}")
-        return False
+    if not has_history_title:
+        logging.error("Current UI does not show the historical meetings title.")
+    if not has_history_content:
+        if has_home_context:
+            logging.error("Current UI only shows the home-page Historical Meetings entry, not the history page.")
+        else:
+            logging.error("Current UI does not show a history list, search box, or empty history state.")
+    return has_history_title and has_history_content
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(check_recent_ended_meeting())

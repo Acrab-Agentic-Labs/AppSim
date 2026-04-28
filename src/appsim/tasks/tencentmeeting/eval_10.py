@@ -7,6 +7,11 @@
 import os
 import logging
 
+try:
+    from ._answer_utils import answer_contains_any, answer_contains_number
+except ImportError:
+    from _answer_utils import answer_contains_any, answer_contains_number
+
 
 # ============================================================================
 # 常量定义 - 每个脚本独立定义
@@ -172,10 +177,16 @@ def verify_participant_count_in_meeting(
             actual_participants_in_meeting.add(participant.get(USER_ID_KEY))
 
     actual_count = len(actual_participants_in_meeting)
-    return actual_count == expected_count
+    if actual_count != expected_count:
+        logging.error(
+            "Participant count for meeting %s was %s, expected %s.",
+            meeting_id,
+            actual_count,
+            expected_count,
+        )
+        return False
 
-
-
+    return answer_contains_number(result, actual_count)
 
 
 if __name__ == '__main__':

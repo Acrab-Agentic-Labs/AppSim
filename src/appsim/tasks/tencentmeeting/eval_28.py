@@ -1,5 +1,4 @@
 import os
-import json
 import logging
 from appsim.utils import read_json_from_device
 
@@ -29,6 +28,13 @@ MEETING_START_TIME_KEY = "startTime"
 
 MEETING_TYPE_PERSONAL = "PERSONAL"
 MEETING_STATUS_ONGOING = "ONGOING"
+
+
+def _normalize_mute_on_entry(value):
+    normalized = str(value).strip().casefold()
+    if normalized in {"off", "关闭", "始终关闭"}:
+        return "off"
+    return normalized
 
 
 def check_personal_meeting_room_settings(
@@ -117,7 +123,7 @@ def check_personal_meeting_room_settings(
 
         # 验证入会静音规则
         actual_mute_on_entry = user_room.get("muteOnEntry", "")
-        if actual_mute_on_entry != expected_mute_on_entry:
+        if _normalize_mute_on_entry(actual_mute_on_entry) != _normalize_mute_on_entry(expected_mute_on_entry):
             logging.error(
                 f"验证失败：成员入会时静音设置为 '{actual_mute_on_entry}'，期望为 '{expected_mute_on_entry}'。"
             )

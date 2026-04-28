@@ -6,6 +6,11 @@
 import os
 import logging
 from appsim.utils import read_json_from_device
+try:
+    from ._answer_utils import answer_contains_any, answer_contains_number
+except ImportError:
+    from _answer_utils import answer_contains_any, answer_contains_number
+
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
@@ -70,13 +75,11 @@ def verify_chensiyuan_max_participants_meeting(
         max_meeting = max(user_meetings, key=lambda m: len(m.get("participantIds", [])))
         actual_topic = max_meeting.get("topic")
 
-        if actual_topic == expected_topic:
-            return True
-        else:
-            logging.error(
-                f"验证失败：参与人数最多的会议主题为 '{actual_topic}'，期望为 '{expected_topic}'。"
-            )
+        if actual_topic != expected_topic:
+            logging.error("Max-participant meeting topic %r did not match expected %r.", actual_topic, expected_topic)
             return False
+
+        return answer_contains_any(result, [actual_topic])
     except Exception as e:
         logging.error(f"处理数据时发生错误: {e}")
         return False
