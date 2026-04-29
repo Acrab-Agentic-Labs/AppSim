@@ -1,102 +1,91 @@
-#!/usr/bin/env python3
 """
-Android App Chat Message Navigation Log Verification Script
+指令 12 验证脚本：告诉我八七会议会址纪念馆的开放时间有几个小时 把你的答案放在<ans>和</ans>之间。
 
-This script verifies that the "发送与爸爸的聊天，询问吃了吗" action was correctly recorded
-by reading the private storage JSON file using ADB.
+步骤：3
 """
 
-import json
-import subprocess
+import logging
 import sys
+import re
 
-
-def verify_last_log12(result=None, device_id=None):
+def validate(result=None, **kwargs):
     """
-    Verify the last log entry in 12_dad_chat_history.json matches the expected action.
-
-    Returns:
-        bool: True if verification passes, False otherwise
+    更宽容的校验器：
+    只要 AI 的回答中包含了关键词列表里的【任意一个】，就算通过。
     """
-    try:
-        # Use ADB to read the private file content directly into memory
-        cmd = ["adb"]
-        if device_id:
-            cmd.extend(["-s", device_id])
-        cmd.extend(["exec-out", "run-as", "com.example.GaoDe", "cat", "files/12_dad_chat_history.json"])
+    # 这里放所有可能的正确表达方式（比如数字和汉字大写）
+    EXPECTED_KEYWORDS = ["8", "八","8小时","八小时"] 
 
-        result1 = subprocess.run(cmd, capture_output=True, text=False, check=True)
-
-        # Decode the output with proper encoding handling
-        try:
-            stdout_text = result1.stdout.decode("utf-8")
-        except UnicodeDecodeError:
-            # Fallback to gbk encoding for Chinese Windows systems
-            try:
-                stdout_text = result1.stdout.decode("gbk")
-            except UnicodeDecodeError:
-                # Last resort: ignore decode errors
-                stdout_text = result1.stdout.decode("utf-8", errors="ignore")
-
-        # Parse JSON content from memory
-        if not stdout_text.strip():
-            print("FAIL: JSON file is empty")
-            return False
-
-        json_data = json.loads(stdout_text)
-
-        # Check if there are any records
-        if not json_data or len(json_data) == 0:
-            print("FAIL: No records found in JSON file")
-            return False
-
-        # Get the last record
-        last_record = json_data[-1]
-
-        # Verify the action field
-        if "action" not in last_record:
-            print("FAIL: 'action' field not found in last record")
-            return False
-
-        expected_action = "发送与爸爸的聊天，询问吃了吗"
-        actual_action = last_record["action"]
-        if actual_action == expected_action:
-            print("PASS: Dad chat message verification successful")
-            print(f"Expected: {expected_action}")
-            print(f"Actual: {actual_action}")
-            print(f"Timestamp: {last_record.get('timestamp', 'N/A')}")
-            print(f"Page: {last_record.get('page', 'N/A')}")
-            return True
-        else:
-            print("FAIL: Action mismatch")
-            print(f"Expected: {expected_action}")
-            print(f"Actual: {actual_action}")
-            return False
-
-    except subprocess.CalledProcessError as e:
-        print(f"FAIL: ADB command failed - {e}")
-        try:
-            error_text = e.stderr.decode("utf-8") if e.stderr else "No error output"
-        except:
-            error_text = "Error decoding stderr"
-        print(f"Error output: {error_text}")
-        return False
-    except json.JSONDecodeError as e:
-        print(f"FAIL: JSON parsing error - {e}")
-        print(f"Raw content: {stdout_text}")
-        return False
-    except Exception as e:
-        print(f"FAIL: Unexpected error - {e}")
+    if not result or "final_message" not in result:
         return False
 
+    final_msg = str(result["final_message"])
+
+    # 1. 提取检测范围（有标签看标签，没标签看全文）
+    tag_match = re.search(r"<ans>\s*(.*?)\s*</ans>", final_msg, re.IGNORECASE | re.DOTALL)
+    text_to_check = tag_match.group(1).strip() if tag_match else final_msg.strip()
+
+    # 2. 宽容匹配逻辑：使用 any()
+    # 只要 EXPECTED_KEYWORDS 里的【任意一个】词在 text_to_check 中，就返回 True
+    is_correct = any(kw in text_to_check for kw in EXPECTED_KEYWORDS)
+
+    if is_correct:
+        logging.info(f"✅ 检测成功！匹配到关键信息之一: {EXPECTED_KEYWORDS}")
+        return True
+    else:
+        logging.error(f"❌ 检测失败！回复中未匹配到预设关键词。预期其中之一: {EXPECTED_KEYWORDS}, 实际得到: '{text_to_check}'")
+        return False
 
 if __name__ == "__main__":
-    # Verify the expected operation: "发送与爸爸的聊天，询问吃了吗"
-    success = verify_last_log12()
+    # 配置日志输出格式
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-    if success:
-        print("\n✓ PASS")
-        sys.exit(0)
-    else:
-        print("\n✗ FAIL")
-        sys.exit(1)
+    print("=" * 70)
+    print("任务 12：告诉我八七会议会址纪念馆的开放时间有几个小时")
+    print("=" * 70)
+    print("\n📋 人工操作步骤：")
+    print("  1. 搜索八七会议会址纪念馆")
+    print("  2. 查看开放时间")
+    print("\n🔍 正在等待 Runner 调用 AI 进行验证...")
+
+    # --- 模拟测试用例 ---
+
+    # 用例 1：正确且带标签
+    test_case_1 = {
+        "final_message": "八七会议会址纪念馆的开放时间有 <ans>8个小时</ans>",
+        "expected_eval_result": True,
+    }
+
+    # 用例 2：完全无关的回答
+    test_case_2 = {
+        "final_message": "我无法找到该纪念馆的开放时间信息。",
+        "expected_eval_result": False
+    }
+
+    # 用例 3：错误的小时数
+    test_case_3 = {
+        "final_message": "八七会议会址纪念馆的开放时间有 <ans>10</ans> 个小时",
+        "expected_eval_result": False
+    }
+
+    # 开始执行模拟测试
+    all_tests = [test_case_1, test_case_2, test_case_3]
+    total_passed = 0
+
+    for idx, test in enumerate(all_tests, 1):
+        logging.info(f"\n[测试用例 {idx}]")
+        actual_result = validate(result=test)
+        expected_result = test["expected_eval_result"]
+
+        if actual_result == expected_result:
+            logging.info(f"✅ 结果符合预期 (实际: {actual_result})")
+            total_passed += 1
+        else:
+            logging.error(f"❌ 结果不符合预期！实际: {actual_result}, 期望: {expected_result}")
+
+    print("\n" + "=" * 70)
+    print(f"模拟测试完成：通过 {total_passed}/{len(all_tests)}")
+    print("=" * 70)
+
+    # 如果模拟测试全部通过，则退出码为0
+    sys.exit(0 if total_passed == len(all_tests) else 1)
