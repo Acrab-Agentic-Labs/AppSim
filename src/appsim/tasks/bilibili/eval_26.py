@@ -53,9 +53,10 @@ def CheckHistoryItemDelete(result=None,device_id=None,backup_dir=None):
         # 验证 result 存在
         if result is None:
             return False
+        final_msg = result.get("final_message") or ""  # final_message 可能为 None，统一按空字符串处理
 
         # 检测 result 中的final_messages中是否包含 "8"
-        if 'final_message' in result and '8' in result['final_message']:
+        if '8' in final_msg:
             return True
         else:
             return False
