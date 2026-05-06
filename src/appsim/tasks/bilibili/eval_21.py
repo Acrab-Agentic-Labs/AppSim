@@ -12,7 +12,7 @@ def validate_task_21(result=None, device_id=None, backup_dir=None):
     if result is None:
         return False
 
-    final_msg = result.get("final_message", "")
+    final_msg = result.get("final_message") or ""  # final_message 可能为 None，统一按空字符串处理
 
     try:
         # 1. 使用 ADB 从设备拉取相关视频数据
@@ -79,4 +79,3 @@ def validate_task_21(result=None, device_id=None, backup_dir=None):
 if __name__ == '__main__':
     result = validate_task_21()
     print(result)
-

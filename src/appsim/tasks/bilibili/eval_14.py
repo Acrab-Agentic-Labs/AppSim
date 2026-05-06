@@ -11,7 +11,7 @@ def validate_task_14(result=None, device_id=None, backup_dir=None):
     if result is None:
         return False
 
-    final_msg = result.get("final_message", "")
+    final_msg = result.get("final_message") or ""  # final_message 可能为 None，统一按空字符串处理
 
     try:
         # 1. 使用 ADB 从设备拉取关注动态数据
@@ -73,4 +73,3 @@ def validate_task_14(result=None, device_id=None, backup_dir=None):
 if __name__ == '__main__':
     result = validate_task_14()
     print(result)
-

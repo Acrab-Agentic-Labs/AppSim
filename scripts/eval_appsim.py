@@ -16,7 +16,9 @@ try:
 except ImportError:
     raise ImportError("agent_factory.py 文件不存在")
 
-load_dotenv(override=True, verbose=True)
+# 保留脚本传入的多设备 API 配置，.env 只补充缺失值。
+# 如果脚本没有指定某个变量，仍然会读取 .env 中的对应配置。
+load_dotenv(override=False, verbose=True)
 
 
 def parse_args():
@@ -93,6 +95,16 @@ def main():
     # 确保输出目录存在
     os.makedirs(args.output_dir, exist_ok=True)
 
+    check_log_dir = None
+    if task_app in {AppEnum.SPOTIFY, AppEnum.INSTAGRAM}:
+        # 只有 Spotify 和 Instagram 的检查脚本会写 check_logs，其他 App 不创建空目录。
+        check_log_dir = os.path.join(args.output_dir, "check_logs")
+        os.environ["APPSIM_CHECK_LOG_DIR"] = check_log_dir
+        os.makedirs(check_log_dir, exist_ok=True)
+    else:
+        # 防止外部环境变量影响其他 App，常规校验文件仍写入具体指令级截图目录。
+        os.environ.pop("APPSIM_CHECK_LOG_DIR", None)
+
     # 设置截图目录为 output-dir/screenshots/{package_name}
     screenshots_dir = os.path.join(args.output_dir, "screenshots", app_package)
     os.makedirs(screenshots_dir, exist_ok=True)
@@ -105,6 +117,8 @@ def main():
         logging.info(f"   Agent: {agent_name}")
         logging.info(f"   输出目录: {args.output_dir}")
         logging.info(f"   截图目录: {screenshots_dir}")
+        if check_log_dir:
+            logging.info(f"   检查日志目录: {check_log_dir}")
     except Exception as e:
         logging.error(f"❌ 初始化失败: {e}")
         raise e

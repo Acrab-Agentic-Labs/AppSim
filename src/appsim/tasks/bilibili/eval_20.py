@@ -53,13 +53,14 @@ def CheckSearchGame1(result=None,device_id=None,backup_dir=None):
         # 验证 result 存在
         if result is None:
             return False
+        final_msg = result.get("final_message") or ""  # final_message 可能为 None，统一按空字符串处理
 
         # 检测 result 中的final_messages中是否包含数字"3"（作为独立的数字）
         # 使用正则表达式精确匹配，避免匹配到"30"、"13"、"300"等包含3的数字
-        if 'final_message' in result:
+        if final_msg:
             # 匹配独立的数字3，可以是"3个"、"3 个"、"共3个"等形式
             pattern = r'(?:^|[^\d])3(?:[^\d]|$)'
-            if re.search(pattern, result['final_message']):
+            if re.search(pattern, final_msg):
                 return True
 
         return False

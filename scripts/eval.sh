@@ -1,24 +1,28 @@
 #!/usr/bin/env bash
+# 开始执行之前，请完成全部TODO
 set -Eeuo pipefail
 
 # Fill DEVICE_1..DEVICE_4 with your cloud phone addresses before running.
 # Apps are distributed round-robin across 4 devices.
-# GAODE is intentionally excluded.
+# Each app runs all available task items.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 RUN_TAG="${RUN_TAG:-$(date +%Y%m%d_%H%M%S)}"
-AGENT_NAME="${AGENT_NAME:-UI-TARS-1.5}"
-RESULT_ROOT="${RESULT_ROOT:-${SCRIPT_DIR}/results/${AGENT_NAME}/${RUN_TAG}}"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 ERROR_LOG=""
+
+# TODO
+AGENT_NAME="${AGENT_NAME:-UI-TARS-1.5}"
+RESULT_ROOT="${RESULT_ROOT:-${SCRIPT_DIR}/results/${AGENT_NAME}/${RUN_TAG}}"
+
 
 # ============================================================================
 # API Configuration (REQUIRED)
 # ============================================================================
-# Set these environment variables before running, or modify the defaults below:
-API_BASE="${API_BASE:-https://your-api-endpoint.com/api/v3}"
-API_KEY="${API_KEY:-your-api-key-here}"
+# TODO: Set these environment variables before running, or modify the defaults below:
+API_BASE="your-api-base-url"
+API_KEY="your-api-key"
 
 # ============================================================================
 # Model Configuration (REQUIRED)
@@ -33,7 +37,7 @@ API_KEY="${API_KEY:-your-api-key-here}"
 #   - Use the same model name for all devices
 #   - Example: All entries set to "your-model-name"
 #
-# The array size must match the number of devices (currently 4).
+# TODO: The array size must match the number of devices (currently 4).
 MODEL_NAMES=(
   "your-model-name-1"  # Used by device 1
   "your-model-name-2"  # Used by device 2
@@ -45,15 +49,16 @@ MODEL_NAMES=(
 # Device Configuration (REQUIRED)
 # ============================================================================
 # Configure your Android device addresses here.
-# Format: "host:port" for remote devices, or "emulator-5554" for local emulators
+# TODO: Format: "host:port" for remote devices, or "emulator-5554" for local emulators
 DEVICE_IDS=(
-  "device-1-host:port"
-  "device-2-host:port"
-  "device-3-host:port"
-  "device-4-host:port"
+  "device-1-address"
+  "device-2-address"
+  "device-3-address"
+  "device-4-address"
 )
 
 APPS=(
+  "GAODE"
   "BILIBILI"
   "CTRIP"
   "ELEME"
@@ -118,6 +123,12 @@ maybe_connect_device() {
   fi
 }
 
+is_uiautomator2_connection_failure() {
+  local log_path="$1"
+
+  grep -Eiq "uiautomator2.*(连接失败|connect|connection|failed|error)|RemoteDisconnected|HTTPConnectionPool|Max retries exceeded" "${log_path}"
+}
+
 print_assignment_plan() {
   local idx device app
 
@@ -140,32 +151,56 @@ run_one_app() {
   local app_output_dir="${RESULT_ROOT}/${device_slug}/${app}"
   local log_path="${app_output_dir}/run.log"
   local rc
+  local attempt=1
+  local max_attempts=2
 
   mkdir -p "${app_output_dir}"
   : > "${log_path}"
 
-  echo "[$(date '+%F %T')] Starting ${app} on ${device}"
+  while true; do
+    if [[ "${attempt}" -eq 1 ]]; then
+      echo "[$(date '+%F %T')] Starting ${app} on ${device}"
+    else
+      echo "[$(date '+%F %T')] Retrying ${app} on ${device} (attempt ${attempt}/${max_attempts})"
+    fi
 
-  set +e
-  "${PYTHON_BIN}" "${SCRIPT_DIR}/eval_appsim.py" \
-    --agent-name "${AGENT_NAME}" \
-    --device-id "${device}" \
-    --output-dir "${app_output_dir}" \
-    --task "${app}" \
-    --start-index 0 \
-    --end-index 1 \
-    > >(tee -a "${log_path}") \
-    2> >(tee -a "${log_path}" >&2)
-  rc=$?
-  set -e
+    # TODO: 下面的start和end index两行是为了测试用的，正式运行时可以直接删除
+    # --start-index 0 \
+    # --end-index 2 \
+    set +e
+    "${PYTHON_BIN}" "${SCRIPT_DIR}/eval_appsim.py" \
+      --agent-name "${AGENT_NAME}" \
+      --device-id "${device}" \
+      --output-dir "${app_output_dir}" \
+      --task "${app}" \
+      > >(tee -a "${log_path}") \
+      2> >(tee -a "${log_path}" >&2)
+    rc=$?
+    set -e
 
-  if [[ "${rc}" -ne 0 ]]; then
+    if [[ "${rc}" -eq 0 ]]; then
+      echo "[$(date '+%F %T')] Finished ${app} on ${device}"
+      return 0
+    fi
+
     echo "[$(date '+%F %T')] FAILED ${app} on ${device} (exit ${rc})" >&2
-  else
-    echo "[$(date '+%F %T')] Finished ${app} on ${device}"
-  fi
 
-  return "${rc}"
+    # 每个 App 非 0 退出只重试一次；连接类失败先等 3 秒并重连设备。
+    if [[ "${attempt}" -lt "${max_attempts}" ]]; then
+      if is_uiautomator2_connection_failure "${log_path}"; then
+        echo "[$(date '+%F %T')] Detected uiautomator2 connection failure for ${app} on ${device}; retrying after 3s." >&2
+        sleep 3
+        maybe_connect_device "${device}"
+      else
+        echo "[$(date '+%F %T')] Retrying failed app ${app} on ${device} once." >&2
+      fi
+
+      attempt=$((attempt + 1))
+      continue
+    fi
+
+    return "${rc}"
+  done
 }
 
 run_device_queue() {
@@ -177,6 +212,9 @@ run_device_queue() {
 
   # Set device-specific model to avoid rate limiting
   export MODEL_NAME="${MODEL_NAMES[$worker_index]}"
+  export UI_TARS_15_API_BASE="${API_BASE}"
+  export UI_TARS_15_API_KEY="${API_KEY}"
+  export UI_TARS_15_MODEL_NAME="${MODEL_NAME}"
   echo "[Device ${device}] Using model: ${MODEL_NAME}"
 
   maybe_connect_device "${device}"
