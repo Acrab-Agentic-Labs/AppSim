@@ -166,6 +166,7 @@ def main():
             ItemEvalDetail["verify_result"] = verify_result
         else:
             logging.error(f"{id + 1}/{len(tasks.task_items)}. {instruction} -> 指令执行失败")
+            ItemEvalDetail["verify_result"] = False
 
         # 每次循环立即写入一行结果
         with open(output_path, "a", encoding="utf-8") as f:
