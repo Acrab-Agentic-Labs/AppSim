@@ -65,7 +65,8 @@ class SeedAgent(BaseAgent):
         self._check_adb_connection()
 
     def reset(self) -> None:
-        pass
+        self.conversation_messages = []
+        self.current_task_folder = None
 
     def execute_instruction(self, instruction, max_steps=50, max_attempts_per_step=3) -> AgentExecutionResult:
         """

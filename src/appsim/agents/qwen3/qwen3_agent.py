@@ -176,6 +176,26 @@ class Qwen3Agent(BaseAgent):
         """重置 Agent"""
         self.history = []
 
+    def close(self):
+        """关闭 Agent，释放资源"""
+        try:
+            if hasattr(self, "client") and self.client:
+                try:
+                    self.client.close()
+                    logging.debug("已关闭 OpenAI 客户端")
+                except Exception as e:
+                    logging.warning(f"关闭 OpenAI 客户端时出错: {e}")
+
+            if hasattr(self, "u2_device") and self.u2_device:
+                self.u2_device = None
+                logging.debug("已清理 uiautomator2 设备连接")
+
+            self.history = []
+            self.current_task_folder = None
+            logging.info("Qwen3Agent 资源清理完成")
+        except Exception as e:
+            logging.error(f"关闭 Qwen3Agent 时出错: {e}")
+
     def _save_screenshot(self, screenshot: np.ndarray, step: int, prefix: str = "") -> Optional[str]:
         """保存截图到文件
 
