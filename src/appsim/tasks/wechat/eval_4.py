@@ -1,20 +1,25 @@
-# 4、看看我有多少个微信好友。告诉我数字即可。
+import re
 
+# 4、看看我有多少个微信好友。把你的答案放置在<ans>和</ans>之间，你的答案必须是一个阿拉伯数字。
 
 def task4_validate_friend_count(result=None, device_id=None, backup_dir=None):
-    # 验证 result 存在
-    if result is None:
+    try:
+        if not isinstance(result, dict):
+            return False
+
+        final_msg = result.get("final_message")
+        if final_msg is None:
+            return False
+
+        final_msg = str(final_msg)
+        match = re.search(
+            r"<ans>\s*(\d+)\s*</ans>",
+            final_msg,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if match is None:
+            return False
+
+        return match.group(1) == "101"
+    except Exception:
         return False
-
-    # 安全获取 final_message，如果为 None 则默认为空字符串
-    final_msg = result.get("final_message") or ""
-
-    if "21" in final_msg or "二十一" in final_msg:
-        return True
-    else:
-        return False
-
-
-if __name__ == "__main__":
-    result = task4_validate_friend_count()
-    print(result)
