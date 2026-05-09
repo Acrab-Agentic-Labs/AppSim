@@ -139,10 +139,10 @@ pip install -e .
 
 ```bash
 python scripts/eval_appsim.py \
-    --agent-name UI-TARS-1.5 \
+    --agent-name AgentCPM-GUI \
     --task BILIBILI \
     --device-id emulator-5554 \
-    --output-dir results/UI-TARS-1.5/
+    --output-dir results/AgentCPM-GUI/
 ```
 
 #### 2. 参数说明
@@ -151,10 +151,12 @@ python scripts/eval_appsim.py \
 
 - `--agent-name`: Agent 名称，可选值：
   - `Seed-1.5-VL`
-  - `UI-TARS-1.5`（默认推荐）
+  - `UI-TARS-1.5`
   - `GPT-5`
   - `Gemini-2.5-Pro`
   - `Claude-4.5-Sonnet`
+  - `Qwen3-VL`
+  - `AgentCPM-GUI`（批量脚本默认）
 
 - `--task`: 要评估的应用任务，可选值：
   - `BILIBILI` - 哔哩哔哩
@@ -189,13 +191,15 @@ python scripts/eval_appsim.py \
 
 ##### 环境变量
 
-在运行评测前，需要配置以下环境变量：
+直接运行 `scripts/eval_appsim.py` 时，可以通过通用环境变量提供 OpenAI 兼容接口配置：
 
 ```bash
 export API_BASE='https://your-api-endpoint.com/api/v3'
 export API_KEY='your-api-key-here'
 export MODEL_NAME='your-model-name'
 ```
+
+不同 Agent 也支持自己的环境变量前缀，例如 `AGENTCPM_GUI_API_BASE`、`AGENTCPM_GUI_API_KEY`、`AGENTCPM_GUI_MODEL_NAME`。批量脚本会按设备自动导出这些变量，一般只需要改 `scripts/eval.sh` 的配置区。
 
 #### 3. 批量评测脚本
 
@@ -208,46 +212,65 @@ export MODEL_NAME='your-model-name'
 编辑 `scripts/eval.sh` 文件，配置以下信息：
 
 ```bash
-# API 配置
-API_BASE="${API_BASE:-https://your-api-endpoint.com/api/v3}"
-API_KEY="${API_KEY:-your-api-key-here}"
+# Agent 配置，默认使用 AgentCPM-GUI。
+AGENT_NAME="${AGENT_NAME:-AgentCPM-GUI}"
 
-# 模型配置（每个设备使用不同的模型以避免限流）
+# OpenAI 兼容 API 配置。三组数组按下标一一对应，数量必须不少于设备数量。
+API_BASES=(
+  "https://your-api-endpoint-1.com/api/v3"
+  "https://your-api-endpoint-2.com/api/v3"
+  "https://your-api-endpoint-3.com/api/v3"
+  "https://your-api-endpoint-4.com/api/v3"
+)
+API_KEYS=(
+  "your-api-key-1"
+  "your-api-key-2"
+  "your-api-key-3"
+  "your-api-key-4"
+)
 MODEL_NAMES=(
-  "your-model-name-1"  # 设备 1 使用
-  "your-model-name-2"  # 设备 2 使用
-  "your-model-name-3"  # 设备 3 使用
-  "your-model-name-4"  # 设备 4 使用
+  "your-model-name-1"
+  "your-model-name-2"
+  "your-model-name-3"
+  "your-model-name-4"
 )
 
-# 设备配置
+# Android 设备，可以是远程 host:port，也可以是 emulator-5554。
 DEVICE_IDS=(
   "device-1-host:port"
   "device-2-host:port"
   "device-3-host:port"
   "device-4-host:port"
 )
+
+# 要评测的 App。脚本会按 round-robin 分配到 DEVICE_IDS。
+APPS=(
+  "GAODE"
+  "BILIBILI"
+  "CTRIP"
+)
 ```
 
 **步骤 2：运行脚本**
 
 ```bash
-cd scripts
-bash eval.sh
+bash scripts/eval.sh
 ```
 
 **特性**：
-- ✅ 自动在 4 个设备上并行运行
-- ✅ 每个设备使用独立的模型端点（避免 API 限流）
-- ✅ Round-robin 方式分配应用到设备
-- ✅ 实时保存结果到 JSONL 文件
-- ✅ 自动生成带时间戳的结果目录
+- 自动按 `DEVICE_IDS` 并行启动 worker
+- 每个设备使用对应下标的 `API_BASES`、`API_KEYS`、`MODEL_NAMES`
+- Round-robin 方式分配 `APPS` 到设备
+- 远程 `host:port` 设备会先尝试 `adb connect`
+- 每个 App 失败后按 `MAX_APP_ATTEMPTS` 重试，并在 uiautomator2 连接异常时重连
+- 实时保存 `eval_details_*.jsonl`、`run.log` 和 `console_errors.log`
+- 自动生成带时间戳的结果目录
 
 **输出结构**：
 ```
 scripts/results/
-└── UI-TARS-1.5/
-    └── 20260423_001257/          # 运行时间戳
+└── AgentCPM-GUI/
+    └── 20260423_001257/          # RUN_TAG，默认是运行时间戳
         ├── 122.228.230.214_10454/
         │   ├── BILIBILI/
         │   │   ├── eval_details_Bilibili_*.jsonl
@@ -268,22 +291,31 @@ Windows 用户可以使用 `eval.bat` 脚本，配置方式类似。
 可以通过环境变量覆盖默认配置：
 
 ```bash
-# 自定义 Agent 名称
+# 自定义 Agent 名称。
 export AGENT_NAME="GPT-5"
 
-# 自定义结果目录
+# 自定义结果目录。
 export RESULT_ROOT="./my_results/"
 
-# 自定义运行标签
+# 自定义运行标签。
 export RUN_TAG="experiment_001"
 
-# 运行脚本
-bash eval.sh
+# 只跑每个 App 的部分任务，区间规则同 Python 切片 task_items[start:end]。
+export START_INDEX=0
+export END_INDEX=2
+
+# 设置每个 App 的总尝试次数。
+export MAX_APP_ATTEMPTS=2
+
+bash scripts/eval.sh
 ```
+
+`AgentCPM-GUI` 还可以通过 `MAX_TOKENS` 和 `HISTORY_IMAGE_TURNS` 控制请求参数。当前短上下文服务建议保持默认值：`MAX_TOKENS=512`、`HISTORY_IMAGE_TURNS=1`。
 
 #### 4. 特别说明
 
 - 使用 `UI-TARS-1.5` Agent 时，模型输出的坐标使用 1000x1000 坐标系
+- 使用 `AgentCPM-GUI` Agent 时，模型输出紧凑 JSON，坐标使用 0-1000 相对坐标系
 - 如果使用其他模型，请确保模型输出的坐标格式符合要求（1000x1000 坐标系，整数坐标）
 - 评估结果会实时保存到输出目录的 JSONL 文件中，文件名包含时间戳
 
@@ -335,7 +367,3 @@ A: 按以下步骤排查：
 A: 编辑 `eval.sh` 中的 `APPS` 数组，只保留需要测试的应用名称。
 
 ---
-
-## 许可证
-
-[添加许可证信息]
