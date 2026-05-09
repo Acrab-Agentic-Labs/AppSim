@@ -16,6 +16,7 @@ class AgentEnum(Enum):
     GEMINI25_PRO = "Gemini-2.5-Pro"
     CLAUDE45_SONNET = "Claude-4.5-Sonnet"
     QWEN3_VL = "Qwen3-VL"
+    AGENTCPM_GUI = "AgentCPM-GUI"
 
 
 def create_agent(
@@ -160,6 +161,30 @@ def create_agent(
             api_base=base_url,
             device_id=device_id,
             screenshots_dir=screenshots_dir,
+            model_kwargs=model_kwargs,
+        )
+
+    elif agent_name == AgentEnum.AGENTCPM_GUI:
+        # 导入模型
+        from appsim.agents.agentcpm import AgentCPMAgent
+
+        # 获取特定环境变量配置
+        api_key = os.getenv("AGENTCPM_GUI_API_KEY", api_key) or "EMPTY"
+        base_url = os.getenv("AGENTCPM_GUI_API_BASE", base_url)
+        model_name = os.getenv("AGENTCPM_GUI_MODEL_NAME", model_name) or "AgentCPM-GUI"
+        max_tokens = int(os.getenv("AGENTCPM_GUI_MAX_TOKENS", "512"))
+        history_image_turns = int(os.getenv("AGENTCPM_GUI_HISTORY_IMAGE_TURNS", "1"))
+        # 超参
+        model_kwargs = {}
+
+        return AgentCPMAgent(
+            model_name=model_name,
+            api_key=api_key,
+            api_base=base_url,
+            device_id=device_id,
+            screenshots_dir=screenshots_dir,
+            max_tokens=max_tokens,
+            history_image_turns=history_image_turns,
             model_kwargs=model_kwargs,
         )
 
