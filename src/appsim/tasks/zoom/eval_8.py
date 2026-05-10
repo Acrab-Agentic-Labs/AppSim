@@ -1,14 +1,14 @@
 from ._shared import evaluate_task
 
 
-def verify_busy_status(
+def verify_display_name_updated(
     result=None,
     device_id=None,
     backup_dir=None,
     **kwargs,
 ) -> bool:
     return evaluate_task(
-        task_id=8,
+        task_id=9,
         result=result,
         device_id=device_id,
         backup_dir=backup_dir,
@@ -17,4 +17,4 @@ def verify_busy_status(
 
 
 if __name__ == "__main__":
-    print(verify_busy_status())
+    print(verify_display_name_updated())

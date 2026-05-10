@@ -1,14 +1,14 @@
 from ._shared import evaluate_task
 
 
-def verify_copy_invite_link_then_leave(
+def verify_screen_share_in_new_meeting(
     result=None,
     device_id=None,
     backup_dir=None,
     **kwargs,
 ) -> bool:
     return evaluate_task(
-        task_id=3,
+        task_id=4,
         result=result,
         device_id=device_id,
         backup_dir=backup_dir,
@@ -17,4 +17,4 @@ def verify_copy_invite_link_then_leave(
 
 
 if __name__ == "__main__":
-    print(verify_copy_invite_link_then_leave())
+    print(verify_screen_share_in_new_meeting())

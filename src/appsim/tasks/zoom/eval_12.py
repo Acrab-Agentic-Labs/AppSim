@@ -1,14 +1,14 @@
 from ._shared import evaluate_task
 
 
-def verify_raise_lower_hand_with_thumbs_up(
+def verify_contact_count_answer(
     result=None,
     device_id=None,
     backup_dir=None,
     **kwargs,
 ) -> bool:
     return evaluate_task(
-        task_id=12,
+        task_id=13,
         result=result,
         device_id=device_id,
         backup_dir=backup_dir,
@@ -17,4 +17,4 @@ def verify_raise_lower_hand_with_thumbs_up(
 
 
 if __name__ == "__main__":
-    print(verify_raise_lower_hand_with_thumbs_up())
+    print(verify_contact_count_answer())
