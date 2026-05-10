@@ -1,14 +1,14 @@
 from ._shared import evaluate_task
 
 
-def verify_unmute_all_389257198(
+def verify_raise_lower_hand_with_thumbs_up(
     result=None,
     device_id=None,
     backup_dir=None,
     **kwargs,
 ) -> bool:
     return evaluate_task(
-        task_id=11,
+        task_id=12,
         result=result,
         device_id=device_id,
         backup_dir=backup_dir,
@@ -17,4 +17,4 @@ def verify_unmute_all_389257198(
 
 
 if __name__ == "__main__":
-    print(verify_unmute_all_389257198())
+    print(verify_raise_lower_hand_with_thumbs_up())

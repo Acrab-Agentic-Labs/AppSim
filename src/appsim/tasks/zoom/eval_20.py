@@ -1,20 +1,21 @@
-from ._shared import evaluate_task
+try:
+    from ._shared import _profile_state
+except ImportError:
+    from _shared import _profile_state  # type: ignore
 
 
-def verify_enable_waiting_room_and_extend_noon_meeting(
+PROFILE_UPDATE_TASK_ID = 16
+
+
+def verify_change_display_name_to_liu_chenlong(
     result=None,
     device_id=None,
     backup_dir=None,
     **kwargs,
 ) -> bool:
-    return evaluate_task(
-        task_id=20,
-        result=result,
-        device_id=device_id,
-        backup_dir=backup_dir,
-        **kwargs,
-    )
+    profile = _profile_state(PROFILE_UPDATE_TASK_ID, device_id, backup_dir)
+    return str(profile.get("displayName", "")) == "Liu Chenlong"
 
 
 if __name__ == "__main__":
-    print(verify_enable_waiting_room_and_extend_noon_meeting())
+    print(verify_change_display_name_to_liu_chenlong())

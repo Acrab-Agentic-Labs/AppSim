@@ -1,14 +1,14 @@
 from ._shared import evaluate_task
 
 
-def verify_calculate_spent_amount(
+def verify_cancel_all_orders_after_next_month(
     result=None,
     device_id=None,
     backup_dir=None,
     **kwargs,
 ) -> bool:
     return evaluate_task(
-        task_id=24,
+        task_id=25,
         result=result,
         device_id=device_id,
         backup_dir=backup_dir,
@@ -16,4 +16,4 @@ def verify_calculate_spent_amount(
 
 
 if __name__ == "__main__":
-    print(verify_calculate_spent_amount())
+    print(verify_cancel_all_orders_after_next_month())
