@@ -9,6 +9,12 @@ from .eval_7 import task7_stared_moments_count
 from .eval_8 import task8_moments_count
 from .eval_9 import task9_song_name_check
 from .eval_10 import task10_validate_latest_friend_like_count
+from .eval_11 import task11_validate_financial_report_person
+from .eval_12 import task12_validate_design_draft_person
+from .eval_13 import task13_validate_panda_message
+from .eval_14 import task14_validate_movie_message
+from .eval_15 import task15_validate_restaurant_message
+from .eval_16 import task16_validate_cat_dog_messages
 
 # 所有测试指令列表（共10条，instruct 完全匹配需求描述）
 WECHAT_TASKS = AppTasks(
@@ -73,6 +79,42 @@ WECHAT_TASKS = AppTasks(
             verify_func=task10_validate_latest_friend_like_count,
             human_steps=3,
             is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="查看工作讨论组的消息，谁完成了财务报表？把你的答案放置在<ans>和</ans>之间，你的答案必须是人名。",
+            verify_func=task11_validate_financial_report_person,
+            human_steps=7,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction="查看工作讨论组的消息，是谁完成了设计稿？把你的答案放置在<ans>和</ans>之间，你的答案必须是人名。",
+            verify_func=task12_validate_design_draft_person,
+            human_steps=7,
+            is_reasoning=True,
+        ),
+        TaskItem(
+            instruction='从"发现"进入朋友圈，浏览好友朋友圈，找到发大熊猫朋友圈的好友，给他发消息："大熊猫好可爱啊！是哪里的动物园呀？"',
+            verify_func=task13_validate_panda_message,
+            human_steps=12,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction='从"发现"进入朋友圈，浏览好友朋友圈，看一下谁推荐电影了，然后发消息问她："是什么电影呀？可以给我讲一下是什么主题的吗？"',
+            verify_func=task14_validate_movie_message,
+            human_steps=12,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction='从"发现"进入朋友圈，浏览好友朋友圈，有人分享了一个网红餐厅，发消息问一下她："是哪家餐厅呀？主打菜是什么？"',
+            verify_func=task15_validate_restaurant_message,
+            human_steps=15,
+            is_reasoning=False,
+        ),
+        TaskItem(
+            instruction='从"发现"进入朋友圈，浏览好友朋友圈，给分享小猫小狗的两个人分别发送"你的猫好可爱!"和"你的狗好可爱！"',
+            verify_func=task16_validate_cat_dog_messages,
+            human_steps=14,
+            is_reasoning=False,
         ),
     ],
 )
