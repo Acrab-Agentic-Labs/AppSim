@@ -31,6 +31,7 @@ from .eval_26 import validate_task_26
 from .eval_27 import validate_task_27
 from .eval_28 import validate_task_28
 from .eval_29 import CheckCacheVideoCommentAndMessageSetting
+from .eval_30 import validate_task_30
 
 # 所有测试指令列表
 BILIBILI_TASKS = AppTasks(
@@ -65,6 +66,7 @@ BILIBILI_TASKS = AppTasks(
         TaskItem(instruction='分别打开历史记录里的第二个视频和收藏夹里的第二个视频，查看各自评论区展示的第一条一级评论的点赞数；如果两者不同，就对点赞数更高的那个视频发送评论"这赞也太多了吧！"，如果两者相同，就对历史记录里的那个视频发送评论"这赞也太多了吧！"。', verify_func=validate_task_27, human_steps=12, is_reasoning=True),
         TaskItem(instruction='算一下我的关注列表里的前五个关注一共发了多少条视频，然后去导航栏的关注动态页面，在列表页面给逍遥散人的第一条动态点赞！', verify_func=validate_task_28, human_steps=11, is_reasoning=True),
         TaskItem(instruction='看一下离线缓存中是什么视频然后去我的收藏里观看这个视频，并给这个视频评论"张三就是有学问！"然后关闭消息设置里的消息提醒。', verify_func=CheckCacheVideoCommentAndMessageSetting, human_steps=14, is_reasoning=False),
+        TaskItem(instruction='搜索原神，观看搜索到的第一个视频，看一下点赞最高的那个评论说的什么。', verify_func=validate_task_30, human_steps=6, is_reasoning=True),
     ]
 )
 
