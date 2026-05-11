@@ -1,6 +1,6 @@
 def validate_task_19(result=None, device_id=None, backup_dir=None):
     """
-    任务19: 看一下会员购里的前四个商品一共卖了多少件
+    任务19: 看一下会员购里的前四个商品一共多少人购买
     """
     if result is None:
         return False
