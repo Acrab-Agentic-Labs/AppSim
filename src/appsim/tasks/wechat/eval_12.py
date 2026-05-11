@@ -1,17 +1,29 @@
-# 12、查看工作讨论组的消息，是谁完成了设计稿？告诉我答案即可。
+import re
+
+
+# 12、查看工作讨论组的消息，是谁完成了设计稿？把你的答案放置在<ans>和</ans>之间，你的答案必须是人名。
 
 
 def task12_validate_design_draft_person(result=None, device_id=None, backup_dir=None):
-    # 验证 result 存在
-    if result is None:
-        return False
+    try:
+        if not isinstance(result, dict):
+            return False
 
-    # 安全获取 final_message，如果为 None 则默认为空字符串
-    final_msg = result.get("final_message") or ""
+        final_msg = result.get("final_message")
+        if final_msg is None:
+            return False
 
-    if "周浩然" in final_msg:
-        return True
-    else:
+        final_msg = str(final_msg)
+        match = re.search(
+            r"<ans>\s*(.*?)\s*</ans>",
+            final_msg,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if match is None:
+            return False
+
+        return match.group(1).strip() == "周浩然"
+    except Exception:
         return False
 
 

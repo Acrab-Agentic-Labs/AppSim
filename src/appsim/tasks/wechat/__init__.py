@@ -16,7 +16,7 @@ from .eval_14 import task14_validate_movie_message
 from .eval_15 import task15_validate_restaurant_message
 from .eval_16 import task16_validate_cat_dog_messages
 
-# 所有测试指令列表（共10条，instruct 完全匹配需求描述）
+# 所有测试指令列表（共16条，instruction 完全匹配需求描述）
 WECHAT_TASKS = AppTasks(
     package_name="com.example.fakewechat",
     task_items=[
@@ -93,25 +93,25 @@ WECHAT_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
-            instruction='从"发现"进入朋友圈，浏览好友朋友圈，找到发大熊猫朋友圈的好友，给他发消息："大熊猫好可爱啊！是哪里的动物园呀？"',
+            instruction='从"发现"进入朋友圈，浏览好友朋友圈，找到第一个发大熊猫朋友圈的好友，给他发消息："大熊猫好可爱啊！是哪里的动物园呀？"',
             verify_func=task13_validate_panda_message,
             human_steps=12,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction='从"发现"进入朋友圈，浏览好友朋友圈，看一下谁推荐电影了，然后发消息问她："是什么电影呀？可以给我讲一下是什么主题的吗？"',
+            instruction='从"发现"进入朋友圈，浏览好友朋友圈，找到第一个推荐电影的好友，然后发消息问她："是什么电影呀？可以给我讲一下是什么主题的吗？"',
             verify_func=task14_validate_movie_message,
             human_steps=12,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction='从"发现"进入朋友圈，浏览好友朋友圈，有人分享了一个网红餐厅，发消息问一下她："是哪家餐厅呀？主打菜是什么？"',
+            instruction='从"发现"进入朋友圈，浏览好友朋友圈，找到第一个分享网红餐厅的好友，发消息问一下她："是哪家餐厅呀？主打菜是什么？"',
             verify_func=task15_validate_restaurant_message,
             human_steps=15,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction='从"发现"进入朋友圈，浏览好友朋友圈，给分享小猫小狗的两个人分别发送"你的猫好可爱!"和"你的狗好可爱！"',
+            instruction='从"发现"进入朋友圈，浏览好友朋友圈，给第一个分享小猫朋友圈的好友和第一个分享小狗朋友圈的好友分别发送"你的猫好可爱！"和"你的狗好可爱！"',
             verify_func=task16_validate_cat_dog_messages,
             human_steps=14,
             is_reasoning=False,

@@ -1,4 +1,4 @@
-# 15、从"发现"进入朋友圈，浏览好友朋友圈，朋友圈有人分享了一个网红餐厅，发消息问一下她："是哪家餐厅呀？主打菜是什么？"
+# 15、从"发现"进入朋友圈，浏览好友朋友圈，找到第一个分享网红餐厅的好友，发消息问一下她："是哪家餐厅呀？主打菜是什么？"
 import os
 import json
 import subprocess
@@ -19,7 +19,7 @@ def task15_validate_restaurant_message(result=None, device_id=None, backup_dir=N
         cmd.extend(["exec-out", "run-as", "com.example.fakewechat", "cat", "files/messages.json"])
 
         with open(message_file_path, "w", encoding="utf-8") as f:
-            subprocess.run(cmd, stdout=f)
+            subprocess.run(cmd, stdout=f, check=True)
 
         # 打开此文件
         with open(message_file_path, "r", encoding="utf-8") as f:

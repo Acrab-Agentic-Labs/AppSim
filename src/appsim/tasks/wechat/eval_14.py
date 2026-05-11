@@ -1,4 +1,4 @@
-# 14、从"发现"进入朋友圈，浏览好友朋友圈，看一下谁推荐电影了，然后发消息问她："是什么电影呀？可以给我讲一下是什么主题的吗？"
+# 14、从"发现"进入朋友圈，浏览好友朋友圈，找到第一个推荐电影的好友，然后发消息问她："是什么电影呀？可以给我讲一下是什么主题的吗？"
 import os
 import json
 import subprocess
@@ -19,7 +19,7 @@ def task14_validate_movie_message(result=None, device_id=None, backup_dir=None):
         cmd.extend(["exec-out", "run-as", "com.example.fakewechat", "cat", "files/messages.json"])
 
         with open(message_file_path, "w", encoding="utf-8") as f:
-            subprocess.run(cmd, stdout=f)
+            subprocess.run(cmd, stdout=f, check=True)
 
         # 打开此文件
         with open(message_file_path, "r", encoding="utf-8") as f:

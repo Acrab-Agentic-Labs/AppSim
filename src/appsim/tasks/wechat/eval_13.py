@@ -1,4 +1,4 @@
-# 13、从"发现"进入朋友圈，浏览好友朋友圈，找到发大熊猫朋友圈的好友，给他发消息："大熊猫好可爱啊！是哪里的动物园呀？"
+# 13、从"发现"进入朋友圈，浏览好友朋友圈，找到第一个发大熊猫朋友圈的好友，给他发消息："大熊猫好可爱啊！是哪里的动物园呀？"
 import os
 import json
 import subprocess
@@ -19,7 +19,7 @@ def task13_validate_panda_message(result=None, device_id=None, backup_dir=None):
         cmd.extend(["exec-out", "run-as", "com.example.fakewechat", "cat", "files/messages.json"])
 
         with open(message_file_path, "w", encoding="utf-8") as f:
-            subprocess.run(cmd, stdout=f)
+            subprocess.run(cmd, stdout=f, check=True)
 
         # 打开此文件
         with open(message_file_path, "r", encoding="utf-8") as f:
