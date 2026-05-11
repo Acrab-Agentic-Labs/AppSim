@@ -1,24 +1,20 @@
 """
-Check Script #12: Search for content related to "happy" on the search page
-Difficulty: 2 (Medium)
-Check Method: Read exported search_state.json and verify query/results
+Check Script #12: 搜索'happy'、点赞收藏第一条搜索结果、关注作者、给deepak.patel发'Great photos!'、添加亲密好友
+Difficulty: 3 (Hard)
+Check Method: Read search_state + posts_state + user_state + conversations_state
 """
 import json
-import os
 import subprocess
-import sys
-
+import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from .common import *
+
+INITIAL_FOLLOWING = ["user_anushka", "user_naina", "user_deepak", "user_yashi"]
 
 
 def _read_search_state(adb):
     cmd = adb.base_cmd + [
-        "exec-out",
-        "run-as",
-        APP_PACKAGE,
-        "cat",
-        "files/autotest/search_state.json",
+        "exec-out", "run-as", APP_PACKAGE, "cat", "files/autotest/search_state.json",
     ]
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
@@ -30,34 +26,62 @@ def _read_search_state(adb):
 
 
 def check(adb, ui):
+    # Search check
+    search_ok = False
     state = _read_search_state(adb)
     if state:
         query = str(state.get("query", "")).strip().lower()
         is_searching = state.get("isSearching") is True
-        total_results = int(state.get("totalResultsCount") or 0)
-        post_results = int(state.get("postResultsCount") or 0)
+        if query == "happy" and is_searching:
+            search_ok = True
 
-        if query == "happy" and is_searching and total_results > 0:
-            return result_pass(
-                "Search state confirms happy query with results",
-                {"query": query, "totalResultsCount": total_results, "postResultsCount": post_results},
-            )
+    # Like + Save check on first post
+    like_ok = False
+    save_ok = False
+    posts = get_posts_state(adb)
+    if posts:
+        original_posts = [p for p in posts if p["postId"].startswith("post_")]
+        if original_posts:
+            like_ok = "user_self" in original_posts[0].get("likedBy", [])
+            save_ok = "user_self" in original_posts[0].get("savedBy", [])
 
-        return result_fail(
-            "Search state does not confirm a completed happy search",
-            state,
-        )
+    # Follow + close friend check
+    user = get_user_state(adb)
+    follow_ok = False
+    close_friend_ok = False
+    if user:
+        current_following = user.get("following", [])
+        new_follows = [u for u in current_following if u not in INITIAL_FOLLOWING]
+        follow_ok = len(new_follows) > 0
+        close_friend_ok = len(user.get("closeFriends", [])) > 0
 
-    # Fallback UI check for older app builds without search_state.json
-    all_texts = ui.get_all_texts()
-    happy_count = sum(1 for t in all_texts if "happy" in t.lower())
-    if happy_count >= 2 and (ui.has_text("Posts") or ui.has_text("Search results")):
-        return result_pass("Search results contain 'happy' related content")
+    # Message check
+    message_ok = False
+    convs = get_conversations_state(adb)
+    if convs and isinstance(convs, list):
+        for conv in convs:
+            if "user_deepak" in conv.get("participantIds", []):
+                for msg in conv.get("messages", []):
+                    if "Great photos!" in msg.get("text", ""):
+                        message_ok = True
+                        break
+            if message_ok:
+                break
 
-    if ui.has_text("Search") and ui.has_text("happy"):
-        return result_fail("Search box has 'happy' but no search results/state found")
+    checks = {
+        "search": search_ok,
+        "like": like_ok,
+        "save": save_ok,
+        "follow": follow_ok,
+        "message": message_ok,
+        "close_friend": close_friend_ok,
+    }
 
-    return result_fail("Not on search results page for happy")
+    missing = [k for k, v in checks.items() if not v]
+    if not missing:
+        return result_pass("All operations completed (search+like+save+follow+message+close_friend)")
+    passed = [k for k, v in checks.items() if v]
+    return result_fail(f"Partially completed. Done: {passed}, Missing: {missing}")
 
 
 if __name__ == "__main__":

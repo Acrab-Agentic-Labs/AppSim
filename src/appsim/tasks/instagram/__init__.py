@@ -60,25 +60,25 @@ INSTAGRAM_TASKS = AppTasks(
         TaskItem(
             instruction="Tell me how many likes the first post on the homepage has",
             verify_func=validate_task(1),
-            human_steps=2,
+            human_steps=1,
             is_reasoning=True,
         ),
         TaskItem(
             instruction="Tell me how many likes the currently playing short video has",
             verify_func=validate_task(2),
-            human_steps=2,
+            human_steps=1,
             is_reasoning=True,
         ),
         TaskItem(
             instruction="Tell me how many contacts are on the current messages page",
             verify_func=validate_task(3),
-            human_steps=2,
+            human_steps=1,
             is_reasoning=True,
         ),
         TaskItem(
             instruction="Tell me the username of the current user",
             verify_func=validate_task(4),
-            human_steps=2,
+            human_steps=1,
             is_reasoning=False,
         ),
         TaskItem(
@@ -100,9 +100,9 @@ INSTAGRAM_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Go to the author profile of the first post on the homepage",
+            instruction="Like the first post on the homepage, save it, comment 'Love this!', and repost it",
             verify_func=validate_task(8),
-            human_steps=3,
+            human_steps=8,
             is_reasoning=False,
         ),
         TaskItem(
@@ -124,33 +124,33 @@ INSTAGRAM_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Search for content related to 'happy' on the search page",
+            instruction="Search for 'happy', like and save the first search result post, follow the author, send 'Great photos!' to deepak.patel, then add a close friend",
             verify_func=validate_task(12),
-            human_steps=3,
+            human_steps=17,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Open the first conversation on the messages page",
+            instruction="Change username to 'Li', set gender to male, set account to private, and enable sleep mode",
             verify_func=validate_task(13),
-            human_steps=3,
+            human_steps=12,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Show me the first comment of the first post on the homepage",
             verify_func=validate_task(14),
-            human_steps=3,
+            human_steps=2,
             is_reasoning=True,
         ),
         TaskItem(
             instruction="Share the first post on the homepage",
             verify_func=validate_task(15),
-            human_steps=3,
+            human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Share my personal QR code",
             verify_func=validate_task(16),
-            human_steps=3,
+            human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
@@ -162,7 +162,7 @@ INSTAGRAM_TASKS = AppTasks(
         TaskItem(
             instruction="Check my number of followers",
             verify_func=validate_task(18),
-            human_steps=2,
+            human_steps=1,
             is_reasoning=True,
         ),
         TaskItem(
@@ -174,37 +174,37 @@ INSTAGRAM_TASKS = AppTasks(
         TaskItem(
             instruction="Check how many items are in my favorites collection",
             verify_func=validate_task(20),
-            human_steps=2,
+            human_steps=3,
             is_reasoning=True,
         ),
         TaskItem(
             instruction="Comment 'Nice!' under the second post on the homepage",
             verify_func=validate_task(21),
-            human_steps=4,
+            human_steps=5,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Open a chat with deepak.patel and send the message 'Hello, how are you?'",
             verify_func=validate_task(22),
-            human_steps=4,
+            human_steps=5,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Set my account to private",
             verify_func=validate_task(23),
-            human_steps=3,
+            human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Set daily usage time limit to 60 minutes",
             verify_func=validate_task(24),
-            human_steps=4,
+            human_steps=5,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Change my username to 'zhou'",
             verify_func=validate_task(25),
-            human_steps=3,
+            human_steps=5,
             is_reasoning=False,
         ),
         TaskItem(
@@ -216,13 +216,13 @@ INSTAGRAM_TASKS = AppTasks(
         TaskItem(
             instruction="Randomly select a user and block them",
             verify_func=validate_task(27),
-            human_steps=3,
+            human_steps=5,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Randomly add a close friend",
             verify_func=validate_task(28),
-            human_steps=3,
+            human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
@@ -234,7 +234,7 @@ INSTAGRAM_TASKS = AppTasks(
         TaskItem(
             instruction="Enable Sleep Mode",
             verify_func=validate_task(30),
-            human_steps=3,
+            human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
@@ -246,19 +246,19 @@ INSTAGRAM_TASKS = AppTasks(
         TaskItem(
             instruction="Log out of the current account",
             verify_func=validate_task(32),
-            human_steps=3,
+            human_steps=5,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Create a new collection named 'Favorites'",
             verify_func=validate_task(33),
-            human_steps=4,
+            human_steps=7,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Create a new post: select the second picture from the album, set title 'Beautiful sunset', add hashtag #nature, add location 'Central Park', then post",
             verify_func=validate_task(34),
-            human_steps=8,
+            human_steps=10,
             is_reasoning=False,
         ),
         TaskItem(
@@ -270,31 +270,31 @@ INSTAGRAM_TASKS = AppTasks(
         TaskItem(
             instruction="Create a new post: select any picture, enter a title, add a music track by search, set audience to 'Close Friends', then post",
             verify_func=validate_task(36),
-            human_steps=8,
+            human_steps=12,
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Send 'I like your post!' to an unfollowed user",
+            instruction="Post a new video: select the second video from album, set caption 'cute', set location to 'Central Park', set audience to 'Close Friends', then post",
             verify_func=validate_task(37),
-            human_steps=5,
+            human_steps=12,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Create a new post, hide like count, enable Facebook sharing",
             verify_func=validate_task(38),
-            human_steps=6,
+            human_steps=9,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Create a new post: select the second picture from the album, set title 'Beautiful sunset', add hashtag #nature, add location 'Central Park', hide like count, disable comments, then post",
             verify_func=validate_task(39),
-            human_steps=10,
+            human_steps=13,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Post a short video",
             verify_func=validate_task(40),
-            human_steps=5,
+            human_steps=4,
             is_reasoning=False,
         ),
     ],

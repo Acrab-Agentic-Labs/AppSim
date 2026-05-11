@@ -10,17 +10,9 @@ import os
 from datetime import datetime
 
 
-LOG_DIR_ENV = "APPSIM_CHECK_LOG_DIR"
-LOG_DIR = os.environ.get(LOG_DIR_ENV)
-
-
-def _get_log_dir():
-    global LOG_DIR
-    LOG_DIR = os.environ.get(LOG_DIR_ENV)
-    if not LOG_DIR:
-        return None
-    os.makedirs(LOG_DIR, exist_ok=True)
-    return LOG_DIR
+# Log directory for detailed check results
+LOG_DIR = os.path.join(os.path.dirname(__file__), "check_logs")
+os.makedirs(LOG_DIR, exist_ok=True)
 
 
 class AppChecker:
@@ -147,11 +139,7 @@ def _log_result(passed, message, details=None):
         "details": details or {}
     }
 
-    log_dir = _get_log_dir()
-    if not log_dir:
-        return
-
-    log_file = os.path.join(log_dir, f"{check_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+    log_file = os.path.join(LOG_DIR, f"{check_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
     try:
         with open(log_file, 'w', encoding='utf-8') as f:
             json.dump(log_entry, f, indent=2, ensure_ascii=False)

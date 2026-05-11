@@ -1,36 +1,59 @@
-# Task 38: 创建一个新的歌单并添加两首新的歌曲
-# Check: 通过 JSON 验证存在新歌单且包含至少2首歌，并且UI在歌单详情页
+# Task 38: 搜索歌曲style，并收藏，告诉我第一句歌词, 查看制作人员并告诉我作词人是谁，然后设置定时器15min
+# Check: 验证 likedSongs 增加, answer 含歌词+作词人, 定时器已设置
 from .check_common import AppChecker, run_check, result_pass, result_fail
 
 
-def check(c: AppChecker):
-    # 必须在歌单详情页，而不是添加歌曲的选择页面
-    ui_passed = (
-        c.find_desc("Back")
-        and (
-            c.find_desc("Shuffle")
-            or c.find_text_contains("songs")
-            or c.find_desc("Play")
+def check(c: AppChecker, result=None):
+    # 验证 likedSongs 增加
+    user_state = c.get_user_state()
+    if not user_state or not isinstance(user_state, dict):
+        return result_fail("Check failed: unable to read user_state.json")
+
+    liked_songs = user_state.get("likedSongs", [])
+    if len(liked_songs) <= len(c.INITIAL_LIKED_SONGS):
+        return result_fail(
+            "Check failed: liked songs did not increase",
+            {"likedSongs": liked_songs, "initialLikedSongs": c.INITIAL_LIKED_SONGS},
         )
-        and not c.find_text("Add to playlist")  # 不在添加歌曲页面
+
+    # 验证定时器已设置
+    playback_state = c.get_playback_state()
+    if playback_state and isinstance(playback_state, dict):
+        sleep_timer = playback_state.get("sleepTimer") or playback_state.get("sleepTimerMs") or playback_state.get("timerMinutes")
+        if not sleep_timer:
+            # Fallback: UI 验证
+            if not c.find_text("15") and not c.find_text_contains("min"):
+                return result_fail(
+                    "Check failed: sleep timer not set to 15 minutes",
+                    {"playbackState": playback_state},
+                )
+
+    # 验证答案包含歌词和作词人信息
+    if not result or "final_message" not in result:
+        return result_fail("Check failed: no answer provided in result")
+
+    final_msg = str(result["final_message"]).lower()
+
+    # 检查是否包含歌词信息
+    has_lyrics = any(
+        keyword in final_msg
+        for keyword in ["i close my eyes", "close my eyes", "lyric", "歌词", "first line"]
     )
 
-    if not ui_passed:
-        return result_fail("UI check failed: not on playlist detail page")
+    # 检查是否包含作词人信息
+    has_lyricist = any(
+        keyword in final_msg
+        for keyword in ["taylor swift", "kenshi yonezu", "lyricist", "作词", "songwriter", "written by"]
+    )
 
-    # 验证 JSON 中存在新歌单且包含至少2首歌
-    playlists = c.get_user_playlists()
-    if not playlists or not isinstance(playlists, list):
-        return result_fail("Check failed: unable to read user_playlists.json")
+    if not has_lyrics or not has_lyricist:
+        return result_fail(
+            "Check failed: answer does not contain required lyrics and lyricist information",
+            {"finalMessage": result["final_message"]},
+        )
 
-    for p in playlists:
-        song_ids = p.get("songIds", [])
-        if len(song_ids) >= 2:
-            return result_pass(f"Check passed: playlist '{p.get('name')}' has {len(song_ids)} songs")
-
-    return result_fail(
-        "Check failed: no user playlist with 2+ songs found",
-        {"userPlaylists": playlists},
+    return result_pass(
+        "Check passed: liked songs increased, answer contains lyrics and lyricist info, timer set"
     )
 
 

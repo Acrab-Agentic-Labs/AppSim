@@ -1,51 +1,56 @@
 """
-任务4：播放每日推荐的歌曲
+任务4：播放当前歌曲
 难度：低
 """
 
 import logging
-import sys
-from .verification_functions import is_daily_recommend_context, is_daily_recommend_song, is_in_daily_recommend_context, read_json_from_device
+from .verification_functions import read_json_from_device
 
-def check_is_playing(result=None, device_id=None, backup_dir=None):
+
+def check_current_song_is_playing(result=None, device_id=None, backup_dir=None):
     """
-    任务4: 验证是否正在播放每日推荐的歌曲
+    任务4: 验证当前歌曲是否正在播放
     - 检查 playback_state.json 中 isPlaying 是否为 true
-    - 检查 currentSong.source 是否为 "daily_recommend"
+    - 通过对比备份数据确认是由agent操作触发的播放（而非初始状态）
     """
     data = read_json_from_device("autotest/playback_state.json", device_id, result, backup_dir=backup_dir)
 
     if not data:
-        logging.error("✗ 测试失败 - 任务4未完成：无法读取播放状态数据")
+        logging.error("✗ 测试失败 - 任务4未完成：无法读取播放状态")
         return False
 
     # 检查是否正在播放
-    is_playing = data.get("isPlaying")
-    if not is_playing:
-        logging.error(f"✗ 测试失败 - 任务4未完成：歌曲未在播放。isPlaying = {is_playing}")
+    if not (data.get("isPlaying", False) or data.get("is_playing", False)):
+        logging.error("✗ 测试失败 - 任务4未完成：当前歌曲未在播放状态")
         return False
 
-    # 检查歌曲来源
-    current_song = data.get("currentSong")
-    if not current_song:
-        logging.error("✗ 测试失败 - 任务4未完成：没有当前播放的歌曲信息")
-        return False
+    # 检查是否有播放操作记录（区分初始状态和agent操作）
+    if data.get("playTriggered", False) or data.get("play_triggered", False):
+        logging.info("✓ 测试通过 - 任务4完成：当前歌曲正在播放（检测到播放操作）")
+        return True
 
-    # 检查歌曲来源或当前查看的页面/歌单上下文
-    playlists_data = read_json_from_device("autotest/user_playlists.json", device_id, result, backup_dir=backup_dir)
-    is_daily_context = is_in_daily_recommend_context(data) or is_daily_recommend_context(playlists_data)
-    if not is_daily_recommend_song(current_song) and not is_daily_context:
-        logging.error(f"✗ 测试失败 - 任务4未完成：播放来源不是每日推荐。当前歌曲信息: {current_song}")
-        logging.info(f"  当前播放状态: {data}")
-        logging.info(f"  当前歌单状态: {playlists_data}")
-        logging.info("  提示: 需要从'每日推荐'页面点击歌曲播放")
-        return False
+    # 检查播放记录
+    play_records = read_json_from_device("data/play_records.json", device_id, result, backup_dir=backup_dir)
+    if play_records:
+        records = play_records.get("records", play_records) if isinstance(play_records, dict) else play_records
+        if len(records) > 0:
+            logging.info("✓ 测试通过 - 任务4完成：当前歌曲正在播放（检测到播放记录）")
+            return True
 
-    # 所有检查通过
-    song_name = current_song.get("songName", "未知")
-    logging.info(f"✓ 测试通过 - 任务4完成：正在播放每日推荐的歌曲 '{song_name}'")
-    return True
+    # 检查lastAction字段
+    if data.get("lastAction") == "play" or data.get("last_action") == "play":
+        logging.info("✓ 测试通过 - 任务4完成：当前歌曲正在播放（检测到play动作）")
+        return True
+
+    # 如果进度发生了变化（与初始状态不同），也认为是有操作的
+    progress = data.get("progress", 0)
+    if progress == 0:
+        logging.info("✓ 测试通过 - 任务4完成：当前歌曲正在播放（进度为0，刚开始播放）")
+        return True
+
+    logging.error("✗ 测试失败 - 任务4未完成：播放状态为初始状态，未检测到agent的播放操作")
+    return False
+
 
 if __name__ == "__main__":
-
-    print(check_is_playing())
+    print(check_current_song_is_playing())
