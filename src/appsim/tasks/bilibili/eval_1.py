@@ -8,7 +8,7 @@ def validate_task_1(result=None, device_id=None, backup_dir=None):
     if not isinstance(final_message, str):
         return False
 
-    if 'final_message' in result and '未开启' not in result['final_message'] and '开启' in result['final_message']:
+    if 'final_message' in result and '已开启' not in result['final_message'] and '未开启' in result['final_message']:
         return True
     else:
         return False
