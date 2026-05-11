@@ -1,82 +1,97 @@
 import subprocess
 import json
 import os
-import re
+import shutil
+import time
 
-def validate_task_23(result=None, device_id=None, backup_dir=None):
+
+def CheckSearchPlayLikeReply(result=None, device_id=None, backup_dir=None):
     """
-    任务23: 查看收藏的第一个视频的视频时长
-    改进: 从APP数据源获取收藏视频数据
+    检验逻辑:搜索视频"游戏解说"，播放搜索出的第一个视频并点赞，然后对该视频评论"谢谢分享！"
+    验证用户是否完成搜索、播放、点赞、评论回复全流程
+    合并自: eval_22(搜索播放点赞) + eval_16(评论回复)
     """
-    if result is None:
-        return False
-
-    final_msg = result.get("final_message") or ""  # final_message 可能为 None，统一按空字符串处理
-
     try:
-        # 1. 使用 ADB 从设备拉取收藏列表数据
-        cmd = ["adb"]
+        print("\n正在检查日志...")
+        cmd_logcat = ['adb']
         if device_id:
-            cmd.extend(["-s", device_id])
-        cmd.extend(["exec-out", "run-as", "com.example.bilibili_sim",
-                   "cat", "files/favorites.json"])
+            cmd_logcat.extend(['-s', device_id])
+        cmd_logcat.extend(['logcat', '-d', '-s', 'BilibiliAutoTest:D'])
 
-        result_data = subprocess.run(
-            cmd,
+        result1 = subprocess.run(
+            cmd_logcat,
             capture_output=True,
-            encoding='utf-8',
-            errors='replace',
             text=True,
-            timeout=10
+            timeout=10,
+            encoding='utf-8',
+            errors='ignore'
         )
 
-        # 保存数据到备份目录
+        log_content = result1.stdout
         if backup_dir:
-            favorites_file_path = os.path.join(backup_dir, 'favorites.json')
-            with open(favorites_file_path, 'w', encoding='utf-8') as f:
-                f.write(result_data.stdout)
+            logcat_file_path = os.path.join(backup_dir, 'logcat.txt')
+            open(logcat_file_path, 'w', encoding='utf-8').write(log_content)
 
-        # 检查命令是否成功执行
-        if result_data.returncode != 0 or not result_data.stdout:
-            print("⚠️ 无法读取收藏列表数据，回退验证")
-            return '03:45' in final_msg
-
-        # 2. 解析JSON数据
-        try:
-            data = json.loads(result_data.stdout)
-        except json.JSONDecodeError:
-            print("⚠️ 收藏列表数据格式错误，回退验证")
-            return '03:45' in final_msg
-
-        # 3. 获取第一个视频的时长
-        favorites_list = data.get("favorites", [])
-        if not favorites_list:
-            print("⚠️ 收藏列表为空，回退验证")
-            return '03:45' in final_msg
-
-        first_video = favorites_list[0]
-        duration = first_video.get("duration", "")
-
-        # 4. 验证 final_message 中是否包含正确答案
-        # 处理可能的格式：03:45、3:45等
-        if duration in final_msg:
-            print(f"✓ 验证成功: 第一个收藏视频时长 = {duration}")
-            return True
-        # 也尝试去掉前导0的格式
-        elif duration.startswith("0") and duration[1:] in final_msg:
-            print(f"✓ 验证成功: 第一个收藏视频时长 = {duration}")
-            return True
-        else:
-            print(f"❌ 验证失败: 期望答案={duration}, 实际回答={final_msg}")
+        # 1. 验证搜索操作
+        search_completed = 'SEARCH_COMPLETED' in log_content
+        search_keyword = '游戏解说' in log_content
+        if not (search_completed or search_keyword):
+            print("验证失败: 未检测到搜索'游戏解说'")
+            print(f"日志内容:\n{log_content}")
             return False
 
-    except subprocess.TimeoutExpired:
-        print("⚠️ ADB命令超时，回退验证")
-        return '03:45' in final_msg
-    except Exception as e:
-        print(f"⚠️ 验证过程出错: {str(e)}, 回退验证")
-        return '03:45' in final_msg
+        # 2. 验证播放视频
+        video_player_opened = 'VIDEO_PLAYER_OPENED' in log_content
+        if not video_player_opened:
+            print("验证失败: 未检测到播放视频")
+            return False
 
-if __name__ == '__main__':
-    result = validate_task_23()
-    print(result)
+        # 3. 验证点赞
+        like_button_clicked = 'LIKE_BUTTON_CLICKED' in log_content
+        if not like_button_clicked:
+            print("验证失败: 未检测到点击点赞按钮")
+            return False
+
+        # 4. 验证进入评论页面
+        comment_page_entered = 'COMMENT_PAGE_ENTERED' in log_content
+        reply_button_clicked = 'REPLY_BUTTON_CLICKED' in log_content
+        if not (comment_page_entered or reply_button_clicked):
+            print("验证失败: 未检测到进入评论页面或点击回复")
+            return False
+
+        # 5. 验证输入评论内容
+        comment_input_text = 'COMMENT_INPUT_TEXT' in log_content
+        comment_content_check = '谢谢分享！' in log_content
+        if not (comment_input_text or comment_content_check):
+            print("验证失败: 未检测到输入评论内容'谢谢分享！'")
+            return False
+
+        # 6. 验证发送评论
+        send_button_clicked = 'SEND_BUTTON_CLICKED' in log_content
+        comment_sent_success = 'COMMENT_SENT_SUCCESS' in log_content
+        if not (send_button_clicked or comment_sent_success):
+            print("验证失败: 未检测到点击发送或评论发送成功")
+            return False
+
+        print("搜索播放点赞+评论回复全流程验证成功!")
+        return True
+
+    except subprocess.TimeoutExpired:
+        print("验证失败: 读取日志超时")
+        return False
+    finally:
+        try:
+            cmd_clear = ['adb']
+            if device_id:
+                cmd_clear.extend(['-s', device_id])
+            cmd_clear.extend(['logcat', '-c'])
+            subprocess.run(cmd_clear, timeout=5)
+            print("🔄 已清除日志缓存")
+        except subprocess.TimeoutExpired:
+            print("⚠️ 清除日志超时")
+        except Exception as e:
+            print(f"⚠️ 清除日志失败: {str(e)}")
+
+if __name__ == "__main__":
+    result1 = CheckSearchPlayLikeReply()
+    print(result1)

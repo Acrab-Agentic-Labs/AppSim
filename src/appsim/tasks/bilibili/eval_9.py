@@ -6,10 +6,10 @@ import time
 
 
 
-def CheckProfilePage(result=None,device_id=None,backup_dir=None):
+def CheckReplyComment(result=None,device_id=None,backup_dir=None):
     """
-    检验逻辑:在我的页面，点击顶部头像或昵称区域，进入个人资料页查看信息
-    验证用户是否进入个人资料页
+    检验逻辑:对首页第一条视频评论，点击回复，输入"谢谢分享！"并发送
+    验证用户是否完成评论回复
     """
     try:
         print("\n正在检查日志...")
@@ -32,27 +32,30 @@ def CheckProfilePage(result=None,device_id=None,backup_dir=None):
             logcat_file_path = os.path.join(backup_dir, 'logcat.txt')
             open(logcat_file_path, 'w', encoding='utf-8').write(log_content)
 
-        # step3. 验证关键操作 - 只需要检测到PersonTab即可
-        person_tab_detected = 'PersonTab' in log_content
+        # step3. 验证关键操作
+        reply_button_clicked = 'REPLY_BUTTON_CLICKED' in log_content
+        reply_to_first = 'REPLY_TO_COMMENT: cmt001' in log_content
+        comment_content_check = '谢谢分享！' in log_content
+        send_button_clicked = 'SEND_BUTTON_CLICKED' in log_content
+        comment_sent_success = 'COMMENT_SENT_SUCCESS' in log_content
 
-        if not person_tab_detected:
-            print("验证失败: 未检测到PersonTab")
-            print("\n提示: 请确保:")
-            print("1. 在我的页面点击了顶部头像或昵称")
-            print("2. 已进入个人资料页")
-            print(f"\n日志内容:\n{log_content}")
+        # 验证是否回复了第一条评论
+        if not (reply_button_clicked and reply_to_first):
+            print("验证失败: 未检测到对第一条评论点击回复")
             return False
 
-        # 验证 result 存在
-        if result is None:
+        # 检测输入内容
+        if not comment_content_check:
+            print("验证失败: 未检测到输入评论内容'谢谢分享！'")
             return False
-        final_msg = result.get("final_message") or ""  # final_message 可能为 None，统一按空字符串处理
 
-        # 检测 result 中的final_messages中是否包含 "凡人修仙传"
-        if '凡人修仙传' in final_msg:
-            return True
-        else:
+        # 检测发送操作
+        if not (send_button_clicked or comment_sent_success):
+            print("验证失败: 未检测到点击发送或评论发送成功")
             return False
+
+        print("评论回复验证成功!")
+        return True
 
     except subprocess.TimeoutExpired:
         print("验证失败: 读取日志超时")
@@ -72,5 +75,5 @@ def CheckProfilePage(result=None,device_id=None,backup_dir=None):
             print(f"⚠️ 清除日志失败: {str(e)}")
 
 if __name__ == "__main__":
-    result1 = CheckProfilePage()
+    result1 = CheckReplyComment()
     print(result1)
