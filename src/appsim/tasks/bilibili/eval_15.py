@@ -1,77 +1,82 @@
 import subprocess
 import json
 import os
+import shutil
+import time
 import re
 
-def validate_task_15(result=None, device_id=None, backup_dir=None):
-    """
-    任务15: 数一下关注列表有几个已互粉的up主
-    改进: 从APP数据源获取关注列表并统计互粉数量
-    """
-    if result is None:
-        return False
 
-    final_msg = result.get("final_message") or ""  # final_message 可能为 None，统一按空字符串处理
 
+def CheckHistoryItemDelete(result=None,device_id=None,backup_dir=None):
+    """
+    检验逻辑:在历史记录页面，找到今天观看过的一个视频，长按该记录项，将其从历史记录中删除，然后告诉我删除后还有几个视频
+    验证用户是否在APP中真正完成了历史记录删除操作
+    """
     try:
-        # 1. 使用 ADB 从设备拉取关注列表数据
-        cmd = ["adb"]
+        print("\n正在检查日志...")
+        cmd_logcat = ['adb']
         if device_id:
-            cmd.extend(["-s", device_id])
-        cmd.extend(["exec-out", "run-as", "com.example.bilibili_sim",
-                   "cat", "files/following_list.json"])
+            cmd_logcat.extend(['-s', device_id])
+        cmd_logcat.extend(['logcat', '-d', '-s', 'BilibiliAutoTest:D'])
 
-        result_data = subprocess.run(
-            cmd,
+        result1 = subprocess.run(
+            cmd_logcat,
             capture_output=True,
-            encoding='utf-8',
-            errors='replace',
             text=True,
-            timeout=10
+            timeout=10,
+            encoding='utf-8',
+            errors='ignore'
         )
 
-        # 保存数据到备份目录
+        log_content = result1.stdout
         if backup_dir:
-            following_file_path = os.path.join(backup_dir, 'following_list.json')
-            with open(following_file_path, 'w', encoding='utf-8') as f:
-                f.write(result_data.stdout)
+            logcat_file_path = os.path.join(backup_dir, 'logcat.txt')
+            open(logcat_file_path, 'w', encoding='utf-8').write(log_content)
 
-        # 检查命令是否成功执行
-        if result_data.returncode != 0 or not result_data.stdout:
-            print("⚠️ 无法读取关注列表数据，回退验证")
-            pattern = r'(?:^|[^\d])1(?:[^\d]|$)'
-            return bool(re.search(pattern, final_msg))
+        # step3. 验证关键操作 - 放宽验证条件
+        history_page_entered = 'HISTORY_PAGE_ENTERED' in log_content
+        history_data_loaded = 'HISTORY_DATA_LOADED' in log_content
+        history_item_long_pressed = 'HISTORY_ITEM_LONG_PRESSED' in log_content
+        delete_button_clicked = 'DELETE_BUTTON_CLICKED' in log_content
+        history_item_deleted = 'HISTORY_ITEM_DELETED' in log_content
 
-        # 2. 解析JSON数据
-        try:
-            data = json.loads(result_data.stdout)
-        except json.JSONDecodeError:
-            print("⚠️ 关注列表数据格式错误，回退验证")
-            pattern = r'(?:^|[^\d])1(?:[^\d]|$)'
-            return bool(re.search(pattern, final_msg))
+        # 只要检测到删除相关操作即可
+        if not (history_item_long_pressed or delete_button_clicked or history_item_deleted):
+            print("验证失败: 未检测到删除历史记录操作")
+            print("\n提示: 请确保:")
+            print("1. 进入了历史记录页面")
+            print("2. 长按了某个历史记录项")
+            print("3. 点击了删除")
+            print(f"\n日志内容:\n{log_content}")
+            return False
 
-        # 3. 统计互粉的up主数量
-        following_list = data.get("following_list", [])
-        mutual_follow_count = sum(1 for user in following_list if user.get("is_mutual_follow", False))
+        # 验证 result 存在
+        if result is None:
+            return False
 
-        # 4. 验证 final_message 中是否包含正确答案
-        pattern = rf'(?:^|[^\d]){mutual_follow_count}(?:[^\d]|$)'
-        if re.search(pattern, final_msg):
-            print(f"✓ 验证成功: 互粉up主数量 = {mutual_follow_count}")
+        # 检测 result 中的final_messages中是否包含 "8"
+        if 'final_message' in result and '8' in result['final_message']:
             return True
         else:
-            print(f"❌ 验证失败: 期望答案={mutual_follow_count}, 实际回答={final_msg}")
             return False
 
     except subprocess.TimeoutExpired:
-        print("⚠️ ADB命令超时，回退验证")
-        pattern = r'(?:^|[^\d])1(?:[^\d]|$)'
-        return bool(re.search(pattern, final_msg))
-    except Exception as e:
-        print(f"⚠️ 验证过程出错: {str(e)}, 回退验证")
-        pattern = r'(?:^|[^\d])1(?:[^\d]|$)'
-        return bool(re.search(pattern, final_msg))
+        print("验证失败: 读取日志超时")
+        return False
+    finally:
+        # 无论成功失败，最后都清除日志
+        try:
+            cmd_clear = ['adb']
+            if device_id:
+                cmd_clear.extend(['-s', device_id])
+            cmd_clear.extend(['logcat', '-c'])
+            subprocess.run(cmd_clear, timeout=5)
+            print("🔄 已清除日志缓存")
+        except subprocess.TimeoutExpired:
+            print("⚠️ 清除日志超时")
+        except Exception as e:
+            print(f"⚠️ 清除日志失败: {str(e)}")
 
-if __name__ == '__main__':
-    result = validate_task_15()
-    print(result)
+if __name__ == "__main__":
+    result1 = CheckHistoryItemDelete()
+    print(result1)

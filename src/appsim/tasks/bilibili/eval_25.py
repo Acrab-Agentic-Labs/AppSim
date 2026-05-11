@@ -1,71 +1,90 @@
 import subprocess
 import json
 import os
-import re
+import shutil
+import time
 
-def validate_task_25(result=None, device_id=None, backup_dir=None):
+
+def CheckFavoriteLikeComment(result=None, device_id=None, backup_dir=None):
     """
-    任务25: 去设置里找一下uid是多少
-    改进: 从APP配置中读取实际UID
+    检验逻辑:给我的收藏里第二个视频点赞并评论："谢谢up主的分享！"
+    验证用户是否进入收藏、点赞、并发送评论
     """
-    if result is None:
-        return False
-
-    final_msg = result.get("final_message") or ""  # final_message 可能为 None，统一按空字符串处理
-
     try:
-        # 1. 使用 ADB 从设备拉取用户配置
-        cmd = ["adb"]
+        print("\n正在检查日志...")
+        cmd_logcat = ['adb']
         if device_id:
-            cmd.extend(["-s", device_id])
-        cmd.extend(["exec-out", "run-as", "com.example.bilibili_sim",
-                   "cat", "files/user_profile.json"])
+            cmd_logcat.extend(['-s', device_id])
+        cmd_logcat.extend(['logcat', '-d', '-s', 'BilibiliAutoTest:D'])
 
-        result_data = subprocess.run(
-            cmd,
+        result1 = subprocess.run(
+            cmd_logcat,
             capture_output=True,
-            encoding='utf-8',
-            errors='replace',
             text=True,
-            timeout=10
+            timeout=10,
+            encoding='utf-8',
+            errors='ignore'
         )
 
-        # 保存数据到备份目录
+        log_content = result1.stdout
         if backup_dir:
-            profile_file_path = os.path.join(backup_dir, 'user_profile.json')
-            with open(profile_file_path, 'w', encoding='utf-8') as f:
-                f.write(result_data.stdout)
+            logcat_file_path = os.path.join(backup_dir, 'logcat.txt')
+            open(logcat_file_path, 'w', encoding='utf-8').write(log_content)
 
-        # 检查命令是否成功执行
-        if result_data.returncode != 0 or not result_data.stdout:
-            print("⚠️ 无法读取用户配置数据，回退验证")
-            return '649734343' in final_msg
-
-        # 2. 解析JSON数据
-        try:
-            data = json.loads(result_data.stdout)
-        except json.JSONDecodeError:
-            print("⚠️ 用户配置数据格式错误，回退验证")
-            return '649734343' in final_msg
-
-        # 3. 获取UID
-        uid = str(data.get("uid", ""))
-
-        # 4. 验证 final_message 中是否包含正确答案
-        if uid and uid in final_msg:
-            print(f"✓ 验证成功: UID = {uid}")
-            return True
-        else:
-            print(f"❌ 验证失败: 期望UID={uid}, 实际回答={final_msg}")
+        # 1. 验证进入收藏页面
+        favorite_page_entered = 'FAVORITE_PAGE_ENTERED' in log_content
+        if not favorite_page_entered:
+            print("验证失败: 未检测到进入收藏页面")
+            print("\n提示: 请确保进入了我的收藏页面")
             return False
 
-    except subprocess.TimeoutExpired:
-        print("⚠️ ADB命令超时，回退验证")
-        return '649734343' in final_msg
-    except Exception as e:
-        print(f"⚠️ 验证过程出错: {str(e)}, 回退验证")
-        return '649734343' in final_msg
+        # 2. 验证点赞操作
+        like_button_clicked = 'LIKE_BUTTON_CLICKED' in log_content
+        if not like_button_clicked:
+            print("验证失败: 未检测到点赞操作")
+            print("\n提示: 请确保对视频点击了点赞按钮")
+            return False
 
-if __name__ == '__main__':
-    result = validate_task_25()
-    print(result)
+        # 3. 验证进入评论并输入内容
+        comment_page_entered = 'COMMENT_PAGE_ENTERED' in log_content
+        reply_button_clicked = 'REPLY_BUTTON_CLICKED' in log_content
+        if not (comment_page_entered or reply_button_clicked):
+            print("验证失败: 未检测到进入评论页面")
+            return False
+
+        # 4. 验证输入评论内容
+        comment_input_text = 'COMMENT_INPUT_TEXT' in log_content
+        comment_content_check = '谢谢up主的分享！' in log_content
+        if not (comment_input_text or comment_content_check):
+            print("验证失败: 未检测到输入评论内容'谢谢up主的分享！'")
+            return False
+
+        # 5. 验证发送评论
+        send_button_clicked = 'SEND_BUTTON_CLICKED' in log_content
+        comment_sent_success = 'COMMENT_SENT_SUCCESS' in log_content
+        if not (send_button_clicked or comment_sent_success):
+            print("验证失败: 未检测到点击发送或评论发送成功")
+            return False
+
+        print("收藏视频点赞+评论验证成功!")
+        return True
+
+    except subprocess.TimeoutExpired:
+        print("验证失败: 读取日志超时")
+        return False
+    finally:
+        try:
+            cmd_clear = ['adb']
+            if device_id:
+                cmd_clear.extend(['-s', device_id])
+            cmd_clear.extend(['logcat', '-c'])
+            subprocess.run(cmd_clear, timeout=5)
+            print("🔄 已清除日志缓存")
+        except subprocess.TimeoutExpired:
+            print("⚠️ 清除日志超时")
+        except Exception as e:
+            print(f"⚠️ 清除日志失败: {str(e)}")
+
+if __name__ == "__main__":
+    result1 = CheckFavoriteLikeComment()
+    print(result1)
