@@ -1,7 +1,7 @@
 """
-Check Script #13: 查看消息页面的第一个会话
-Difficulty: 2 (Medium)
-Check Method: Check if entered chat detail page
+Check Script #13: 修改用户名为'Li'、性别改为男性、设为私密账户、开启睡眠模式
+Difficulty: 3 (Hard)
+Check Method: Read user_state.json for multiple account settings
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -9,22 +9,28 @@ from .common import *
 
 
 def check(adb, ui):
-    # ChatDetailScreen features: has Back button, Message... input box
-    has_back = "Back" in ui.get_all_descs()
-    has_message_input = ui.has_text("Message...")
+    user = get_user_state(adb)
+    if not user:
+        return result_fail("Unable to read user_state.json")
 
-    if has_back and has_message_input:
-        return result_pass("Successfully opened first chat conversation")
+    checks = {
+        "username": user.get("username", "").lower() == "li",
+        "private": user.get("isPrivate") is True,
+        "sleep_mode": user.get("sleepMode") is True,
+    }
 
-    # Alternative: 检查Send按钮
-    if has_message_input:
-        return result_pass("Entered chat detail page")
+    # Gender check
+    gender = user.get("gender", "")
+    if gender:
+        checks["gender"] = gender.lower() == "male"
+    else:
+        checks["gender"] = ui.has_text("Male") or ui.has_text("male")
 
-    # Check if still on messages list
-    if ui.has_text("Messages") and not has_message_input:
-        return result_fail("Still on messages list, not in conversation detail")
-
-    return result_fail("Chat detail page not detected")
+    missing = [k for k, v in checks.items() if not v]
+    if not missing:
+        return result_pass("All account settings updated (username+gender+private+sleep)")
+    passed = [k for k, v in checks.items() if v]
+    return result_fail(f"Partially completed. Done: {passed}, Missing: {missing}")
 
 
 if __name__ == "__main__":

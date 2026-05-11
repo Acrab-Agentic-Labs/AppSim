@@ -1,39 +1,46 @@
-# Task 40: 目前音乐库中有多少首喜欢的歌曲
-# Check: 通过 JSON 读取实际 likedSongs 数量，并验证答案是否正确
+# Task 40: 告诉我有声书第一条内容的标题和发布日期, 播放并收藏它, 发表评论 'Great episode!',
+# 并快进15秒，然后收藏第二本有声书
+# Check: 验证 savedAudiobooks >= 2, answer 含标题和日期信息
 from .check_common import AppChecker, run_check, result_pass, result_fail
 
 
 def check(c: AppChecker, result=None):
-    state = c.get_user_state()
-    if not state:
+    # 验证 savedAudiobooks 至少有2本
+    user_state = c.get_user_state()
+    if not user_state or not isinstance(user_state, dict):
         return result_fail("Check failed: unable to read user_state.json")
 
-    liked = state.get("likedSongs", [])
-    expected_count = len(liked)
-
-    # 检查 UI 是否在 Liked Songs 页面
-    ui_passed = (
-        c.find_text("Liked Songs")
-        and c.find_desc("Back")
-        and (
-            c.find_text_contains("songs")
-            or c.find_desc("Shuffle")
+    saved_audiobooks = user_state.get("savedAudiobooks", [])
+    if len(saved_audiobooks) < 2:
+        return result_fail(
+            f"Check failed: saved audiobooks count is {len(saved_audiobooks)}, expected at least 2",
+            {"savedAudiobooks": saved_audiobooks},
         )
+
+    # 验证答案包含第一本有声书的标题和发布日期
+    if not result or "final_message" not in result:
+        return result_fail("Check failed: no answer provided in result")
+
+    final_msg = str(result["final_message"]).lower()
+
+    # 第一本有声书: "The Art of Reading" by James Clear
+    has_title = any(
+        keyword in final_msg
+        for keyword in ["art of reading", "the art", "audiobook", "有声书"]
+    )
+    has_date = any(
+        keyword in final_msg
+        for keyword in ["date", "publish", "发布", "日期", "20"]
     )
 
-    if not ui_passed:
-        return result_fail("UI check failed: Liked Songs page not visible")
+    if not has_title or not has_date:
+        return result_fail(
+            "Check failed: answer does not contain first audiobook title and publish date",
+            {"finalMessage": result["final_message"]},
+        )
 
-    # 检查 AI 回答是否包含正确的数量
-    if result and "final_message" in result:
-        final_msg = str(result["final_message"])
-        # 正确答案应该包含实际数量
-        if str(expected_count) in final_msg:
-            return result_pass(f"Check passed: UI correct and answer contains {expected_count}")
-
-    return result_fail(
-        f"Answer check failed: final_message does not contain correct count ({expected_count})",
-        {"likedSongs": liked, "expectedCount": expected_count},
+    return result_pass(
+        f"Check passed: {len(saved_audiobooks)} audiobooks saved, answer contains title and date"
     )
 
 

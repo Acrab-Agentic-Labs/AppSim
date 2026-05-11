@@ -23,9 +23,10 @@ def check_create_playlist_and_add_song(result=None, device_id=None, backup_dir=N
         latest_playlist = sorted_playlists[0]
         playlist_name = latest_playlist.get("playlistName", "未知名称")
         song_count = latest_playlist.get("songCount", 0)
+        song_ids = latest_playlist.get("songIds", [])
 
-        if song_count > 0:
-            logging.info(f"✓ 测试通过 - 任务12完成：设备状态确认，最新歌单'{playlist_name}'中已有 {song_count} 首歌曲")
+        if song_count > 0 or len(song_ids) > 0:
+            logging.info(f"✓ 测试通过 - 任务12完成：设备状态确认，最新歌单'{playlist_name}'中已有 {max(song_count, len(song_ids))} 首歌曲")
             return True
         else:
             logging.warning(f"  → 设备状态警告: 最新歌单'{playlist_name}'已创建，但歌曲数量为0")

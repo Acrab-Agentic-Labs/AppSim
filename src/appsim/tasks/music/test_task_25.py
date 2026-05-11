@@ -1,62 +1,103 @@
 """
-任务25：进入个人听歌时长页面，告诉我本周听歌时长是多少
-难度：中
-类型：信息检索类
+任务25：搜索'薛之谦'，进入歌手主页，播放"演员"，收藏该歌曲，查看歌词并告诉我第一句歌词，并播放MV
+难度：高
+类型：复合操作+推理类
 """
 
 import logging
-import sys
-import re
 from .verification_functions import read_json_from_device
 
-def check_weekly_listening_duration_is_reported(result=None, device_id=None, backup_dir=None):
+
+def check_composite_xuezhiqian_play_favorite_lyrics_mv(result=None, device_id=None, backup_dir=None):
     """
-    任务25: 验证AI是否返回了正确的本周听歌时长
-    - 从AI的 final_message 中提取所有数字
-    - 从 duration_data.json 读取真实的 weeklyData.totalDuration
-    - 从真实数据中提取所有数字
-    - 对比两组数字是否完全一致
+    任务25: 验证复合操作
+    1. 搜索历史包含"薛之谦"
+    2. 播放了"演员"
+    3. 歌曲被收藏
+    4. 歌词已显示
+    5. AI回答包含第一句歌词"简单点说话的方式简单点"
+    6. MV正在播放
     """
+    # 1. 检查搜索历史
+    search_history = read_json_from_device("autotest/search_history.json", device_id, result, backup_dir)
+    if not search_history:
+        logging.error("✗ 测试失败 - 任务25未完成：未找到搜索历史")
+        return False
+
+    searched = False
+    for search in search_history.get("searches", []):
+        if "薛之谦" in search.get("query", ""):
+            searched = True
+            break
+    if not searched:
+        logging.error("✗ 测试失败 - 任务25未完成：未搜索'薛之谦'")
+        return False
+
+    # 2. 检查是否播放了"演员"
+    playback_state = read_json_from_device("autotest/playback_state.json", device_id, result, backup_dir)
+    if not playback_state:
+        logging.error("✗ 测试失败 - 任务25未完成：未找到播放状态")
+        return False
+
+    current_song = playback_state.get("currentSong", {})
+    play_records = read_json_from_device("data/play_records.json", device_id, result, backup_dir)
+    played_yangyuan = False
+    if current_song and "演员" in current_song.get("songName", ""):
+        played_yangyuan = True
+    elif play_records:
+        records = play_records.get("records", play_records) if isinstance(play_records, dict) else play_records
+        for record in records:
+            if isinstance(record, dict) and ("演员" in record.get("songName", "") or "演员" in record.get("name", "")):
+                played_yangyuan = True
+                break
+    if not played_yangyuan:
+        logging.error("✗ 测试失败 - 任务25未完成：未播放'演员'")
+        return False
+
+    # 3. 检查歌曲是否被收藏
+    favorites = read_json_from_device("autotest/user_favorites.json", device_id, result, backup_dir)
+    if not favorites:
+        logging.error("✗ 测试失败 - 任务25未完成：未找到收藏数据")
+        return False
+
+    favorited_songs = favorites.get("favoriteSongs", []) or favorites.get("songs", [])
+    if not any("演员" in song.get("songName", "") or "演员" in song.get("name", "") for song in favorited_songs):
+        logging.error("✗ 测试失败 - 任务25未完成：未收藏'演员'")
+        return False
+
+    # 4. 检查歌词是否已显示
+    app_state = read_json_from_device("autotest/app_state.json", device_id, result, backup_dir)
+    if not app_state:
+        logging.error("✗ 测试失败 - 任务25未完成：未找到应用状态")
+        return False
+
+    if not app_state.get("lyrics_shown", False) and not app_state.get("showLyrics", False):
+        logging.error("✗ 测试失败 - 任务25未完成：未查看歌词")
+        return False
+
+    # 5. 检查AI回答是否包含第一句歌词
     if not result or "final_message" not in result:
         logging.error("✗ 测试失败 - 任务25未完成：AI未提供final_message")
         return False
 
     final_msg = result["final_message"]
-    if not final_msg or not isinstance(final_msg, str):
-        logging.error(f"✗ 测试失败 - 任务25未完成：final_message格式错误: {final_msg}")
+    if not final_msg or "简单点说话的方式简单点" not in final_msg:
+        logging.error(f"✗ 测试失败 - 任务25未完成：AI未正确报告第一句歌词。回答: '{final_msg}'")
         return False
 
-    # 1. 从设备读取真实的听歌时长数据
-    duration_data = read_json_from_device("data/duration_data.json", device_id, result, backup_dir)
-    if not duration_data:
-        logging.error("✗ 测试失败 - 任务25未完成：无法从设备读取 duration_data.json")
+    # 6. 检查MV是否在播放
+    mv_state = read_json_from_device("autotest/mv_playback.json", device_id, result, backup_dir)
+    if not mv_state:
+        logging.error("✗ 测试失败 - 任务25未完成：未找到MV播放状态")
         return False
 
-    # 2. 提取真实的听歌时长数值
-    try:
-        true_duration_str = duration_data["weeklyData"]["totalDuration"]
-        # 使用正则表达式从 "24小时29分" 中提取 ['24', '29']
-        true_numbers = re.findall(r'\d+', true_duration_str)
-        if not true_numbers:
-            logging.error(f"✗ 测试失败 - 任务25未完成：在设备数据中未能提取到时长数值: '{true_duration_str}'")
-            return False
-        logging.info(f"  → 设备中的真实时长是: '{true_duration_str}', 提取数值: {true_numbers}")
-    except (KeyError, TypeError) as e:
-        logging.error(f"✗ 测试失败 - 任务25未完成：duration_data.json 格式不正确，缺少 weeklyData.totalDuration 字段。错误: {e}")
+    if not mv_state.get("is_playing", False) and not mv_state.get("isPlaying", False):
+        logging.error("✗ 测试失败 - 任务25未完成：MV未在播放")
         return False
 
-    # 3. 从AI的回答中提取所有数字
-    ai_numbers = re.findall(r'\d+', final_msg)
-    logging.info(f"  → AI的回答是: '{final_msg}', 提取数值: {ai_numbers}")
+    logging.info("✓ 测试通过 - 任务25完成：搜索薛之谦、播放演员、收藏、查看歌词、报告第一句、播放MV")
+    return True
 
-    # 4. 比较两组数字是否一致 (排序后比较，忽略顺序)
-    if sorted(ai_numbers) == sorted(true_numbers):
-        logging.info(f"✓ 测试通过 - 任务25完成：AI返回了正确的时长数值。")
-        return True
-    else:
-        logging.error(f"✗ 测试失败 - 任务25未完成：AI返回了错误的数值。期望: {sorted(true_numbers)}, 实际: {sorted(ai_numbers)}")
-        return False
 
 if __name__ == "__main__":
-
-    print(check_weekly_listening_duration_is_reported())
+    print(check_composite_xuezhiqian_play_favorite_lyrics_mv())
