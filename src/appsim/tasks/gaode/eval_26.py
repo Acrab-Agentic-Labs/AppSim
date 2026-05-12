@@ -1,22 +1,22 @@
 """
-指令 26 验证脚本：步行导航去我1月1日去过的一家餐馆
+指令 26 验证脚本：在导航去滨江饭店的路线中添加收藏中第一行地点作为途径点
 
-答案：Lilly Cafe
+答案：目的地为滨江饭店，途经点为亚朵酒店
 
 功能说明：
-- 验证应用是否正确执行了步行导航到最近去过餐馆的任务
+- 验证应用是否正确执行了在导航路线中添加收藏地点作为途经点的任务
 - 通过 ADB 读取应用私有存储中的 JSON 文件
-- 检查 JSON 文件中是否包含必要的字段：destination（目的地）、mode（导航方式）、started（是否已开始）
+- 检查 JSON 文件中是否包含必要的字段：destination（目的地）、waypoint（途经点）、added（是否已添加）
 
 验证逻辑：
-1. 使用 ADB 读取 26_walk_to_recent_restaurant.json 文件
+1. 使用 ADB 读取 27_add_favorite_as_waypoint.json 文件
 2. 解析 JSON 内容
-3. 验证 destination 字段包含 "Lilly Cafe"
-4. 验证 mode 字段包含 "步行"
-5. 验证 started 字段为 true（表示已开始导航）
+3. 验证 destination 字段包含 "滨江饭店"
+4. 验证 waypoint 字段包含 "亚朵酒店"
+5. 验证 added 字段为 true（表示已添加途经点）
 6. 返回验证结果（PASS/FAIL）
 
-步骤：8
+步骤：10
 """
 
 import json
@@ -24,13 +24,13 @@ import subprocess
 import sys
 
 # 预设的正确答案
-EXPECTED_DESTINATION = "Lilly Cafe"
-EXPECTED_MODE = "步行"
+EXPECTED_DESTINATION = "滨江饭店"
+EXPECTED_WAYPOINT = "亚朵酒店"
 
 
-def verify_walk_to_recent_restaurant(device_id=None):
+def verify_add_favorite_as_waypoint(device_id=None):
     """
-    验证步行导航到最近去过餐馆任务是否完成
+    验证添加收藏地点作为途经点任务是否完成
 
     参数：
         device_id (str): Android 设备 ID，如果为 None 则使用默认设备
@@ -48,7 +48,7 @@ def verify_walk_to_recent_restaurant(device_id=None):
             "run-as",
             "com.example.amap_sim",  # 应用包名
             "cat",
-            "files/26_walk_to_recent_restaurant.json"  # JSON 文件路径
+            "files/27_add_favorite_as_waypoint.json"  # JSON 文件路径
         ])
 
         print("正在执行 ADB 命令读取文件...")
@@ -77,18 +77,18 @@ def verify_walk_to_recent_restaurant(device_id=None):
             print("❌ FAIL: 缺少 'destination' 字段")
             return False
 
-        if "mode" not in json_data:
-            print("❌ FAIL: 缺少 'mode' 字段")
+        if "waypoint" not in json_data:
+            print("❌ FAIL: 缺少 'waypoint' 字段")
             return False
 
-        if "started" not in json_data:
-            print("❌ FAIL: 缺少 'started' 字段")
+        if "added" not in json_data:
+            print("❌ FAIL: 缺少 'added' 字段")
             return False
 
         # 获取字段值
         destination = json_data["destination"]
-        mode = json_data["mode"]
-        started = json_data["started"]
+        waypoint = json_data["waypoint"]
+        added = json_data["added"]
 
         # 验证目的地是否包含预设答案
         if EXPECTED_DESTINATION not in str(destination):
@@ -97,23 +97,24 @@ def verify_walk_to_recent_restaurant(device_id=None):
             print(f"   实际结果: {destination}")
             return False
 
-        # 验证导航方式是否包含"步行"
-        if EXPECTED_MODE not in str(mode):
-            print("❌ FAIL: 导航方式中未包含'步行'")
-            print(f"   实际结果: {mode}")
+        # 验证途经点是否包含预设答案
+        if EXPECTED_WAYPOINT not in str(waypoint):
+            print("❌ FAIL: 途经点中未包含预期答案")
+            print(f"   预期答案: {EXPECTED_WAYPOINT}")
+            print(f"   实际结果: {waypoint}")
             return False
 
-        # 验证是否已开始导航
-        if not started:
-            print("❌ FAIL: 'started' 字段为 false，任务未完成")
-            print(f"   当前值: {started}")
+        # 验证是否已添加途经点
+        if not added:
+            print("❌ FAIL: 'added' 字段为 false，任务未完成")
+            print(f"   当前值: {added}")
             return False
 
         # 验证通过，输出结果
-        print("✓ PASS: 步行导航到最近去过餐馆任务验证成功")
+        print("✓ PASS: 添加收藏地点作为途经点任务验证成功")
         print(f"   目的地: {destination}")
-        print(f"   导航方式: {mode}")
-        print(f"   已开始导航: {started}")
+        print(f"   途经点: {waypoint}")
+        print(f"   已添加: {added}")
 
         return True
 
@@ -138,11 +139,11 @@ def verify_walk_to_recent_restaurant(device_id=None):
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("指令 26 验证：步行导航去我最近去过的一家餐馆")
+    print("指令 26 验证：在导航去滨江饭店的路线中添加收藏中第一个地点作为途径点")
     print("=" * 60)
 
     # 执行验证
-    success = verify_walk_to_recent_restaurant()
+    success = verify_add_favorite_as_waypoint()
 
     # 输出最终结果
     print("=" * 60)

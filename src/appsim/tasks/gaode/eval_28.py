@@ -1,36 +1,33 @@
 """
-指令 28 验证脚本：在导航去M+购物中心的路线中添加第一个途经点芦苇滩，第二个途经点武汉市人民政府
+指令 28 验证脚本：完成路线导航：M+购物中心到武汉市人民政府再到芦苇滩最后到我的位置的路线导航
 
-答案：目的地为M+购物中心，途经点包含芦苇滩和武汉市人民政府
+答案：站点顺序为 M+购物中心 -> 武汉市人民政府 -> 芦苇滩 -> 我的位置
 
 功能说明：
-- 验证应用是否正确执行了在导航路线中添加多个途经点的任务
+- 验证应用是否正确执行了多站点路线导航任务
 - 通过 ADB 读取应用私有存储中的 JSON 文件
-- 检查 JSON 文件中是否包含必要的字段：destination（目的地）、waypoints（途经点数组）、added（是否已添加）
+- 检查 JSON 文件中是否包含必要的字段：stops（站点数组）、completed（是否已完成）
 
 验证逻辑：
-1. 使用 ADB 读取 28_add_multiple_waypoints.json 文件
+1. 使用 ADB 读取 29_multi_stop_navigation.json 文件
 2. 解析 JSON 内容
-3. 验证 destination 字段包含 "M+" 或 "M+购物中心"
-4. 验证 waypoints 数组包含 "芦苇滩" 和 "武汉市人民政府"
-5. 验证 added 字段为 true（表示已添加途经点）
+3. 验证 stops 数组按顺序包含：M+购物中心、武汉市人民政府、芦苇滩、我的位置
+4. 验证站点顺序不能错误
+5. 验证 completed 字段为 true（表示已完成路线导航）
 6. 返回验证结果（PASS/FAIL）
-
-步骤：13
 """
 
 import json
 import subprocess
 import sys
 
-# 预设的正确答案
-EXPECTED_DESTINATION = ["M+", "M+购物中心"]
-EXPECTED_WAYPOINTS = ["芦苇滩", "武汉市人民政府"]
+# 预设的正确答案（按顺序的站点）
+EXPECTED_STOPS_ORDER = ["M+", "武汉市人民政府", "芦苇滩", "我的位置"]
 
 
-def verify_add_multiple_waypoints(device_id=None):
+def verify_multi_stop_navigation(device_id=None):
     """
-    验证添加多个途经点任务是否完成
+    验证多站点路线导航任务是否完成
 
     参数：
         device_id (str): Android 设备 ID，如果为 None 则使用默认设备
@@ -48,7 +45,7 @@ def verify_add_multiple_waypoints(device_id=None):
             "run-as",
             "com.example.amap_sim",  # 应用包名
             "cat",
-            "files/28_add_multiple_waypoints.json"  # JSON 文件路径
+            "files/29_multi_stop_navigation.json"  # JSON 文件路径
         ])
 
         print("正在执行 ADB 命令读取文件...")
@@ -73,79 +70,59 @@ def verify_add_multiple_waypoints(device_id=None):
         json_data = json.loads(stdout_text)
 
         # 验证必要字段是否存在
-        if "destination" not in json_data:
-            print("❌ FAIL: 缺少 'destination' 字段")
+        if "stops" not in json_data:
+            print("❌ FAIL: 缺少 'stops' 字段")
             return False
 
-        if "waypoints" not in json_data:
-            print("❌ FAIL: 缺少 'waypoints' 字段")
-            return False
-
-        if "added" not in json_data:
-            print("❌ FAIL: 缺少 'added' 字段")
+        if "completed" not in json_data:
+            print("❌ FAIL: 缺少 'completed' 字段")
             return False
 
         # 获取字段值
-        destination = json_data["destination"]
-        waypoints = json_data["waypoints"]
-        added = json_data["added"]
+        stops = json_data["stops"]
+        completed = json_data["completed"]
 
-        # 验证目的地是否包含预设答案中的任意一个
-        found_dest_match = False
-        matched_dest = None
-        for expected in EXPECTED_DESTINATION:
-            if expected in str(destination):
-                found_dest_match = True
-                matched_dest = expected
-                break
-
-        if not found_dest_match:
-            print("❌ FAIL: 目的地中未包含预期答案")
-            print(f"   预期答案（任意一个）: {', '.join(EXPECTED_DESTINATION)}")
-            print(f"   实际结果: {destination}")
+        # 验证stops是否为数组
+        if not isinstance(stops, list):
+            print("❌ FAIL: 'stops' 字段不是数组")
+            print(f"   当前类型: {type(stops).__name__}")
             return False
 
-        # 验证waypoints是否为数组
-        if not isinstance(waypoints, list):
-            print("❌ FAIL: 'waypoints' 字段不是数组")
-            print(f"   当前类型: {type(waypoints).__name__}")
+        # 验证站点数量
+        if len(stops) < 4:
+            print("❌ FAIL: 站点数量不足（需要至少4个）")
+            print(f"   当前数量: {len(stops)}")
+            print(f"   实际stops: {stops}")
             return False
 
-        # 验证途经点数量
-        if len(waypoints) < 2:
-            print("❌ FAIL: 途经点数量不足（需要至少2个）")
-            print(f"   当前数量: {len(waypoints)}")
-            print(f"   实际waypoints: {waypoints}")
-            return False
+        # 将stops转换为字符串列表
+        stops_str_list = [str(stop) for stop in stops]
 
-        # 将waypoints转换为字符串列表
-        waypoints_str_list = [str(wp) for wp in waypoints]
+        # 验证每个站点的顺序
+        for i, expected_stop in enumerate(EXPECTED_STOPS_ORDER):
+            if i >= len(stops):
+                print(f"❌ FAIL: 缺少第{i+1}个站点")
+                print(f"   预期第{i+1}个站点: {expected_stop}")
+                print(f"   实际stops: {stops}")
+                return False
 
-        # 验证第一个途经点是否包含"芦苇滩"
-        if "芦苇滩" not in waypoints_str_list[0]:
-            print("❌ FAIL: 第一个途经点不是'芦苇滩'")
-            print(f"   预期第一个途经点: 芦苇滩")
-            print(f"   实际第一个途经点: {waypoints[0]}")
-            return False
+            if expected_stop not in stops_str_list[i]:
+                print(f"❌ FAIL: 第{i+1}个站点顺序错误")
+                print(f"   预期第{i+1}个站点: {expected_stop}")
+                print(f"   实际第{i+1}个站点: {stops[i]}")
+                print(f"   完整站点列表: {stops}")
+                return False
 
-        # 验证第二个途经点是否包含"武汉市人民政府"
-        if "武汉市人民政府" not in waypoints_str_list[1]:
-            print("❌ FAIL: 第二个途经点不是'武汉市人民政府'")
-            print(f"   预期第二个途经点: 武汉市人民政府")
-            print(f"   实际第二个途经点: {waypoints[1]}")
-            return False
-
-        # 验证是否已添加途经点
-        if not added:
-            print("❌ FAIL: 'added' 字段为 false，任务未完成")
-            print(f"   当前值: {added}")
+        # 验证是否已完成路线导航
+        if not completed:
+            print("❌ FAIL: 'completed' 字段为 false，任务未完成")
+            print(f"   当前值: {completed}")
             return False
 
         # 验证通过，输出结果
-        print("✓ PASS: 添加多个途经点任务验证成功")
-        print(f"   目的地: {destination}")
-        print(f"   途经点: {waypoints}")
-        print(f"   已添加: {added}")
+        print("✓ PASS: 多站点路线导航任务验证成功")
+        print(f"   站点列表: {stops}")
+        print(f"   已完成: {completed}")
 
         return True
 
@@ -170,11 +147,11 @@ def verify_add_multiple_waypoints(device_id=None):
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("指令 28 验证：在导航去M+购物中心的路线中添加第一个途经点芦苇滩，第二个途经点武汉市人民政府")
+    print("指令 28 验证：完成路线导航：M+购物中心到武汉市人民政府再到芦苇滩最后到我的位置")
     print("=" * 60)
 
-    # 执行验证
-    success = verify_add_multiple_waypoints()
+    # 执行验��
+    success = verify_multi_stop_navigation()
 
     # 输出最终结果
     print("=" * 60)
