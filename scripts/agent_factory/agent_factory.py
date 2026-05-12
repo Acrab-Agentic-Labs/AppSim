@@ -17,12 +17,13 @@ class AgentEnum(Enum):
     CLAUDE45_SONNET = "Claude-4.5-Sonnet"
     QWEN3_VL = "Qwen3-VL"
     AGENTCPM_GUI = "AgentCPM-GUI"
+    M3A_AGENT = "m3a_agent"
 
 
 def create_agent(
-    agent_name: AgentEnum,
-    device_id: str,
-    screenshots_dir: str = "screenshots",
+        agent_name: AgentEnum,
+        device_id: str,
+        screenshots_dir: str = "screenshots",
 ) -> BaseAgent:
     """
     创建 Agent 实例
@@ -42,6 +43,18 @@ def create_agent(
     api_key = os.getenv("API_KEY")
     base_url = os.getenv("API_BASE")
     model_name = os.getenv("MODEL_NAME")
+
+    def _create_m3a_agent(selected_api_key: str, selected_base_url: str, selected_model_name: str) -> BaseAgent:
+        from appsim.agents.m3a_agent import M3AAgent
+
+        return M3AAgent(
+            api_key=selected_api_key,
+            base_url=selected_base_url,
+            model_name=selected_model_name,
+            device_id=device_id,
+            screenshots_dir=screenshots_dir,
+            model_kwargs={},
+        )
 
     if agent_name == AgentEnum.SEED15_VL:
         # 导入模型
@@ -84,65 +97,26 @@ def create_agent(
             model_kwargs=model_kwargs,
         )
 
-    elif agent_name == AgentEnum.GPT5:
-        # 导入模型
-        from appsim.agents.m3a_agent import M3AAgent
+    elif agent_name == AgentEnum.M3A_AGENT:
+        return _create_m3a_agent(api_key, base_url, model_name)
 
-        # 获取特定环境变量配置
+    elif agent_name == AgentEnum.GPT5:
         api_key = os.getenv("GPT5_API_KEY", api_key)
         base_url = os.getenv("GPT5_API_BASE", base_url)
         model_name = os.getenv("GPT5_MODEL_NAME", model_name)
-        # 超参
-        model_kwargs = {}
-
-        return M3AAgent(
-            api_key=api_key,
-            base_url=base_url,
-            model_name=model_name,
-            device_id=device_id,
-            screenshots_dir=screenshots_dir,
-            model_kwargs=model_kwargs,
-        )
+        return _create_m3a_agent(api_key, base_url, model_name)
 
     elif agent_name == AgentEnum.GEMINI25_PRO:
-        # 导入模型
-        from appsim.agents.m3a_agent import M3AAgent
-
-        # 获取特定环境变量配置
         api_key = os.getenv("GEMINI25_PRO_API_KEY", api_key)
         base_url = os.getenv("GEMINI25_PRO_API_BASE", base_url)
         model_name = os.getenv("GEMINI25_PRO_MODEL_NAME", model_name)
-        # 超参
-        model_kwargs = {}
-
-        return M3AAgent(
-            api_key=api_key,
-            base_url=base_url,
-            model_name=model_name,
-            device_id=device_id,
-            screenshots_dir=screenshots_dir,
-            model_kwargs=model_kwargs,
-        )
+        return _create_m3a_agent(api_key, base_url, model_name)
 
     elif agent_name == AgentEnum.CLAUDE45_SONNET:
-        # 导入模型
-        from appsim.agents.m3a_agent import M3AAgent
-
-        # 获取特定环境变量配置
         api_key = os.getenv("CLAUDE45_SONNET_API_KEY", api_key)
         base_url = os.getenv("CLAUDE45_SONNET_API_BASE", base_url)
         model_name = os.getenv("CLAUDE45_SONNET_MODEL_NAME", model_name)
-        # 超参
-        model_kwargs = {}
-
-        return M3AAgent(
-            api_key=api_key,
-            base_url=base_url,
-            model_name=model_name,
-            device_id=device_id,
-            screenshots_dir=screenshots_dir,
-            model_kwargs=model_kwargs,
-        )
+        return _create_m3a_agent(api_key, base_url, model_name)
 
     elif agent_name == AgentEnum.QWEN3_VL:
         # 导入模型
@@ -189,3 +163,4 @@ def create_agent(
         )
 
     raise ValueError(f"无效的 Agent 名称: {agent_name}")
+

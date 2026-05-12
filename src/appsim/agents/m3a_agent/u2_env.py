@@ -16,19 +16,22 @@ class UIElement:
     """UI 元素数据结构，兼容 M3A 的 UIElement 接口"""
 
     def __init__(
-        self,
-        bounds: Tuple[int, int, int, int],  # (left, top, right, bottom)
-        text: Optional[str] = None,
-        content_description: Optional[str] = None,
-        hint_text: Optional[str] = None,
-        tooltip: Optional[str] = None,
-        is_clickable: bool = False,
-        is_long_clickable: bool = False,
-        is_editable: bool = False,
-        is_scrollable: bool = False,
-        is_focusable: bool = False,
-        is_selected: bool = False,
-        is_checked: bool = False,
+            self,
+            bounds: Tuple[int, int, int, int],  # (left, top, right, bottom)
+            text: Optional[str] = None,
+            content_description: Optional[str] = None,
+            hint_text: Optional[str] = None,
+            tooltip: Optional[str] = None,
+            is_clickable: bool = False,
+            is_long_clickable: bool = False,
+            is_editable: bool = False,
+            is_scrollable: bool = False,
+            is_focusable: bool = False,
+            is_selected: bool = False,
+            is_checked: bool = False,
+            class_name: Optional[str] = None,
+            resource_name: Optional[str] = None,
+            package_name: Optional[str] = None,
     ):
         self.bounds = bounds
         self.text = text
@@ -42,6 +45,9 @@ class UIElement:
         self.is_focusable = is_focusable
         self.is_selected = is_selected
         self.is_checked = is_checked
+        self.class_name = class_name
+        self.resource_name = resource_name
+        self.package_name = package_name
 
 
 class U2Env:
@@ -171,6 +177,9 @@ class U2Env:
                 text = node.get("text") or None
                 content_desc = node.get("content-desc") or None
                 hint_text = node.get("hint") or None
+                class_name = node.get("class") or None
+                resource_name = node.get("resource-id") or None
+                package_name = node.get("package") or None
 
                 # 判断是否为可交互元素
                 is_interactive = is_clickable or is_long_clickable or is_editable or is_scrollable or is_focusable
@@ -195,6 +204,9 @@ class U2Env:
                     is_focusable=is_focusable,
                     is_selected=parse_bool("selected", False),
                     is_checked=parse_bool("checked", False),
+                    class_name=class_name,
+                    resource_name=resource_name,
+                    package_name=package_name,
                 )
 
                 return ui_element, is_interactive
