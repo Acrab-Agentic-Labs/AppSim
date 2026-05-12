@@ -14,7 +14,6 @@ from PIL import Image
 from ..base import AgentExecutionResult, BaseAgent
 from .action_executor import ActionExecutor
 from .m3a_utils import (
-    add_screenshot_label,
     add_ui_element_mark,
     parse_reason_action_output,
     validate_ui_element,
@@ -24,7 +23,6 @@ from .prompt import (
     ACTION_SELECTION_PROMPT_TEMPLATE,
     GUIDANCE,
     PROMPT_PREFIX,
-    SUMMARY_PROMPT_TEMPLATE,
 )
 from .u2_env import U2Env, UIElement
 
@@ -55,8 +53,8 @@ def _generate_ui_element_description(ui_element: UIElement, index: int) -> str:
 
 
 def _generate_ui_elements_description_list(
-    ui_elements: List[UIElement],
-    screen_width_height_px: tuple[int, int],
+        ui_elements: List[UIElement],
+        screen_width_height_px: tuple[int, int],
 ) -> str:
     """生成 UI 元素列表的描述字符串."""
     tree_info = ""
@@ -67,10 +65,10 @@ def _generate_ui_elements_description_list(
 
 
 def _action_selection_prompt(
-    goal: str,
-    history: List[str],
-    ui_elements: str,
-    additional_guidelines: Optional[List[str]] = None,
+        goal: str,
+        history: List[str],
+        ui_elements: str,
+        additional_guidelines: Optional[List[str]] = None,
 ) -> str:
     """生成动作选择提示词."""
     if history:
@@ -94,36 +92,54 @@ def _action_selection_prompt(
     )
 
 
-def _summarize_prompt(
-    action: str,
-    reason: str,
-    goal: str,
-    before_elements: str,
-    after_elements: str,
-) -> str:
-    """生成总结提示词."""
-    return SUMMARY_PROMPT_TEMPLATE.format(
-        prompt_prefix=PROMPT_PREFIX,
-        goal=goal,
-        before_elements=before_elements,
-        after_elements=after_elements,
-        action=action,
-        reason=reason,
-    )
+def _build_history_summary(action_dict: Dict[str, Any], reason: str) -> str:
+    """为后续动作选择生成轻量历史摘要，不再额外调用 LLM."""
+    action_type = action_dict.get("action_type", "unknown")
+
+    if action_type == "click":
+        action_desc = f"clicked UI element {action_dict.get('index')}"
+    elif action_type == "long_press":
+        action_desc = f"long pressed UI element {action_dict.get('index')}"
+    elif action_type == "input_text":
+        text = str(action_dict.get("text", ""))
+        truncated_text = text if len(text) <= 30 else text[:27] + "..."
+        action_desc = f'input "{truncated_text}" into UI element {action_dict.get("index")}'
+    elif action_type == "scroll":
+        index = action_dict.get("index")
+        target = f"UI element {index}" if index is not None else "the screen"
+        action_desc = f"scrolled {action_dict.get('direction')} on {target}"
+    elif action_type == "keyboard_enter":
+        action_desc = "pressed keyboard enter"
+    elif action_type == "navigate_home":
+        action_desc = "navigated to the home screen"
+    elif action_type == "navigate_back":
+        action_desc = "navigated back"
+    elif action_type == "open_app":
+        action_desc = f'opened app "{action_dict.get("app_name", "")}"'
+    elif action_type == "wait":
+        action_desc = "waited for the screen to update"
+    else:
+        action_desc = f"executed action {action_type}"
+
+    compact_reason = " ".join(reason.split())
+    if len(compact_reason) > 160:
+        compact_reason = compact_reason[:157] + "..."
+
+    return f"Executed {action_desc}. Reason: {compact_reason}"
 
 
 class M3AAgent(BaseAgent):
     """M3A Agent - 基于 uiautomator2 和 OpenAI 的多模态 Android 自动化 Agent"""
 
     def __init__(
-        self,
-        api_key: str,
-        base_url: str,
-        model_name: str,
-        device_id: str,
-        screenshots_dir: str = "screenshots",
-        wait_after_action_seconds: float = 2.0,
-        model_kwargs: Optional[dict] = None,
+            self,
+            api_key: str,
+            base_url: str,
+            model_name: str,
+            device_id: str,
+            screenshots_dir: str = "screenshots",
+            wait_after_action_seconds: float = 2.0,
+            model_kwargs: Optional[dict] = None,
     ):
         """初始化 M3A Agent.
 
@@ -399,73 +415,17 @@ Action: {"action_type": "status", "goal_status": "infeasible"}"""
         # 等待界面稳定
         time.sleep(self.wait_after_action_seconds)
 
-        # 获取执行后的状态
-        state = self.env.get_state(wait_to_stabilize=False)
-        logical_screen_size = self.env.logical_screen_size
-        orientation = self.env.orientation
-        physical_frame_boundary = self.env.physical_frame_boundary
-
-        after_ui_elements = state["ui_elements"]
-        after_ui_elements_list = _generate_ui_elements_description_list(after_ui_elements, logical_screen_size)
-        after_screenshot = state["pixels"].copy()
-
-        # 在截图上标记 UI 元素
-        for index, ui_element in enumerate(after_ui_elements):
-            if validate_ui_element(ui_element, logical_screen_size):
-                add_ui_element_mark(
-                    after_screenshot,
-                    ui_element,
-                    index,
-                    logical_screen_size,
-                    physical_frame_boundary,
-                    orientation,
-                )
-
-        # 添加标签
-        add_screenshot_label(step_data["before_screenshot_with_som"], "before")
-        add_screenshot_label(after_screenshot, "after")
-        step_data["after_screenshot_with_som"] = after_screenshot.copy()
-
-        # 生成总结提示词
-        summary_prompt = _summarize_prompt(
-            action,
-            reason,
-            goal,
-            before_ui_elements_list,
-            after_ui_elements_list,
-        )
-
-        # 调用 LLM 生成总结
-        summary, is_safe, raw_response = self.llm.predict_mm(
-            summary_prompt,
-            [
-                step_data["before_screenshot_with_som"],
-                after_screenshot,
-            ],
-        )
-
-        if is_safe == False:
-            summary = "Summary triggered LLM safety classifier."
-
-        if not raw_response:
-            logging.error(f"Error calling LLM in summarization phase. This should not happen: {summary}")
-            step_data["summary"] = f"Some error occurred calling LLM during summarization phase: {summary}"
-            self.history.append(step_data)
-            return {"done": False, "data": step_data}
-
-        step_data["summary_prompt"] = summary_prompt
-        step_data["summary"] = f"Action selected: {action}. {summary}"
-        logging.info(f"Summary: {summary}")
-        step_data["summary_raw_response"] = raw_response
+        step_data["summary"] = _build_history_summary(action_dict, reason)
+        logging.info(f"Summary: {step_data['summary']}")
 
         self.history.append(step_data)
         return {"done": False, "data": step_data}
 
     def execute_instruction(
-        self,
-        instruction: str,
-        max_steps: int = 50,
-        max_attempts_per_step: int = 3,
+            self,
+            instruction: str,
+            max_steps: int = 50,
+            max_attempts_per_step: int = 3,
     ) -> AgentExecutionResult:
         """执行指令（实现 BaseAgent 接口）.
 
@@ -596,3 +556,4 @@ Action: {"action_type": "status", "goal_status": "infeasible"}"""
         """关闭 Agent，释放资源"""
         if hasattr(self, "env") and self.env is not None:
             self.env.close()
+
