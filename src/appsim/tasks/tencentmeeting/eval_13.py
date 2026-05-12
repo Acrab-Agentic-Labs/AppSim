@@ -1,179 +1,100 @@
-"""
-功能: 验证手机号13开头的联系人数目
-验证目标: 统计phone字段以"13"开头的用户数量
-数据来源: users.json
-"""
-
 import os
+import json
 import logging
-
-try:
-    from ._answer_utils import answer_contains_any, answer_contains_number
-except ImportError:
-    from _answer_utils import answer_contains_any, answer_contains_number
-
-
-# ============================================================================
-# 常量定义 - 每个脚本独立定义
-# ============================================================================
+from appsim.utils import read_json_from_device
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-EXPECTED_COUNT = 40
-
-# 数据文件常量
+USER_ID = "user001"
 MEETINGS_FILE = "meetings.json"
-USERS_FILE = "users.json"
-MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
-PERSONAL_MEETING_ROOMS_FILE = "personal_meeting_rooms.json"
-MESSAGES_FILE = "messages.json"
-HAND_RAISE_RECORDS_FILE = "hand_raise_records.json"
-MEETING_INVITATIONS_FILE = "meeting_invitations.json"
 
-# JSON字段名常量
-MEETING_ID_KEY = "meetingId"
-USER_ID_KEY = "userId"
-MEETING_STATUS_KEY = "status"
+# 常量定义
 MEETING_TYPE_KEY = "meetingType"
-PARTICIPANT_IDS_KEY = "participantIds"
-IS_MUTED_KEY = "isMuted"
-IS_CAMERA_ON_KEY = "isCameraOn"
-IS_SHARING_SCREEN_KEY = "isSharingScreen"
-IS_HAND_RAISED_KEY = "isHandRaised"
+MEETING_STATUS_KEY = "status"
+MEETING_TOPIC_KEY = "topic"
+MEETING_SETTINGS_KEY = "settings"
+MEETING_START_TIME_KEY = "startTime"
 
-# 业务常量
-MEETING_STATUS_UPCOMING = "UPCOMING"
-MEETING_STATUS_ONGOING = "ONGOING"
-MEETING_STATUS_ENDED = "ENDED"
 MEETING_TYPE_INSTANT = "INSTANT"
-MEETING_TYPE_SCHEDULED = "SCHEDULED"
-MEETING_TYPE_PERSONAL = "PERSONAL"
+MEETING_STATUS_ONGOING = "ONGOING"
+DEFAULT_QUICK_MEETING_TOPIC = "快速会议"
+DEFAULT_QUICK_MEETING_SETTINGS = {
+    "allowParticipantUnmute": True,
+    "cameraOffOnEntry": True,
+    "enableWaitingRoom": False,
+    "muteOnEntry": True,
+}
 
-
-# ============================================================================
-# 工具函数 - read_json_from_device 内联实现
-# ============================================================================
-
-def read_json_from_device(
-    device_id: str,
-    package_name: str,
-    device_json_path: str,
-    backup_dir: str
-) -> dict or list or None:
-    """
-    从Android设备读取JSON文件并返回解析后的数据。
-
-    此函数是appsim.utils.read_json_from_device的独立实现，
-    确保每个脚本完全自包含，无外部依赖。
-
-    参数:
-        device_id (str): Android设备ID（adb设备序列号）
-        package_name (str): 应用包名
-        device_json_path (str): 设备上JSON文件的相对路径（相对于app私有目录）
-        backup_dir (str): 本地备份目录路径
-
-    返回:
-        dict/list/None: 解析后的JSON数据，失败返回None
-    """
-    import subprocess
-    import pathlib
-    import json
-
-    # 创建备份目录
-    pathlib.Path(backup_dir).mkdir(parents=True, exist_ok=True)
-
-    # 本地文件路径
-    local_file_path = os.path.join(backup_dir, pathlib.Path(device_json_path).name)
-
-    try:
-        # 检查设备文件是否存在
-        _NO_FILE_STR = "No such file or directory"
-        cmd_ls = ["adb", "-s", device_id, "exec-out", "run-as", package_name, "ls", device_json_path]
-        result_ls = subprocess.run(cmd_ls, encoding="utf-8", capture_output=True, check=False)
-
-        if _NO_FILE_STR in result_ls.stdout or result_ls.returncode != 0:
-            logging.error(
-                f"文件在设备上不存在: {device_id}:{package_name}:{device_json_path}. "
-                f"Stderr: {result_ls.stderr.strip()}"
-            )
-            raise FileNotFoundError(
-                f"File not found: {device_id}:{package_name}:{device_json_path}"
-            )
-
-        # 拉取文件
-        cmd_cat = ["adb", "-s", device_id, "exec-out", "run-as", package_name, "cat", device_json_path]
-        with open(local_file_path, "w", encoding="utf-8") as fw:
-            result_cat = subprocess.run(cmd_cat, stdout=fw, stderr=subprocess.PIPE, check=False)
-
-        if result_cat.returncode != 0:
-            logging.error(f"ADB cat命令执行失败: {device_json_path}. Stderr: {result_cat.stderr.strip()}")
-            raise Exception(f"ADB cat command failed for {device_json_path}")
-
-        # 解析JSON
-        with open(local_file_path, "r", encoding="utf-8") as fr:
-            data = json.load(fr)
-
-        logging.info(f"成功从设备读取JSON: {device_json_path}")
-        return data
-
-    except FileNotFoundError:
-        logging.error(f"设备文件不存在: {device_json_path}")
-        return None
-    except json.JSONDecodeError as e:
-        logging.error(f"JSON解析失败: {local_file_path}, 错误: {e}")
-        return None
-    except Exception as e:
-        logging.error(f"读取设备JSON文件时发生未知错误: {e}")
-        return None
-
-
-# ============================================================================
-# 验证函数 - 核心业务逻辑
-# ============================================================================
-
-def verify_phone_13_count(
+def check_quick_meeting_created(
     result=None,
     device_id=None,
     backup_dir=None,
 ) -> bool:
     """
-    验证通讯录中手机号13开头的联系人数目是否与预期匹配。
+    检查是否成功创建了一场默认配置的快速会议。
 
     参数:
-        expected_count (int): 期望的手机号13开头人数。
+        expected_topic (str): 快速会议的默认主题。
+        expected_settings (dict, optional): 快速会议的默认设置。如果为None，则使用预设的默认值。
         device_id (str, optional): Android设备的ID. Defaults to None.
         backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
-                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_reasoning_tasks")。
+                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_6")。
 
     返回:
-        bool: 如果实际手机号13开头人数与期望数目匹配则返回True，否则返回False。
+        bool: 如果找到一场符合默认配置的快速会议，返回True，否则返回False。
     """
 
     # 使用常量
-    expected_count = EXPECTED_COUNT
+    user_id = USER_ID
+    expected_settings = DEFAULT_QUICK_MEETING_SETTINGS
+    expected_topic = DEFAULT_QUICK_MEETING_TOPIC
 
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_36")
+        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_6")
 
-    users_data = read_json_from_device(
+    data = read_json_from_device(
         device_id=device_id,
         package_name=PACKAGE_NAME,
-        device_json_path=f"files/{USERS_FILE}",
+        device_json_path=f"files/{MEETINGS_FILE}",
         backup_dir=backup_dir,
     )
 
-    if users_data is None:
-        print(f"错误: 无法从设备读取或解析 {USERS_FILE}。")
+    if data is None:
+        logging.error(f"错误: 无法从设备读取或解析 {MEETINGS_FILE}。")
         return False
 
-    actual_count = len([u for u in users_data if u.get("phone", "").startswith("13")])
-    if actual_count != expected_count:
-        logging.error("Phone-prefix count %s did not match expected %s.", actual_count, expected_count)
+    try:
+        # 筛选出所有进行中的快速会议
+        ongoing_instant_meetings = [
+            m
+            for m in data
+            if m.get(MEETING_TYPE_KEY) == MEETING_TYPE_INSTANT
+            and m.get(MEETING_STATUS_KEY) == MEETING_STATUS_ONGOING
+        ]
+
+        if not ongoing_instant_meetings:
+            logging.error(f"未找到任何进行中的快速会议。")
+            return False
+
+        # 找到最新创建的快速会议 (根据 startTime 判断)
+        latest_quick_meeting = max(
+            ongoing_instant_meetings, key=lambda x: x.get(MEETING_START_TIME_KEY, 0)
+        )
+
+        # 检查主题和设置是否符合默认配置
+        topic_match = latest_quick_meeting.get(MEETING_TOPIC_KEY) == expected_topic
+        settings_match = latest_quick_meeting.get(MEETING_SETTINGS_KEY) == expected_settings
+
+        if not (topic_match and settings_match):
+            logging.error(f"最新快速会议的主题或设置不符合预期。实际主题: {latest_quick_meeting.get(MEETING_TOPIC_KEY)}, 期望主题: {expected_topic}. 实际设置: {latest_quick_meeting.get(MEETING_SETTINGS_KEY)}, 期望设置: {expected_settings}.")
+            return False
+
+        return True
+
+    except Exception as e:
+        logging.error(f"处理数据时发生错误: {e}")
         return False
-
-    return answer_contains_number(result, actual_count)
-
 
 if __name__ == '__main__':
-    print(read_json_from_device())
+    print(check_quick_meeting_created())

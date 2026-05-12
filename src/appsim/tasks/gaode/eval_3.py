@@ -31,7 +31,7 @@ def validate(result=None, **kwargs):
     # --- 步骤 1: 提取待检测的文本 ---
     # 尝试寻找 <ans> 标签
     tag_match = re.search(r"<ans>\s*(.*?)\s*</ans>", final_msg, re.IGNORECASE | re.DOTALL)
-    
+
     if tag_match:
         # 如果有标签，我们只检测标签里的内容
         text_to_check = tag_match.group(1).strip()

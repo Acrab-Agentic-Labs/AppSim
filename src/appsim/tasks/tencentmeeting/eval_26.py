@@ -1,125 +1,262 @@
-"""
-功能: 计算所有已结束会议的平均时长
-数据库位置: meetings.json
+"""Composite task: copy the personal meeting-room link and answer count 6.
+
+The personal-link copy check is inlined from the former eval_7.py so this
+registered task no longer depends on deleted atomic task files.
 """
 
-import os
 import logging
-from appsim.utils import read_json_from_device
+import re
+
 try:
-    from ._answer_utils import answer_contains_any, answer_contains_number
+    from ._answer_utils import answer_contains_number
+    from ._device_utils import (
+        contains_text,
+        current_ui_text,
+        default_backup_dir,
+        list_records,
+        normalize_text,
+        read_clipboard_text,
+        read_json_from_device,
+    )
 except ImportError:
-    from _answer_utils import answer_contains_any, answer_contains_number
+    from _answer_utils import answer_contains_number
+    from _device_utils import (
+        contains_text,
+        current_ui_text,
+        default_backup_dir,
+        list_records,
+        normalize_text,
+        read_clipboard_text,
+        read_json_from_device,
+    )
 
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
+USER_ID = "user001"
+MEETING_ID = "4157555988"
+EXPECTED_LINK = "meeting.tencent.com/p/4157555988"
+ROOMS_FILE = "personal_meeting_rooms.json"
+LAST_COPIED_LINK_FILE = "last_copied_link.json"
+CLIPBOARD_ACTIONS_FILE = "clipboard_actions.json"
+COPY_ACTION_TYPE = "personal_room_link"
+EXPECTED_PARTICIPANT_COUNT = 6
 
-# 任务特定常量
-EXPECTED_MINUTES = 78
-TOLERANCE = 5
-MEETINGS_FILE = "meetings.json"
+COPY_SUCCESS_MARKERS = [
+    "Copied",
+    "Link copied",
+    "Copied to clipboard",
+    "\u94fe\u63a5\u5df2\u590d\u5236",
+    "\u590d\u5236\u6210\u529f",
+    "\u5df2\u590d\u5236",
+]
+CLIPBOARD_UNREADABLE_MARKERS = [
+    "securityexception",
+    "permission denial",
+    "permission denied",
+    "access denied",
+    "can't find service",
+    "unknown command",
+    "not found",
+    "no primary clip",
+    "no clip",
+    "primaryclip=null",
+    "primary clip: null",
+    "clipboard is empty",
+    "service not found",
+]
 
-def verify_average_meeting_duration(
+
+def _room_data_has_expected_link(device_id, backup_dir) -> bool:
+    rooms = list_records(
+        read_json_from_device(
+            device_id=device_id,
+            package_name=PACKAGE_NAME,
+            device_json_path=f"files/{ROOMS_FILE}",
+            backup_dir=backup_dir,
+        )
+    )
+    return any(
+        str(room.get("userId")) == USER_ID
+        and str(room.get("meetingId")) == MEETING_ID
+        and EXPECTED_LINK.casefold() in str(room.get("meetingLink", "")).casefold()
+        for room in rooms
+    )
+
+
+def _text_has_expected_link(value: str) -> bool:
+    compact_text = re.sub(r"\s+", "", str(value or "")).casefold()
+    return bool(re.search(rf"(?:https?://)?{re.escape(EXPECTED_LINK.casefold())}", compact_text))
+
+
+def _copy_record_matches(record) -> bool:
+    if not isinstance(record, dict):
+        return False
+    return (
+        str(record.get("userId")) == USER_ID
+        and str(record.get("type")) == COPY_ACTION_TYPE
+        and _text_has_expected_link(record.get("text"))
+        and record.get("timestamp") is not None
+    )
+
+
+def _records_from_data(data) -> list[dict]:
+    if isinstance(data, dict):
+        return [data]
+    return list_records(data)
+
+
+def _read_optional_file(device_id, backup_dir, file_name):
+    return read_json_from_device(
+        device_id=device_id,
+        package_name=PACKAGE_NAME,
+        device_json_path=f"files/{file_name}",
+        backup_dir=backup_dir,
+        required=False,
+    )
+
+
+def _record_timestamp(record: dict) -> int:
+    try:
+        return int(record.get("timestamp") or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _latest_relevant_record(records: list[dict]) -> dict | None:
+    relevant_records = [
+        record
+        for record in records
+        if str(record.get("userId")) == USER_ID and str(record.get("type")) == COPY_ACTION_TYPE
+    ]
+    if not relevant_records:
+        return None
+    return max(relevant_records, key=_record_timestamp)
+
+
+def _copy_record_status(device_id, backup_dir) -> bool | None:
+    last_record_data = _read_optional_file(device_id, backup_dir, LAST_COPIED_LINK_FILE)
+    if last_record_data is not None:
+        records = _records_from_data(last_record_data)
+        if records:
+            return any(_copy_record_matches(record) for record in records)
+        return False
+
+    actions_data = _read_optional_file(device_id, backup_dir, CLIPBOARD_ACTIONS_FILE)
+    if actions_data is None:
+        return None
+
+    latest_record = _latest_relevant_record(_records_from_data(actions_data))
+    if latest_record is None:
+        return False
+    return _copy_record_matches(latest_record)
+
+
+def _clipboard_sections(clipboard_text: str) -> list[tuple[str, str]]:
+    return re.findall(r"(?ms)^--- (.*?) ---\n(.*?)(?=^--- .*? ---\n|\Z)", clipboard_text or "")
+
+
+def _clipboard_read_unavailable(clipboard_text: str) -> bool:
+    normalized = normalize_text(clipboard_text).casefold()
+    if not normalized:
+        return True
+
+    sections = _clipboard_sections(clipboard_text)
+    if not sections:
+        return any(marker in normalized for marker in CLIPBOARD_UNREADABLE_MARKERS)
+
+    saw_unreadable_output = False
+    for label, content in sections:
+        section = normalize_text(content).casefold()
+        if not section:
+            continue
+        if any(marker in section for marker in CLIPBOARD_UNREADABLE_MARKERS):
+            saw_unreadable_output = True
+            continue
+        if label.startswith("cmd clipboard") or label.endswith("decoded utf16"):
+            return False
+        if label == "dumpsys clipboard" and any(marker in section for marker in ("text=", "text:", "clipdata")):
+            return False
+        if label.startswith("service call clipboard") and "result: parcel" in section:
+            saw_unreadable_output = True
+
+    return saw_unreadable_output
+
+
+def _ui_has_copy_success_evidence(device_id, backup_dir) -> bool:
+    ui_text = current_ui_text(device_id, backup_dir)
+    if not ui_text:
+        return False
+    return contains_text(ui_text, [EXPECTED_LINK]) and contains_text(ui_text, COPY_SUCCESS_MARKERS)
+
+
+def _verify_invitation_link_copied(device_id=None, backup_dir=None) -> bool:
+    if backup_dir is None:
+        backup_dir = default_backup_dir("tencentmeeting_eval_26")
+
+    room_ok = _room_data_has_expected_link(device_id, backup_dir)
+    if not room_ok:
+        logging.error("Personal room data does not contain expected link %s.", EXPECTED_LINK)
+        return False
+
+    copy_record_status = _copy_record_status(device_id, backup_dir)
+    if copy_record_status is True:
+        logging.info("App private copy record contains expected personal room link.")
+        return True
+    if copy_record_status is False:
+        logging.error("App private copy record does not contain expected link %s.", EXPECTED_LINK)
+        return False
+
+    clipboard_text = read_clipboard_text(device_id, backup_dir)
+    if not _text_has_expected_link(clipboard_text):
+        if _clipboard_read_unavailable(clipboard_text) and _ui_has_copy_success_evidence(device_id, backup_dir):
+            logging.info("Clipboard was unreadable, but current UI shows the expected link and copy success.")
+            return True
+        logging.error("Clipboard does not contain expected link %s.", EXPECTED_LINK)
+        return False
+    return True
+
+
+def _run_subcheck(label, verify_func, *args, **kwargs) -> bool:
+    try:
+        return bool(verify_func(*args, **kwargs))
+    except Exception:
+        logging.exception("Composite eval_26 subcheck raised an exception: %s.", label)
+        return False
+
+
+def verify_invitation_link_copied_and_participant_count(
     result=None,
     device_id=None,
     backup_dir=None,
+    **kwargs,
 ) -> bool:
-    """
-    验证所有已结束会议的平均时长。
+    """Verify copied personal-room link and final answer participant count 6."""
 
-    参数:
-        expected_minutes (int): 期望的平均时长（分钟）。
-        tolerance (int): 容差范围（分钟）。默认为5分钟。
-        device_id (str, optional): Android设备的ID. Defaults to None.
-        backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
-                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_33")。
-
-    返回:
-        bool: 如果实际平均时长在期望范围内则返回True，否则返回False。
-    """
-
-    # 使用常量
-    expected_minutes = EXPECTED_MINUTES
-    tolerance = TOLERANCE
-
+    if kwargs:
+        logging.debug("Composite eval_26 ignored extra args: %s", sorted(kwargs))
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_33")
+        backup_dir = default_backup_dir("tencentmeeting_eval_26")
 
-    try:
-        meetings_data = read_json_from_device(
-            device_id=device_id,
-            package_name=PACKAGE_NAME,
-            device_json_path=f"files/{MEETINGS_FILE}",
-            backup_dir=backup_dir,
-        )
-    except FileNotFoundError:
-        logging.error(f"错误: 文件在设备上未找到: files/{MEETINGS_FILE}")
-        return False
-    except Exception as e:
-        logging.error(f"从设备读取JSON文件时发生错误: {e}")
-        return False
+    link_copied_ok = _run_subcheck(
+        "copy personal meeting-room link",
+        _verify_invitation_link_copied,
+        device_id=device_id,
+        backup_dir=backup_dir,
+    )
+    participant_count_ok = answer_contains_number(result, EXPECTED_PARTICIPANT_COUNT)
 
-    if meetings_data is None:
-        logging.error(f"无法从设备读取或解析 {MEETINGS_FILE}。")
-        return False
+    if link_copied_ok:
+        logging.info("Composite eval_26 subcheck passed: copied personal-room link.")
+    else:
+        logging.error("Composite eval_26 subcheck failed: copied personal-room link.")
 
-    try:
-        # 过滤已结束的会议
-        ended_meetings = [m for m in meetings_data if m.get("status") == "ENDED"]
+    if participant_count_ok:
+        logging.info("Composite eval_26 subcheck passed: answer contains %s.", EXPECTED_PARTICIPANT_COUNT)
+    else:
+        logging.error("Composite eval_26 subcheck failed: answer does not contain %s.", EXPECTED_PARTICIPANT_COUNT)
 
-        if not ended_meetings:
-            logging.error("没有找到已结束的会议。")
-            return False
-
-        # 计算每个会议的时长（分钟）
-        durations = []
-        MAX_REASONABLE_DURATION_MINUTES = 24 * 60  # 24小时
-        for meeting in ended_meetings:
-            start_time = meeting.get("startTime")
-            end_time = meeting.get("endTime")
-
-            if start_time and end_time:
-                duration_minutes = (end_time - start_time) / (1000 * 60)
-                # 过滤掉不合理的时长（负数或超过24小时）
-                if 0 < duration_minutes <= MAX_REASONABLE_DURATION_MINUTES:
-                    durations.append(duration_minutes)
-                else:
-                    logging.warning(f"跳过不合理的会议时长: {duration_minutes:.1f} 分钟 (会议ID: {meeting.get('meetingId', 'unknown')})")
-
-        if not durations:
-            logging.error("没有找到有效的会议时长数据。")
-            return False
-
-        # 计算平均时长
-        avg_duration = sum(durations) / len(durations)
-
-        # 检查是否在容差范围内
-        if abs(avg_duration - expected_minutes) > tolerance:
-            logging.error(
-                "Average ended-meeting duration was %.1f minutes, expected %s within tolerance %s.",
-                avg_duration,
-                expected_minutes,
-                tolerance,
-            )
-            return False
-
-        return answer_contains_number(result, round(avg_duration)) or answer_contains_number(result, round(avg_duration, 1))
-    except Exception as e:
-        logging.error(f"处理数据时发生错误: {e}")
-        return False
+    return link_copied_ok and participant_count_ok
 
 
 if __name__ == "__main__":
-    # 测试代码
-    import shutil
-    temp_backup_dir = os.path.join(os.getcwd(), "temp_eval_backup_33")
-
-    print("注意: 本地测试无法模拟真实设备文件拉取。")
-    print(f"假设调用: verify_average_meeting_duration(expected_minutes=88, tolerance=5, backup_dir='{temp_backup_dir}')")
-
-    if os.path.exists(temp_backup_dir):
-        shutil.rmtree(temp_backup_dir)
-
-
-if __name__ == '__main__':
-    print(verify_average_meeting_duration())
+    print(verify_invitation_link_copied_and_participant_count())

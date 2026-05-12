@@ -29,7 +29,7 @@ def validate(result=None, **kwargs):
 
     # 2. 提取待检测文本 (正则匹配 <ans>内容 </ans>)
     tag_match = re.search(r"<ans>\s*(.*?)\s*</ans>", final_msg, re.IGNORECASE | re.DOTALL)
-    
+
     if tag_match:
         text_to_check = tag_match.group(1).strip()
         logging.info(f"  → 从 <ans> 标签中提取到: '{text_to_check}'")

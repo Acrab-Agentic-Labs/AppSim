@@ -1,107 +1,185 @@
-"""
-功能: 统计指定会议中指定用户发送的消息数量
-数据库位置: messages.json
+"""Composite task: raise hand and inspect the target contact details.
+
+This file inlines the logic from the former atomic checks for hand raise and
+phone-number contact lookup so the deleted eval_5.py/eval_6.py files are no
+longer required at import time.
 """
 
-import os
 import logging
-from appsim.utils import read_json_from_device
+
 try:
-    from ._answer_utils import answer_contains_any, answer_contains_number
+    from ._device_utils import (
+        contains_text,
+        current_ui_text,
+        default_backup_dir,
+        list_records,
+        read_json_from_device,
+    )
 except ImportError:
-    from _answer_utils import answer_contains_any, answer_contains_number
+    from _device_utils import (
+        contains_text,
+        current_ui_text,
+        default_backup_dir,
+        list_records,
+        read_json_from_device,
+    )
 
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
-
-# 任务特定常量
 MEETING_ID = "meeting_3d7e91"
-SENDER_ID = "user002"
-EXPECTED_COUNT = 2
-MESSAGES_FILE = "messages.json"
+USER_ID = "user001"
+MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
+HAND_RAISE_RECORDS_FILE = "hand_raise_records.json"
 
-def verify_message_count_by_sender(
+IS_HAND_RAISED_KEY = "isHandRaised"
+MEETING_ID_KEY = "meetingId"
+USER_ID_KEY = "userId"
+LOWER_TIME_KEY = "lowerTime"
+
+TARGET_NAME = "\u9648\u601d\u8fdc"
+TARGET_PHONE = "15823467912"
+DETAIL_PAGE_MARKERS = [
+    "Contact Method",
+    "Email",
+    "Call",
+    "Source",
+    "Added via meeting",
+    "\u8054\u7cfb\u65b9\u5f0f",
+    "\u90ae\u7bb1",
+    "\u547c\u53eb",
+    "\u6765\u6e90",
+    "\u901a\u8fc7\u4f1a\u8bae\u6dfb\u52a0",
+]
+
+
+def _check_hand_raise(result=None, device_id=None, backup_dir=None) -> bool:
+    participants_data = read_json_from_device(
+        device_id=device_id,
+        package_name=PACKAGE_NAME,
+        device_json_path=f"files/{MEETING_PARTICIPANTS_FILE}",
+        backup_dir=backup_dir,
+    )
+    if participants_data is None:
+        logging.error("Unable to read or parse %s.", MEETING_PARTICIPANTS_FILE)
+        return False
+
+    hand_raise_data = read_json_from_device(
+        device_id=device_id,
+        package_name=PACKAGE_NAME,
+        device_json_path=f"files/{HAND_RAISE_RECORDS_FILE}",
+        backup_dir=backup_dir,
+    )
+    if hand_raise_data is None:
+        logging.error("Unable to read or parse %s.", HAND_RAISE_RECORDS_FILE)
+        return False
+
+    participant_raised = any(
+        record.get(MEETING_ID_KEY) == MEETING_ID
+        and record.get(USER_ID_KEY) == USER_ID
+        and record.get(IS_HAND_RAISED_KEY) is True
+        for record in list_records(participants_data)
+    )
+    record_exists = any(
+        record.get(MEETING_ID_KEY) == MEETING_ID
+        and record.get(USER_ID_KEY) == USER_ID
+        and record.get(LOWER_TIME_KEY) is None
+        for record in list_records(hand_raise_data)
+    )
+
+    if not participant_raised:
+        logging.error(
+            "User %s is not marked as hand-raised in meeting %s.",
+            USER_ID,
+            MEETING_ID,
+        )
+    if not record_exists:
+        logging.error(
+            "No active hand-raise record found for user %s in meeting %s.",
+            USER_ID,
+            MEETING_ID,
+        )
+
+    if not (participant_raised and record_exists) and isinstance(result, dict):
+        executed_actions = result.get("executed_actions", [])
+        hand_raise_clicked = any(
+            action.get("action") == "click"
+            and "\u4e3e\u624b" in str(action.get("description", ""))
+            for action in executed_actions
+            if isinstance(action, dict)
+        )
+        if hand_raise_clicked:
+            logging.warning("Data was not updated, but executed actions show a hand-raise click.")
+            return True
+
+    return participant_raised and record_exists
+
+
+def _check_search_user_by_phone(device_id=None, backup_dir=None) -> bool:
+    ui_text = current_ui_text(device_id, backup_dir)
+    if not ui_text:
+        logging.error("Unable to read current UI state.")
+        return False
+
+    has_name = contains_text(ui_text, [TARGET_NAME, "Chen Siyuan"])
+    has_phone = contains_text(ui_text, [TARGET_PHONE])
+    has_detail_context = contains_text(ui_text, DETAIL_PAGE_MARKERS)
+
+    if not has_name:
+        logging.error("Current UI does not show target contact name Chen Siyuan.")
+    if not has_phone:
+        logging.error("Current UI does not show target phone %s.", TARGET_PHONE)
+    if not has_detail_context:
+        logging.error("Current UI does not show contact-detail fields.")
+    return has_name and has_phone and has_detail_context
+
+
+def _run_subcheck(label, verify_func, *args, **kwargs) -> bool:
+    try:
+        return bool(verify_func(*args, **kwargs))
+    except Exception:
+        logging.exception("Composite eval_25 subcheck raised an exception: %s.", label)
+        return False
+
+
+def check_hand_raise_and_search_user_by_phone(
     result=None,
     device_id=None,
     backup_dir=None,
+    **kwargs,
 ) -> bool:
-    """
-    验证指定会议中指定用户发送的消息数量。
+    """Verify hand raise in the meeting and the target phone contact page."""
 
-    参数:
-        meeting_id (str): 会议ID。
-        sender_id (str): 发送者用户ID。
-        expected_count (int): 期望的消息数量。
-        device_id (str, optional): Android设备的ID. Defaults to None.
-        backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
-                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_32")。
-
-    返回:
-        bool: 如果实际消息数量与期望数量匹配则返回True，否则返回False。
-    """
-
-    # 使用常量
-    meeting_id = MEETING_ID
-    sender_id = SENDER_ID
-    expected_count = EXPECTED_COUNT
-
+    if kwargs:
+        logging.debug("Composite eval_25 ignored extra args: %s", sorted(kwargs))
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_32")
+        backup_dir = default_backup_dir("tencentmeeting_eval_25")
 
-    try:
-        messages_data = read_json_from_device(
-            device_id=device_id,
-            package_name=PACKAGE_NAME,
-            device_json_path=f"files/{MESSAGES_FILE}",
-            backup_dir=backup_dir,
-        )
-    except FileNotFoundError:
-        logging.error(f"错误: 文件在设备上未找到: files/{MESSAGES_FILE}")
-        return False
-    except Exception as e:
-        logging.error(f"从设备读取JSON文件时发生错误: {e}")
-        return False
+    hand_raise_ok = _run_subcheck(
+        "hand raise",
+        _check_hand_raise,
+        result=result,
+        device_id=device_id,
+        backup_dir=backup_dir,
+    )
+    search_user_ok = _run_subcheck(
+        "phone contact details",
+        _check_search_user_by_phone,
+        device_id=device_id,
+        backup_dir=backup_dir,
+    )
 
-    if messages_data is None:
-        logging.error(f"无法从设备读取或解析 {MESSAGES_FILE}。")
-        return False
+    if hand_raise_ok:
+        logging.info("Composite eval_25 subcheck passed: hand raise.")
+    else:
+        logging.error("Composite eval_25 subcheck failed: hand raise.")
 
-    try:
-        # 过滤出指定会议的消息
-        meeting_messages = [m for m in messages_data if m.get("meetingId") == meeting_id]
+    if search_user_ok:
+        logging.info("Composite eval_25 subcheck passed: phone contact details.")
+    else:
+        logging.error("Composite eval_25 subcheck failed: phone contact details.")
 
-        # 再过滤出指定发送者的消息
-        sender_messages = [m for m in meeting_messages if m.get("senderId") == sender_id]
-
-        actual_count = len(sender_messages)
-
-        if actual_count != expected_count:
-            logging.error(
-                "Sender %s in meeting %s sent %s messages, expected %s.",
-                sender_id,
-                meeting_id,
-                actual_count,
-                expected_count,
-            )
-            return False
-
-        return answer_contains_number(result, actual_count)
-    except Exception as e:
-        logging.error(f"处理数据时发生错误: {e}")
-        return False
+    return hand_raise_ok and search_user_ok
 
 
 if __name__ == "__main__":
-    # 测试代码
-    import shutil
-    temp_backup_dir = os.path.join(os.getcwd(), "temp_eval_backup_32")
-
-    print("注意: 本地测试无法模拟真实设备文件拉取。")
-    print(f"假设调用: verify_message_count_by_sender(meeting_id='meeting_3d7e91', sender_id='user002', expected_count=2, backup_dir='{temp_backup_dir}')")
-
-    if os.path.exists(temp_backup_dir):
-        shutil.rmtree(temp_backup_dir)
-
-
-if __name__ == '__main__':
-    print(verify_message_count_by_sender())
+    print(check_hand_raise_and_search_user_by_phone())

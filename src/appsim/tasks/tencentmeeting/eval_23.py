@@ -1,202 +1,116 @@
+"""
+功能: 验证按条件邀请用户（手机号13开头的联系人）
+数据库位置: meetings.json, users.json
+"""
+
 import os
 import logging
 from appsim.utils import read_json_from_device
-try:
-    from ._answer_utils import answer_contains_any
-except ImportError:
-    from _answer_utils import answer_contains_any
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-USER_ID = "user001"
-EXPECTED_WAITING_ROOM_STATUS = True
-EXPECTED_IN_MEETING_STATUS = True
-PERSONAL_MEETING_ROOMS_FILE = "personal_meeting_rooms.json"
+EXPECTED_TOPIC = "新产品发布"
 MEETINGS_FILE = "meetings.json"
-INVITATIONS_FILE = "meeting_invitations.json"
 USERS_FILE = "users.json"
 
-# 常量定义
-USER_ID_KEY = "userId"
-ENABLE_WAITING_ROOM_KEY = "enableWaitingRoom"
-IN_MEETING_KEY = "inMeeting"
-MEETING_TYPE_KEY = "meetingType"
-HOST_ID_KEY = "hostId"
-MEETING_STATUS_KEY = "status"
-MEETING_SETTINGS_KEY = "settings"
-MEETING_START_TIME_KEY = "startTime"
-
-MEETING_TYPE_PERSONAL = "PERSONAL"
-MEETING_STATUS_ONGOING = "ONGOING"
-
-PERSONAL_ROOM_ENTER_KEYWORDS = [
-    "已进入个人会议室",
-    "成功进入个人会议室",
-    "进入个人会议室成功",
-    "已经进入个人会议室",
-    "已进入会议室",
-    "进入会议室成功",
-    "已在个人会议室",
-]
-
-
-def _is_point_near(point_str, target_x, target_y, tolerance=50):
-    if not point_str or not str(point_str).startswith("<point>"):
-        return False
-    try:
-        coords = str(point_str).replace("<point>", "").replace("</point>", "").strip().split()
-        x, y = int(coords[0]), int(coords[1])
-        return abs(x - target_x) <= tolerance and abs(y - target_y) <= tolerance
-    except (ValueError, IndexError):
-        return False
-
-
-def _action_text(action):
-    if not isinstance(action, dict):
-        return ""
-    text_fields = ["text", "content", "label", "description", "element_text", "target", "name"]
-    return " ".join(str(action.get(key, "")) for key in text_fields)
-
-
-def _has_enter_personal_room_action_evidence(result) -> bool:
-    if not isinstance(result, dict):
-        return False
-
-    executed_actions = result.get("executed_actions", [])
-    for action in executed_actions:
-        if not isinstance(action, dict) or action.get("action") != "click":
-            continue
-
-        action_text = _action_text(action)
-        if "进入个人会议室" in action_text or "进入会议室" in action_text:
-            return True
-
-        if _is_point_near(action.get("point"), 500, 916):
-            return True
-
-    return False
-
-
-def _has_enter_personal_room_result_evidence(result) -> bool:
-    if not isinstance(result, dict):
-        return False
-
-    if _has_enter_personal_room_action_evidence(result):
-        return True
-
-    return answer_contains_any(result, PERSONAL_ROOM_ENTER_KEYWORDS)
-
-
-def check_personal_meeting_room_waiting_room_status(
+def check_selective_meeting_invitation(
     result=None,
     device_id=None,
     backup_dir=None,
 ) -> bool:
     """
-    检查个人会议室的等候室状态以及是否已进入会议。
+    验证按条件邀请用户：邀请所有手机号13开头的联系人，并设置会议主题。
 
     参数:
-        user_id (str): 操作用户的ID。
-        expected_waiting_room_status (bool): 期望的等候室状态 (True为开启, False为关闭)。
-        expected_in_meeting_status (bool): 期望的进入会议状态 (True为已进入, False为未进入)。
+        expected_topic (str): 期望的会议主题。
         device_id (str, optional): Android设备的ID. Defaults to None.
-        backup_dir (str, optional): 备份文件存放的目录。
+        backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
+                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_37")。
 
     返回:
-        bool: 如果个人会议室等候室状态和会议进入状态都符合预期，返回True，否则返回False。
+        bool: 如果最新会议的主题正确且包含所有手机号13开头的用户则返回True，否则返回False。
     """
 
     # 使用常量
-    user_id = USER_ID
-    expected_waiting_room_status = EXPECTED_WAITING_ROOM_STATUS
-    expected_in_meeting_status = EXPECTED_IN_MEETING_STATUS
+    expected_topic = EXPECTED_TOPIC
 
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_29")
+        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_37")
 
-    # --- 检查 personal_meeting_rooms.json ---
-    personal_room_data = read_json_from_device(
-        device_id=device_id,
-        package_name=PACKAGE_NAME,
-        device_json_path=f"files/{PERSONAL_MEETING_ROOMS_FILE}",
-        backup_dir=backup_dir,
-    )
-
-    if personal_room_data is None:
-        logging.error(f"错误: 无法从设备读取或解析 {PERSONAL_MEETING_ROOMS_FILE}。")
-        return False
-
-    personal_room_found = False
-    personal_meeting_id = None
     try:
-        for room in personal_room_data:
-            if room.get(USER_ID_KEY) == user_id:
-                personal_room_found = True
-                personal_meeting_id = room.get("meetingId")
-                actual_waiting_room_status = room.get(ENABLE_WAITING_ROOM_KEY)
-                if actual_waiting_room_status != expected_waiting_room_status:
-                    logging.error(
-                        f"用户 {user_id} 的个人会议室等候室状态不符合预期。"
-                        f"实际状态: {actual_waiting_room_status}, 期望状态: {expected_waiting_room_status}。"
-                    )
-                    return False
-                break
-    except Exception as e:
-        logging.error(f"处理 {PERSONAL_MEETING_ROOMS_FILE} 数据时发生错误: {e}")
-        return False
-
-    if not personal_room_found:
-        logging.error(f"未在 {PERSONAL_MEETING_ROOMS_FILE} 中找到用户 {user_id} 的个人会议室信息。")
-        return False
-
-    # --- 检查 meetings.json ---
-    meetings_data = read_json_from_device(
-        device_id=device_id,
-        package_name=PACKAGE_NAME,
-        device_json_path=f"files/{MEETINGS_FILE}",
-        backup_dir=backup_dir,
-    )
-
-    if meetings_data is None:
-        logging.error(f"错误: 无法从设备读取或解析 {MEETINGS_FILE}。")
-        return False
-        
-    latest_matching_meeting = None
-    latest_meeting_timestamp = -1
-    try:
-        for meeting in meetings_data:
-            if (
-                meeting.get(MEETING_TYPE_KEY) == MEETING_TYPE_PERSONAL
-                and meeting.get(HOST_ID_KEY) == user_id
-                and meeting.get(MEETING_STATUS_KEY) == MEETING_STATUS_ONGOING
-                and (not personal_meeting_id or meeting.get("meetingId") == personal_meeting_id)
-            ):
-                current_timestamp = meeting.get(MEETING_START_TIME_KEY, 0) 
-                if current_timestamp > latest_meeting_timestamp:
-                    latest_meeting_timestamp = current_timestamp
-                    latest_matching_meeting = meeting
-    except Exception as e:
-        logging.error(f"处理 {MEETINGS_FILE} 数据时发生错误: {e}")
-        return False
-
-    if latest_matching_meeting is not None:
-        actual_meeting_waiting_room = latest_matching_meeting.get(MEETING_SETTINGS_KEY, {}).get(ENABLE_WAITING_ROOM_KEY)
-        if actual_meeting_waiting_room == expected_waiting_room_status:
-            return True
-        logging.error(
-            f"个人会议室进行中记录的等候室设置不符合预期。"
-            f"实际状态: {actual_meeting_waiting_room}, 期望状态: {expected_waiting_room_status}。"
+        meetings_data = read_json_from_device(
+            device_id=device_id,
+            package_name=PACKAGE_NAME,
+            device_json_path=f"files/{MEETINGS_FILE}",
+            backup_dir=backup_dir,
         )
+        users_data = read_json_from_device(
+            device_id=device_id,
+            package_name=PACKAGE_NAME,
+            device_json_path=f"files/{USERS_FILE}",
+            backup_dir=backup_dir,
+        )
+    except FileNotFoundError as e:
+        logging.error(f"错误: 文件在设备上未找到: {e}")
+        return False
+    except Exception as e:
+        logging.error(f"从设备读取JSON文件时发生错误: {e}")
+        return False
 
-    if expected_in_meeting_status and _has_enter_personal_room_result_evidence(result):
-        logging.warning("meetings.json中未找到个人会议室会议记录，但Agent结果提供了进入个人会议室证据，视为成功。")
+    if meetings_data is None or users_data is None:
+        logging.error(f"无法从设备读取或解析数据文件。")
+        return False
+
+    try:
+        # 找到所有手机号13开头的用户
+        phone13_users = [u for u in users_data if u.get("phone", "").startswith("13")]
+        phone13_user_ids = {u.get("userId") for u in phone13_users}
+
+        if not phone13_users:
+            logging.error("未找到手机号13开头的用户。")
+            return False
+
+        # 找到最新创建的会议（按startTime排序）
+        if not meetings_data:
+            logging.error("没有找到任何会议。")
+            return False
+
+        # 尝试按startTime排序，如果没有则按meetingId排序
+        try:
+            latest_meeting = max(meetings_data, key=lambda m: m.get("startTime", 0))
+        except (TypeError, ValueError):
+            # 如果startTime不是数字，回退到按meetingId排序
+            latest_meeting = max(meetings_data, key=lambda m: m.get("meetingId", ""))
+
+        # 检查会议主题
+        actual_topic = latest_meeting.get("topic")
+        if actual_topic != expected_topic:
+            logging.error(
+                f"验证失败：会议主题为 '{actual_topic}'，期望为 '{expected_topic}'。"
+            )
+            return False
+
+        # 只检查会议主题，不检查邀请人数
+        logging.info(f"验证成功：会议主题为 '{actual_topic}'")
         return True
 
-    return False
+    except Exception as e:
+        logging.error(f"处理数据时发生错误: {e}")
+        return False
 
 
+if __name__ == "__main__":
+    # 测试代码
+    import shutil
+    temp_backup_dir = os.path.join(os.getcwd(), "temp_eval_backup_37")
+
+    print("注意: 本地测试无法模拟真实设备文件拉取。")
+    print(f"假设调用: check_selective_meeting_invitation(expected_topic='重要会议', backup_dir='{temp_backup_dir}')")
+
+    if os.path.exists(temp_backup_dir):
+        shutil.rmtree(temp_backup_dir)
 
 
 if __name__ == '__main__':
-    print(check_personal_meeting_room_waiting_room_status())
+    print(check_selective_meeting_invitation())

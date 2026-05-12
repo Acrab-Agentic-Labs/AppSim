@@ -64,23 +64,23 @@ if __name__ == "__main__":
     print("\n🔍 正在等待 Runner 调用 AI 进行验证...")
 
     # --- 模拟测试用例 ---
-    
+
     # 用例 1：正确且带标签
     test_case_1 = {
         "final_message": "评分最高的是 <ans>肖记公安牛肉鱼杂馆</ans>",
         "expected_eval_result": True,
     }
-    
+
     # 用例 2：完全无关的回答
     test_case_2 = {
-        "final_message": "我没有找到相关的排行榜信息。", 
+        "final_message": "我没有找到相关的排行榜信息。",
         "expected_eval_result": False
     }
-    
+
     # 用例 3：名称不完整（缺少“肖记”二字）
     test_case_3 = {
         "final_message": "我认为评分最高的是 <ans>公安牛肉鱼杂馆</ans>",
-        "expected_eval_result": False 
+        "expected_eval_result": False
     }
 
     # 开始执行模拟测试
@@ -91,7 +91,7 @@ if __name__ == "__main__":
         logging.info(f"\n[测试用例 {idx}]")
         actual_result = validate(result=test)
         expected_result = test["expected_eval_result"]
-        
+
         if actual_result == expected_result:
             logging.info(f"✅ 结果符合预期 (实际: {actual_result})")
             total_passed += 1
@@ -101,6 +101,6 @@ if __name__ == "__main__":
     print("\n" + "=" * 70)
     print(f"模拟测试完成：通过 {total_passed}/{len(all_tests)}")
     print("=" * 70)
-    
+
     # 如果模拟测试全部通过，则退出码为0
     sys.exit(0 if total_passed == len(all_tests) else 1)
