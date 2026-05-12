@@ -1,6 +1,6 @@
 """
-功能: 验证通讯录中的联系人数目
-验证目标: 检查users.json中的用户总数是否与期望值匹配
+功能: 验证手机号13开头的联系人数目
+验证目标: 统计phone字段以"13"开头的用户数量
 数据来源: users.json
 """
 
@@ -20,7 +20,7 @@ except ImportError:
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-EXPECTED_COUNT = 150
+EXPECTED_COUNT = 40
 
 # 数据文件常量
 MEETINGS_FILE = "meetings.json"
@@ -132,29 +132,29 @@ def read_json_from_device(
 # 验证函数 - 核心业务逻辑
 # ============================================================================
 
-def verify_contact_count(
+def verify_phone_13_count(
     result=None,
     device_id=None,
     backup_dir=None,
 ) -> bool:
     """
-    验证通讯录中的联系人数目是否与预期匹配。
+    验证通讯录中手机号13开头的联系人数目是否与预期匹配。
 
     参数:
-        expected_count (int): 期望的联系人数目。
+        expected_count (int): 期望的手机号13开头人数。
         device_id (str, optional): Android设备的ID. Defaults to None.
         backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
                                      os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_reasoning_tasks")。
 
     返回:
-        bool: 如果实际联系人数目与期望数目匹配则返回True，否则返回False。
+        bool: 如果实际手机号13开头人数与期望数目匹配则返回True，否则返回False。
     """
 
     # 使用常量
     expected_count = EXPECTED_COUNT
 
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_32")
+        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_36")
 
     users_data = read_json_from_device(
         device_id=device_id,
@@ -167,9 +167,9 @@ def verify_contact_count(
         print(f"错误: 无法从设备读取或解析 {USERS_FILE}。")
         return False
 
-    actual_count = len(users_data)
+    actual_count = len([u for u in users_data if u.get("phone", "").startswith("13")])
     if actual_count != expected_count:
-        logging.error("Contact count %s did not match expected %s.", actual_count, expected_count)
+        logging.error("Phone-prefix count %s did not match expected %s.", actual_count, expected_count)
         return False
 
     return answer_contains_number(result, actual_count)

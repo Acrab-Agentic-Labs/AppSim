@@ -13,7 +13,7 @@ def validate(result=None, **kwargs):
     只要 AI 的回答中包含了关键词列表里的【任意一个】，就算通过。
     """
     # 这里放所有可能的正确表达方式（比如数字和汉字大写）
-    EXPECTED_KEYWORDS = ["4", "四","4元", "四元","4块", "四块"] 
+    EXPECTED_KEYWORDS = ["4", "四","4元", "四元","4块", "四块"]
 
     if not result or "final_message" not in result:
         return False

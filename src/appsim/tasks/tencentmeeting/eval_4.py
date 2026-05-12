@@ -56,7 +56,7 @@ def check_screen_sharing(
         for participant in data:
             if participant.get(MEETING_ID_KEY) == meeting_id and participant.get(USER_ID_KEY) == user_id:
                 return participant.get(IS_SHARING_SCREEN_KEY) == expected_sharing_status
-        
+
         logging.error(f"未在 {MEETING_PARTICIPANTS_FILE} 中找到会议 {meeting_id} 的参与者 {user_id}。")
         return False
     except Exception as e:

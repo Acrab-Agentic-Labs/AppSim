@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import time
 import xml.etree.ElementTree as ET
 from typing import Any, Iterable
 
@@ -115,12 +116,27 @@ def dump_current_ui(device_id: str | None, backup_dir: str | None = None) -> str
 
     backup_path = _ensure_backup_dir(backup_dir)
     remote_path = "/sdcard/appsim_window_dump.xml"
-    dump_result = run_adb(device_id, "shell", "uiautomator", "dump", remote_path, timeout=20.0)
-    if dump_result is None:
-        return ""
-    if dump_result.returncode != 0:
-        logging.error("uiautomator dump failed: %s", (dump_result.stderr or dump_result.stdout).strip())
-        return ""
+    dump_result = None
+    for attempt in range(1, 4):
+        dump_result = run_adb(device_id, "shell", "uiautomator", "dump", remote_path, timeout=20.0)
+        if dump_result is not None and dump_result.returncode == 0:
+            break
+        message = "" if dump_result is None else (dump_result.stderr or dump_result.stdout).strip()
+        if attempt < 3:
+            logging.warning("uiautomator dump failed (attempt %s/3): %s", attempt, message)
+            time.sleep(1.0)
+        else:
+            logging.warning("uiautomator dump failed; trying uiautomator2 fallback: %s", message)
+            raw_xml = dump_current_ui_with_uiautomator2(device_id)
+            if raw_xml:
+                if backup_path is not None:
+                    try:
+                        (backup_path / "window_dump.xml").write_text(raw_xml, encoding="utf-8")
+                    except Exception as exc:
+                        logging.warning("Unable to write UI dump backup: %s", exc)
+                return raw_xml
+            logging.error("uiautomator dump failed: %s", message)
+            return ""
 
     cat_result = run_adb(device_id, "exec-out", "cat", remote_path, timeout=20.0)
     if cat_result is None or cat_result.returncode != 0 or not cat_result.stdout:
@@ -137,6 +153,17 @@ def dump_current_ui(device_id: str | None, backup_dir: str | None = None) -> str
         except Exception as exc:
             logging.warning("Unable to write UI dump backup: %s", exc)
     return raw_xml
+
+
+def dump_current_ui_with_uiautomator2(device_id: str | None) -> str:
+    try:
+        import uiautomator2 as u2
+
+        device = u2.connect(device_id) if device_id else u2.connect()
+        return device.dump_hierarchy(compressed=False, pretty=False) or ""
+    except Exception as exc:
+        logging.warning("uiautomator2 dump_hierarchy fallback failed: %s", exc)
+        return ""
 
 
 def _attribute_values_from_xml(raw_xml: str) -> list[str]:

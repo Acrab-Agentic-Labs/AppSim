@@ -1,7 +1,7 @@
 """
-功能: 验证会议列表中的会议数目
-验证目标: 检查meetings.json中的会议总数是否与期望值匹配
-数据来源: meetings.json
+功能: 验证通讯录中周姓联系人的数目
+验证目标: 统计username以"周"开头的用户数量
+数据来源: users.json
 """
 
 import os
@@ -20,7 +20,7 @@ except ImportError:
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-EXPECTED_COUNT = 50
+EXPECTED_COUNT = 8
 
 # 数据文件常量
 MEETINGS_FILE = "meetings.json"
@@ -132,47 +132,48 @@ def read_json_from_device(
 # 验证函数 - 核心业务逻辑
 # ============================================================================
 
-def verify_meeting_count(
+def verify_surname_zhou_count(
     result=None,
     device_id=None,
     backup_dir=None,
 ) -> bool:
     """
-    验证会议列表中的会议数目是否与预期匹配。
+    验证通讯录中周姓联系人的数目是否与预期匹配。
 
     参数:
-        result: Agent执行结果对象（包含executed_actions等信息）
+        expected_count (int): 期望的周姓人数。
         device_id (str, optional): Android设备的ID. Defaults to None.
         backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
-                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_31").
+                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_reasoning_tasks")。
 
     返回:
-        bool: 如果实际会议数目与期望数目匹配则返回True，否则返回False。
+        bool: 如果实际周姓人数与期望数目匹配则返回True，否则返回False。
     """
+
     # 使用常量
     expected_count = EXPECTED_COUNT
 
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_31")
+        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_35")
 
-    meetings_data = read_json_from_device(
+    users_data = read_json_from_device(
         device_id=device_id,
         package_name=PACKAGE_NAME,
-        device_json_path=f"files/{MEETINGS_FILE}",
+        device_json_path=f"files/{USERS_FILE}",
         backup_dir=backup_dir,
     )
 
-    if meetings_data is None:
-        print(f"错误: 无法从设备读取或解析 {MEETINGS_FILE}。")
+    if users_data is None:
+        print(f"错误: 无法从设备读取或解析 {USERS_FILE}。")
         return False
 
-    actual_count = len(meetings_data)
+    actual_count = len([u for u in users_data if u.get("username", "").startswith("\u5468")])
     if actual_count != expected_count:
-        logging.error("Meeting count %s did not match expected %s.", actual_count, expected_count)
+        logging.error("Zhou surname count %s did not match expected %s.", actual_count, expected_count)
         return False
 
     return answer_contains_number(result, actual_count)
 
 
 if __name__ == '__main__':
-    print(verify_meeting_count())
+    print(read_json_from_device())

@@ -66,19 +66,19 @@ if __name__ == "__main__":
     print("\n🔍 正在进行模拟 Case 验证...")
 
     # --- 模拟测试用例 ---
-    
+
     # 用例 1：正确且带标签
     test_case_1 = {
         "final_message": "根据简介，最近的四星级酒店是 <ans>瑞安城市酒店店</ans>",
         "expected_eval_result": True,
     }
-    
+
     # 用例 2：回答不相关或未找到
     test_case_2 = {
-        "final_message": "我没有在周边发现任何标注为四星级的酒店。", 
+        "final_message": "我没有在周边发现任何标注为四星级的酒店。",
         "expected_eval_result": False
     }
-    
+
     # 用例 3：名称不完整（缺少城市前缀“武汉”）
     test_case_3 = {
         "final_message": "最近的四星级酒店名字叫 <ans>瑞安城市酒店</ans>",
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         logging.info(f"\n[测试用例 {idx}]")
         actual_result = validate(result=test)
         expected_result = test["expected_eval_result"]
-        
+
         if actual_result == expected_result:
             logging.info(f"✅ 结果符合预期 (实际: {actual_result})")
             total_passed += 1
@@ -103,6 +103,6 @@ if __name__ == "__main__":
     print("\n" + "=" * 70)
     print(f"任务 21 模拟测试完成：通过 {total_passed}/{len(all_tests)}")
     print("=" * 70)
-    
+
     # 如果模拟测试全部通过，则退出码为0
     sys.exit(0 if total_passed == len(all_tests) else 1)

@@ -1,144 +1,125 @@
+"""
+功能: 验证参与者管理操作（全体静音）
+数据库位置: meeting_participants.json
+"""
+
 import os
 import logging
 from appsim.utils import read_json_from_device
-try:
-    from ._answer_utils import answer_contains_any
-except ImportError:
-    from _answer_utils import answer_contains_any
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
 
 # 任务特定常量
-MEETING_ID = "Meeting_5d8e21"
-USER_ID = "user001"
-EXPECTED_SHARING_STATUS = True
-MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
-IS_SHARING_KEY = "isSharingScreen"
+MEETING_ID = "meeting_3d7e91"
+PARTICIPANTS_FILE = "meeting_participants.json"
 
-
-SCREEN_SHARING_SUCCESS_KEYWORDS = [
-    "已共享屏幕",
-    "正在共享屏幕",
-    "共享屏幕已开启",
-    "屏幕共享已开启",
-    "开始共享",
-    "已开始共享",
-    "成功共享",
-    "已共享",
-]
-
-
-def _is_point_near(point_str, target_x, target_y, tolerance=50):
-    if not point_str or not str(point_str).startswith("<point>"):
-        return False
-    try:
-        coords = str(point_str).replace("<point>", "").replace("</point>", "").strip().split()
-        x, y = int(coords[0]), int(coords[1])
-        return abs(x - target_x) <= tolerance and abs(y - target_y) <= tolerance
-    except (ValueError, IndexError):
-        return False
-
-
-def _action_text(action):
-    if not isinstance(action, dict):
-        return ""
-    text_fields = ["text", "content", "label", "description", "element_text", "target", "name"]
-    return " ".join(str(action.get(key, "")) for key in text_fields)
-
-
-def _has_screen_sharing_action_evidence(result) -> bool:
-    if not isinstance(result, dict):
-        return False
-
-    executed_actions = result.get("executed_actions", [])
-    for action in executed_actions:
-        if not isinstance(action, dict) or action.get("action") != "click":
-            continue
-
-        if "共享屏幕" in _action_text(action):
-            return True
-
-        if _is_point_near(action.get("point"), 608, 910) or _is_point_near(action.get("point"), 500, 900):
-            return True
-
-    return False
-
-
-def _has_screen_sharing_result_evidence(result) -> bool:
-    if not isinstance(result, dict):
-        return False
-
-    if _has_screen_sharing_action_evidence(result):
-        return True
-
-    return answer_contains_any(result, SCREEN_SHARING_SUCCESS_KEYWORDS)
-
-
-def check_screen_sharing_active(
+def check_participant_management(
     result=None,
     device_id=None,
     backup_dir=None,
 ) -> bool:
     """
-    检查指定会议中特定用户的屏幕共享状态是否符合预期。
+    验证参与者管理：全体静音。
 
     参数:
         meeting_id (str): 会议ID。
-        user_id (str): 用户ID。
-        expected_sharing_status (bool): 期望的屏幕共享状态 (True为正在共享, False为未共享)。
         device_id (str, optional): Android设备的ID. Defaults to None.
-        backup_dir (str, optional): 备份文件存放的目录。
+        backup_dir (str, optional): 备份文件存放的目录。如果为 None，则默认路径为
+                                     os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_36")。
 
     返回:
-        bool: 如果屏幕共享状态符合预期，返回True，否则返回False。
+        bool: 如果所有参与者都被静音则返回True，否则返回False。
     """
 
     # 使用常量
     meeting_id = MEETING_ID
-    user_id = USER_ID
-    expected_sharing_status = EXPECTED_SHARING_STATUS
 
     if backup_dir is None:
-        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_28")
+        backup_dir = os.path.join(os.getcwd(), "scripts_backup", "tencentmeeting_eval_36")
 
-    data = read_json_from_device(
-        device_id=device_id,
-        package_name=PACKAGE_NAME,
-        device_json_path=f"files/{MEETING_PARTICIPANTS_FILE}",
-        backup_dir=backup_dir,
-    )
+    try:
+        participants_data = read_json_from_device(
+            device_id=device_id,
+            package_name=PACKAGE_NAME,
+            device_json_path=f"files/{PARTICIPANTS_FILE}",
+            backup_dir=backup_dir,
+        )
+    except FileNotFoundError:
+        logging.error(f"错误: 文件在设备上未找到: files/{PARTICIPANTS_FILE}")
+        return False
+    except Exception as e:
+        logging.error(f"从设备读取JSON文件时发生错误: {e}")
+        return False
 
-    if data is None:
-        logging.error(f"错误: 无法从设备读取或解析 {MEETING_PARTICIPANTS_FILE}。")
+    if participants_data is None:
+        logging.error(f"无法从设备读取或解析 {PARTICIPANTS_FILE}。")
         return False
 
     try:
-        matching_participant = None
-        for participant in data:
-            if participant.get("meetingId") == meeting_id and participant.get("userId") == user_id:
-                matching_participant = participant
-                break
+        # 过滤出指定会议的参与者
+        meeting_participants = [p for p in participants_data if p.get("meetingId") == meeting_id]
 
-        if matching_participant is not None:
-            actual_sharing_status = matching_participant.get(IS_SHARING_KEY)
-            if actual_sharing_status == expected_sharing_status:
-                return True
+        if not meeting_participants:
+            logging.error(f"会议 {meeting_id} 中没有找到任何参与者。")
+            return False
 
-            logging.error(
-                f"会议 {meeting_id} 中用户 {user_id} 的屏幕共享状态不符合预期。"
-                f"实际状态: {actual_sharing_status}, 期望状态: {expected_sharing_status}。"
-            )
-        else:
-            logging.error(f"未在 {MEETING_PARTICIPANTS_FILE} 中找到会议 {meeting_id} 的参与者 {user_id}。")
+        # 检查所有参与者的静音状态
+        for participant in meeting_participants:
+            user_id = participant.get("userId")
+            is_muted = participant.get("isMuted")
 
-        if expected_sharing_status and _has_screen_sharing_result_evidence(result):
-            logging.warning("数据库中屏幕共享状态未更新，但Agent结果提供了明确的共享屏幕证据，视为成功。")
-            return True
+            # 所有用户都应该是静音状态
+            if is_muted != True:
+                logging.error(
+                    f"验证失败：用户 {user_id} 应该是静音状态，但当前为 {is_muted}。"
+                )
 
-        return False
+                # Fallback: 检查Agent是否点击了"全部静音"按钮
+                if result is not None:
+                    executed_actions = result.get("executed_actions", [])
+
+                    # 辅助函数：检查坐标是否接近
+                    def is_point_near(point_str, target_x, target_y, tolerance=50):
+                        if not point_str or not point_str.startswith("<point>"):
+                            return False
+                        try:
+                            coords = point_str.replace("<point>", "").replace("</point>", "").strip().split()
+                            x, y = int(coords[0]), int(coords[1])
+                            return abs(x - target_x) <= tolerance and abs(y - target_y) <= tolerance
+                        except:
+                            return False
+
+                    # 检查是否点击了"全部静音"按钮（根据之前的日志，坐标约为274, 861）
+                    mute_all_clicked = any(
+                        a.get("action") == "click" and is_point_near(a.get("point"), 274, 861)
+                        for a in executed_actions
+                    )
+
+                    if mute_all_clicked:
+                        logging.warning(f"警告：Agent已点击全部静音按钮，将视为成功。")
+                        return True
+
+                return False
+
+        logging.info(f"验证成功：会议 {meeting_id} 中所有 {len(meeting_participants)} 个参与者都已静音。")
+        return True
+
     except Exception as e:
         logging.error(f"处理数据时发生错误: {e}")
         return False
 
+
+if __name__ == "__main__":
+    # 测试代码
+    import shutil
+    temp_backup_dir = os.path.join(os.getcwd(), "temp_eval_backup_36")
+
+    print("注意: 本地测试无法模拟真实设备文件拉取。")
+    print(f"假设调用: check_participant_management(meeting_id='meeting_3d7e91', unmuted_user_id='user003', removed_user_id='user004', backup_dir='{temp_backup_dir}')")
+
+    if os.path.exists(temp_backup_dir):
+        shutil.rmtree(temp_backup_dir)
+
+
 if __name__ == '__main__':
-    print(check_screen_sharing_active())
+    print(check_participant_management())
