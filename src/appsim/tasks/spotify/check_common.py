@@ -10,9 +10,14 @@ import os
 from datetime import datetime
 
 
-# Log directory for detailed check results
-LOG_DIR = os.path.join(os.path.dirname(__file__), "check_logs")
-os.makedirs(LOG_DIR, exist_ok=True)
+# Default log directory for detailed check results. The actual directory is
+# resolved lazily so imports do not create project files as a side effect.
+DEFAULT_LOG_DIR = os.path.join(os.path.dirname(__file__), "check_logs")
+
+
+def get_log_dir():
+    """Resolve the check log directory from env or fallback to the local default."""
+    return os.environ.get("APPSIM_CHECK_LOG_DIR") or DEFAULT_LOG_DIR
 
 
 class AppChecker:
@@ -139,8 +144,10 @@ def _log_result(passed, message, details=None):
         "details": details or {}
     }
 
-    log_file = os.path.join(LOG_DIR, f"{check_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+    log_dir = get_log_dir()
+    log_file = os.path.join(log_dir, f"{check_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
     try:
+        os.makedirs(log_dir, exist_ok=True)
         with open(log_file, 'w', encoding='utf-8') as f:
             json.dump(log_entry, f, indent=2, ensure_ascii=False)
     except Exception:
