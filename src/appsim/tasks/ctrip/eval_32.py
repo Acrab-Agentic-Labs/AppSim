@@ -7,10 +7,10 @@ import subprocess
 # 检查条件：最后3条记录依次是火车票(杭州->北京, 2025-10-20, 最快且5小时内)、酒店(北京, 王府井希尔顿, 10.20-10.22)、火车票(北京->杭州, 2025-10-22)
 
 
-def check_booking_complex_budget(agent_answer=None, device_id=None, backup_dir=None):
-    if agent_answer is None:
+def check_booking_complex_budget(result=None, device_id=None, backup_dir=None):
+    if result is None:
         return False
-    final_message = agent_answer.get("final_message")
+    final_message = result.get("final_message")
     if not isinstance(final_message, str):
         return False
 
@@ -79,10 +79,10 @@ def check_booking_complex_budget(agent_answer=None, device_id=None, backup_dir=N
         ):
             return False
 
-        if "final_message" in agent_answer and (
-            "足够" in agent_answer["final_message"]
-            or ("够" in agent_answer["final_message"] and "不够" not in agent_answer["final_message"])
-            or ("enough" in agent_answer["final_message"].lower() and "not enough" not in agent_answer["final_message"].lower())
+        if "final_message" in result and (
+            "足够" in result["final_message"]
+            or ("够" in result["final_message"] and "不够" not in result["final_message"])
+            or ("enough" in result["final_message"].lower() and "not enough" not in result["final_message"].lower())
         ):
             return True
         else:

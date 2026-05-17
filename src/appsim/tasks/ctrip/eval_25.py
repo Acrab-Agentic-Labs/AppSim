@@ -4,7 +4,7 @@ import re
 # 检查条件：智能体返回的价格是否为 470
 
 
-def check_train_search_max_price(result=None, device_id=None):
+def check_train_search_max_price(result=None, device_id=None,backup_dir=None):
     """
     验证任务25的最终答案。
 
