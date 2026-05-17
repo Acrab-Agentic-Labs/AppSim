@@ -14,9 +14,18 @@ def _get_baseline_orders_path(backup_dir):
         if os.path.exists(backup_orders_path):
             return backup_orders_path
 
-    return os.path.normpath(
-        os.path.join(os.path.dirname(__file__), "..", "app", "src", "main", "assets", "data", "orders.json")
-    )
+    current_task_dir = os.path.dirname(__file__)
+    candidate_paths = [
+        os.path.join(current_task_dir, "orders.json"),
+        os.path.join(current_task_dir, "..", "app", "src", "main", "assets", "data", "orders.json"),
+    ]
+    for candidate_path in candidate_paths:
+        normalized_path = os.path.normpath(candidate_path)
+        if os.path.exists(normalized_path):
+            return normalized_path
+
+    # Fall back to the current repo layout so the downstream error message is stable.
+    return os.path.normpath(os.path.join(current_task_dir, "orders.json"))
 
 
 def validate_task_twenty_nine(result=None, device_id=None, backup_dir=None):
