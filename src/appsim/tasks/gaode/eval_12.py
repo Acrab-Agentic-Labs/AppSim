@@ -1,91 +1,22 @@
-"""
-指令 12 验证脚本：告诉我八七会议会址纪念馆的开放时间有几个小时 把你的答案放在<ans>和</ans>之间。
+TASK12_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取开放时间的小时数。",
+    "properties": {
+        "open_hours": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "开放时间的小时数，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["open_hours"],
+    "additionalProperties": False,
+}
 
-步骤：3
-"""
-
-import logging
-import sys
-import re
 
 def validate(result=None, **kwargs):
-    """
-    更宽容的校验器：
-    只要 AI 的回答中包含了关键词列表里的【任意一个】，就算通过。
-    """
-    # 这里放所有可能的正确表达方式（比如数字和汉字大写）
-    EXPECTED_KEYWORDS = ["8", "八","8小时","八小时"]
-
-    if not result or "final_message" not in result:
+    if not isinstance(result, dict):
         return False
-
-    final_msg = str(result["final_message"])
-
-    # 1. 提取检测范围（有标签看标签，没标签看全文）
-    tag_match = re.search(r"<ans>\s*(.*?)\s*</ans>", final_msg, re.IGNORECASE | re.DOTALL)
-    text_to_check = tag_match.group(1).strip() if tag_match else final_msg.strip()
-
-    # 2. 宽容匹配逻辑：使用 any()
-    # 只要 EXPECTED_KEYWORDS 里的【任意一个】词在 text_to_check 中，就返回 True
-    is_correct = any(kw in text_to_check for kw in EXPECTED_KEYWORDS)
-
-    if is_correct:
-        logging.info(f"✅ 检测成功！匹配到关键信息之一: {EXPECTED_KEYWORDS}")
-        return True
-    else:
-        logging.error(f"❌ 检测失败！回复中未匹配到预设关键词。预期其中之一: {EXPECTED_KEYWORDS}, 实际得到: '{text_to_check}'")
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
-
-if __name__ == "__main__":
-    # 配置日志输出格式
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
-
-    print("=" * 70)
-    print("任务 12：告诉我八七会议会址纪念馆的开放时间有几个小时")
-    print("=" * 70)
-    print("\n📋 人工操作步骤：")
-    print("  1. 搜索八七会议会址纪念馆")
-    print("  2. 查看开放时间")
-    print("\n🔍 正在等待 Runner 调用 AI 进行验证...")
-
-    # --- 模拟测试用例 ---
-
-    # 用例 1：正确且带标签
-    test_case_1 = {
-        "final_message": "八七会议会址纪念馆的开放时间有 <ans>8个小时</ans>",
-        "expected_eval_result": True,
-    }
-
-    # 用例 2：完全无关的回答
-    test_case_2 = {
-        "final_message": "我无法找到该纪念馆的开放时间信息。",
-        "expected_eval_result": False
-    }
-
-    # 用例 3：错误的小时数
-    test_case_3 = {
-        "final_message": "八七会议会址纪念馆的开放时间有 <ans>10</ans> 个小时",
-        "expected_eval_result": False
-    }
-
-    # 开始执行模拟测试
-    all_tests = [test_case_1, test_case_2, test_case_3]
-    total_passed = 0
-
-    for idx, test in enumerate(all_tests, 1):
-        logging.info(f"\n[测试用例 {idx}]")
-        actual_result = validate(result=test)
-        expected_result = test["expected_eval_result"]
-
-        if actual_result == expected_result:
-            logging.info(f"✅ 结果符合预期 (实际: {actual_result})")
-            total_passed += 1
-        else:
-            logging.error(f"❌ 结果不符合预期！实际: {actual_result}, 期望: {expected_result}")
-
-    print("\n" + "=" * 70)
-    print(f"模拟测试完成：通过 {total_passed}/{len(all_tests)}")
-    print("=" * 70)
-
-    # 如果模拟测试全部通过，则退出码为0
-    sys.exit(0 if total_passed == len(all_tests) else 1)
+    return extracted_answer.get("open_hours") == 8
