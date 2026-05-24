@@ -1,7 +1,7 @@
 from ..base import AppTasks, TaskItem
 from .eval_1 import validate_task_one
 from .eval_2 import validate_task_two
-from .eval_3 import validate_task_three
+from .eval_3 import TASK3_ANSWER_SCHEMA, validate_task_three
 from .eval_4 import validate_task_four
 from .eval_5 import validate_task_five
 from .eval_6 import validate_task_six
@@ -60,6 +60,8 @@ WHATSAPP_TASKS = AppTasks(
             verify_func=validate_task_three,
             human_steps=3,
             is_reasoning=False,
+            evaluation_type="answer",
+            answer_schema=TASK3_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Like Olivia's newly uploaded status.",

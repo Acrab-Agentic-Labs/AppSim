@@ -252,6 +252,16 @@ def _result_contains_number(result, expected_number: int) -> bool:
 
 
 def _extract_result_answer_text(result) -> str:
+    if isinstance(result, dict):
+        extracted_answer = result.get("extracted_answer")
+        if isinstance(extracted_answer, dict):
+            for value in extracted_answer.values():
+                if value is None:
+                    continue
+                text = str(value).strip()
+                if text:
+                    return text
+
     if not isinstance(result, dict):
         return ""
     for key in ("final_message", "final_answer", "answer", "content", "message"):
@@ -1124,11 +1134,11 @@ def evaluate_task(task_id: int, result=None, device_id=None, backup_dir=None, **
                 if int(item.get("unreadCount", 0)) > 0
             ]
         )
-        answer_ok = _result_answer_is_arabic_number(result, expected_unread)
-        if not answer_ok:
+        extracted_answer = result.get("extracted_answer") if isinstance(result, dict) else None
+        if not isinstance(extracted_answer, dict) or extracted_answer.get("unread_count") != expected_unread:
             logging.info(
-                "Zoom task 15 verify detail: answer=%r expected_number=%s",
-                _extract_result_answer_text(result),
+                "Zoom task 15 verify detail: extracted_answer=%r expected_number=%s",
+                extracted_answer,
                 expected_unread,
             )
             return False
@@ -1236,4 +1246,3 @@ def evaluate_task(task_id: int, result=None, device_id=None, backup_dir=None, **
 
     logging.error("Unsupported Zoom task ID: %s", task_id)
     return False
-
