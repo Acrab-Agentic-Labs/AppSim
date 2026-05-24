@@ -72,19 +72,21 @@ class BaselineExtractor(AnswerExtractor):
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user_prompt},
         ]
+        kwargs = {
+            "model": self.model_name,
+            "messages": messages,
+        }
         try:
             response = self.client.chat.completions.create(
-                model=self.model_name,
-                temperature=0.0,
-                response_format={"type": "json_object"},
-                messages=messages,
+                **kwargs, temperature=0.0, response_format={"type": "json_object"},
             )
         except Exception:
-            response = self.client.chat.completions.create(
-                model=self.model_name,
-                temperature=0.0,
-                messages=messages,
-            )
+            try:
+                response = self.client.chat.completions.create(
+                    **kwargs, temperature=0.0,
+                )
+            except Exception:
+                response = self.client.chat.completions.create(**kwargs)
         return response.choices[0].message.content or ""
 
     def extract(
