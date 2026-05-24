@@ -1,5 +1,19 @@
 from ._shared import evaluate_task
 
+TASK12_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the count of not-started scheduled meetings.",
+    "properties": {
+        "meeting_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The number of not-started scheduled meetings, as an Arabic numeral integer.",
+        }
+    },
+    "required": ["meeting_count"],
+    "additionalProperties": False,
+}
+
 
 def verify_contact_count_answer(
     result=None,

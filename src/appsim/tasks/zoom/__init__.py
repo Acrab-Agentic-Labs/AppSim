@@ -15,12 +15,12 @@ from .eval_8 import verify_display_name_updated
 from .eval_9 import verify_join_994488281_with_camera
 from .eval_10 import verify_unmute_all_389257198
 from .eval_11 import verify_raise_lower_hand_with_thumbs_up
-from .eval_12 import verify_contact_count_answer
+from .eval_12 import TASK12_ANSWER_SCHEMA, verify_contact_count_answer
 from .eval_13 import verify_upcoming_schedule_count_answer
 from .eval_14 import TASK14_ANSWER_SCHEMA, verify_schedule_tomorrow_1900_with_derek_and_brittany
 from .eval_15 import verify_cancel_may_first_schedule
 from .eval_16 import verify_message_natalie_about_next_monday_leave
-from .eval_17 import verify_delay_tomorrow_noon_to_1300
+from .eval_17 import TASK17_ANSWER_SCHEMA, verify_delay_tomorrow_noon_to_1300
 from .eval_18 import verify_enable_waiting_room_and_extend_noon_meeting
 from .eval_19 import verify_change_personal_status_to_busy
 from .eval_20 import verify_change_display_name_to_liu_chenlong
@@ -95,10 +95,12 @@ ZOOM_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction='Count all currently "Not started" scheduled meetings, then open the earliest one, copy its invite link, and return to the meeting list. Put the numeric answer between <ans> and </ans>, using Arabic numerals, for example <ans>3</ans>.',
+            instruction='Count all currently "Not started" scheduled meetings, then open the earliest one, copy its invite link, and return to the meeting list.',
             verify_func=verify_contact_count_answer,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="hybrid",
+            answer_schema=TASK12_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Search for Natalie Cox in the contacts list, send the message \"I need to take leave from next Monday's meeting.\", return to the chat list, and confirm this conversation appears in recent chats.",
@@ -127,10 +129,12 @@ ZOOM_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction='Find all not-started meetings in the next 7 days, count them, and rename the latest-starting one to "[GUIA-19] Final Review". Put the numeric answer between <ans> and </ans>, using Arabic numerals, for example <ans>3</ans>.',
+            instruction='Find all not-started meetings in the next 7 days, count them, and rename the latest-starting one to "[GUIA-19] Final Review".',
             verify_func=verify_delay_tomorrow_noon_to_1300,
             human_steps=5,
             is_reasoning=True,
+            evaluation_type="hybrid",
+            answer_schema=TASK17_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Find the nearest scheduled meeting that has not started yet, enable the waiting room, disable "Allow participants to join before host", save it, and return to the meeting list.',
