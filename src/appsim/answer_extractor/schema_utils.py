@@ -35,6 +35,10 @@ def extract_first_json_object(text: str) -> Any:
 
 def normalize_answer_by_schema(answer: Any, schema: Dict[str, Any]) -> Any:
     """按 schema 做最少量的通用归一化。"""
+    if answer is None:
+        # 方案 1：字段级 null 视为“未抽到答案”的合法值，保留给 verifier 决定是否接受。
+        return None
+
     schema_type = schema.get("type")
 
     if schema_type == "object" and isinstance(answer, dict):
@@ -96,6 +100,9 @@ def validate_answer_by_schema(answer: Any, schema: Dict[str, Any], path: str = "
     """使用极简 JSON Schema 子集校验答案。"""
     errors: List[str] = []
     schema_type = schema.get("type")
+
+    if answer is None and path != "$":
+        return errors
 
     if schema_type == "object":
         if not isinstance(answer, dict):
