@@ -199,6 +199,16 @@ export API_KEY='your-api-key-here'
 export MODEL_NAME='your-model-name'
 ```
 
+对于 `evaluation_type="answer"` 或 `evaluation_type="hybrid"` 的任务，评测脚本还会调用 answer extractor，把 agent 的 `final_message` 结构化为 `result["extracted_answer"]`。默认情况下，answer extractor 会复用上面的 `API_BASE`、`API_KEY`、`MODEL_NAME`。如果希望 extractor 使用独立模型，也可以单独配置：
+
+```bash
+export ANSWER_EXTRACTOR_API_BASE='https://your-extractor-endpoint.com/api/v3'
+export ANSWER_EXTRACTOR_API_KEY='your-extractor-api-key'
+export ANSWER_EXTRACTOR_MODEL_NAME='your-extractor-model-name'
+```
+
+新接入的 `answer` / `hybrid` 任务会优先读取 `result["extracted_answer"]` 做验证，不再依赖旧的 `final_message` 文本格式约束（例如 `<ans>...</ans>`）。
+
 不同 Agent 也支持自己的环境变量前缀，例如 `AGENTCPM_GUI_API_BASE`、`AGENTCPM_GUI_API_KEY`、`AGENTCPM_GUI_MODEL_NAME`。批量脚本会按设备自动导出这些变量，一般只需要改 `scripts/eval.sh` 的配置区。
 
 #### 3. 批量评测脚本
