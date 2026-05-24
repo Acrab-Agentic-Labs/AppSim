@@ -2,30 +2,30 @@
 from functools import wraps
 
 from ..base import AppTasks, TaskItem
-from .eval_1 import validate as validate_task_1
-from .eval_2 import validate as validate_task_2
-from .eval_3 import validate as validate_task_3
-from .eval_4 import validate as validate_task_4
-from .eval_5 import validate as validate_task_5
+from .eval_1 import TASK1_ANSWER_SCHEMA, validate as validate_task_1
+from .eval_2 import TASK2_ANSWER_SCHEMA, validate as validate_task_2
+from .eval_3 import TASK3_ANSWER_SCHEMA, validate as validate_task_3
+from .eval_4 import TASK4_ANSWER_SCHEMA, validate as validate_task_4
+from .eval_5 import TASK5_ANSWER_SCHEMA, validate as validate_task_5
 from .eval_6 import verify_modify_username
 from .eval_7 import verify_navigate_to_destination
 from .eval_8 import verify_open_bright_mode
 from .eval_9 import verify_delete_recent_route
 from .eval_10 import verify_favorite_nearest_restaurant
-from .eval_11 import validate as validate_task_11
-from .eval_12 import validate as validate_task_12
-from .eval_13 import validate as validate_task_13
-from .eval_14 import validate as validate_task_14
-from .eval_15 import validate as validate_task_15
+from .eval_11 import TASK11_ANSWER_SCHEMA, validate as validate_task_11
+from .eval_12 import TASK12_ANSWER_SCHEMA, validate as validate_task_12
+from .eval_13 import TASK13_ANSWER_SCHEMA, validate as validate_task_13
+from .eval_14 import TASK14_ANSWER_SCHEMA, validate as validate_task_14
+from .eval_15 import TASK15_ANSWER_SCHEMA, validate as validate_task_15
 from .eval_16 import verify_walk_to_nearest_food
 from .eval_17 import verify_navigate_from_poi
 from .eval_18 import verify_add_waypoint
 from .eval_19 import verify_call_top_attraction
 from .eval_20 import verify_favorite_nearby_attractions
-from .eval_21 import validate as validate_task_21
-from .eval_22 import validate as validate_task_22
-from .eval_23 import validate as validate_task_23
-from .eval_24 import validate as validate_task_24
+from .eval_21 import TASK21_ANSWER_SCHEMA, validate as validate_task_21
+from .eval_22 import TASK22_ANSWER_SCHEMA, validate as validate_task_22
+from .eval_23 import TASK23_ANSWER_SCHEMA, validate as validate_task_23
+from .eval_24 import TASK24_ANSWER_SCHEMA, validate as validate_task_24
 from .eval_25 import verify_cycle_to_favorite
 from .eval_26 import verify_add_favorite_as_waypoint
 from .eval_27 import verify_add_multiple_waypoints
@@ -56,34 +56,44 @@ GAODE_TASKS = AppTasks(
     package_name=PACKAGE_NAME,
     task_items=[
         TaskItem(
-            instruction=_gaode_instruction("进入周边界面，告诉我美食排行榜中评分最高的美食，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("进入周边界面，告诉我美食排行榜中评分最高的美食。"),
             verify_func=validate_task_1,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK1_ANSWER_SCHEMA,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我第一次导航去了哪个地点，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我第一次导航去了哪个地点。"),
             verify_func=validate_task_2,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK2_ANSWER_SCHEMA,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我账号的名字和id，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我账号的名字和id。"),
             verify_func=validate_task_3,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK3_ANSWER_SCHEMA,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我周边最近的酒店名字，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我周边最近的酒店名字。"),
             verify_func=validate_task_4,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK4_ANSWER_SCHEMA,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我收藏夹收藏了几个地点，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我收藏夹收藏了几个地点。"),
             verify_func=validate_task_5,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK5_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction=_gaode_instruction("修改我的名字为123456。"),
@@ -116,34 +126,44 @@ GAODE_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我步行去最近的酒店需要几分钟，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我步行去最近的酒店需要几分钟。"),
             verify_func=validate_task_11,
             human_steps=7,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK11_ANSWER_SCHEMA,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我八七会议会址纪念馆的开放时间有几个小时，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我八七会议会址纪念馆的开放时间有几个小时。"),
             verify_func=validate_task_12,
             human_steps=5,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK12_ANSWER_SCHEMA,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我M+购物中心的地址，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我M+购物中心的地址。"),
             verify_func=validate_task_13,
             human_steps=5,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK13_ANSWER_SCHEMA,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我美食排行榜第一的地点的电话号码，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我美食排行榜第一的地点的电话号码。"),
             verify_func=validate_task_14,
             human_steps=5,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK14_ANSWER_SCHEMA,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我收藏的第一行饭店的名称，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我收藏的第一行饭店的名称。"),
             verify_func=validate_task_15,
             human_steps=6,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK15_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction=_gaode_instruction("步行导航去周边最近的美食店。"),
@@ -176,28 +196,36 @@ GAODE_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我最近的一家四星级酒店名字（根据简介看），把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我最近的一家四星级酒店名字（根据简介看）。"),
             verify_func=validate_task_21,
             human_steps=11,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK21_ANSWER_SCHEMA,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我台北路公共停车场停车收费标准（一个小时多少钱），把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我台北路公共停车场停车收费标准（一个小时多少钱）。"),
             verify_func=validate_task_22,
             human_steps=5,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK22_ANSWER_SCHEMA,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我江汉大学（汉口校区）周边美食排行榜第一名是什么，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我江汉大学（汉口校区）周边美食排行榜第一名是什么。"),
             verify_func=validate_task_23,
             human_steps=8,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK23_ANSWER_SCHEMA,
         ),
         TaskItem(
-            instruction=_gaode_instruction("告诉我现在的位置，距离武汉市公安局（江岸分局）的周边美食排行榜第一名驾车需要几分钟，把你的答案放在<ans>和</ans>之间。"),
+            instruction=_gaode_instruction("告诉我现在的位置，距离武汉市公安局（江岸分局）的周边美食排行榜第一名驾车��要几分钟。"),
             verify_func=validate_task_24,
             human_steps=9,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK24_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction=_gaode_instruction("骑行导航去我收藏的饭店中最近的一家。"),
