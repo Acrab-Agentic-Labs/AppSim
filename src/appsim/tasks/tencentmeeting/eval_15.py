@@ -2,10 +2,24 @@ import os
 import json
 import logging
 from appsim.utils import read_json_from_device
-try:
-    from ._answer_utils import answer_contains_any, answer_contains_number
-except ImportError:
-    from _answer_utils import answer_contains_any, answer_contains_number
+
+TASK15_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取最近一场已结束会议的主题和时长。",
+    "properties": {
+        "meeting_topic": {
+            "type": "string",
+            "description": "会议主题名称。",
+        },
+        "duration_minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "会议时长（分钟），必须是阿拉伯数字整数。",
+        },
+    },
+    "required": ["meeting_topic", "duration_minutes"],
+    "additionalProperties": False,
+}
 
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
@@ -101,12 +115,15 @@ def get_latest_ended_meeting_details(
             )
             return False
 
-        details_evidence = [
-            actual_topic,
-            recent_meeting.get("meetingId"),
-            end_time_ms,
-        ]
-        return answer_contains_any(result, details_evidence) or answer_contains_number(result, actual_duration_minutes)
+        if not isinstance(result, dict):
+            return False
+        extracted_answer = result.get("extracted_answer")
+        if not isinstance(extracted_answer, dict):
+            return False
+        topic_ok = actual_topic in str(extracted_answer.get("meeting_topic") or "")
+        dur_val = extracted_answer.get("duration_minutes")
+        duration_ok = dur_val is not None and abs(dur_val - actual_duration_minutes) <= duration_tolerance_minutes
+        return topic_ok or duration_ok
 
 
     except Exception as e:

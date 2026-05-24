@@ -6,10 +6,20 @@
 import os
 import logging
 from appsim.utils import read_json_from_device
-try:
-    from ._answer_utils import answer_contains_any, answer_contains_number
-except ImportError:
-    from _answer_utils import answer_contains_any, answer_contains_number
+
+TASK18_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取已结束会议的平均时长。",
+    "properties": {
+        "average_minutes": {
+            "type": "number",
+            "minimum": 0,
+            "description": "已结束会议的平均时长（分钟），保留整数或一位小数。",
+        }
+    },
+    "required": ["average_minutes"],
+    "additionalProperties": False,
+}
 
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
@@ -103,7 +113,15 @@ def verify_average_meeting_duration(
             )
             return False
 
-        return answer_contains_number(result, round(avg_duration)) or answer_contains_number(result, round(avg_duration, 1))
+        if not isinstance(result, dict):
+            return False
+        extracted_answer = result.get("extracted_answer")
+        if not isinstance(extracted_answer, dict):
+            return False
+        ans_val = extracted_answer.get("average_minutes")
+        if ans_val is not None and abs(ans_val - avg_duration) <= tolerance:
+            return True
+        return False
     except Exception as e:
         logging.error(f"处理数据时发生错误: {e}")
         return False

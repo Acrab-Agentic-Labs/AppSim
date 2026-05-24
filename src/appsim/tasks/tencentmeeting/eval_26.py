@@ -8,7 +8,6 @@ import logging
 import re
 
 try:
-    from ._answer_utils import answer_contains_number
     from ._device_utils import (
         contains_text,
         current_ui_text,
@@ -19,7 +18,6 @@ try:
         read_json_from_device,
     )
 except ImportError:
-    from _answer_utils import answer_contains_number
     from _device_utils import (
         contains_text,
         current_ui_text,
@@ -29,6 +27,20 @@ except ImportError:
         read_clipboard_text,
         read_json_from_device,
     )
+
+TASK26_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取会议室的参会人数。",
+    "properties": {
+        "participant_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "参会人数，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["participant_count"],
+    "additionalProperties": False,
+}
 
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
@@ -243,7 +255,11 @@ def verify_invitation_link_copied_and_participant_count(
         device_id=device_id,
         backup_dir=backup_dir,
     )
-    participant_count_ok = answer_contains_number(result, EXPECTED_PARTICIPANT_COUNT)
+    participant_count_ok = False
+    if isinstance(result, dict):
+        extracted_answer = result.get("extracted_answer")
+        if isinstance(extracted_answer, dict) and extracted_answer.get("participant_count") == EXPECTED_PARTICIPANT_COUNT:
+            participant_count_ok = True
 
     if link_copied_ok:
         logging.info("Composite eval_26 subcheck passed: copied personal-room link.")
