@@ -1,32 +1,21 @@
-import re
-
-
-# 9、好友张杰的新歌名字叫什么来着，有点忘记了，你翻一下我和他的聊天记录。把你的答案放置在<ans>和</ans>之间，你的答案必须是歌曲名。
+TASK9_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取歌曲名称。",
+    "properties": {
+        "song_name": {
+            "type": "string",
+            "description": "歌曲名称，仅输出歌名本身，不含引号或书名号。",
+        }
+    },
+    "required": ["song_name"],
+    "additionalProperties": False,
+}
 
 
 def task9_song_name_check(result=None, device_id=None, backup_dir=None) -> bool:
-    try:
-        if not isinstance(result, dict):
-            return False
-
-        final_msg = result.get("final_message")
-        if final_msg is None:
-            return False
-
-        final_msg = str(final_msg)
-        match = re.search(
-            r"<ans>\s*(.*?)\s*</ans>",
-            final_msg,
-            re.IGNORECASE | re.DOTALL,
-        )
-        if match is None:
-            return False
-
-        return match.group(1).strip() == "秋日私语"
-    except Exception:
+    if not isinstance(result, dict):
         return False
-
-
-if __name__ == "__main__":
-    result = task9_song_name_check()
-    print(result)
+    extracted_answer = result.get("extracted_answer")
+    if isinstance(extracted_answer, dict) and extracted_answer.get("song_name") == "秋日私语":
+        return True
+    return False
