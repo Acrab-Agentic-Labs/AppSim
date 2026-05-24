@@ -7,10 +7,19 @@
 import os
 import logging
 
-try:
-    from ._answer_utils import answer_contains_any, answer_contains_number
-except ImportError:
-    from _answer_utils import answer_contains_any, answer_contains_number
+TASK9_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取手机号13开头的人数。",
+    "properties": {
+        "person_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "手机号13开头的人数，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["person_count"],
+    "additionalProperties": False,
+}
 
 
 # ============================================================================
@@ -172,7 +181,12 @@ def verify_phone_13_count(
         logging.error("Phone-prefix count %s did not match expected %s.", actual_count, expected_count)
         return False
 
-    return answer_contains_number(result, actual_count)
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if isinstance(extracted_answer, dict) and extracted_answer.get("person_count") == actual_count:
+        return True
+    return False
 
 
 if __name__ == '__main__':

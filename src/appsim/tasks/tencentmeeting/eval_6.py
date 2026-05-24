@@ -7,10 +7,19 @@
 import os
 import logging
 
-try:
-    from ._answer_utils import answer_contains_any, answer_contains_number
-except ImportError:
-    from _answer_utils import answer_contains_any, answer_contains_number
+TASK6_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取联系人数目。",
+    "properties": {
+        "contact_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "联系人总数，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["contact_count"],
+    "additionalProperties": False,
+}
 
 
 # ============================================================================
@@ -172,7 +181,12 @@ def verify_contact_count(
         logging.error("Contact count %s did not match expected %s.", actual_count, expected_count)
         return False
 
-    return answer_contains_number(result, actual_count)
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if isinstance(extracted_answer, dict) and extracted_answer.get("contact_count") == actual_count:
+        return True
+    return False
 
 
 if __name__ == '__main__':

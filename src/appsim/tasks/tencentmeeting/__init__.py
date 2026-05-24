@@ -11,28 +11,28 @@ from .eval_1 import check_recent_ended_meeting
 from .eval_2 import check_previous_meeting_playback
 from .eval_3 import check_join_meeting_with_password
 from .eval_4 import check_screen_sharing
-from .eval_5 import verify_meeting_count
-from .eval_6 import verify_contact_count
-from .eval_7 import verify_not_started_meeting_count
-from .eval_8 import verify_surname_zhou_count
-from .eval_9 import verify_phone_13_count
-from .eval_10 import verify_invitable_people_count
+from .eval_5 import TASK5_ANSWER_SCHEMA, verify_meeting_count
+from .eval_6 import TASK6_ANSWER_SCHEMA, verify_contact_count
+from .eval_7 import TASK7_ANSWER_SCHEMA, verify_not_started_meeting_count
+from .eval_8 import TASK8_ANSWER_SCHEMA, verify_surname_zhou_count
+from .eval_9 import TASK9_ANSWER_SCHEMA, verify_phone_13_count
+from .eval_10 import TASK10_ANSWER_SCHEMA, verify_invitable_people_count
 from .eval_11 import check_all_mics_muted
 from .eval_12 import check_message_content
 from .eval_13 import check_quick_meeting_created
 from .eval_14 import check_scheduled_meeting_with_all_friends
-from .eval_15 import get_latest_ended_meeting_details
+from .eval_15 import TASK15_ANSWER_SCHEMA, get_latest_ended_meeting_details
 from .eval_16 import check_screen_sharing_active
-from .eval_17 import verify_message_count_by_sender
-from .eval_18 import verify_average_meeting_duration
-from .eval_19 import verify_most_active_sender
+from .eval_17 import TASK17_ANSWER_SCHEMA, verify_message_count_by_sender
+from .eval_18 import TASK18_ANSWER_SCHEMA, verify_average_meeting_duration
+from .eval_19 import TASK19_ANSWER_SCHEMA, verify_most_active_sender
 from .eval_20 import check_personal_meeting_room_settings
 from .eval_21 import check_personal_room_invitation
 from .eval_22 import check_participant_management
 from .eval_23 import check_selective_meeting_invitation
 from .eval_24 import check_message_and_handraise
 from .eval_25 import check_hand_raise_and_search_user_by_phone
-from .eval_26 import verify_invitation_link_copied_and_participant_count
+from .eval_26 import TASK26_ANSWER_SCHEMA, verify_invitation_link_copied_and_participant_count
 
 TENCENT_MEETING_TASKS = AppTasks(
     package_name="com.example.tencent_meeting_sim",
@@ -71,6 +71,8 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_meeting_count,
             human_steps=1,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK5_ANSWER_SCHEMA,
         ),
         # 6
         TaskItem(
@@ -78,6 +80,8 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_contact_count,
             human_steps=15,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK6_ANSWER_SCHEMA,
         ),
         # 7
         TaskItem(
@@ -85,6 +89,8 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_not_started_meeting_count,
             human_steps=1,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK7_ANSWER_SCHEMA,
         ),
         # 8
         TaskItem(
@@ -92,6 +98,8 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_surname_zhou_count,
             human_steps=15,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK8_ANSWER_SCHEMA,
         ),
         # 9
         TaskItem(
@@ -99,6 +107,8 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_phone_13_count,
             human_steps=15,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK9_ANSWER_SCHEMA,
         ),
         # 10
         TaskItem(
@@ -106,6 +116,8 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_invitable_people_count,
             human_steps=15,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK10_ANSWER_SCHEMA,
         ),
         # 11
         TaskItem(
@@ -141,6 +153,8 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=get_latest_ended_meeting_details,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK15_ANSWER_SCHEMA,
         ),
         # 16
         TaskItem(
@@ -155,6 +169,8 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_message_count_by_sender,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK17_ANSWER_SCHEMA,
         ),
         # 18
         TaskItem(
@@ -162,6 +178,8 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_average_meeting_duration,
             human_steps=39,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK18_ANSWER_SCHEMA,
         ),
         # 19
         TaskItem(
@@ -169,6 +187,8 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_most_active_sender,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK19_ANSWER_SCHEMA,
         ),
         # 20
         TaskItem(
@@ -218,6 +238,8 @@ TENCENT_MEETING_TASKS = AppTasks(
             verify_func=verify_invitation_link_copied_and_participant_count,
             human_steps=8,
             is_reasoning=True,
+            evaluation_type="hybrid",
+            answer_schema=TASK26_ANSWER_SCHEMA,
         ),
     ],
 )

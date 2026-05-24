@@ -7,10 +7,19 @@ import os
 import logging
 from collections import Counter
 from appsim.utils import read_json_from_device
-try:
-    from ._answer_utils import answer_contains_any, answer_contains_number
-except ImportError:
-    from _answer_utils import answer_contains_any, answer_contains_number
+
+TASK19_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取发送消息最多的用户。",
+    "properties": {
+        "sender_name": {
+            "type": "string",
+            "description": "发送消息最多的用户姓名，仅输出姓名。",
+        }
+    },
+    "required": ["sender_name"],
+    "additionalProperties": False,
+}
 
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
@@ -96,7 +105,18 @@ def verify_most_active_sender(
                 if m.get("senderId") == expected_sender_id and m.get("senderName")
             }
         )
-        return answer_contains_any(result, [expected_sender_id] + sender_names)
+        if not isinstance(result, dict):
+            return False
+        extracted_answer = result.get("extracted_answer")
+        if not isinstance(extracted_answer, dict):
+            return False
+        ans_name = str(extracted_answer.get("sender_name") or "")
+        if expected_sender_id in ans_name:
+            return True
+        for name in sender_names:
+            if name and name in ans_name:
+                return True
+        return False
     except Exception as e:
         logging.error(f"处理数据时发生错误: {e}")
         return False

@@ -6,10 +6,20 @@
 import os
 import logging
 from appsim.utils import read_json_from_device
-try:
-    from ._answer_utils import answer_contains_any, answer_contains_number
-except ImportError:
-    from _answer_utils import answer_contains_any, answer_contains_number
+
+TASK17_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取指定用户发送的消息数量。",
+    "properties": {
+        "message_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "发送的消息数量，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["message_count"],
+    "additionalProperties": False,
+}
 
 
 PACKAGE_NAME = "com.example.tencent_meeting_sim"
@@ -85,7 +95,12 @@ def verify_message_count_by_sender(
             )
             return False
 
-        return answer_contains_number(result, actual_count)
+        if not isinstance(result, dict):
+            return False
+        extracted_answer = result.get("extracted_answer")
+        if isinstance(extracted_answer, dict) and extracted_answer.get("message_count") == actual_count:
+            return True
+        return False
     except Exception as e:
         logging.error(f"处理数据时发生错误: {e}")
         return False
