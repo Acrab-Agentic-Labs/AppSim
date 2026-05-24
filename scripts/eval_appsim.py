@@ -7,6 +7,7 @@ import time
 
 from dotenv import load_dotenv
 
+from appsim.answer_extractor import BaselineExtractor
 from appsim.tasks import APP_TASKS_MAP, AppEnum
 from appsim.utils import run_app_with_clear_data
 
@@ -123,6 +124,13 @@ def main():
         logging.error(f"❌ 初始化失败: {e}")
         raise e
 
+    extractor = None
+    try:
+        extractor = BaselineExtractor()
+        logging.info("   AnswerExtractor: BaselineExtractor")
+    except Exception as e:
+        logging.warning(f"⚠️ AnswerExtractor 初始化失败，将仅保留原始验证路径: {e}")
+
     # 创建输出文件路径（含时间戳）
     output_filename = f"eval_details_{task_app.value}_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
     output_path = os.path.join(args.output_dir, output_filename)
@@ -142,6 +150,7 @@ def main():
             "instruction": instruction,
             "result": None,  # 执行结果
             "verify_result": None,  # 检验结果
+            "evaluation_type": item.evaluation_type,
         }
 
         # 重置 Agent （历史对话记录清空）
@@ -149,13 +158,29 @@ def main():
 
         # 执行指令
         result = agent.execute_instruction(instruction)
-        ItemEvalDetail["result"] = result.model_dump()
+        result_payload = result.model_dump()
+
+        if (
+            extractor is not None
+            and item.evaluation_type in {"answer", "hybrid"}
+            and item.answer_schema
+        ):
+            extraction = extractor.extract(
+                final_message=result_payload.get("final_message"),
+                answer_schema=item.answer_schema,
+                instruction=item.instruction,
+            )
+            result_payload["no_canonicalize_answer"] = extraction.no_canonicalize_answer
+            result_payload["extracted_answer"] = extraction.answer
+            result_payload["answer_extraction"] = extraction.model_dump()
+
+        ItemEvalDetail["result"] = result_payload
 
         if result.success:
             logging.info("✅ 指令执行成功！")
             try:
                 verify_result = verify_function(
-                    device_id=device_id, result=result.model_dump(), backup_dir=result.screenshot_dir
+                    device_id=device_id, result=result_payload, backup_dir=result.screenshot_dir
                 )
             except Exception as e:
                 logging.error(e)

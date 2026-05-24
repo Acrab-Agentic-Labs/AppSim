@@ -1,5 +1,19 @@
 from ._shared import evaluate_task
 
+TASK14_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of unread chat threads after completing the messaging actions.",
+    "properties": {
+        "unread_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The current number of unread chat threads, returned as an Arabic numeral integer.",
+        }
+    },
+    "required": ["unread_count"],
+    "additionalProperties": False,
+}
+
 
 def verify_schedule_tomorrow_1900_with_derek_and_brittany(
     result=None,

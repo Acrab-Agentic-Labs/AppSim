@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from typing import Any, Callable, List
+from typing import Any, Callable, Dict, List, Literal, Optional
 
 from pydantic import BaseModel
 
@@ -16,6 +16,8 @@ class TaskItem(BaseModel):
     verify_func: Callable[[dict], Any]
     human_steps: int
     is_reasoning: bool
+    evaluation_type: Literal["state", "answer", "hybrid"] = "state"
+    answer_schema: Optional[Dict[str, Any]] = None
 
     class Config:
         arbitrary_types_allowed = True

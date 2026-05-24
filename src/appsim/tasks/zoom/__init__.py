@@ -17,7 +17,7 @@ from .eval_10 import verify_unmute_all_389257198
 from .eval_11 import verify_raise_lower_hand_with_thumbs_up
 from .eval_12 import verify_contact_count_answer
 from .eval_13 import verify_upcoming_schedule_count_answer
-from .eval_14 import verify_schedule_tomorrow_1900_with_derek_and_brittany
+from .eval_14 import TASK14_ANSWER_SCHEMA, verify_schedule_tomorrow_1900_with_derek_and_brittany
 from .eval_15 import verify_cancel_may_first_schedule
 from .eval_16 import verify_message_natalie_about_next_monday_leave
 from .eval_17 import verify_delay_tomorrow_noon_to_1300
@@ -107,10 +107,12 @@ ZOOM_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="Find Amber Campbell and Derek Stewart in the contacts list, send each of them \"Please confirm tomorrow's meeting.\", then count the current number of unread chat threads. Put the numeric answer between <ans> and </ans>, using Arabic numerals, for example <ans>3</ans>.",
+            instruction="Find Amber Campbell and Derek Stewart in the contacts list, send each of them \"Please confirm tomorrow's meeting.\", then count the current number of unread chat threads.",
             verify_func=verify_schedule_tomorrow_1900_with_derek_and_brittany,
             human_steps=13,
             is_reasoning=True,
+            evaluation_type="hybrid",
+            answer_schema=TASK14_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Open Settings, turn off "Automatically connect audio when joining meeting", turn on "Always turn on camera when joining meeting", then immediately create a meeting and confirm the camera is on while audio is disconnected.',

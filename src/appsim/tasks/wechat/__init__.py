@@ -2,14 +2,14 @@ from ..base import AppTasks, TaskItem
 from .eval_1 import task1_friend_message_send_check
 from .eval_2 import task2_group_message_send_check
 from .eval_3 import task3_validate_attendee_count
-from .eval_4 import task4_validate_friend_count
+from .eval_4 import TASK4_ANSWER_SCHEMA, task4_validate_friend_count
 from .eval_5 import task5_validate_info_in_group
 from .eval_6 import task6_validate_forward_message
 from .eval_7 import task7_stared_moments_count
 from .eval_8 import task8_moments_count
 from .eval_9 import task9_song_name_check
 from .eval_10 import task10_validate_latest_friend_like_count
-from .eval_11 import task11_validate_financial_report_person
+from .eval_11 import TASK11_ANSWER_SCHEMA, task11_validate_financial_report_person
 from .eval_12 import task12_validate_design_draft_person
 from .eval_13 import task13_validate_panda_message
 from .eval_14 import task14_validate_movie_message
@@ -39,10 +39,12 @@ WECHAT_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
-            instruction="看看我有多少个微信好友。把你的答案放置在<ans>和</ans>之间，你的答案必须是一个阿拉伯数字。",
+            instruction="看看我有多少个微信好友。",
             verify_func=task4_validate_friend_count,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK4_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="看看幸福一家人群，确定一下周六几点集合？在哪集合？把你的答案放置在<ans>和</ans>之间，你的答案必须包含集合时间和集合地点。",
@@ -81,10 +83,12 @@ WECHAT_TASKS = AppTasks(
             is_reasoning=True,
         ),
         TaskItem(
-            instruction="查看工作讨论组的消息，谁完成了财务报表？把你的答案放置在<ans>和</ans>之间，你的答案必须是人名。",
+            instruction="查看工作讨论组的消息，谁完成了财务报表？",
             verify_func=task11_validate_financial_report_person,
             human_steps=7,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK11_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="查看工作讨论组的消息，是谁完成了设计稿？把你的答案放置在<ans>和</ans>之间，你的答案必须是人名。",
