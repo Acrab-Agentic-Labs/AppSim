@@ -1,15 +1,27 @@
 import re
 
-def validate_task_fourteen(result=None, device_id=None, backup_dir=None):
-    """验证任务十四：查看首页前十个商品中华为商品评论数最多的为多少条，给出一个阿拉伯数字即可。"""
-    if result and "final_message" in result and result["final_message"] is not None:
-        message = result["final_message"]
-        numbers = re.findall(r"\d+", message)
-        # Check if any of the found numbers is exactly ''
-        if '3200' in numbers:
-            return True
+TASK14_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取华为商品中评论数最多的评论条数。",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "华为商品评论数最多的为多少条，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
 
-    return False
+
+def validate_task_fourteen(result=None, device_id=None, backup_dir=None):
+    """验证任务十四：查看首页前十个商品中华为商品评论数最多的为多少条。"""
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    return extracted_answer.get("count") == 3200
 
 
 if __name__ == "__main__":

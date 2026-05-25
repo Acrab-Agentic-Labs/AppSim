@@ -1,14 +1,14 @@
 from ..base import AppTasks, TaskItem
-from .eval_1 import validate_task_one
-from .eval_2 import validate_task_two
+from .eval_1 import validate_task_one, TASK1_ANSWER_SCHEMA
+from .eval_2 import validate_task_two, TASK2_ANSWER_SCHEMA
 from .eval_3 import TASK3_ANSWER_SCHEMA, validate_task_three
 from .eval_4 import validate_task_four
 from .eval_5 import validate_task_five
-from .eval_6 import validate_task_six
+from .eval_6 import validate_task_six, TASK6_ANSWER_SCHEMA
 from .eval_7 import validate_task_seven
-from .eval_8 import validate_task_eight
-from .eval_9 import validate_task_nine
-from .eval_10 import validate_task_ten
+from .eval_8 import TASK8_ANSWER_SCHEMA, validate_task_eight
+from .eval_9 import TASK9_ANSWER_SCHEMA, validate_task_nine
+from .eval_10 import TASK10_ANSWER_SCHEMA, validate_task_ten
 from .eval_11 import validate_task_eleven
 from .eval_12 import validate_task_twelve
 from .eval_13 import validate_task_thirteen
@@ -48,12 +48,16 @@ WHATSAPP_TASKS = AppTasks(
             verify_func=validate_task_one,
             human_steps=3,
             is_reasoning=False,
+            evaluation_type="answer",
+            answer_schema=TASK1_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me who the most recent call was with. Just give me the name.",
             verify_func=validate_task_two,
             human_steps=3,
             is_reasoning=False,
+            evaluation_type="answer",
+            answer_schema=TASK2_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Check the phone number linked to my account and tell me the answer only.",
@@ -80,6 +84,8 @@ WHATSAPP_TASKS = AppTasks(
             verify_func=validate_task_six,
             human_steps=4,
             is_reasoning=False,
+            evaluation_type="answer",
+            answer_schema=TASK6_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Follow the Netflix channel.",
@@ -92,18 +98,24 @@ WHATSAPP_TASKS = AppTasks(
             verify_func=validate_task_eight,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK8_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Check how many communities I have joined.",
             verify_func=validate_task_nine,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK9_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Check how many statuses the Spotify channel has posted in total and give me an Arabic numeral only.",
             verify_func=validate_task_ten,
             human_steps=5,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK10_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Create a new conversation with James Walker and tell him "We should have a meeting at 2pm".',

@@ -2,8 +2,33 @@ import json
 import os
 import subprocess
 
+TASK28_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取用户的小红书号。",
+    "properties": {
+        "user_num": {
+            "type": "string",
+            "description": "用户的小红书号。",
+        }
+    },
+    "required": ["user_num"],
+    "additionalProperties": False,
+}
+
+
 def eval_28(result=None, device_id=None, backup_dir=None):
-    _USER_ID="user_001"
+    _USER_ID = "user_001"
+
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+
+    user_num_answer = extracted_answer.get("user_num")
+    if user_num_answer is None:
+        return False
+
     message_file_path = os.path.join(backup_dir, "users.json") if backup_dir is not None else "users.json"
 
     try:
@@ -24,8 +49,11 @@ def eval_28(result=None, device_id=None, backup_dir=None):
 
     for u in data:
         if u.get("id") == _USER_ID:
-            if result==u.get("userNum"):
-                return  True
+            if str(user_num_answer) == str(u.get("userNum")):
+                return True
+
+    return False
+
 
 if __name__ == "__main__":
     result = eval_28()

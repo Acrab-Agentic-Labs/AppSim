@@ -39,6 +39,37 @@ from .check_37 import check as check_37
 from .check_38 import check as check_38
 from .check_39 import check as check_39
 from .check_40 import check as check_40
+from .eval_2 import TASK2_ANSWER_SCHEMA, validate as validate_eval_2
+from .eval_3 import TASK3_ANSWER_SCHEMA, validate as validate_eval_3
+from .eval_4 import TASK4_ANSWER_SCHEMA, validate as validate_eval_4
+from .eval_5 import TASK5_ANSWER_SCHEMA, validate as validate_eval_5
+from .eval_6 import TASK6_ANSWER_SCHEMA, validate as validate_eval_6
+from .eval_7 import TASK7_ANSWER_SCHEMA, validate as validate_eval_7
+from .eval_8 import TASK8_ANSWER_SCHEMA, validate as validate_eval_8
+from .eval_9 import TASK9_ANSWER_SCHEMA, validate as validate_eval_9
+from .eval_18 import TASK18_ANSWER_SCHEMA, validate as validate_eval_18
+from .eval_19 import TASK19_ANSWER_SCHEMA, validate as validate_eval_19
+from .eval_20 import TASK20_ANSWER_SCHEMA, validate as validate_eval_20
+from .eval_32 import TASK32_ANSWER_SCHEMA, validate as validate_eval_32
+from .eval_34 import TASK34_ANSWER_SCHEMA, validate as validate_eval_34
+from .eval_38 import TASK38_ANSWER_SCHEMA, validate as validate_eval_38
+from .eval_39 import TASK39_ANSWER_SCHEMA, validate as validate_eval_39
+from .eval_40 import TASK40_ANSWER_SCHEMA, validate as validate_eval_40
+
+import inspect
+
+TASK1_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the current username.",
+    "properties": {
+        "username": {
+            "type": "string",
+            "description": "The current username.",
+        }
+    },
+    "required": ["username"],
+    "additionalProperties": False,
+}
 
 def validate_task(task_id):
     """Wrapper to convert check function to validate function signature"""
@@ -47,7 +78,11 @@ def validate_task(task_id):
         checker = AppChecker(device_id)
         check_func = globals()[f'check_{task_id}']
         try:
-            passed = check_func(checker, result)
+            sig = inspect.signature(check_func)
+            if 'result' in sig.parameters:
+                passed = check_func(checker, result)
+            else:
+                passed = check_func(checker)
             return passed
         except Exception:
             return False
@@ -61,54 +96,72 @@ SPOTIFY_TASKS = AppTasks(
             verify_func=validate_task(1),
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="hybrid",
+            answer_schema=TASK1_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me the name of the currently playing song",
-            verify_func=validate_task(2),
+            verify_func=validate_eval_2,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK2_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Count how many categories are on the search page",
-            verify_func=validate_task(3),
+            verify_func=validate_eval_3,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK3_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Count how many songs are in the first recommended playlist in 'To get you started'",
-            verify_func=validate_task(4),
+            verify_func=validate_eval_4,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK4_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me the title of the first podcast on the podcasts page",
-            verify_func=validate_task(5),
+            verify_func=validate_eval_5,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK5_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me the publish date of the first podcast",
-            verify_func=validate_task(6),
+            verify_func=validate_eval_6,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK6_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me the name of the first audiobook",
-            verify_func=validate_task(7),
+            verify_func=validate_eval_7,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK7_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me the duration of the first audiobook",
-            verify_func=validate_task(8),
+            verify_func=validate_eval_8,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK8_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me who is the artist of the currently playing song",
-            verify_func=validate_task(9),
+            verify_func=validate_eval_9,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK9_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Play or pause the song on the full-screen playing page",
@@ -160,21 +213,27 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="View the lyrics of IRIS OUT and tell me the first line",
-            verify_func=validate_task(18),
+            verify_func=validate_eval_18,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK18_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="View the credits of Style and tell me who is the lyricist",
-            verify_func=validate_task(19),
+            verify_func=validate_eval_19,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK19_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="View the artist information of Style and tell me the first sentence of the introduction",
-            verify_func=validate_task(20),
+            verify_func=validate_eval_20,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK20_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Search for the song 'Shape of You'",
@@ -244,9 +303,11 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Search for the song 'Blank Space', like it, tell me the first line of the lyrics, view the credits and tell me who is the lyricist",
-            verify_func=validate_task(32),
+            verify_func=validate_eval_32,
             human_steps=9,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK32_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Proceed with premium subscription payment",
@@ -256,9 +317,11 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Tell me the title and publish date of the third podcast on the podcasts page, save it, post a comment 'Great episode!', and fast forward 15 seconds",
-            verify_func=validate_task(34),
+            verify_func=validate_eval_34,
             human_steps=8,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK34_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Fast forward a podcast by 15 seconds",
@@ -280,21 +343,27 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Search for the song 'Style', like it, tell me the first line of the lyrics, view the credits and tell me who is the lyricist, then set the sleep timer to 15 minutes",
-            verify_func=validate_task(38),
+            verify_func=validate_eval_38,
             human_steps=13,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK38_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me how many songs are in the playlist 'Chill Vibes' in the library, if less than 6, add songs until there are 6",
-            verify_func=validate_task(39),
+            verify_func=validate_eval_39,
             human_steps=6,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK39_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me the title and publish date of the first audiobook, play and save it, post a comment 'Great episode!', fast forward 15 seconds, then save the second audiobook",
-            verify_func=validate_task(40),
+            verify_func=validate_eval_40,
             human_steps=12,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK40_ANSWER_SCHEMA,
         ),
     ],
 )
