@@ -1,11 +1,22 @@
+TASK36_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the lowest average price among all shopping lists.",
+    "properties": {
+        "lowest_average_price": {
+            "type": "string",
+            "description": "The lowest average price rounded to two decimal places. Numbers only, no currency symbol.",
+        }
+    },
+    "required": ["lowest_average_price"],
+    "additionalProperties": False,
+}
+
+
 def validate_task_thirty_six(result=None, device_id=None, backup_dir=None):
-    """Validate task 36: calculate the average price of items in each shopping list and report the lowest average price rounded to two decimal places."""
-    if result and "final_message" in result and result["final_message"] is not None:
-        if "29.48" in result["final_message"]:
-            return True
-    return False
-
-
-if __name__ == "__main__":
-    result = validate_task_thirty_six()
-    print(result)
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    price = str(extracted_answer.get("lowest_average_price") or "")
+    return "29.48" in price

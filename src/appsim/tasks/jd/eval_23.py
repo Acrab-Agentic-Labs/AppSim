@@ -1,7 +1,20 @@
 import json
 import os
-import re
 import subprocess
+
+
+TASK23_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取Apple官方旗舰店评分大于4.7的商品的平均价格。",
+    "properties": {
+        "average_price": {
+            "type": "number",
+            "description": "平均价格，保留一位小数，必须是阿拉伯数字。",
+        }
+    },
+    "required": ["average_price"],
+    "additionalProperties": False,
+}
 
 
 def validate_task_twenty_three(result=None, device_id=None, backup_dir=None):
@@ -43,16 +56,12 @@ def validate_task_twenty_three(result=None, device_id=None, backup_dir=None):
 
     print(f"Expected average price: {expected_avg_price}")
 
-    if result and "final_message" in result and result["final_message"] is not None:
-        message = result["final_message"]
-        # Find all numbers (including floats)
-        numbers = re.findall(r"[-+]?\d*\.\d+|\d+", message)
-        if str(expected_avg_price) in numbers:
-            return True
-
-    return False
-
-
-if __name__ == "__main__":
-    pass
- 
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    average_price = extracted_answer.get("average_price")
+    if average_price is None:
+        return False
+    return abs(float(average_price) - expected_avg_price) < 0.01

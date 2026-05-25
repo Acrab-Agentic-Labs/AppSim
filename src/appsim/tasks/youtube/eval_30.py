@@ -1,15 +1,22 @@
-def validate_task_thirty(result=None,device_id=None,backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    if 'final_message' in result and (
-            '21.08.265' in result['final_message']
-    ):
-        return True
-    else:
-        return False
+TASK30_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the current app version number.",
+    "properties": {
+        "version": {
+            "type": "string",
+            "description": "The app version number string.",
+        }
+    },
+    "required": ["version"],
+    "additionalProperties": False,
+}
 
-if __name__ == '__main__':
-    print(validate_task_thirty())
+
+def validate_task_thirty(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    version = str(extracted_answer.get("version") or "")
+    return "21.08.265" in version

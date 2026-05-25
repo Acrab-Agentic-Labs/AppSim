@@ -1,17 +1,22 @@
-def validate_task_two(result=None,device_id=None,backup_dir=None):
-    # 验证 result 存在
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
+TASK2_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取好评最高的10家店中月销量最高的店铺名称。",
+    "properties": {
+        "shop_name": {
+            "type": "string",
+            "description": "月销量最高的店铺完整名称，仅输出名称，不含额外描述。",
+        }
+    },
+    "required": ["shop_name"],
+    "additionalProperties": False,
+}
 
-    # 检测 result 中的final_messages中是否包含 "肯德基"
-    if 'final_message' in result and '肯德基' in result['final_message']:
-        return True
-    else:
-        return False
 
-if __name__ == '__main__':
-    result = validate_task_two()
-    print(result)
+def validate_task_two(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    name = str(extracted_answer.get("shop_name") or "")
+    return "肯德基" in name

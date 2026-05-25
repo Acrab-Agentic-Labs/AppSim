@@ -1,18 +1,22 @@
-def validate_task_3(result=None, device_id=None, backup_dir=None):
-    """
-    任务3: 看看会员购里的前四个商品全部买下来要多少钱
-    """
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
+TASK3_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取会员购前四个商品的总价。",
+    "properties": {
+        "total_price": {
+            "type": "string",
+            "description": "前四个商品全部买下来的总价格，保留小数。",
+        }
+    },
+    "required": ["total_price"],
+    "additionalProperties": False,
+}
 
-    if 'final_message' in result and '269.6' in result['final_message']:
-        return True
-    else:
-        return False
 
-if __name__ == '__main__':
-    result = validate_task_3()
-    print(result)
+def validate_task_3(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    total_price = str(extracted_answer.get("total_price") or "")
+    return "269.6" in total_price

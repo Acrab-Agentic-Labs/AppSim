@@ -1,11 +1,22 @@
+TASK22_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the total price of the three most expensive items by unit price in the cart.",
+    "properties": {
+        "total_price": {
+            "type": "string",
+            "description": "The total price as a decimal number. Numbers only, no currency symbol.",
+        }
+    },
+    "required": ["total_price"],
+    "additionalProperties": False,
+}
+
+
 def validate_task_twenty_two(result=None, device_id=None, backup_dir=None):
-    """Validate task 22: find the three most expensive items in the cart by unit price and calculate their total price."""
-    if result and "final_message" in result and result["final_message"] is not None:
-        if "3118.98" in result["final_message"]:
-            return True
-    return False
-
-
-if __name__ == "__main__":
-    result = validate_task_twenty_two()
-    print(result)
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    total_price = str(extracted_answer.get("total_price") or "")
+    return "3118.98" in total_price

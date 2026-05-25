@@ -1,20 +1,22 @@
-def validate_task_thirteen(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "七" in final_message or
-        "7" in final_message or
-        "seven" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK13_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the count of merchants with free delivery among the first eight on the home page.",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "The number of merchants with free delivery. Must be an Arabic numeral integer.",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
 
 
-if __name__ == "__main__":
-    print(validate_task_thirteen())
+def validate_task_thirteen(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    count = extracted_answer.get("count")
+    return count == 7

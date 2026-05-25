@@ -2,11 +2,11 @@
 from ..base import AppTasks, TaskItem
 
 # 导入所有验证函数（按指令序号对应 eval_1 至 eval_40）
-from .eval_1 import validate_task_one
-from .eval_2 import validate_task_two
-from .eval_3 import validate_task_three
-from .eval_4 import validate_task_four
-from .eval_5 import validate_task_five
+from .eval_1 import TASK1_ANSWER_SCHEMA, validate_task_one
+from .eval_2 import TASK2_ANSWER_SCHEMA, validate_task_two
+from .eval_3 import TASK3_ANSWER_SCHEMA, validate_task_three
+from .eval_4 import TASK4_ANSWER_SCHEMA, validate_task_four
+from .eval_5 import TASK5_ANSWER_SCHEMA, validate_task_five
 from .eval_6 import validate_task_six
 from .eval_7 import validate_task_seven
 from .eval_8 import validate_task_eight
@@ -20,28 +20,28 @@ from .eval_15 import validate_task_fifteen
 from .eval_16 import validate_task_sixteen
 from .eval_17 import validate_task_seventeen
 from .eval_18 import validate_task_eighteen
-from .eval_19 import validate_task_nineteen
+from .eval_19 import TASK19_ANSWER_SCHEMA, validate_task_nineteen
 from .eval_20 import validate_task_twenty
 from .eval_21 import validate_task_twenty_one
 from .eval_22 import validate_task_twenty_two
-from .eval_23 import validate_task_twenty_three
+from .eval_23 import TASK23_ANSWER_SCHEMA, validate_task_twenty_three
 from .eval_24 import validate_task_twenty_four
-from .eval_25 import validate_task_twenty_five
-from .eval_26 import validate_task_twenty_six
-from .eval_27 import validate_task_twenty_seven
-from .eval_28 import validate_task_twenty_eight
-from .eval_29 import validate_task_twenty_nine
-from .eval_30 import validate_task_thirty
-from .eval_31 import validate_task_thirty_one
-from .eval_32 import validate_task_thirty_two
-from .eval_33 import validate_task_thirty_three
-from .eval_34 import validate_task_thirty_four
-from .eval_35 import validate_task_thirty_five
-from .eval_36 import validate_task_thirty_six
-from .eval_37 import validate_task_thirty_seven
-from .eval_38 import validate_task_thirty_eight
-from .eval_39 import validate_task_thirty_nine
-from .eval_40 import validate_task_forty
+from .eval_25 import TASK25_ANSWER_SCHEMA, validate_task_twenty_five
+from .eval_26 import TASK26_ANSWER_SCHEMA, validate_task_twenty_six
+from .eval_27 import TASK27_ANSWER_SCHEMA, validate_task_twenty_seven
+from .eval_28 import TASK28_ANSWER_SCHEMA, validate_task_twenty_eight
+from .eval_29 import TASK29_ANSWER_SCHEMA, validate_task_twenty_nine
+from .eval_30 import TASK30_ANSWER_SCHEMA, validate_task_thirty
+from .eval_31 import TASK31_ANSWER_SCHEMA, validate_task_thirty_one
+from .eval_32 import TASK32_ANSWER_SCHEMA, validate_task_thirty_two
+from .eval_33 import TASK33_ANSWER_SCHEMA, validate_task_thirty_three
+from .eval_34 import TASK34_ANSWER_SCHEMA, validate_task_thirty_four
+from .eval_35 import TASK35_ANSWER_SCHEMA, validate_task_thirty_five
+from .eval_36 import TASK36_ANSWER_SCHEMA, validate_task_thirty_six
+from .eval_37 import TASK37_ANSWER_SCHEMA, validate_task_thirty_seven
+from .eval_38 import TASK38_ANSWER_SCHEMA, validate_task_thirty_eight
+from .eval_39 import TASK39_ANSWER_SCHEMA, validate_task_thirty_nine
+from .eval_40 import TASK40_ANSWER_SCHEMA, validate_task_forty
 
 # 所有测试指令列表（共40条，instruct 完全匹配需求描述）
 ELEME_TASKS = AppTasks(
@@ -52,30 +52,40 @@ ELEME_TASKS = AppTasks(
             verify_func=validate_task_one,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK1_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='在"美食外卖"下，商家好评最高的10家店中，月销量最高的店铺名为？"。',
             verify_func=validate_task_two,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK2_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="帮我看看瑞幸咖啡的招牌系列中，价格最低的一款饮品叫什么名字。",
             verify_func=validate_task_three,
             human_steps=8,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK3_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="查看已保存的地址信息中，于骁的信息有几个。",
             verify_func=validate_task_four,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK4_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="查看最近一个订单的状态。",
             verify_func=validate_task_five,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK5_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='搜索"烤鸡"，价格区间"0-30"。',
@@ -160,6 +170,8 @@ ELEME_TASKS = AppTasks(
             verify_func=validate_task_nineteen,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK19_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="找到已评价的评价，删除最近的一个评价。",
@@ -184,6 +196,8 @@ ELEME_TASKS = AppTasks(
             verify_func=validate_task_twenty_three,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK23_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="清除搜索历史。",
@@ -196,96 +210,128 @@ ELEME_TASKS = AppTasks(
             verify_func=validate_task_twenty_five,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK25_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="找一下我的账单的月账单，看看我9月在哪个时间段点外卖次数最多，占比是多少（用小数表示）。",
             verify_func=validate_task_twenty_six,
             human_steps=5,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK26_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="饿了么首页推荐的前十家店铺，免配送费的有几家？",
             verify_func=validate_task_twenty_seven,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK27_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="看一下订单里面前五个订单，有几个订单的收货人是于骁。",
             verify_func=validate_task_twenty_eight,
             human_steps=19,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK28_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="看一下首页推荐的前20个商家中，月销量超过4000的有几家。",
             verify_func=validate_task_twenty_nine,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK29_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="看一下我订单里面前五个订单，有几个订单是周丹奎送的。",
             verify_func=validate_task_thirty,
             human_steps=19,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK30_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="看一下我十月点了多少次外卖。",
             verify_func=validate_task_thirty_one,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK31_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="看一下周账单吃湘菜花了多少钱。",
             verify_func=validate_task_thirty_two,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK32_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="看下我能用的最大的红包是多少。",
             verify_func=validate_task_thirty_three,
             human_steps=5,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK33_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="看下指定瑞幸能用的券有几张。",
             verify_func=validate_task_thirty_four,
             human_steps=5,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK34_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="看下账单中九月我消费最多的商家",
             verify_func=validate_task_thirty_five,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK35_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="看下首页推荐店铺的前20家中，起送费低于30元的有几家。",
             verify_func=validate_task_thirty_six,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK36_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="看下首页推荐店铺的前23家中，距离我最近的店铺的名字叫什么。",
             verify_func=validate_task_thirty_seven,
             human_steps=5,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK37_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="粤式早茶所有商品销量最高的是哪个。",
             verify_func=validate_task_thirty_eight,
             human_steps=10,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK38_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="主页推荐店铺的前20家中，哪个饮品店配送费加起送费最低且离我最近。",
             verify_func=validate_task_thirty_nine,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK39_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="主页推荐店铺的前20家中，哪个饮品店送达最快。",
             verify_func=validate_task_forty,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK40_ANSWER_SCHEMA,
         ),
     ],
 )

@@ -1,21 +1,22 @@
-def validate_task_eleven(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "20.19" in final_message or
-        "二十点一九" in final_message or
-        "twenty point  one nine" in normalized_message or
-        "twenty point one nine" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK11_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the total cost of all items currently in the cart.",
+    "properties": {
+        "total_cost": {
+            "type": "string",
+            "description": "The total cost as a number. Numbers only, no currency symbol.",
+        }
+    },
+    "required": ["total_cost"],
+    "additionalProperties": False,
+}
 
 
-if __name__ == "__main__":
-    print(validate_task_eleven())
+def validate_task_eleven(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    cost = str(extracted_answer.get("total_cost") or "")
+    return "20.19" in cost

@@ -1,18 +1,22 @@
-def validate_task_17(result=None, device_id=None, backup_dir=None):
-    """
-    任务17: 在设置中，查看当前定时关闭状态
-    """
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
+TASK17_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取设置中当前定时关闭的状态。",
+    "properties": {
+        "status": {
+            "type": "string",
+            "description": "定时关闭的当前状态，如'不开启'、'已开启'等。",
+        }
+    },
+    "required": ["status"],
+    "additionalProperties": False,
+}
 
-    if 'final_message' in result and '不开启' in result['final_message']:
-        return True
-    else:
-        return False
 
-if __name__ == '__main__':
-    result = validate_task_17()
-    print(result)
+def validate_task_17(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    status = str(extracted_answer.get("status") or "")
+    return "不开启" in status

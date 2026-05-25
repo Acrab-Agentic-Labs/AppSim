@@ -1,21 +1,22 @@
-def validate_task_8(result=None, device_id=None, backup_dir=None):
-    """
-    任务8: 数一下关注列表有几个已互粉的up主
-    """
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
+TASK8_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取关注列表中已互粉的UP主数量。",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "已互粉的UP主数量，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
 
-    if 'final_message' in result and (
-            '1' in result['final_message'] or
-            '一个' in result['final_message']
-    ):
-        return True
-    else:
-        return False
 
-if __name__ == '__main__':
-    result = validate_task_8()
-    print(result)
+def validate_task_8(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    count = extracted_answer.get("count")
+    return count == 1

@@ -1,18 +1,22 @@
-def validate_task_ten(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-    if "final_message" in result and (
-        "3:58" in final_message or
-        "three minutes fifty eight seconds" in normalized_message or
-        "three minutes fifty-eight seconds" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK10_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the duration of the first video in liked videos.",
+    "properties": {
+        "duration": {
+            "type": "string",
+            "description": "The duration of the video in M:SS format (e.g., '3:58').",
+        }
+    },
+    "required": ["duration"],
+    "additionalProperties": False,
+}
 
-if __name__ == "__main__":
-    print(validate_task_ten())
+
+def validate_task_ten(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    duration = str(extracted_answer.get("duration") or "")
+    return "3:58" in duration

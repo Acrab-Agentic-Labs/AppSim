@@ -1,22 +1,31 @@
 import subprocess
-import os
+
+
+TASK22_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取搜索'游戏解说'后第一个视频的相关视频数量。",
+    "properties": {
+        "related_count": {
+            "type": "integer",
+            "description": "相关视频的数量，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["related_count"],
+    "additionalProperties": False,
+}
 
 
 def CheckSearchCountAndRelated(result=None, device_id=None, backup_dir=None):
-    """
-    检验逻辑:搜索"游戏解说"，播放第一个视频查看相关视频有几个，告诉我答案即可
-    """
-    if result is None:
+    if not isinstance(result, dict):
         return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
 
-    # 推理部分：检查 final_message 中是否包含 "4"
-    if '4' not in final_message:
+    related_count = extracted_answer.get("related_count")
+    if related_count != 4:
         return False
 
-    # 操作部分：检查日志中是否搜索并播放了视频
     try:
         cmd_logcat = ['adb']
         if device_id:
@@ -43,8 +52,3 @@ def CheckSearchCountAndRelated(result=None, device_id=None, backup_dir=None):
 
     except Exception:
         return False
-
-
-if __name__ == "__main__":
-    result = CheckSearchCountAndRelated()
-    print(result)

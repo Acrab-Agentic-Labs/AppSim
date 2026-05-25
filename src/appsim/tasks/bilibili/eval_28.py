@@ -1,22 +1,31 @@
 import subprocess
-import os
+
+
+TASK28_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取关注列表前五个关注一共发了多少条视频。",
+    "properties": {
+        "total_videos": {
+            "type": "integer",
+            "description": "前五个关注发布的视频总数，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["total_videos"],
+    "additionalProperties": False,
+}
 
 
 def validate_task_28(result=None, device_id=None, backup_dir=None):
-    """
-    任务28: 算一下我的关注列表里的前五个关注一共发了多少条视频，然后去导航栏的关注动态页面，在列表页面给逍遥散人的第一条动态点赞！
-    """
-    if result is None:
+    if not isinstance(result, dict):
         return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
 
-    # 推理部分：检查 final_message 中是否包含视频总数 378
-    if '378' not in final_message:
+    total_videos = extracted_answer.get("total_videos")
+    if total_videos != 378:
         return False
 
-    # 操作部分：检查日志中是否给逍遥散人的动态点赞
     try:
         cmd_logcat = ['adb']
         if device_id:
@@ -43,8 +52,3 @@ def validate_task_28(result=None, device_id=None, backup_dir=None):
 
     except Exception:
         return False
-
-
-if __name__ == '__main__':
-    result = validate_task_28()
-    print(result)

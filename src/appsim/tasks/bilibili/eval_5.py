@@ -1,21 +1,22 @@
-def validate_task_5(result=None, device_id=None, backup_dir=None):
-    """
-    任务5: 在关注列表去UP主逍遥散人主页查看其粉丝数
-    """
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
+TASK5_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取UP主逍遥散人的粉丝数。",
+    "properties": {
+        "follower_count": {
+            "type": "string",
+            "description": "逍遥散人的粉丝数，保留原始格式（如'23.5万'或'234500'）。",
+        }
+    },
+    "required": ["follower_count"],
+    "additionalProperties": False,
+}
 
-    if 'final_message' in result and (
-            '23.5' in result['final_message'] or
-            '234500' in result['final_message']
-    ):
-        return True
-    else:
-        return False
 
-if __name__ == '__main__':
-    result = validate_task_5()
-    print(result)
+def validate_task_5(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    count = str(extracted_answer.get("follower_count") or "")
+    return "23.5" in count or "234500" in count

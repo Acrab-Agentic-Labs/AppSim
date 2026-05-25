@@ -1,18 +1,22 @@
-def validate_task_30(result=None, device_id=None, backup_dir=None):
-    """
-    任务30: 搜索原神，观看搜索到的第一个视频，看一下点赞最高的那个评论说的什么
-    """
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
+TASK30_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取搜索原神后第一个视频中点赞最高评论的内容。",
+    "properties": {
+        "comment_content": {
+            "type": "string",
+            "description": "点赞最高的评论的完整文字内容。",
+        }
+    },
+    "required": ["comment_content"],
+    "additionalProperties": False,
+}
 
-    if 'final_message' in result and '能不能出一期队伍配置推荐' in result['final_message']:
-        return True
-    else:
-        return False
 
-if __name__ == '__main__':
-    result = validate_task_30()
-    print(result)
+def validate_task_30(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    content = str(extracted_answer.get("comment_content") or "")
+    return "能不能出一期队伍配置推荐" in content

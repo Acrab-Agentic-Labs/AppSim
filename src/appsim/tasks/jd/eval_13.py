@@ -1,7 +1,20 @@
 import json
 import os
-import re
 import subprocess
+
+
+TASK13_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取首页商品中评分大于等于4.7的商品数量。",
+    "properties": {
+        "product_count": {
+            "type": "integer",
+            "description": "评分大于等于4.7的商品数量，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["product_count"],
+    "additionalProperties": False,
+}
 
 
 def validate_task_thirteen(result=None, device_id=None, backup_dir=None):
@@ -24,7 +37,6 @@ def validate_task_thirteen(result=None, device_id=None, backup_dir=None):
     try:
         with open(json_path, "r", encoding="utf-8") as f:
             products = json.load(f)
-            # 遍历所有商品
             for product in products:
                 if product.get("rating", 0) >= 4.7:
                     expected_count += 1
@@ -34,16 +46,12 @@ def validate_task_thirteen(result=None, device_id=None, backup_dir=None):
 
     print(f"Expected count of products with rating >= 4.7: {expected_count}")
 
-    if result and "final_message" in result and result["final_message"] is not None:
-        message = result["final_message"]
-        # Find all sequences of digits in the message
-        numbers = re.findall(r"\d+", message)
-        # Check if the found number is exactly the expected count
-        if str(expected_count) in numbers:
-            return True
-
-    return False
-
-
-if __name__ == "__main__":
-    pass
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    product_count = extracted_answer.get("product_count")
+    if product_count is None:
+        return False
+    return int(product_count) == expected_count

@@ -1,18 +1,22 @@
-def validate_task_eighteen(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-    if "final_message" in result and (
-        "17:35" in final_message or
-        "seventeen minutes thirty five seconds" in normalized_message or
-        "seventeen minutes thirty-five seconds" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK18_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the total duration of videos in Watch later.",
+    "properties": {
+        "duration": {
+            "type": "string",
+            "description": "The total duration in MM:SS format (e.g., '17:35').",
+        }
+    },
+    "required": ["duration"],
+    "additionalProperties": False,
+}
 
-if __name__ == "__main__":
-    print(validate_task_eighteen())
+
+def validate_task_eighteen(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    duration = str(extracted_answer.get("duration") or "")
+    return "17:35" in duration

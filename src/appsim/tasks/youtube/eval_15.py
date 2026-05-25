@@ -3,13 +3,29 @@ import os
 import subprocess
 
 
+TASK15_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of search results for the query.",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "The number of search results. Must be an Arabic numeral integer.",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
+
+
 def validate_task_fifteen(result=None, device_id=None, backup_dir=None):
-    if result is None:
+    if not isinstance(result, dict):
         return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
-    normalized_message = final_message.lower()
+    count = extracted_answer.get("count")
+    if not isinstance(count, int):
+        return False
 
     state_path = os.path.join(backup_dir, "task_state.json") if backup_dir else "task_state.json"
     cmd = ["adb"]
@@ -35,13 +51,4 @@ def validate_task_fifteen(result=None, device_id=None, backup_dir=None):
     if not searched:
         return False
 
-    if "final_message" in result and (
-        "2" in final_message or
-        "two" in normalized_message
-    ):
-        return True
-    else:
-        return False
-
-if __name__ == "__main__":
-    print(validate_task_fifteen())
+    return count == 2

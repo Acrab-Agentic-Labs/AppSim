@@ -1,22 +1,31 @@
 import subprocess
-import os
+
+
+TASK4_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取追番列表中第一个动漫的名称。",
+    "properties": {
+        "anime_name": {
+            "type": "string",
+            "description": "追番列表中第一个动漫的完整名称。",
+        }
+    },
+    "required": ["anime_name"],
+    "additionalProperties": False,
+}
 
 
 def CheckProfilePage(result=None, device_id=None, backup_dir=None):
-    """
-    任务4: 进入我的个人资料页查看我追的第一个动漫叫什么
-    """
-    if result is None:
+    if not isinstance(result, dict):
         return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
 
-    # 推理部分：检查 final_message 中是否包含 "凡人修仙传"
-    if '凡人修仙传' not in final_message:
+    anime_name = str(extracted_answer.get("anime_name") or "")
+    if "凡人修仙传" not in anime_name:
         return False
 
-    # 操作部分：检查日志中是否进入了个人资料页
     try:
         cmd_logcat = ['adb']
         if device_id:
@@ -40,8 +49,3 @@ def CheckProfilePage(result=None, device_id=None, backup_dir=None):
 
     except Exception:
         return False
-
-
-if __name__ == '__main__':
-    result = CheckProfilePage()
-    print(result)

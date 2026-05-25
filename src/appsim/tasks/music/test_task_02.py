@@ -1,54 +1,45 @@
 """
-任务2：在‘我的’页面的所有歌单中哪一个歌单里的歌曲数量最多
+任务2：在'我的'页面的所有歌单中哪一个歌单里的歌曲数量最多
 难度：中
 类型：推理类
 """
 
 import logging
-import sys
 from .verification_functions import read_json_from_device
 
+TASK2_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取歌曲数量最多的歌单名称。",
+    "properties": {
+        "playlist_name": {
+            "type": "string",
+            "description": "歌曲数量最多的歌单名称，仅输出歌单名。",
+        }
+    },
+    "required": ["playlist_name"],
+    "additionalProperties": False,
+}
+
+
 def find_playlist_with_most_songs(result=None, device_id=None, backup_dir=None):
-    """
-    任务2: 找出歌曲数量最多的歌单
-    - 从 user_playlists.json 找出歌曲最多的歌单
-    - 检查AI的 final_message 是否包含该歌单名
-    """
-    if not result or "final_message" not in result:
-        logging.error("✗ 测试失败 - 任务2未完成：AI未提供final_message")
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
 
-    final_msg = result["final_message"]
-    if not final_msg or not isinstance(final_msg, str):
-        logging.error(f"✗ 测试失败 - 任务2未完成：final_message格式错误: {final_msg}")
+    playlist_name_answer = str(extracted_answer.get("playlist_name") or "")
+    if not playlist_name_answer:
         return False
 
     data = read_json_from_device("autotest/user_playlists.json", device_id, result, backup_dir=backup_dir)
     if not data or "playlists" not in data or not data["playlists"]:
-        logging.error("✗ 测试失败 - 任务2未完成：无法从设备读取歌单数据或歌单列表为空")
         return False
 
-    # 找到歌曲数量最多的歌单
     playlist_with_most_songs = max(data["playlists"], key=lambda p: p.get("songCount", 0))
     most_songs_playlist_name = playlist_with_most_songs.get("playlistName")
 
     if not most_songs_playlist_name:
-        logging.error("✗ 测试失败 - 任务2未完成：在设备数据中歌曲最多的歌单没有名称")
         return False
 
-    # 检查AI的返回结果
-    if most_songs_playlist_name in final_msg:
-        logging.info(f"✓ 测试通过 - 任务2完成：AI正确返回了歌曲最多的歌单: {most_songs_playlist_name}")
-        return True
-    else:
-        logging.error(f"✗ 测试失败 - 任务2未完成：AI返回错误。正确答案应包含'{most_songs_playlist_name}', 实际返回: '{final_msg}'")
-        return False
-
-if __name__ == "__main__":
-
-    mock_result = {
-        "final_message": "歌曲数量最多的歌单是'热歌榜'。"
-    }
-    # 注意: 独立运行时，需要一个 autotest/user_playlists.json 文件且其中'热歌榜'歌曲最多
-    print(find_playlist_with_most_songs(result=mock_result))
-
+    return most_songs_playlist_name in playlist_name_answer or playlist_name_answer in most_songs_playlist_name

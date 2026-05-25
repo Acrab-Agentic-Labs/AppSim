@@ -1,23 +1,22 @@
-TARGET_VALUE = "1.3"
+TASK21_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the price difference between the cheapest items at Matchaful and HAWA SMOOTHIES.",
+    "properties": {
+        "price_difference": {
+            "type": "string",
+            "description": "The price difference as a number. Numbers only, no currency symbol.",
+        }
+    },
+    "required": ["price_difference"],
+    "additionalProperties": False,
+}
 
 
-def validate_task_twenty_one(result=None, device_id=None, backup_dir=None):
-    if result is None:
+def validate_task_twenty_one(result=None, **kwargs):
+    if not isinstance(result, dict):
         return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "1.3" in final_message or
-        "一点三" in final_message or
-        "one point three" in normalized_message
-    ):
-        return True
-    else:
-        return False
-
-
-if __name__ == "__main__":
-    print(validate_task_twenty_one())
+    diff = str(extracted_answer.get("price_difference") or "")
+    return "1.3" in diff

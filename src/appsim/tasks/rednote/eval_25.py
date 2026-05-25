@@ -1,10 +1,30 @@
+# eval_25.py
 import json
 import os
 import subprocess
 
-def eval_25(result=None, device_id=None, backup_dir=None):
-    _USER_ID="user_001"
+TASK25_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取关注和粉丝的总人数。",
+    "properties": {
+        "total_count": {
+            "type": "integer",
+            "description": "关注人数与粉丝人数之和，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["total_count"],
+    "additionalProperties": False,
+}
 
+
+def eval_25(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+
+    _USER_ID = "user_001"
     message_file_path = os.path.join(backup_dir, "users.json") if backup_dir is not None else "users.json"
 
     try:
@@ -25,8 +45,10 @@ def eval_25(result=None, device_id=None, backup_dir=None):
 
     for u in data:
         if u.get("id") == _USER_ID:
-            if result == u.get("followerCount")+ u.get("followingCount"):
-                return True
+            expected = u.get("followerCount", 0) + u.get("followingCount", 0)
+            return extracted_answer.get("total_count") == expected
+
+    return False
 
 
 if __name__ == "__main__":

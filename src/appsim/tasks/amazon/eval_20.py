@@ -1,11 +1,24 @@
+TASK20_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of items with a rating higher than 4.8.",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "The number of items with rating above 4.8. Must be an Arabic numeral integer.",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
+
+
 def validate_task_twenty(result=None, device_id=None, backup_dir=None):
-    """Validate task 20: search for 'electronics' and count how many items have a rating higher than 4.8."""
-    if result and "final_message" in result and result["final_message"] is not None:
-        if "3" in result["final_message"]:
-            return True
-    return False
-
-
-if __name__ == "__main__":
-    result = validate_task_twenty()
-    print(result)
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    count = extracted_answer.get("count")
+    if not isinstance(count, int):
+        return False
+    return count == 3

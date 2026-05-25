@@ -1,23 +1,22 @@
-TARGET_VALUE = "32.17"
+TASK26_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the total amount spent on burgers in past purchases, excluding delivery fees.",
+    "properties": {
+        "total_spent": {
+            "type": "string",
+            "description": "The total amount spent as a number. Numbers only, no currency symbol.",
+        }
+    },
+    "required": ["total_spent"],
+    "additionalProperties": False,
+}
 
 
-def validate_task_twenty_six(result=None, device_id=None, backup_dir=None):
-    if result is None:
+def validate_task_twenty_six(result=None, **kwargs):
+    if not isinstance(result, dict):
         return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "32.17" in final_message or
-        "三十二点一七" in final_message or
-        "thirty-two point one seven" in normalized_message
-    ):
-        return True
-    else:
-        return False
-
-
-if __name__ == "__main__":
-    print(validate_task_twenty_six())
+    spent = str(extracted_answer.get("total_spent") or "")
+    return "32.17" in spent

@@ -3,6 +3,20 @@ import os
 import subprocess
 
 
+TASK8_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取首页前十个商品中手机的数量。",
+    "properties": {
+        "phone_count": {
+            "type": "integer",
+            "description": "手机商品的数量，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["phone_count"],
+    "additionalProperties": False,
+}
+
+
 def validate_task_eight(result=None, device_id=None, backup_dir=None):
     """验证任务八：计算首页展示的商品中前十个有多少个是手机，给出一个阿拉伯数字即可。"""
     json_path = os.path.join(backup_dir, "products.json") if backup_dir else "products.json"
@@ -32,13 +46,12 @@ def validate_task_eight(result=None, device_id=None, backup_dir=None):
 
     print(f"Expected phone count: {expected_count}")
 
-    if result and "final_message" in result and result["final_message"] is not None:
-        message = result["final_message"]
-        if str(expected_count) in message:
-            return True
-
-    return False
-
-
-if __name__ == "__main__":
-    pass
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    phone_count = extracted_answer.get("phone_count")
+    if phone_count is None:
+        return False
+    return int(phone_count) == expected_count

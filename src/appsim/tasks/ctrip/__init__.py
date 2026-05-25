@@ -23,17 +23,17 @@ from .eval_18 import check_flight_search_bj_sz
 from .eval_19 import check_flight_search_cd_sh_first
 from .eval_20 import check_train_search_bj_sh_date
 from .eval_21 import check_train_search_hz_sz_student
-from .eval_22 import check_from_search_params_file
-from .eval_23 import check_hotel_search_shanghai_min_price
-from .eval_24 import check_flight_search_price_avg
-from .eval_25 import check_train_search_max_price
+from .eval_22 import TASK22_ANSWER_SCHEMA, check_from_search_params_file
+from .eval_23 import TASK23_ANSWER_SCHEMA, check_hotel_search_shanghai_min_price
+from .eval_24 import TASK24_ANSWER_SCHEMA, check_flight_search_price_avg
+from .eval_25 import TASK25_ANSWER_SCHEMA, check_train_search_max_price
 from .eval_26 import check_booking_hotel_shanghai
 from .eval_27 import check_booking_flight_wh_sz
 from .eval_28 import check_booking_train_bj_sh
 from .eval_29 import check_booking_hotel_cheapest
 from .eval_30 import check_booking_train_time
 from .eval_31 import check_booking_multi_step
-from .eval_32 import check_booking_complex_budget
+from .eval_32 import TASK32_ANSWER_SCHEMA, check_booking_complex_budget
 from .eval_33 import check_booking_batch_train
 from .eval_34 import check_booking_complex_batch
 from .eval_35 import check_booking_batch_flight
@@ -173,24 +173,32 @@ CTRIP_TASKS = AppTasks(
             verify_func=check_from_search_params_file,
             human_steps=5,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK22_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="帮我检索上海所有酒店中最低的价格。",
             verify_func=check_hotel_search_shanghai_min_price,
             human_steps=7,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK23_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="查10月21日从北京飞广州的机票，统计下最便宜的 3 趟航班的平均价格告诉我。",
             verify_func=check_flight_search_price_avg,
             human_steps=11,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK24_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="查10月22日广州到杭州下午2点到5点的车次，算下这些车次中最高的价格。",
             verify_func=check_train_search_max_price,
             human_steps=13,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK25_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="找10月22日到10月25日上海住的酒店，客房数和入住人数默认，点第一个酒店，第一个房型预订。",
@@ -233,6 +241,8 @@ CTRIP_TASKS = AppTasks(
             verify_func=check_booking_complex_budget,
             human_steps=50,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK32_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="订5张10月20日深圳到北京的火车票，5小时内到达。",

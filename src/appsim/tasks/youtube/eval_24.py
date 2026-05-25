@@ -1,20 +1,24 @@
-def validate_task_twenty_four(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-    if "final_message" in result and (
-        "139" in final_message or
-        "one hundred and thirty nine" in normalized_message or
-        "one hundred and thirty-nine" in normalized_message or
-        "one hundred thirty nine" in normalized_message or
-        "one hundred thirty-nine" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK24_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the total duration in seconds of computer-related shorts among the first four.",
+    "properties": {
+        "total_seconds": {
+            "type": "integer",
+            "description": "The total duration in seconds. Must be an Arabic numeral integer.",
+        }
+    },
+    "required": ["total_seconds"],
+    "additionalProperties": False,
+}
 
-if __name__ == "__main__":
-    print(validate_task_twenty_four())
+
+def validate_task_twenty_four(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    total_seconds = extracted_answer.get("total_seconds")
+    if not isinstance(total_seconds, int):
+        return False
+    return total_seconds == 139

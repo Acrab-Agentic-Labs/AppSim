@@ -6,12 +6,22 @@ import subprocess
 # 任务32：订10月20日从杭州到北京最快火车票（5小时内达），住北京王府井希尔顿酒店两晚（10.20-10.22），再订10.22北京回杭州的火车，计算所有费用后判断2000元够不够
 # 检查条件：最后3条记录依次是火车票(杭州->北京, 2025-10-20, 最快且5小时内)、酒店(北京, 王府井希尔顿, 10.20-10.22)、火车票(北京->杭州, 2025-10-22)
 
+TASK32_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "判断2000元预算是否足够支付所有费用。",
+    "properties": {
+        "budget_sufficient": {
+            "type": "string",
+            "description": "预算是否足够，仅输出'够'或'不够'。",
+        }
+    },
+    "required": ["budget_sufficient"],
+    "additionalProperties": False,
+}
+
 
 def check_booking_complex_budget(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    if not isinstance(result, dict):
         return False
 
     app_package = "com.example.ctrip_sim"
@@ -79,14 +89,13 @@ def check_booking_complex_budget(result=None, device_id=None, backup_dir=None):
         ):
             return False
 
-        if "final_message" in result and (
-            "足够" in result["final_message"]
-            or ("够" in result["final_message"] and "不够" not in result["final_message"])
-            or ("enough" in result["final_message"].lower() and "not enough" not in result["final_message"].lower())
-        ):
-            return True
-        else:
+        extracted_answer = result.get("extracted_answer")
+        if not isinstance(extracted_answer, dict):
             return False
+        answer = str(extracted_answer.get("budget_sufficient") or "")
+        if answer == "够":
+            return True
+        return False
     except Exception:
         return False
 

@@ -1,18 +1,22 @@
-def validate_task_1(result=None, device_id=None, backup_dir=None):
-    """
-    任务1: 看一下私信智能拦截的开启状态
-    """
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
+TASK1_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取私信智能拦截的开启状态。",
+    "properties": {
+        "status": {
+            "type": "string",
+            "description": "私信智能拦截的状态，仅回答'已开启'或'未开启'。",
+        }
+    },
+    "required": ["status"],
+    "additionalProperties": False,
+}
 
-    if 'final_message' in result and '已开启' not in result['final_message'] and '未开启' in result['final_message']:
-        return True
-    else:
-        return False
 
-if __name__ == '__main__':
-    result = validate_task_1()
-    print(result)
+def validate_task_1(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    status = str(extracted_answer.get("status") or "")
+    return "未开启" in status and "已开启" not in status

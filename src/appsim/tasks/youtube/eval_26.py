@@ -1,17 +1,24 @@
-def validate_task_twenty_six(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-    if "final_message" in result and (
-        "9" in final_message or
-        "nine" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK26_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of play records in History.",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "The number of play records. Must be an Arabic numeral integer.",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
 
-if __name__ == "__main__":
-    print(validate_task_twenty_six())
+
+def validate_task_twenty_six(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    count = extracted_answer.get("count")
+    if not isinstance(count, int):
+        return False
+    return count == 9

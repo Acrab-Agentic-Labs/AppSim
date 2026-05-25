@@ -8,28 +8,28 @@ from .eval_5 import validate_task_five
 from .eval_6 import validate_task_six
 from .eval_7 import validate_task_seven
 from .eval_8 import validate_task_eight
-from .eval_9 import validate_task_nine
-from .eval_10 import validate_task_ten
-from .eval_11 import validate_task_eleven
-from .eval_12 import validate_task_twelve
-from .eval_13 import validate_task_thirteen
-from .eval_14 import validate_task_fourteen
-from .eval_15 import validate_task_fifteen
-from .eval_16 import validate_task_sixteen
-from .eval_17 import validate_task_seventeen
-from .eval_18 import validate_task_eighteen
-from .eval_19 import validate_task_nineteen
-from .eval_20 import validate_task_twenty
-from .eval_21 import validate_task_twenty_one
-from .eval_22 import validate_task_twenty_two
-from .eval_23 import validate_task_twenty_three
-from .eval_24 import validate_task_twenty_four
-from .eval_25 import validate_task_twenty_five
-from .eval_26 import validate_task_twenty_six
-from .eval_27 import validate_task_twenty_seven
-from .eval_28 import validate_task_twenty_eight
-from .eval_29 import validate_task_twenty_nine
-from .eval_30 import validate_task_thirty
+from .eval_9 import validate_task_nine, TASK9_ANSWER_SCHEMA
+from .eval_10 import validate_task_ten, TASK10_ANSWER_SCHEMA
+from .eval_11 import validate_task_eleven, TASK11_ANSWER_SCHEMA
+from .eval_12 import validate_task_twelve, TASK12_ANSWER_SCHEMA
+from .eval_13 import validate_task_thirteen, TASK13_ANSWER_SCHEMA
+from .eval_14 import validate_task_fourteen, TASK14_ANSWER_SCHEMA
+from .eval_15 import validate_task_fifteen, TASK15_ANSWER_SCHEMA
+from .eval_16 import validate_task_sixteen, TASK16_ANSWER_SCHEMA
+from .eval_17 import validate_task_seventeen, TASK17_ANSWER_SCHEMA
+from .eval_18 import validate_task_eighteen, TASK18_ANSWER_SCHEMA
+from .eval_19 import validate_task_nineteen, TASK19_ANSWER_SCHEMA
+from .eval_20 import validate_task_twenty, TASK20_ANSWER_SCHEMA
+from .eval_21 import validate_task_twenty_one, TASK21_ANSWER_SCHEMA
+from .eval_22 import validate_task_twenty_two, TASK22_ANSWER_SCHEMA
+from .eval_23 import validate_task_twenty_three, TASK23_ANSWER_SCHEMA
+from .eval_24 import validate_task_twenty_four, TASK24_ANSWER_SCHEMA
+from .eval_25 import validate_task_twenty_five, TASK25_ANSWER_SCHEMA
+from .eval_26 import validate_task_twenty_six, TASK26_ANSWER_SCHEMA
+from .eval_27 import validate_task_twenty_seven, TASK27_ANSWER_SCHEMA
+from .eval_28 import validate_task_twenty_eight, TASK28_ANSWER_SCHEMA
+from .eval_29 import validate_task_twenty_nine, TASK29_ANSWER_SCHEMA
+from .eval_30 import validate_task_thirty, TASK30_ANSWER_SCHEMA
 from .eval_31 import validate_task_thirty_one
 from .eval_32 import validate_task_thirty_two
 from .eval_33 import validate_task_thirty_three
@@ -93,132 +93,176 @@ YOUTUBE_TASKS = AppTasks(
             verify_func=validate_task_nine,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK9_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Check the duration of the first video in my liked videos',
             verify_func=validate_task_ten,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK10_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Check whether restricted mode is on or off',
             verify_func=validate_task_eleven,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK11_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Check whether the mentions button is on or off',
             verify_func=validate_task_twelve,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK12_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Check the current App language option',
             verify_func=validate_task_thirteen,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK13_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='On the Apple section of the Home page, how many videos are about phones?',
             verify_func=validate_task_fourteen,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK14_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Search for iphone and check how many results this search has',
             verify_func=validate_task_fifteen,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK15_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Check how many related videos are shown below the first video's playback page on the Home page",
             verify_func=validate_task_sixteen,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK16_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='What is the total number of likes in the comments section of the first video on the Home page?',
             verify_func=validate_task_seventeen,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK17_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Check the total duration of the videos in Watch later',
             verify_func=validate_task_eighteen,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK18_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Check the total duration of the videos in Liked videos',
             verify_func=validate_task_nineteen,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK19_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Check Jay Chou's follower count",
             verify_func=validate_task_twenty,
             human_steps=6,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK20_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Scroll through Shorts. Among the first four shorts you see, how many are about computers?',
             verify_func=validate_task_twenty_one,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK21_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Scroll through Shorts. Among the first four shorts you see, how many are about mini PCs?',
             verify_func=validate_task_twenty_two,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK22_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Scroll through Shorts. How many likes do the computer-related shorts among the first four shorts have in total?',
             verify_func=validate_task_twenty_three,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK23_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Scroll through Shorts. Among the first four shorts you see, what is the total duration in seconds of the computer-related shorts? Reply with the number of seconds only',
             verify_func=validate_task_twenty_four,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK24_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='In Jay Chou 夜曲 MV, how many likes does the newest comment have?',
             verify_func=validate_task_twenty_five,
             human_steps=7,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK25_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='How many play records are in History?',
             verify_func=validate_task_twenty_six,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK26_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Check the option selected for Video quality on mobile networks',
             verify_func=validate_task_twenty_seven,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK27_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Check the option selected for Video quality on Wi-Fi',
             verify_func=validate_task_twenty_eight,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK28_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Among the first six videos under All on the Home page, how many are about computers?',
             verify_func=validate_task_twenty_nine,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK29_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='What is the current app version number?',
             verify_func=validate_task_thirty,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK30_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Play Jay Chou 夜曲, choose Higher picture quality, and turn on Loop video and Stable volume',

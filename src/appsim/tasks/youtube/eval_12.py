@@ -1,15 +1,22 @@
-def validate_task_twelve(result=None,device_id=None,backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    if 'final_message' in result and (
-            'on' in result['final_message'].lower()
-    ):
-        return True
-    else:
-        return False
+TASK12_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the current status of the mentions button.",
+    "properties": {
+        "status": {
+            "type": "string",
+            "description": "The status of the mentions button, either 'on' or 'off'.",
+        }
+    },
+    "required": ["status"],
+    "additionalProperties": False,
+}
 
-if __name__ == '__main__':
-    print(validate_task_twelve())
+
+def validate_task_twelve(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    status = str(extracted_answer.get("status") or "").lower()
+    return "on" in status

@@ -1,19 +1,22 @@
-def validate_task_ten(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "Hash Browns" in final_message or
-        "hash browns" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK10_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the name of the cheapest item at a nearby McDonald's.",
+    "properties": {
+        "item_name": {
+            "type": "string",
+            "description": "The full name of the cheapest menu item.",
+        }
+    },
+    "required": ["item_name"],
+    "additionalProperties": False,
+}
 
 
-if __name__ == "__main__":
-    print(validate_task_ten())
+def validate_task_ten(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    name = str(extracted_answer.get("item_name") or "").lower()
+    return "hash browns" in name

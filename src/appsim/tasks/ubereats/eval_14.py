@@ -1,20 +1,22 @@
-def validate_task_fourteen(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "0" in final_message or
-        "零" in final_message or
-        "zero" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK14_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the remaining balance in the Uber account.",
+    "properties": {
+        "balance": {
+            "type": "string",
+            "description": "The account balance as a number. Numbers only, no currency symbol.",
+        }
+    },
+    "required": ["balance"],
+    "additionalProperties": False,
+}
 
 
-if __name__ == "__main__":
-    print(validate_task_fourteen())
+def validate_task_fourteen(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    balance = str(extracted_answer.get("balance") or "")
+    return "0" in balance

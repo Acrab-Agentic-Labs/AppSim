@@ -1,20 +1,22 @@
-def validate_task_fifteen(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "5" in final_message or
-        "五" in final_message or
-        "five" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK15_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the count of previously ordered merchants that sell burgers or pizza.",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "The number of merchants selling burgers or pizza. Must be an Arabic numeral integer.",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
 
 
-if __name__ == "__main__":
-    print(validate_task_fifteen())
+def validate_task_fifteen(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    count = extracted_answer.get("count")
+    return count == 5

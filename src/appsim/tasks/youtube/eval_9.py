@@ -1,16 +1,24 @@
-def validate_task_nine(result=None,device_id=None,backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    if 'final_message' in result and (
-            '3' in result['final_message'] or
-            'three' in result['final_message'].lower()
-    ):
-        return True
-    else:
-        return False
+TASK9_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of Jay Chou MVs watched in History.",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "The number of Jay Chou MVs in watch history. Must be an Arabic numeral integer.",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
 
-if __name__ == '__main__':
-    print(validate_task_nine())
+
+def validate_task_nine(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    count = extracted_answer.get("count")
+    if not isinstance(count, int):
+        return False
+    return count == 3
