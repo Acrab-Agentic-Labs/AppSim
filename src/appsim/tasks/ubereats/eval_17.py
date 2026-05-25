@@ -1,20 +1,22 @@
-def validate_task_seventeen(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "116.24" in final_message or
-        "一百一十六点二四" in final_message or
-        "one hundred sixteen point two four" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK17_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the total amount spent at burger or pizza places from 3.17 to 3.22.",
+    "properties": {
+        "total_spent": {
+            "type": "string",
+            "description": "The total amount spent as a number. Numbers only, no currency symbol.",
+        }
+    },
+    "required": ["total_spent"],
+    "additionalProperties": False,
+}
 
 
-if __name__ == "__main__":
-    print(validate_task_seventeen())
+def validate_task_seventeen(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    spent = str(extracted_answer.get("total_spent") or "")
+    return "116.24" in spent

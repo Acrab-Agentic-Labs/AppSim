@@ -1,10 +1,25 @@
 # Task 9: Check how many communities I have joined.
+TASK9_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of communities the user has joined.",
+    "properties": {
+        "community_count": {
+            "type": "integer",
+            "description": "The number of communities joined. Must be an Arabic numeral integer.",
+        }
+    },
+    "required": ["community_count"],
+    "additionalProperties": False,
+}
+
+
 def validate_task_nine(result=None, device_id=None, backup_dir=None):
-    """Verify task 9: answer "3"."""
-    if result and "final_message" in result and result["final_message"] is not None:
-        if "3" in result["final_message"]:
-            return True
-    return False
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    return extracted_answer.get("community_count") == 3
 
 
 if __name__ == "__main__":

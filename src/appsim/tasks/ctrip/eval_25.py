@@ -1,31 +1,32 @@
-import re
+import json
+import subprocess
+import os
 
 # 任务25：进入"火车票"页面，查10月22日广州到杭州下午2点到5点的车次，检索这些车次中最高的价格
 # 检查条件：智能体返回的价格是否为 470
 
+TASK25_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取指定车次中最高的价格。",
+    "properties": {
+        "max_price": {
+            "type": "integer",
+            "description": "最高价格，必须是阿拉伯数字整数，不含货币符号。",
+        }
+    },
+    "required": ["max_price"],
+    "additionalProperties": False,
+}
 
-def check_train_search_max_price(result=None, device_id=None,backup_dir=None):
-    """
-    验证任务25的最终答案。
 
-    智能体可能返回一句自然语言，因此直接检查 final_message 中是否包含目标价格。
-    """
-    if result is None:
+def check_train_search_max_price(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
         return False
-
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
-
-    if "final_message" in result and (
-        "470" in result["final_message"]
-        or "470.0" in result["final_message"]
-        or "￥470" in result["final_message"]
-        or "470 元" in result["final_message"]
-    ):
-        return True
-    else:
-        return False
+    price = extracted_answer.get("max_price")
+    return price == 470
 
 
 if __name__ == "__main__":

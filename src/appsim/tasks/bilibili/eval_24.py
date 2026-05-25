@@ -1,22 +1,31 @@
 import subprocess
-import os
+
+
+TASK24_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取用户的UID。",
+    "properties": {
+        "uid": {
+            "type": "string",
+            "description": "用户的UID数字字符串。",
+        }
+    },
+    "required": ["uid"],
+    "additionalProperties": False,
+}
 
 
 def CheckUidAndCloseChatPush(result=None, device_id=None, backup_dir=None):
-    """
-    任务24: 查看我的Uid并关闭推送设置中的聊天消息
-    """
-    if result is None:
+    if not isinstance(result, dict):
         return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
 
-    # 推理部分：检查 final_message 中是否包含 UID
-    if '649734343' not in final_message:
+    uid = str(extracted_answer.get("uid") or "")
+    if "649734343" not in uid:
         return False
 
-    # 操作部分：检查日志中是否关闭了聊天消息
     try:
         cmd_logcat = ['adb']
         if device_id:
@@ -40,8 +49,3 @@ def CheckUidAndCloseChatPush(result=None, device_id=None, backup_dir=None):
 
     except Exception:
         return False
-
-
-if __name__ == '__main__':
-    result = CheckUidAndCloseChatPush()
-    print(result)

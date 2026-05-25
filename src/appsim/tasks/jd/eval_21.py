@@ -1,7 +1,20 @@
 import json
 import os
-import re
 import subprocess
+
+
+TASK21_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取Apple官方旗舰店中符合筛选条件的商品数量。",
+    "properties": {
+        "product_count": {
+            "type": "integer",
+            "description": "符合条件的商品数量，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["product_count"],
+    "additionalProperties": False,
+}
 
 
 def validate_task_twenty_one(result=None, device_id=None, backup_dir=None):
@@ -38,14 +51,12 @@ def validate_task_twenty_one(result=None, device_id=None, backup_dir=None):
 
     print(f"Expected count of filtered products: {expected_count}")
 
-    if result and "final_message" in result and result["final_message"] is not None:
-        message = result["final_message"]
-        numbers = re.findall(r"\d+", message)
-        if str(expected_count) in numbers:
-            return True
-
-    return False
-
-
-if __name__ == "__main__":
-    pass
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    product_count = extracted_answer.get("product_count")
+    if product_count is None:
+        return False
+    return int(product_count) == expected_count

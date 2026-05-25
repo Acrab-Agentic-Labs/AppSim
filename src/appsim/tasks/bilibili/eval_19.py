@@ -1,18 +1,22 @@
-def validate_task_19(result=None, device_id=None, backup_dir=None):
-    """
-    任务19: 看一下会员购里的前四个商品一共多少人购买
-    """
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
+TASK19_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取会员购前四个商品的购买人数总和。",
+    "properties": {
+        "total_buyers": {
+            "type": "integer",
+            "description": "前四个商品的购买人数总和，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["total_buyers"],
+    "additionalProperties": False,
+}
 
-    if 'final_message' in result and '4963' in result['final_message']:
-        return True
-    else:
-        return False
 
-if __name__ == '__main__':
-    result = validate_task_19()
-    print(result)
+def validate_task_19(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    total_buyers = extracted_answer.get("total_buyers")
+    return total_buyers == 4963

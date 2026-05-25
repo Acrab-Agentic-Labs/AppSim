@@ -1,19 +1,22 @@
-def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "9:45" in final_message or
-        "21:45" in final_message
-    ):
-        return True
-    else:
-        return False
+TASK16_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the expected arrival time of the latest order.",
+    "properties": {
+        "arrival_time": {
+            "type": "string",
+            "description": "The expected arrival time in H:MM or HH:MM format.",
+        }
+    },
+    "required": ["arrival_time"],
+    "additionalProperties": False,
+}
 
 
-if __name__ == "__main__":
-    print(validate_task_sixteen())
+def validate_task_sixteen(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    time = str(extracted_answer.get("arrival_time") or "")
+    return "9:45" in time or "21:45" in time

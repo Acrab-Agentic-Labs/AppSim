@@ -1,18 +1,22 @@
-def validate_task_26(result=None, device_id=None, backup_dir=None):
-    """
-    任务26: 观看收藏夹第二个视频，查看其前20条展示的评论，评论点赞数最低的那个人是用户几号？
-    """
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
+TASK26_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取前20条评论中点赞数最低的用户编号。",
+    "properties": {
+        "user_number": {
+            "type": "integer",
+            "description": "点赞数最低的用户编号，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["user_number"],
+    "additionalProperties": False,
+}
 
-    if 'final_message' in result and '26' in result['final_message']:
-        return True
-    else:
-        return False
 
-if __name__ == '__main__':
-    result = validate_task_26()
-    print(result)
+def validate_task_26(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    user_number = extracted_answer.get("user_number")
+    return user_number == 26

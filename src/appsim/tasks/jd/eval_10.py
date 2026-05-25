@@ -3,6 +3,20 @@ import os
 import subprocess
 
 
+TASK10_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取待收货订单的数量。",
+    "properties": {
+        "order_count": {
+            "type": "integer",
+            "description": "待收货订单的数量，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["order_count"],
+    "additionalProperties": False,
+}
+
+
 def validate_task_ten(result=None, device_id=None, backup_dir=None):
     """验证任务十：计算待收货的订单有多少项，给出一个阿拉伯数字即可。"""
     json_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
@@ -33,13 +47,12 @@ def validate_task_ten(result=None, device_id=None, backup_dir=None):
 
     print(f"Expected PENDING_RECEIPT order count: {expected_count}")
 
-    if result and "final_message" in result and result["final_message"] is not None:
-        message = result["final_message"]
-        if str(expected_count) in message:
-            return True
-
-    return False
-
-
-if __name__ == "__main__":
-    pass
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    order_count = extracted_answer.get("order_count")
+    if order_count is None:
+        return False
+    return int(order_count) == expected_count

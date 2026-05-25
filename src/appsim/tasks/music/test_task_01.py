@@ -5,29 +5,35 @@
 """
 
 import logging
-import re
 from .verification_functions import read_json_from_device
+
+TASK1_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取当前用户的用户名。",
+    "properties": {
+        "username": {
+            "type": "string",
+            "description": "当前用户的用户名，仅输出名称。",
+        }
+    },
+    "required": ["username"],
+    "additionalProperties": False,
+}
 
 
 def check_username_is_reported(result=None, device_id=None, backup_dir=None):
-    """
-    任务1: 验证AI是否返回了正确的用户名
-    - 从AI的 final_message 中检查是否包含正确的用户名
-    - 从设备读取用户数据获取真实用户名
-    """
-    if not result or "final_message" not in result:
-        logging.error("✗ 测试失败 - 任务1未完成：AI未提供final_message")
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
 
-    final_msg = result["final_message"]
-    if not final_msg or not isinstance(final_msg, str):
-        logging.error(f"✗ 测试失败 - 任务1未完成：final_message格式错误: {final_msg}")
+    username_answer = str(extracted_answer.get("username") or "")
+    if not username_answer:
         return False
 
-    # 从设备读取用户数据
     users_data = read_json_from_device("data/users.json", device_id, result, backup_dir)
     if users_data and isinstance(users_data, list) and len(users_data) > 0:
-        # 取第一个用户作为当前用户
         username = users_data[0].get("username", "")
     elif users_data and isinstance(users_data, dict):
         username = users_data.get("username", "")
@@ -36,21 +42,9 @@ def check_username_is_reported(result=None, device_id=None, backup_dir=None):
             if isinstance(users, list) and len(users) > 0:
                 username = users[0].get("username", "")
     else:
-        # 默认用户名
         username = "音乐爱好者"
 
     if not username:
         username = "音乐爱好者"
 
-    logging.info(f"  → 设备中的用户名为: {username}")
-
-    if username in final_msg:
-        logging.info("✓ 测试通过 - 任务1完成：AI正确报告了用户名")
-        return True
-    else:
-        logging.error(f"✗ 测试失败 - 任务1未完成：AI的回答'{final_msg}'中未包含正确的用户名'{username}'")
-        return False
-
-
-if __name__ == "__main__":
-    print(check_username_is_reported())
+    return username in username_answer or username_answer in username

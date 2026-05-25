@@ -1,7 +1,7 @@
 # 引用所有检验函数
 from ..base import AppTasks, TaskItem
-from .test_task_01 import check_username_is_reported
-from .test_task_02 import find_playlist_with_most_songs
+from .test_task_01 import TASK1_ANSWER_SCHEMA, check_username_is_reported
+from .test_task_02 import TASK2_ANSWER_SCHEMA, find_playlist_with_most_songs
 from .test_task_03 import check_delete_song_from_hot_playlist
 from .test_task_04 import check_current_song_is_playing
 from .test_task_05 import check_is_paused
@@ -17,28 +17,28 @@ from .test_task_14 import check_search_artist_and_play
 from .test_task_15 import check_view_song_detail
 from .test_task_16 import check_lyrics_are_shown
 from .test_task_17 import check_stroll_scene_is_set
-from .test_task_18 import check_first_song_name_is_reported
+from .test_task_18 import TASK18_ANSWER_SCHEMA, check_first_song_name_is_reported
 from .test_task_19 import check_play_from_rank_list
 from .test_task_20 import check_playlist_is_collected
 from .test_task_21 import check_song_is_deleted_from_playlist
 from .test_task_22 import check_listening_stats_is_viewed
 from .test_task_23 import check_song_is_unfavorited
 from .test_task_24 import check_comment_is_posted
-from .test_task_25 import check_composite_xuezhiqian_play_favorite_lyrics_mv
+from .test_task_25 import TASK25_ANSWER_SCHEMA, check_composite_xuezhiqian_play_favorite_lyrics_mv
 from .test_task_26 import check_song_recognition_is_attempted
 from .test_task_27 import check_playlist_sort_order_is_changed
 from .test_task_28 import check_album_is_collected
 from .test_task_29 import check_artist_is_unfollowed
 from .test_task_30 import check_mv_is_playing
 from .test_task_31 import check_player_style_is_changed
-from .test_task_32 import check_first_comment_time_reported
-from .test_task_33 import check_favorite_song_count
-from .test_task_34 import check_third_comment_content_reported
-from .test_task_35 import check_composite_juejiang_full
-from .test_task_36 import check_fan_count
-from .test_task_37 import check_hot_rank_song_count
-from .test_task_38 import check_composite_guofeng_qinghuaci
-from .test_task_39 import check_composite_acg_yequ
+from .test_task_32 import TASK32_ANSWER_SCHEMA, check_first_comment_time_reported
+from .test_task_33 import TASK33_ANSWER_SCHEMA, check_favorite_song_count
+from .test_task_34 import TASK34_ANSWER_SCHEMA, check_third_comment_content_reported
+from .test_task_35 import TASK35_ANSWER_SCHEMA, check_composite_juejiang_full
+from .test_task_36 import TASK36_ANSWER_SCHEMA, check_fan_count
+from .test_task_37 import TASK37_ANSWER_SCHEMA, check_hot_rank_song_count
+from .test_task_38 import TASK38_ANSWER_SCHEMA, check_composite_guofeng_qinghuaci
+from .test_task_39 import TASK39_ANSWER_SCHEMA, check_composite_acg_yequ
 
 # 所有指令
 MUSIC_TASKS = AppTasks(
@@ -49,12 +49,16 @@ MUSIC_TASKS = AppTasks(
             verify_func=check_username_is_reported,
             human_steps=1,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK1_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="在'我的'页面的所有歌单中哪一个歌单里的歌曲数量最多",
             verify_func=find_playlist_with_most_songs,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK2_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="删除'我的'页面中热歌榜歌单的第一首歌曲",
@@ -151,6 +155,8 @@ MUSIC_TASKS = AppTasks(
             verify_func=check_first_song_name_is_reported,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK18_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="在排行榜中打开一个榜单并播放第一首歌曲",
@@ -193,6 +199,8 @@ MUSIC_TASKS = AppTasks(
             verify_func=check_composite_xuezhiqian_play_favorite_lyrics_mv,
             human_steps=17,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK25_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="使用听歌识曲功能识别一首歌曲",
@@ -235,48 +243,64 @@ MUSIC_TASKS = AppTasks(
             verify_func=check_first_comment_time_reported,
             human_steps=6,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK32_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='数一下"我喜欢的音乐"里有几首歌曲',
             verify_func=check_favorite_song_count,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK33_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='告诉我"七里香"的第三条评论是什么',
             verify_func=check_third_comment_content_reported,
             human_steps=6,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK34_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="搜索'倔强'并播放，收藏该歌曲，查看歌词并告诉我第一句，更改播放器样式，然后创建一个新歌单并添加该歌曲",
             verify_func=check_composite_juejiang_full,
             human_steps=20,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK35_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="数一下我的粉丝数目",
             verify_func=check_fan_count,
             human_steps=1,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK36_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='数一下"热歌榜"里有多少首歌曲',
             verify_func=check_hot_rank_song_count,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK37_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='收藏歌单"国风榜"，并播放"青花瓷"，收藏歌曲，发布评论"真好听"，查看歌曲百科并告诉我曲风是什么',
             verify_func=check_composite_guofeng_qinghuaci,
             human_steps=13,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK38_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='收藏歌单"ACG榜"，并播放"夜曲"，收藏歌曲，查看歌词并告诉我第一句歌词是什么，然后查看一下这周的听歌时长',
             verify_func=check_composite_acg_yequ,
             human_steps=11,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK39_ANSWER_SCHEMA,
         ),
     ],
 )

@@ -1,23 +1,22 @@
-TARGET_VALUE = "14"
+TASK29_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the total amount spent on matcha items in past purchases.",
+    "properties": {
+        "total_spent": {
+            "type": "string",
+            "description": "The total amount spent as a number. Numbers only, no currency symbol.",
+        }
+    },
+    "required": ["total_spent"],
+    "additionalProperties": False,
+}
 
 
-def validate_task_twenty_nine(result=None, device_id=None, backup_dir=None):
-    if result is None:
+def validate_task_twenty_nine(result=None, **kwargs):
+    if not isinstance(result, dict):
         return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "14" in final_message or
-        "十四" in final_message or
-        "fourteen" in normalized_message
-    ):
-        return True
-    else:
-        return False
-
-
-if __name__ == "__main__":
-    print(validate_task_twenty_nine())
+    spent = str(extracted_answer.get("total_spent") or "")
+    return "14" in spent

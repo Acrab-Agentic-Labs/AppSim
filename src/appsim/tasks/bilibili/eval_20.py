@@ -1,18 +1,22 @@
-def validate_task_20(result=None, device_id=None, backup_dir=None):
-    """
-    任务20: 查看大会员是否到期
-    """
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
+TASK20_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取大会员是否到期的状态。",
+    "properties": {
+        "status": {
+            "type": "string",
+            "description": "大会员状态，仅回答'已到期'或'未到期'。",
+        }
+    },
+    "required": ["status"],
+    "additionalProperties": False,
+}
 
-    if 'final_message' in result and '已到期' in result['final_message']:
-        return True
-    else:
-        return False
 
-if __name__ == '__main__':
-    result = validate_task_20()
-    print(result)
+def validate_task_20(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    status = str(extracted_answer.get("status") or "")
+    return "已到期" in status

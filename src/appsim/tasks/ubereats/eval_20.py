@@ -1,22 +1,22 @@
-TARGET_VALUE = "McChicken"
+TASK20_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the name of the cheapest burger at McDonald's on the home page.",
+    "properties": {
+        "burger_name": {
+            "type": "string",
+            "description": "The full name of the cheapest burger.",
+        }
+    },
+    "required": ["burger_name"],
+    "additionalProperties": False,
+}
 
 
-def validate_task_twenty(result=None, device_id=None, backup_dir=None):
-    if result is None:
+def validate_task_twenty(result=None, **kwargs):
+    if not isinstance(result, dict):
         return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "McChicken" in final_message or
-        "mcchicken" in normalized_message
-    ):
-        return True
-    else:
-        return False
-
-
-if __name__ == "__main__":
-    print(validate_task_twenty())
+    name = str(extracted_answer.get("burger_name") or "").lower()
+    return "mcchicken" in name

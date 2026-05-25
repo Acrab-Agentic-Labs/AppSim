@@ -3,6 +3,20 @@ import os
 import subprocess
 
 
+TASK9_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取购物车中所有商品的总价。",
+    "properties": {
+        "total_price": {
+            "type": "number",
+            "description": "购物车中所有商品的总价，必须是阿拉伯数字。",
+        }
+    },
+    "required": ["total_price"],
+    "additionalProperties": False,
+}
+
+
 def validate_task_nine(result=None, device_id=None, backup_dir=None):
     """验证任务九：计算购物车中所有商品的总价"""
     json_path = os.path.join(backup_dir, "cart_items.json") if backup_dir else "cart_items.json"
@@ -33,13 +47,12 @@ def validate_task_nine(result=None, device_id=None, backup_dir=None):
 
     print(f"Expected total cart price: {expected_total_price}")
 
-    if result and "final_message" in result and result["final_message"] is not None:
-        message = result["final_message"]
-        if str(int(expected_total_price)) in message or str(float(expected_total_price)) in message:
-            return True
-
-    return False
-
-
-if __name__ == "__main__":
-    pass
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    total_price = extracted_answer.get("total_price")
+    if total_price is None:
+        return False
+    return str(int(expected_total_price)) in str(total_price) or str(float(expected_total_price)) in str(total_price)

@@ -1,22 +1,22 @@
-def validate_task_twenty_eight(result=None,device_id=None,backup_dir=None):
-    # 验证 result 存在
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
+TASK28_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取前五个订单中收货人是于骁的订单数量。",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "收货人是于骁的订单数量，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
 
-    # 检测 result 中的final_message中是否包含 "5"
-    if 'final_message' in result and (
-            "5个" in result['final_message'] or
-            "五个" in result['final_message'] or
-            "5" in result['final_message'] or
-            "五" in result['final_message']
-    ):
-        return True
-    else:
-        return False
 
-if __name__ == '__main__':
-    result = validate_task_twenty_eight()
-    print(result)
+def validate_task_twenty_eight(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    count = extracted_answer.get("count")
+    return count == 5

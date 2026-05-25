@@ -1,7 +1,20 @@
 import json
 import os
-import re
 import subprocess
+
+
+TASK24_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取待使用的电子产品的总件数。",
+    "properties": {
+        "item_count": {
+            "type": "integer",
+            "description": "待使用的电子产品总件数，必须是阿拉伯数字整数。",
+        }
+    },
+    "required": ["item_count"],
+    "additionalProperties": False,
+}
 
 
 def validate_task_twenty_four(result=None, device_id=None, backup_dir=None):
@@ -37,14 +50,12 @@ def validate_task_twenty_four(result=None, device_id=None, backup_dir=None):
 
     print(f"Expected count of PENDING_SHIPMENT electronic items: {expected_count}")
 
-    if result and "final_message" in result and result["final_message"] is not None:
-        message = result["final_message"]
-        numbers = re.findall(r"\d+", message)
-        if str(expected_count) in numbers:
-            return True
-
-    return False
-
-
-if __name__ == "__main__":
-    pass
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    item_count = extracted_answer.get("item_count")
+    if item_count is None:
+        return False
+    return int(item_count) == expected_count

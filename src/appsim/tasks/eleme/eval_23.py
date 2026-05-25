@@ -9,7 +9,21 @@ PAGE_MY_ORDERS = "my_orders"
 PAGE_ORDER_DETAIL = "order_detail"
 ORDER_STATUS_DELIVERED = "已送达"
 
-def validate_task_twenty_three(result=None,device_id=None,backup_dir=None):
+TASK23_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取最新已送达订单的实付金额。",
+    "properties": {
+        "amount": {
+            "type": "string",
+            "description": "实付金额数值。仅输出数字，不含单位和货币符号。",
+        }
+    },
+    "required": ["amount"],
+    "additionalProperties": False,
+}
+
+
+def validate_task_twenty_three(result=None, device_id=None, backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
@@ -38,13 +52,10 @@ def validate_task_twenty_three(result=None,device_id=None,backup_dir=None):
     if not clicked_first_delivered_order:
         return False
 
-    if result is None:
+    if not isinstance(result, dict):
         return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str) or '33' not in final_message:
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
-
-if __name__ == '__main__':
-    # 运行验证并输出结果
-    result = validate_task_twenty_three()
-    print(result)
+    amount = str(extracted_answer.get("amount") or "")
+    return "33" in amount

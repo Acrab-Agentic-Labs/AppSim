@@ -1,19 +1,22 @@
-def validate_task_twenty_three(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-    if "final_message" in result and (
-        "3.6K" in final_message or
-        "3.6k" in final_message or
-        "3600" in final_message or
-        "three thousand six hundred" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK23_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the total likes of computer-related shorts among the first four.",
+    "properties": {
+        "total_likes": {
+            "type": "string",
+            "description": "The total number of likes, preserving original format.",
+        }
+    },
+    "required": ["total_likes"],
+    "additionalProperties": False,
+}
 
-if __name__ == "__main__":
-    print(validate_task_twenty_three())
+
+def validate_task_twenty_three(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    total_likes = str(extracted_answer.get("total_likes") or "")
+    return "3.6K" in total_likes or "3.6k" in total_likes or "3600" in total_likes

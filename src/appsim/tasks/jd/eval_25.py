@@ -1,7 +1,20 @@
 import json
 import os
-import re
 import subprocess
+
+
+TASK25_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取首页前10个商品中非手机商品的平均评分。",
+    "properties": {
+        "average_rating": {
+            "type": "number",
+            "description": "非手机商品的平均评分，保留2位小数，必须是阿拉伯数字。",
+        }
+    },
+    "required": ["average_rating"],
+    "additionalProperties": False,
+}
 
 
 def validate_task_twenty_five(result=None, device_id=None, backup_dir=None):
@@ -41,14 +54,12 @@ def validate_task_twenty_five(result=None, device_id=None, backup_dir=None):
 
     print(f"Expected average rating for non-phone products: {expected_avg_rating}")
 
-    if result and "final_message" in result and result["final_message"] is not None:
-        message = result["final_message"]
-        numbers = re.findall(r"[-+]?\d*\.\d+|\d+", message)
-        if str(expected_avg_rating) in numbers:
-            return True
-
-    return False
-
-
-if __name__ == "__main__":
-    pass
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    average_rating = extracted_answer.get("average_rating")
+    if average_rating is None:
+        return False
+    return abs(float(average_rating) - expected_avg_rating) < 0.001

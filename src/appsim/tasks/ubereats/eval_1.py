@@ -1,19 +1,22 @@
-def validate_task_one(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "YES" in final_message or
-        "yes" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK1_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract whether there is a nearby McDonald's.",
+    "properties": {
+        "answer": {
+            "type": "string",
+            "description": "Answer yes or no only.",
+        }
+    },
+    "required": ["answer"],
+    "additionalProperties": False,
+}
 
 
-if __name__ == "__main__":
-    print(validate_task_one())
+def validate_task_one(result=None, **kwargs):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    answer = str(extracted_answer.get("answer") or "").lower()
+    return "yes" in answer

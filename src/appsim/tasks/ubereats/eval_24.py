@@ -1,22 +1,22 @@
-TARGET_VALUE = "Burger"
+TASK24_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract whether the user prefers Burger or Pizza based on past purchases.",
+    "properties": {
+        "preference": {
+            "type": "string",
+            "description": "The food preference: either 'Burger' or 'Pizza'.",
+        }
+    },
+    "required": ["preference"],
+    "additionalProperties": False,
+}
 
 
-def validate_task_twenty_four(result=None, device_id=None, backup_dir=None):
-    if result is None:
+def validate_task_twenty_four(result=None, **kwargs):
+    if not isinstance(result, dict):
         return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
         return False
-    normalized_message = final_message.lower()
-
-    if "final_message" in result and (
-        "Burger" in final_message or
-        "burger" in normalized_message
-    ):
-        return True
-    else:
-        return False
-
-
-if __name__ == "__main__":
-    print(validate_task_twenty_four())
+    pref = str(extracted_answer.get("preference") or "").lower()
+    return "burger" in pref

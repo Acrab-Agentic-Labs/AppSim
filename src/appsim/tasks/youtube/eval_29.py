@@ -1,17 +1,24 @@
-def validate_task_twenty_nine(result=None, device_id=None, backup_dir=None):
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
-    normalized_message = final_message.lower()
-    if "final_message" in result and (
-        "3" in final_message or
-        "three" in normalized_message
-    ):
-        return True
-    else:
-        return False
+TASK29_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of computer-related videos among the first six under All on the Home page.",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "The number of computer-related videos. Must be an Arabic numeral integer.",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
 
-if __name__ == "__main__":
-    print(validate_task_twenty_nine())
+
+def validate_task_twenty_nine(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    count = extracted_answer.get("count")
+    if not isinstance(count, int):
+        return False
+    return count == 3

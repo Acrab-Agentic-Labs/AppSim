@@ -10,10 +10,23 @@ PAGE_INFO_TITLE_VALUE = "红包卡券"
 PAGE_INFO_SCREEN_NAME_KEY = "screen_name"
 PAGE_INFO_SCREEN_NAME_VALUE = "CouponsScreen"
 
-def validate_task_one(result=None,device_id=None,backup_dir=None):
+TASK1_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取红包卡券中红包的总价值。",
+    "properties": {
+        "total_value": {
+            "type": "integer",
+            "description": "红包总价值金额，必须是阿拉伯数字整数，不含单位。",
+        }
+    },
+    "required": ["total_value"],
+    "additionalProperties": False,
+}
+
+
+def validate_task_one(result=None, device_id=None, backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
-        # 兼容对象和数组两种格式
         if isinstance(all_data, list):
             data = all_data[-1] if all_data else {}
         else:
@@ -32,22 +45,11 @@ def validate_task_one(result=None,device_id=None,backup_dir=None):
         return False
     if page_info.get(PAGE_INFO_SCREEN_NAME_KEY) != PAGE_INFO_SCREEN_NAME_VALUE:
         return False
-    if result is None:
-        return False
-    final_message = result.get("final_message")
-    if not isinstance(final_message, str):
-        return False
 
-    # 检测 result 中的final_messages中是否包含 "84"
-    if 'final_message' in result and (
-            "84元" in result['final_message'] or
-            "84块" in result['final_message'] or
-            "￥84" in result['final_message']
-    ):
-        return True
-    else:
+    if not isinstance(result, dict):
         return False
-
-if __name__ == '__main__':
-    result = validate_task_one()
-    print(result)
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    total_value = extracted_answer.get("total_value")
+    return total_value == 84

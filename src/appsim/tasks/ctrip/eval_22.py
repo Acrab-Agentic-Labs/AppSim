@@ -1,31 +1,34 @@
 import json
-import re
 import subprocess
 import os
 
 # 任务22：进入 "酒店" 页面，为我筛选北京评分最高的前 3 家酒店的平均价
 # 检查条件：智能体计算的平均价格是否与真实的平均价格一致
 
-def check_from_search_params_file(result=None,device_id=None, backup_dir=None):
+TASK22_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取北京评分最高的前3家酒店的平均价格。",
+    "properties": {
+        "average_price": {
+            "type": "integer",
+            "description": "平均价格，必须是阿拉伯数字整数，不含货币符号。",
+        }
+    },
+    "required": ["average_price"],
+    "additionalProperties": False,
+}
 
-    if result is None:
-        return False
-    final_message = result.get('final_message')
-    if not isinstance(final_message, str):
-        return False
 
-    if 'final_message' in result and (
-            "183" in result['final_message'] or
-            "183.0" in result['final_message'] or
-            "￥183" in result['final_message'] or
-            "183元" in result['final_message']
-    ):
-        return True
-    else:
+def check_from_search_params_file(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
         return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    price = extracted_answer.get("average_price")
+    return price == 183
 
 
 if __name__ == "__main__":
-    # 计算并打印预期答案
-    result=check_from_search_params_file()
+    result = check_from_search_params_file()
     print(result)
