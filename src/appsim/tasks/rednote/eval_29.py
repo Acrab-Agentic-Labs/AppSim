@@ -2,12 +2,35 @@ import json
 import os
 import subprocess
 
+TASK29_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "提取关注的博主中最受大众关注的博主名称。",
+    "properties": {
+        "nickname": {
+            "type": "string",
+            "description": "最受大众关注的博主昵称。",
+        }
+    },
+    "required": ["nickname"],
+    "additionalProperties": False,
+}
+
+
 def eval_29(result=None, device_id=None, backup_dir=None):
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+
+    nickname_answer = extracted_answer.get("nickname")
+    if nickname_answer is None:
+        return False
+
     follows_path = os.path.join(backup_dir, "follows.json") if backup_dir else "follows.json"
     users_path = os.path.join(backup_dir, "users.json") if backup_dir else "users.json"
 
     try:
-        # 拉 follows.json
         cmd = ["adb"]
         if device_id:
             cmd.extend(["-s", device_id])
@@ -15,7 +38,6 @@ def eval_29(result=None, device_id=None, backup_dir=None):
         with open(follows_path, "w") as f:
             subprocess.run(cmd, stdout=f)
 
-        # 拉 users.json
         cmd = ["adb"]
         if device_id:
             cmd.extend(["-s", device_id])
@@ -23,7 +45,6 @@ def eval_29(result=None, device_id=None, backup_dir=None):
         with open(users_path, "w") as f:
             subprocess.run(cmd, stdout=f)
 
-        # 读取数据
         with open(follows_path, "r", encoding="utf-8") as f:
             follows = json.load(f)
 
@@ -36,7 +57,6 @@ def eval_29(result=None, device_id=None, backup_dir=None):
     if not follows or not users:
         return False
 
-    # 1. 收集第一个文件中出现的用户 id
     user_ids = set()
     for item in follows:
         if "followerId" in item:
@@ -44,17 +64,14 @@ def eval_29(result=None, device_id=None, backup_dir=None):
         if "followingId" in item:
             user_ids.add(item["followingId"])
 
-    # 2. 在 users 中筛选
     candidates = [u for u in users if u.get("id") in user_ids]
     if not candidates:
         return False
 
-    # 3. 找 followerCount 最大的用户
     max_user = max(candidates, key=lambda u: u.get("followerCount", 0))
     nickname = max_user.get("nickname")
 
-    # 4. 校验结果
-    return nickname == result
+    return nickname == nickname_answer
 
 
 if __name__ == "__main__":

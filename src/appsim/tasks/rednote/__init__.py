@@ -21,14 +21,14 @@ from .eval_18 import publish_and_self_interact_check
 from .eval_19 import note_interaction_check
 from .eval_20 import follow_back_fan_check
 from .eval_21 import view_and_comment_notes_check
-from .eval_22 import count_author_notes_check
+from .eval_22 import count_author_notes_check, TASK22_ANSWER_SCHEMA
 from .eval_23 import unfollow_author_check
-from .eval_24 import eval_24
-from .eval_25 import eval_25
-from .eval_26 import eval_26
+from .eval_24 import TASK24_ANSWER_SCHEMA, eval_24
+from .eval_25 import TASK25_ANSWER_SCHEMA, eval_25
+from .eval_26 import TASK26_ANSWER_SCHEMA, eval_26
 from .eval_27 import find_tie_method
-from .eval_28 import eval_28
-from .eval_29 import eval_29
+from .eval_28 import eval_28, TASK28_ANSWER_SCHEMA
+from .eval_29 import eval_29, TASK29_ANSWER_SCHEMA
 
 # 所有指令
 RED_NOTE_TASKS = AppTasks(
@@ -165,6 +165,8 @@ RED_NOTE_TASKS = AppTasks(
             verify_func=count_author_notes_check,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK22_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="对'潮流时尚达人'取消关注",
@@ -177,18 +179,24 @@ RED_NOTE_TASKS = AppTasks(
             verify_func=eval_24,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK24_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="计算我的关注和粉丝总人数",
             verify_func=eval_25,
             human_steps=1,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK25_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="数一下'潮流时尚达人'共发布的笔记数量",
             verify_func=eval_26,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK26_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="我想学习围巾的新系法，帮我推荐一篇笔记并打开",
@@ -201,12 +209,16 @@ RED_NOTE_TASKS = AppTasks(
             verify_func=eval_28,
             human_steps=1,
             is_reasoning=False,
+            evaluation_type="answer",
+            answer_schema=TASK28_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="告诉我我关注的博主中最受大众关注的是谁",
             verify_func=eval_29,
             human_steps=21,
             is_reasoning=False,
+            evaluation_type="answer",
+            answer_schema=TASK29_ANSWER_SCHEMA,
         ),
     ],
 )

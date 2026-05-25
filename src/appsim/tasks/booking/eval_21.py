@@ -1,5 +1,26 @@
 from ._shared import evaluate_task
 
+TASK21_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract information about the nearest upcoming trip.",
+    "properties": {
+        "trip_name": {
+            "type": "string",
+            "description": "The name or title of the nearest upcoming trip.",
+        },
+        "trip_date": {
+            "type": "string",
+            "description": "The date of the trip.",
+        },
+        "trip_amount": {
+            "type": "string",
+            "description": "The cost/amount of the trip.",
+        },
+    },
+    "required": ["trip_name"],
+    "additionalProperties": False,
+}
+
 
 def verify_answer_nearest_upcoming_trip(
     result=None,

@@ -2,16 +2,28 @@ import json
 import os
 import subprocess
 
+TASK33_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of customer service responses received.",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "The total number of customer service responses, excluding the initial greeting.",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
+
 
 def validate_task_thirty_three(result=None, device_id=None, backup_dir=None):
-    """Validate task 33: Send 'Hi', 'I have a question about my order', and 'I want to cancel' to the customer service one by one. Let me know how many customer service responses you have received in total, excluding the initial greeting message from the customer service. Please return the number in Arabic numerals only."""
-    # Check final_message contains "3"
-    message_answer_ok = False
-    if result and "final_message" in result and result["final_message"] is not None:
-        if "3" in result["final_message"]:
-            message_answer_ok = True
-
-    if not message_answer_ok:
+    """Validate task 33: Send messages to customer service and count responses."""
+    if not isinstance(result, dict):
+        return False
+    extracted_answer = result.get("extracted_answer")
+    if not isinstance(extracted_answer, dict):
+        return False
+    if extracted_answer.get("count") != 3:
         return False
 
     # Check chat_messages.json has the 3 user messages with exact content

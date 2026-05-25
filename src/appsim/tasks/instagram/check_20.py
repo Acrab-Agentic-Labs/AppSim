@@ -71,18 +71,20 @@ def check(adb, ui, result=None):
             },
         )
 
-    # Check if AI answer contains the correct count
-    if result and "final_message" in result:
-        final_msg = str(result["final_message"])
-        if str(total_saved) in final_msg:
-            return result_pass(
-                f"Check passed: UI on Saved page and answer contains correct count ({total_saved})",
-                {
-                    "savedPostsCount": saved_posts_count,
-                    "savedReelsCount": saved_reels_count,
-                    "totalSaved": total_saved,
-                },
-            )
+    # Check if AI answer contains the correct count via extracted_answer
+    if result and isinstance(result, dict):
+        extracted_answer = result.get("extracted_answer")
+        if isinstance(extracted_answer, dict):
+            count_val = extracted_answer.get("count")
+            if count_val is not None and int(count_val) == total_saved:
+                return result_pass(
+                    f"Check passed: UI on Saved page and answer contains correct count ({total_saved})",
+                    {
+                        "savedPostsCount": saved_posts_count,
+                        "savedReelsCount": saved_reels_count,
+                        "totalSaved": total_saved,
+                    },
+                )
 
     return result_fail(
         f"Answer check failed: final_message does not contain correct count ({total_saved})",

@@ -1,5 +1,18 @@
 from ._shared import evaluate_task
 
+TASK23_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the total amount spent so far.",
+    "properties": {
+        "amount": {
+            "type": "number",
+            "description": "The total amount spent, as a numeric value.",
+        }
+    },
+    "required": ["amount"],
+    "additionalProperties": False,
+}
+
 
 def verify_calculate_spent_amount(
     result=None,

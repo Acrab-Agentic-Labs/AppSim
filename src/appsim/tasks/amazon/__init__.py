@@ -1,9 +1,9 @@
 from ..base import AppTasks, TaskItem
 from .eval_1 import validate_task_one
-from .eval_2 import validate_task_two
-from .eval_3 import validate_task_three
+from .eval_2 import validate_task_two, TASK2_ANSWER_SCHEMA
+from .eval_3 import validate_task_three, TASK3_ANSWER_SCHEMA
 from .eval_4 import validate_task_four
-from .eval_5 import validate_task_five
+from .eval_5 import validate_task_five, TASK5_ANSWER_SCHEMA
 from .eval_6 import validate_task_six
 from .eval_7 import validate_task_seven
 from .eval_8 import validate_task_eight
@@ -12,29 +12,29 @@ from .eval_10 import validate_task_ten
 from .eval_11 import validate_task_eleven
 from .eval_12 import validate_task_twelve
 from .eval_13 import validate_task_thirteen
-from .eval_14 import validate_task_fourteen
+from .eval_14 import validate_task_fourteen, TASK14_ANSWER_SCHEMA
 from .eval_15 import validate_task_fifteen
 from .eval_16 import validate_task_sixteen
 from .eval_17 import validate_task_seventeen
-from .eval_18 import validate_task_eighteen
-from .eval_19 import validate_task_nineteen
-from .eval_20 import validate_task_twenty
+from .eval_18 import validate_task_eighteen, TASK18_ANSWER_SCHEMA
+from .eval_19 import validate_task_nineteen, TASK19_ANSWER_SCHEMA
+from .eval_20 import validate_task_twenty, TASK20_ANSWER_SCHEMA
 from .eval_21 import validate_task_twenty_one
-from .eval_22 import validate_task_twenty_two
+from .eval_22 import validate_task_twenty_two, TASK22_ANSWER_SCHEMA
 from .eval_23 import validate_task_twenty_three
 from .eval_24 import validate_task_twenty_four
 from .eval_25 import validate_task_twenty_five
 from .eval_26 import validate_task_twenty_six
 from .eval_27 import validate_task_twenty_seven
-from .eval_28 import validate_task_twenty_eight
+from .eval_28 import validate_task_twenty_eight, TASK28_ANSWER_SCHEMA
 from .eval_29 import validate_task_twenty_nine
 from .eval_30 import validate_task_thirty
 from .eval_31 import validate_task_thirty_one
 from .eval_32 import validate_task_thirty_two
-from .eval_33 import validate_task_thirty_three
+from .eval_33 import validate_task_thirty_three, TASK33_ANSWER_SCHEMA
 from .eval_34 import validate_task_thirty_four
 from .eval_35 import validate_task_thirty_five
-from .eval_36 import validate_task_thirty_six
+from .eval_36 import validate_task_thirty_six, TASK36_ANSWER_SCHEMA
 from .eval_37 import validate_task_thirty_seven
 from .eval_38 import validate_task_thirty_eight
 from .eval_39 import validate_task_thirty_nine
@@ -54,12 +54,16 @@ AMAZON_TASKS = AppTasks(
             verify_func=validate_task_two,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK2_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Check how many 'Lifestyle' items are in the Interests section and return only an Arabic numeral.",
             verify_func=validate_task_three,
             human_steps=4,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK3_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Send 'Hello, I have some questions about Dyson products.' to customer service.",
@@ -72,6 +76,8 @@ AMAZON_TASKS = AppTasks(
             verify_func=validate_task_five,
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK5_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Select the 12 oz option of Starbucks coffee beans and add it to the cart.",
@@ -126,6 +132,8 @@ AMAZON_TASKS = AppTasks(
             verify_func=validate_task_fourteen,
             human_steps=6,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK14_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Cancel all pending orders.",
@@ -150,18 +158,24 @@ AMAZON_TASKS = AppTasks(
             verify_func=validate_task_eighteen,
             human_steps=6,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK18_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Search for 'MacBook' and tell me how many reviews mention 'Battery life' in the result item. Return only an Arabic numeral.",
             verify_func=validate_task_nineteen,
             human_steps=6,
             is_reasoning=False,
+            evaluation_type="answer",
+            answer_schema=TASK19_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Search for 'electronics', count how many items have a rating higher than 4.8, and return only an Arabic numeral.",
             verify_func=validate_task_twenty,
             human_steps=7,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK20_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="View the items available for repurchase, find the cheapest one, and add it to the cart.",
@@ -174,6 +188,8 @@ AMAZON_TASKS = AppTasks(
             verify_func=validate_task_twenty_two,
             human_steps=8,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK22_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Add the item with the most reviews from the list 'Shopping List 2' to the cart.",
@@ -210,6 +226,8 @@ AMAZON_TASKS = AppTasks(
             verify_func=validate_task_twenty_eight,
             human_steps=12,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK28_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Find the product or products with the largest discount on the home page and follow their stores.",
@@ -240,6 +258,8 @@ AMAZON_TASKS = AppTasks(
             verify_func=validate_task_thirty_three,
             human_steps=11,
             is_reasoning=False,
+            evaluation_type="hybrid",
+            answer_schema=TASK33_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Check out all unpaid orders.",
@@ -258,6 +278,8 @@ AMAZON_TASKS = AppTasks(
             verify_func=validate_task_thirty_six,
             human_steps=17,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK36_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Create a shopping list named 'Electronics Wishlist', then search for 'Samsung' and add the first search result to that list.",

@@ -40,6 +40,86 @@ from .check_38 import check as check_38
 from .check_39 import check as check_39
 from .check_40 import check as check_40
 
+import inspect
+
+TASK1_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of likes on the first post.",
+    "properties": {
+        "like_count": {
+            "type": "string",
+            "description": "The like count (e.g. '123', '1.2K').",
+        }
+    },
+    "required": ["like_count"],
+    "additionalProperties": False,
+}
+
+TASK2_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of likes on the currently playing short video.",
+    "properties": {
+        "like_count": {
+            "type": "string",
+            "description": "The like count (e.g. '456', '2.3K').",
+        }
+    },
+    "required": ["like_count"],
+    "additionalProperties": False,
+}
+
+TASK3_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of contacts on the messages page.",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "The number of contacts/conversations.",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
+
+TASK4_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the username of the current user.",
+    "properties": {
+        "username": {
+            "type": "string",
+            "description": "The current user's username.",
+        }
+    },
+    "required": ["username"],
+    "additionalProperties": False,
+}
+
+TASK18_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of followers.",
+    "properties": {
+        "follower_count": {
+            "type": "string",
+            "description": "The follower count (e.g. '100', '1.5K').",
+        }
+    },
+    "required": ["follower_count"],
+    "additionalProperties": False,
+}
+
+TASK20_ANSWER_SCHEMA = {
+    "type": "object",
+    "description": "Extract the number of items in the favorites collection.",
+    "properties": {
+        "count": {
+            "type": "integer",
+            "description": "The total number of items in the favorites/saved collection.",
+        }
+    },
+    "required": ["count"],
+    "additionalProperties": False,
+}
+
 def validate_task(task_id):
     """Wrapper to convert check function to validate function signature"""
     def wrapper(result=None, device_id=None, backup_dir=None):
@@ -48,7 +128,11 @@ def validate_task(task_id):
         ui = get_ui(adb)
         check_func = globals()[f'check_{task_id:02d}']
         try:
-            passed = check_func(adb, ui)
+            sig = inspect.signature(check_func)
+            if 'result' in sig.parameters:
+                passed = check_func(adb, ui, result=result)
+            else:
+                passed = check_func(adb, ui)
             return passed
         except Exception:
             return False
@@ -62,24 +146,32 @@ INSTAGRAM_TASKS = AppTasks(
             verify_func=validate_task(1),
             human_steps=1,
             is_reasoning=True,
+            evaluation_type="hybrid",
+            answer_schema=TASK1_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me how many likes the currently playing short video has",
             verify_func=validate_task(2),
             human_steps=1,
             is_reasoning=True,
+            evaluation_type="hybrid",
+            answer_schema=TASK2_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me how many contacts are on the current messages page",
             verify_func=validate_task(3),
             human_steps=1,
             is_reasoning=True,
+            evaluation_type="hybrid",
+            answer_schema=TASK3_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Tell me the username of the current user",
             verify_func=validate_task(4),
             human_steps=1,
             is_reasoning=False,
+            evaluation_type="hybrid",
+            answer_schema=TASK4_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Like the first post on the homepage",
@@ -164,6 +256,8 @@ INSTAGRAM_TASKS = AppTasks(
             verify_func=validate_task(18),
             human_steps=1,
             is_reasoning=True,
+            evaluation_type="hybrid",
+            answer_schema=TASK18_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Like the currently playing short video",
@@ -176,6 +270,8 @@ INSTAGRAM_TASKS = AppTasks(
             verify_func=validate_task(20),
             human_steps=3,
             is_reasoning=True,
+            evaluation_type="hybrid",
+            answer_schema=TASK20_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction="Comment 'Nice!' under the second post on the homepage",

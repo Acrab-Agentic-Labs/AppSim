@@ -24,9 +24,9 @@ from .eval_17 import verify_book_most_comfortable_taxi_hkg_to_regal
 from .eval_18 import verify_book_paris_most_expensive_vip_ticket
 from .eval_19 import verify_book_sagrada_standard_ticket
 from .eval_20 import verify_book_london_green_skip_line_ticket_tomorrow
-from .eval_21 import verify_answer_nearest_upcoming_trip
+from .eval_21 import verify_answer_nearest_upcoming_trip, TASK21_ANSWER_SCHEMA
 from .eval_22 import verify_update_phone_to_752_0405
-from .eval_23 import verify_calculate_spent_amount
+from .eval_23 import verify_calculate_spent_amount, TASK23_ANSWER_SCHEMA
 from .eval_24 import verify_cancel_all_orders_after_next_month
 from .eval_25 import verify_update_profile_first_name_to_peter
 
@@ -158,6 +158,8 @@ BOOKING_TASKS = AppTasks(
             verify_func=verify_answer_nearest_upcoming_trip,
             human_steps=1,
             is_reasoning=True,
+            evaluation_type="answer",
+            answer_schema=TASK21_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Change my phone number to 752-0405.',
@@ -170,6 +172,8 @@ BOOKING_TASKS = AppTasks(
             verify_func=verify_calculate_spent_amount,
             human_steps=2,
             is_reasoning=True,
+            evaluation_type="hybrid",
+            answer_schema=TASK23_ANSWER_SCHEMA,
         ),
         TaskItem(
             instruction='Cancel all bookings scheduled after next month.',

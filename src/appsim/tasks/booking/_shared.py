@@ -670,9 +670,17 @@ def evaluate_task(task_id: int, result=None, device_id=None, backup_dir=None, **
         date_groups = _trip_date_keyword_groups(nearest_order)
         amount_groups = _trip_amount_keyword_groups(nearest_order)
 
-        has_name = bool(name_groups) and _result_contains_any_group(result, name_groups, broad=True)
-        has_date = bool(date_groups) and _result_contains_any_group(result, date_groups, broad=True)
-        has_amount = bool(amount_groups) and _result_contains_any_group(result, amount_groups, broad=True)
+        if isinstance(result, dict) and isinstance(result.get("extracted_answer"), dict):
+            ea = result["extracted_answer"]
+            ea_text = " ".join(str(v) for v in ea.values() if v)
+            norm = _normalize_text(ea_text)
+            has_name = bool(name_groups) and any(all(_normalize_text(t) in norm for t in g) for g in name_groups)
+            has_date = bool(date_groups) and any(all(_normalize_text(t) in norm for t in g) for g in date_groups)
+            has_amount = bool(amount_groups) and any(all(_normalize_text(t) in norm for t in g) for g in amount_groups)
+        else:
+            has_name = bool(name_groups) and _result_contains_any_group(result, name_groups, broad=True)
+            has_date = bool(date_groups) and _result_contains_any_group(result, date_groups, broad=True)
+            has_amount = bool(amount_groups) and _result_contains_any_group(result, amount_groups, broad=True)
         return has_name and has_date and has_amount
 
     if task_id == 22:
@@ -692,7 +700,13 @@ def evaluate_task(task_id: int, result=None, device_id=None, backup_dir=None, **
     if task_id == 24:
         spend_action = _latest_account_action(task_id, device_id, backup_dir, action_type=ACTION_SPEND_CALCULATED)
         amount = _float_value(_as_dict(spend_action).get("amount")) if spend_action else 0.0
-        return bool(spend_action and _float_close(amount, BASELINE_SPENT_AMOUNT))
+        state_ok = bool(spend_action and _float_close(amount, BASELINE_SPENT_AMOUNT))
+        if isinstance(result, dict) and isinstance(result.get("extracted_answer"), dict):
+            ea_amount = _float_value(result["extracted_answer"].get("amount"))
+            answer_ok = ea_amount is not None and _float_close(ea_amount, BASELINE_SPENT_AMOUNT)
+        else:
+            answer_ok = _result_contains_number(result, BASELINE_SPENT_AMOUNT)
+        return state_ok and answer_ok
 
     if task_id == 25:
         cancel_actions = _future_cancel_actions(task_id, device_id, backup_dir)
