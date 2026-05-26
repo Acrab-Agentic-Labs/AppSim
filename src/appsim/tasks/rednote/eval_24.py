@@ -5,11 +5,11 @@ import subprocess
 
 TASK24_ANSWER_SCHEMA = {
     "type": "object",
-    "description": "提取私信的数目。",
+    "description": "提取用户回答中的私信消息总条数。",
     "properties": {
         "message_count": {
             "type": "integer",
-            "description": "私信数目，必须是阿拉伯数字整数。",
+            "description": "私信消息总条数，必须是阿拉伯数字整数；注意不是私信会话数量，而是所有私信消息的总数。",
         }
     },
     "required": ["message_count"],
@@ -42,7 +42,8 @@ def eval_24(result=None, device_id=None, backup_dir=None):
     if not data or len(data) == 0:
         return False
 
-    return extracted_answer.get("message_count") == len(data)
+    expected_message_count = len(data)
+    return extracted_answer.get("message_count") == expected_message_count
 
 
 if __name__ == "__main__":

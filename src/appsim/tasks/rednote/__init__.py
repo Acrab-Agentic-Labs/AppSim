@@ -175,7 +175,7 @@ RED_NOTE_TASKS = AppTasks(
             is_reasoning=False,
         ),
         TaskItem(
-            instruction="数一下我的私信的数目",
+            instruction="数一下我有多少条私信消息",
             verify_func=eval_24,
             human_steps=2,
             is_reasoning=True,
