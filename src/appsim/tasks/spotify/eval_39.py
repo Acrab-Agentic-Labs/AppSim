@@ -1,13 +1,17 @@
 TASK39_ANSWER_SCHEMA = {
     "type": "object",
-    "description": "Extract the number of songs in the Chill Vibes playlist.",
+    "description": "Extract the initial song count for the Chill Vibes playlist when the agent first checks it, not the final count after completing the task.",
     "properties": {
-        "song_count": {
+        "initial_song_count": {
             "type": "integer",
-            "description": "The number of songs in the playlist. Must be an Arabic numeral integer.",
+            "description": "The song count in the Chill Vibes playlist when the agent first checks the playlist, not the final count after completing the task. Must be an Arabic numeral integer.",
+        },
+        "final_song_count": {
+            "type": "integer",
+            "description": "If the final answer explicitly mentions the final number of songs in the Chill Vibes playlist after adding songs, extract it; otherwise leave it null.",
         }
     },
-    "required": ["song_count"],
+    "required": ["initial_song_count"],
     "additionalProperties": False,
 }
 
@@ -18,5 +22,5 @@ def validate(result=None, **kwargs):
     extracted_answer = result.get("extracted_answer")
     if not isinstance(extracted_answer, dict):
         return False
-    count = extracted_answer.get("song_count")
+    count = extracted_answer.get("initial_song_count")
     return count == 4
