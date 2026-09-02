@@ -12,7 +12,7 @@ TASK14_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_14(result=None, **kwargs):
+def verify_favorite_collection_video_count(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

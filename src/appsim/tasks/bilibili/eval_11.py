@@ -12,7 +12,7 @@ TASK11_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_11(result=None, **kwargs):
+def verify_message_notification_status(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

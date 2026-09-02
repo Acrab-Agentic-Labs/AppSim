@@ -2,7 +2,7 @@ import subprocess
 import os
 
 
-def validate_task_27(result=None, device_id=None, backup_dir=None):
+def verify_two_video_first_comment_like_comparison_reply(result=None, device_id=None, backup_dir=None):
     """
     任务27: 分别打开历史记录里的第二个视频和收藏夹里的第二个视频，查看各自评论区展示的第一条一级评论的点赞数；
     如果两者不同，就对点赞数更高的那个视频发送评论"这赞也太多了吧！"，如果两者相同，就对历史记录里的那个视频发送评论。
@@ -48,5 +48,5 @@ def validate_task_27(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == '__main__':
-    result = validate_task_27()
+    result = verify_two_video_first_comment_like_comparison_reply()
     print(result)

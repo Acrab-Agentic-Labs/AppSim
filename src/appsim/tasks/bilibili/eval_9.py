@@ -6,7 +6,7 @@ import time
 
 
 
-def CheckReplyComment(result=None,device_id=None,backup_dir=None):
+def verify_first_video_reply_sent(result=None,device_id=None,backup_dir=None):
     """
     检验逻辑:对首页第一条视频评论，点击回复，输入"谢谢分享！"并发送
     验证用户是否完成评论回复
@@ -75,5 +75,5 @@ def CheckReplyComment(result=None,device_id=None,backup_dir=None):
             print(f"⚠️ 清除日志失败: {str(e)}")
 
 if __name__ == "__main__":
-    result1 = CheckReplyComment()
+    result1 = verify_first_video_reply_sent()
     print(result1)

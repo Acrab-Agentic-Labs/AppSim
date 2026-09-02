@@ -12,7 +12,7 @@ TASK30_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_30(result=None, **kwargs):
+def verify_search_first_video_top_comment_content(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

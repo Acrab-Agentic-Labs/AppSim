@@ -12,7 +12,7 @@ TASK8_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_8(result=None, **kwargs):
+def verify_mutual_follow_up_count(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

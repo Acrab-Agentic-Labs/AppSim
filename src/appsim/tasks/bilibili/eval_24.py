@@ -15,7 +15,7 @@ TASK24_ANSWER_SCHEMA = {
 }
 
 
-def CheckUidAndCloseChatPush(result=None, device_id=None, backup_dir=None):
+def verify_uid_and_chat_push_closed(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

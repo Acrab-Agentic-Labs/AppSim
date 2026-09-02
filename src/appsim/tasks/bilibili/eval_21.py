@@ -5,7 +5,7 @@ import shutil
 import time
 
 
-def CheckVideoLikeFavoriteFullscreen(result=None, device_id=None, backup_dir=None):
+def verify_first_video_like_favorite_fullscreen(result=None, device_id=None, backup_dir=None):
     """
     检验逻辑:看主页第一个视频，点赞，取消收藏，进入全屏模式观看
     验证用户是否完成点赞、收藏、全屏三个操作
@@ -78,5 +78,5 @@ def CheckVideoLikeFavoriteFullscreen(result=None, device_id=None, backup_dir=Non
             print(f"⚠️ 清除日志失败: {str(e)}")
 
 if __name__ == "__main__":
-    result1 = CheckVideoLikeFavoriteFullscreen()
+    result1 = verify_first_video_like_favorite_fullscreen()
     print(result1)

@@ -5,7 +5,7 @@ import shutil
 import time
 
 
-def CheckSearchPlayLikeReply(result=None, device_id=None, backup_dir=None):
+def verify_search_play_like_reply(result=None, device_id=None, backup_dir=None):
     """
     检验逻辑:搜索视频"游戏解说"，播放搜索出的第一个视频并点赞，然后对该视频评论"谢谢分享！"
     验证用户是否完成搜索、播放、点赞、评论回复全流程
@@ -93,5 +93,5 @@ def CheckSearchPlayLikeReply(result=None, device_id=None, backup_dir=None):
             print(f"⚠️ 清除日志失败: {str(e)}")
 
 if __name__ == "__main__":
-    result1 = CheckSearchPlayLikeReply()
+    result1 = verify_search_play_like_reply()
     print(result1)

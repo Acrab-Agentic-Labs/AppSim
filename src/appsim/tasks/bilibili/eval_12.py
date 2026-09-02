@@ -12,7 +12,7 @@ TASK12_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_12(result=None, **kwargs):
+def verify_lowest_level_replied_comment_like_count(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
