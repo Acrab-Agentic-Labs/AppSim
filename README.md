@@ -1,141 +1,138 @@
-# AppSim 项目文档
+# AppSim Project Documentation
 
-## 📑 目录
+Chinese version: [README_CN.md](README_CN.md)
 
-- [项目介绍](#项目介绍)
-- [设备环境](#设备环境)
-  - [AVD模拟器](#avd模拟器)
+## Contents
+
+- [Project Overview](#project-overview)
+- [Environment Setup](#environment-setup)
+  - [AVD Emulator](#avd-emulator)
     - [Windows & MacOS](#windows--macos)
-    - [Linux服务器](#linux服务器)
-- [评测环境](#评测环境)
-  - [准备工作](#准备工作)
-  - [使用说明](#使用说明)
-    - [1. 基础用法](#1-基础用法)
-    - [2. 参数说明](#2-参数说明)
-    - [3. 批量评测脚本](#3-批量评测脚本)
-    - [4. 特别说明](#4-特别说明)
-    - [5. 扩展Agent类型](#5-扩展agent类型)
+    - [Linux Server](#linux-server)
+- [Evaluation Setup](#evaluation-setup)
+  - [Preparation](#preparation)
+    - [Install App APKs](#install-app-apks)
+  - [Usage](#usage)
+    - [1. Basic Usage](#1-basic-usage)
+    - [2. Parameters](#2-parameters)
+    - [3. Batch Evaluation Scripts](#3-batch-evaluation-scripts)
+    - [4. Notes](#4-notes)
+    - [5. Extending Agent Types](#5-extending-agent-types)
+- [FAQ](#faq)
 
 ---
 
-## 项目介绍
+## Project Overview
 
-AppSim 是一个用于评测 GUI Agent 在移动应用上的自动化测试框架。
+AppSim is an automated evaluation framework for GUI agents on mobile apps.
 
-## 设备环境
+## Environment Setup
 
-### AVD模拟器
+### AVD Emulator
 
 #### Windows & MacOS
 
-TODO: 使用 AndroidStudio 安装
+TODO: install through Android Studio.
 
-#### Linux服务器
+#### Linux Server
 
-##### 安装JDK
+##### Install JDK
 
-``` bash 
-# 下载 JDK
+```bash
 wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz ./
-
-# 解压 JDK
 tar -zxvf openjdk-17.0.2_linux-x64_bin.tar.gz -C /opt
-
-# 配置环境变量
 export JAVA_HOME="/opt/jdk-17.0.2"
 export PATH="$PATH:$JAVA_HOME/bin"
 export CLASSPATH=$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 ```
 
-
-##### 安装 SDKManager
+##### Install SDKManager
 
 ```bash
-# 下载
 wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
-
-# 安装
 unzip commandlinetools-linux-8092744_latest.zip -d /opt/
-
-# 配置环境变量
 export PATH="$PATH:/opt/cmdline-tools/bin"
 ```
 
-
-##### 环境变量配置
+##### Configure Environment Variables
 
 ```bash
-# 配置环境变量
 export ANDROID_SDK_ROOT=/opt/android-sdk
-
-# 安装 platform-tools, emulator, build-tools, platforms, system-image
-# licenses 全部选 TRUE
 sdkmanager --sdk_root=$ANDROID_SDK_ROOT --install "platform-tools" "emulator" "build-tools;33.0.0" "platforms;android-33" "system-images;android-33;default;x86_64"
-
-# 配置环境变量
 export PATH="$PATH:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools"
 ```
 
+##### Create Emulator
 
-##### 创建模拟器
 ```bash
-# 创建 AVD
-# 是否创建选no
 avdmanager --verbose create avd --force --name "testavd" --package "system-images;android-33;default;x86_64"
 ```
 
-##### 启动模拟器
+##### Start Emulator
+
 ```bash
-# 启动模拟器
-# 如果遇到检查的ANDROID_SDK_ROOT路径不对
-# 修改 vi ~/.android/avd/testavd.avd/config.ini 中 image.sysdir.1 的路径为绝对路径或相对 $ANDROID_SDK_ROOT 的路径
 emulator @testavd -no-boot-anim -netdelay none -accel on -no-snapshot -wipe-data -no-window -port 5554
 ```
 
-##### 利用 scrcpy 查看界面内容(可选)
+If `ANDROID_SDK_ROOT` is checked in the wrong location, update `image.sysdir.1` in `~/.android/avd/testavd.avd/config.ini` to an absolute path or a path relative to `$ANDROID_SDK_ROOT`.
 
-如果需要在本地电脑查看服务器上AVD的页面，可以通过 scrcpy 实现.
+##### View the Emulator Screen with scrcpy (optional)
 
-1. 远程开发机配置
+If you want to view the AVD screen from a local machine, use `scrcpy`.
+
+1. Remote machine setup
 
 ```bash
-# 开启tcpip服务
 adb tcpip 5555
-
-# 防火墙允许5555的tcp请求
 ufw allow 5555/tcp
 ```
 
-2. 本地电脑连接
+2. Local machine connection
 
 ```bash
-# adb 连接目标端口
 adb connect server_ip:5555
-
-# scrcpy 启动
 scrcpy
 ```
 
-## 评测环境
+## Evaluation Setup
 
-### 准备工作
+### Preparation
+
+#### Install App APKs
+
+Before running evaluations, install the 17 AppSim APKs on the test phone or emulator. You can also fork the source repos below and build the APKs yourself for evaluation.
+
+| Chinese Name | English Name | GitHub Repo |
+|---|---|---|
+| 哔哩哔哩 | BiliBili | https://github.com/Acrab-Lab/AppSim-BiliBili |
+| 饿了么 | Eleme | https://github.com/Acrab-Lab/AppSim-Eleme |
+| 高德地图 | Amap | https://github.com/Acrab-Lab/AppSim-Amap |
+| 京东 | JD | https://github.com/Acrab-Lab/AppSim-JD |
+| 腾讯会议 | Tencent Meeting | https://github.com/Acrab-Lab/AppSim-TencentMeeting |
+| 网易云音乐 | NetEase Cloud Music | https://github.com/Acrab-Lab/AppSim-NetEaseCloudMusic |
+| 微信 | WeChat | https://github.com/Acrab-Lab/AppSim-Wechat-V2 |
+| 小红书 | RedNote | https://github.com/Acrab-Lab/AppSim-RedNote |
+| 携程 | Ctrip | https://github.com/Acrab-Lab/AppSim-Ctrip |
+|  | Amazon | https://github.com/Acrab-Lab/AppSim-Amazon |
+|  | Booking | https://github.com/Acrab-Lab/AppSim-Booking |
+|  | Instagram | https://github.com/Acrab-Lab/AppSim-Instagram |
+|  | Spotify | https://github.com/Acrab-Lab/GUIAgent-Spotify |
+|  | Uber Eats | https://github.com/Acrab-Lab/AppSim-UberEats |
+|  | WhatsApp | https://github.com/Acrab-Lab/AppSim-WhatsApp |
+|  | YouTube | https://github.com/Acrab-Lab/AppSim-Youtube |
+|  | Zoom | https://github.com/Acrab-Lab/AppSim-Zoom |
 
 ```bash
-# 创建虚拟环境
 uv venv --python=3.11
-
-# 安装依赖
 pip install -r requirements.txt
-
-# 安装项目
 pip install -e .
 ```
 
-### 使用说明
+### Usage
 
-#### 1. 基础用法
+#### 1. Basic Usage
 
-**单个应用评测**：
+Single app evaluation:
 
 ```bash
 python scripts/eval_appsim.py \
@@ -145,30 +142,30 @@ python scripts/eval_appsim.py \
     --output-dir results/AgentCPM-GUI/
 ```
 
-#### 2. 参数说明
+#### 2. Parameters
 
-##### 命令行参数
+##### Command-line arguments
 
-- `--agent-name`: Agent 名称，可选值：
+- `--agent-name`: Agent name. Available values:
   - `Seed-1.5-VL`
   - `UI-TARS-1.5`
   - `GPT-5`
   - `Gemini-2.5-Pro`
   - `Claude-4.5-Sonnet`
   - `Qwen3-VL`
-  - `AgentCPM-GUI`（批量脚本默认）
+  - `AgentCPM-GUI` (default for batch scripts)
 
-- `--task`: 要评估的应用任务，可选值：
-  - `BILIBILI` - 哔哩哔哩
-  - `CTRIP` - 携程旅行
-  - `ELEME` - 饿了么
-  - `GAODE` - 高德地图
-  - `MYJD` - 京东
-  - `MUSIC` - 网易云音乐
-  - `RED_NOTE` - 小红书
-  - `TENCENT_MEETING` - 腾讯会议
+- `--task`: App task to evaluate. Available values:
+  - `BILIBILI` - BiliBili
+  - `CTRIP` - Ctrip
+  - `ELEME` - Eleme
+  - `GAODE` - Amap
+  - `MYJD` - JD
+  - `MUSIC` - NetEase Cloud Music
+  - `RED_NOTE` - RedNote
+  - `TENCENT_MEETING` - Tencent Meeting
   - `UBEREATS` - Uber Eats
-  - `WECHAT` - 微信
+  - `WECHAT` - WeChat
   - `YOUTUBE` - YouTube
   - `AMAZON` - Amazon
   - `WHATSAPP` - WhatsApp
@@ -177,21 +174,21 @@ python scripts/eval_appsim.py \
   - `SPOTIFY` - Spotify
   - `INSTAGRAM` - Instagram
 
-- `--device-id`: 设备ID（adb地址），例如：
-  - `emulator-5554` - 模拟器
-  - `122.228.230.212:10246` - 远程设备
+- `--device-id`: Device ID (adb address), for example:
+  - `emulator-5554` - emulator
+  - `122.228.230.212:10246` - remote device
 
-- `--output-dir`: 结果输出目录（默认: `./output/`）
+- `--output-dir`: Output directory (default: `./output/`)
 
-- `--start-index`: 从指定索引开始执行任务（默认: 0）
+- `--start-index`: Start task index (default: `0`)
 
-- `--end-index`: 执行任务的结束索引（默认为None. 非None时按照Python的习惯执行 task_items[start_index:end_index]）
+- `--end-index`: End task index (default: `None`). When not `None`, the script follows Python slicing semantics for `task_items[start_index:end_index]`.
 
-- `--verbose`: 设置时显示详细的log信息(等同于logging.DEBUG)
+- `--verbose`: Show detailed log output (equivalent to `logging.DEBUG`)
 
-##### 环境变量
+##### Environment variables
 
-直接运行 `scripts/eval_appsim.py` 时，可以通过通用环境变量提供 OpenAI 兼容接口配置：
+When running `scripts/eval_appsim.py` directly, you can configure the OpenAI-compatible API with common environment variables:
 
 ```bash
 export API_BASE='https://your-api-endpoint.com/api/v3'
@@ -199,7 +196,7 @@ export API_KEY='your-api-key-here'
 export MODEL_NAME='your-model-name'
 ```
 
-对于 `evaluation_type="answer"` 或 `evaluation_type="hybrid"` 的任务，评测脚本还会调用 answer extractor，把 agent 的 `final_message` 结构化为 `result["extracted_answer"]`。默认情况下，answer extractor 会复用上面的 `API_BASE`、`API_KEY`、`MODEL_NAME`。如果希望 extractor 使用独立模型，也可以单独配置：
+For tasks with `evaluation_type="answer"` or `evaluation_type="hybrid"`, the evaluation script also calls an answer extractor to structure the agent's `final_message` into `result["extracted_answer"]`. By default, the extractor reuses `API_BASE`, `API_KEY`, and `MODEL_NAME` above. If you want the extractor to use a separate model, configure it explicitly:
 
 ```bash
 export ANSWER_EXTRACTOR_API_BASE='https://your-extractor-endpoint.com/api/v3'
@@ -207,25 +204,23 @@ export ANSWER_EXTRACTOR_API_KEY='your-extractor-api-key'
 export ANSWER_EXTRACTOR_MODEL_NAME='your-extractor-model-name'
 ```
 
-新接入的 `answer` / `hybrid` 任务会优先读取 `result["extracted_answer"]` 做验证，不再依赖旧的 `final_message` 文本格式约束（例如 `<ans>...</ans>`）。
+New `answer` and `hybrid` tasks prefer `result["extracted_answer"]` for validation, instead of relying on the legacy `final_message` text format constraint such as `<ans>...</ans>`.
 
-不同 Agent 也支持自己的环境变量前缀，例如 `AGENTCPM_GUI_API_BASE`、`AGENTCPM_GUI_API_KEY`、`AGENTCPM_GUI_MODEL_NAME`。批量脚本会按设备自动导出这些变量，一般只需要改 `scripts/eval.sh` 的配置区。
+Different agents also support their own environment variable prefixes, such as `AGENTCPM_GUI_API_BASE`, `AGENTCPM_GUI_API_KEY`, and `AGENTCPM_GUI_MODEL_NAME`. Batch scripts export these variables automatically per device, so in most cases you only need to edit the configuration block in `scripts/eval.sh`.
 
-#### 3. 批量评测脚本
+#### 3. Batch Evaluation Scripts
 
-项目提供了批量评测脚本，可以在多个设备上并行运行所有应用的评测。
+The project provides batch evaluation scripts that can run evaluations for multiple apps in parallel across multiple devices.
 
-##### 使用 `eval.sh` (Linux/MacOS)
+##### Using `eval.sh` (Linux/MacOS)
 
-**步骤 1：配置脚本**
+**Step 1: Configure the script**
 
-编辑 `scripts/eval.sh` 文件，配置以下信息：
+Edit `scripts/eval.sh` and set the following values:
 
 ```bash
-# Agent 配置，默认使用 AgentCPM-GUI。
 AGENT_NAME="${AGENT_NAME:-AgentCPM-GUI}"
 
-# OpenAI 兼容 API 配置。三组数组按下标一一对应，数量必须不少于设备数量。
 API_BASES=(
   "https://your-api-endpoint-1.com/api/v3"
   "https://your-api-endpoint-2.com/api/v3"
@@ -245,7 +240,6 @@ MODEL_NAMES=(
   "your-model-name-4"
 )
 
-# Android 设备，可以是远程 host:port，也可以是 emulator-5554。
 DEVICE_IDS=(
   "device-1-host:port"
   "device-2-host:port"
@@ -253,7 +247,6 @@ DEVICE_IDS=(
   "device-4-host:port"
 )
 
-# 要评测的 App。脚本会按 round-robin 分配到 DEVICE_IDS。
 APPS=(
   "GAODE"
   "BILIBILI"
@@ -261,26 +254,28 @@ APPS=(
 )
 ```
 
-**步骤 2：运行脚本**
+**Step 2: Run the script**
 
 ```bash
 bash scripts/eval.sh
 ```
 
-**特性**：
-- 自动按 `DEVICE_IDS` 并行启动 worker
-- 每个设备使用对应下标的 `API_BASES`、`API_KEYS`、`MODEL_NAMES`
-- Round-robin 方式分配 `APPS` 到设备
-- 远程 `host:port` 设备会先尝试 `adb connect`
-- 每个 App 失败后按 `MAX_APP_ATTEMPTS` 重试，并在 uiautomator2 连接异常时重连
-- 实时保存 `eval_details_*.jsonl`、`run.log` 和 `console_errors.log`
-- 自动生成带时间戳的结果目录
+**Features**
 
-**输出结构**：
-```
+- Automatically starts workers in parallel based on `DEVICE_IDS`
+- Uses the matching `API_BASES`, `API_KEYS`, and `MODEL_NAMES` entry for each device
+- Distributes `APPS` to devices in round-robin order
+- Attempts `adb connect` first for remote `host:port` devices
+- Retries each app up to `MAX_APP_ATTEMPTS`, and reconnects when uiautomator2 connection errors occur
+- Saves `eval_details_*.jsonl`, `run.log`, and `console_errors.log` in real time
+- Generates timestamped result directories automatically
+
+**Output structure**
+
+```text
 scripts/results/
 └── AgentCPM-GUI/
-    └── 20260423_001257/          # RUN_TAG，默认是运行时间戳
+    └── 20260423_001257/          # RUN_TAG, defaults to the run timestamp
         ├── 122.228.230.214_10454/
         │   ├── BILIBILI/
         │   │   ├── eval_details_Bilibili_*.jsonl
@@ -292,88 +287,79 @@ scripts/results/
         └── console_errors.log
 ```
 
-##### 使用 `eval.bat` (Windows)
+##### Using `eval.bat` (Windows)
 
-Windows 用户可以使用 `eval.bat` 脚本，配置方式类似。
+Windows users can use `eval.bat`. The configuration is similar.
 
-##### 自定义配置
+##### Custom Configuration
 
-可以通过环境变量覆盖默认配置：
+You can override the default settings with environment variables:
 
 ```bash
-# 自定义 Agent 名称。
 export AGENT_NAME="GPT-5"
-
-# 自定义结果目录。
 export RESULT_ROOT="./my_results/"
-
-# 自定义运行标签。
 export RUN_TAG="experiment_001"
-
-# 只跑每个 App 的部分任务，区间规则同 Python 切片 task_items[start:end]。
 export START_INDEX=0
 export END_INDEX=2
-
-# 设置每个 App 的总尝试次数。
 export MAX_APP_ATTEMPTS=2
 
 bash scripts/eval.sh
 ```
 
-`AgentCPM-GUI` 还可以通过 `MAX_TOKENS` 和 `HISTORY_IMAGE_TURNS` 控制请求参数。当前短上下文服务建议保持默认值：`MAX_TOKENS=512`、`HISTORY_IMAGE_TURNS=1`。
+`AgentCPM-GUI` also supports `MAX_TOKENS` and `HISTORY_IMAGE_TURNS` for request tuning. The current short-context service recommends keeping the defaults: `MAX_TOKENS=512` and `HISTORY_IMAGE_TURNS=1`.
 
-#### 4. 特别说明
+#### 4. Notes
 
-- 使用 `UI-TARS-1.5` Agent 时，模型输出的坐标使用 1000x1000 坐标系
-- 使用 `AgentCPM-GUI` Agent 时，模型输出紧凑 JSON，坐标使用 0-1000 相对坐标系
-- 如果使用其他模型，请确保模型输出的坐标格式符合要求（1000x1000 坐标系，整数坐标）
-- 评估结果会实时保存到输出目录的 JSONL 文件中，文件名包含时间戳
+- `UI-TARS-1.5` uses a 1000x1000 coordinate system for model outputs
+- `AgentCPM-GUI` uses compact JSON and a 0-1000 relative coordinate system
+- If you use another model, make sure its coordinate format matches the required 1000x1000 integer coordinate format
+- Evaluation results are saved to JSONL files in the output directory in real time, and the file names include timestamps
 
-##### UI-TARS 官方 API 提供的手机 GUI 任务处理场景动作表
+##### Official UI-TARS API Action Table for Mobile GUI Tasks
 
-> 记录 UI-TARS 模型的官方 API 提供的 Action
+> Action reference provided by the official UI-TARS API
 
-模型会输出类似于 `click(point='<point>500 257</point>')` 这样的一段动作，我们按照下表展示的规则去解析模型输出的内容。
+The model may output actions such as `click(point='<point>500 257</point>')`. We parse the model output according to the rules in the table below.
 
-| Action 名称 | 动作类型 | 参数                | 输出示例                                                                 |
-|-------------|----------|---------------------|--------------------------------------------------------------------------|
-| click       | 点击     | point               | `click(point='<point>x1 y1</point>')`                            |
-| long_press  | 长按     | point               | `long_press(point='<point>x1 y1</point>')`                       |
-| type        | 输入     | content             | `type(content='文本内容\\n')`                                    |
-| scroll      | 滚动     | point、direction    | `scroll(point='<point>x1 y1</point>', direction='down')`         |
-| open_app    | 打开应用 | app_name            | `open_app(app_name='微信')`                                      |
-| drag        | 拖拽     | start_point、end_point | `drag(start_point='<point>x1 y1</point>', end_point='<point>x2 y2</point>')` |
-| press_home  | 返回主屏幕 | 无                  | `press_home()`                                                   |
-| press_back  | 返回     | 无                  | `press_back()`                                                   |
-| finished    | 完成     | content             | `finished(content='操作完成信息')`                                |
+| Action Name | Action Type | Parameters | Example Output |
+|-------------|-------------|------------|----------------|
+| click | click | point | `click(point='<point>x1 y1</point>')` |
+| long_press | long press | point | `long_press(point='<point>x1 y1</point>')` |
+| type | input | content | `type(content='text\\n')` |
+| scroll | scroll | point, direction | `scroll(point='<point>x1 y1</point>', direction='down')` |
+| open_app | open app | app_name | `open_app(app_name='WeChat')` |
+| drag | drag | start_point, end_point | `drag(start_point='<point>x1 y1</point>', end_point='<point>x2 y2</point>')` |
+| press_home | return to home screen | none | `press_home()` |
+| press_back | go back | none | `press_back()` |
+| finished | finish | content | `finished(content='operation complete')` |
 
-#### 5. 扩展Agent类型
+#### 5. Extending Agent Types
 
-项目支持多种 Agent，通过 `--agent-name` 参数切换。不同的 Agent 对应不同的模型和配置，具体实现位于 `scripts/agent_factory/agent_factory.py`。
+The project supports multiple agents through the `--agent-name` parameter. Different agents map to different models and settings, and the implementation lives in `scripts/agent_factory/agent_factory.py`.
 
-如果需要添加新的 Agent 或修改模型配置，请编辑 `scripts/agent_factory/agent_factory.py` 文件。
+To add a new agent or change model settings, edit `scripts/agent_factory/agent_factory.py`.
 
 ---
 
-## 常见问题
+## FAQ
 
-### Q: 如何查看评测进度？
+### Q: How can I monitor evaluation progress?
 
-A: 评测过程中会实时输出日志，可以通过以下方式查看：
-- 控制台输出：实时显示当前执行状态
-- `run.log`：每个应用的详细执行日志
-- `console_errors.log`：所有错误信息汇总
+A: Logs are printed in real time during evaluation:
+- Console output: current execution status
+- `run.log`: detailed logs for each app
+- `console_errors.log`: aggregated error messages
 
-### Q: 评测失败如何排查？
+### Q: How do I debug a failed evaluation?
 
-A: 按以下步骤排查：
-1. 检查 `run.log` 查看具体错误信息
-2. 确认设备连接正常：`adb devices`
-3. 确认 API 配置正确（API_BASE, API_KEY, MODEL_NAME）
-4. 查看 `console_errors.log` 了解全局错误
+A: Follow these steps:
+1. Check `run.log` for the exact error
+2. Confirm the device connection: `adb devices`
+3. Confirm the API settings are correct (`API_BASE`, `API_KEY`, `MODEL_NAME`)
+4. Check `console_errors.log` for global errors
 
-### Q: 如何只测试部分应用？
+### Q: How do I test only a subset of apps?
 
-A: 编辑 `eval.sh` 中的 `APPS` 数组，只保留需要测试的应用名称。
+A: Edit the `APPS` array in `eval.sh` and keep only the app names you want to test.
 
 ---
