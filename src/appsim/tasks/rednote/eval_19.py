@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def note_interaction_check(result=None, device_id=None, backup_dir=None):
+def verify_collected_note_liked_and_commented(result=None, device_id=None, backup_dir=None):
     # 检查浏览历史
     browsing_file_path = os.path.join(backup_dir, "browsing_history.json") if backup_dir is not None else "browsing_history.json"
     cmd = ["adb"]
@@ -84,4 +84,4 @@ def note_interaction_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(note_interaction_check())
+    print(verify_collected_note_liked_and_commented())

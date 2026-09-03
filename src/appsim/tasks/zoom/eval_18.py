@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_enable_waiting_room_and_extend_noon_meeting(
+def verify_nearest_upcoming_meeting_waiting_room_enabled(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_enable_waiting_room_and_extend_noon_meeting(
 
 
 if __name__ == "__main__":
-    print(verify_enable_waiting_room_and_extend_noon_meeting())
+    print(verify_nearest_upcoming_meeting_waiting_room_enabled())

@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_media_enabled_before_host(
+def verify_meeting_media_state_and_chat(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_media_enabled_before_host(
 
 
 if __name__ == "__main__":
-    print(verify_media_enabled_before_host())
+    print(verify_meeting_media_state_and_chat())

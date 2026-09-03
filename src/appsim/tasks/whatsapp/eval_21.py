@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_one(result=None, device_id=None, backup_dir=None):
+def verify_status_reaction_added(result=None, device_id=None, backup_dir=None):
     """Verify task 21: status_spotify_003 in statuses.json has userReaction set to 🔥."""
     file_path = os.path.join(backup_dir, "statuses.json") if backup_dir else "statuses.json"
 
@@ -30,5 +30,5 @@ def validate_task_twenty_one(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_one()
+    result = verify_status_reaction_added()
     print(result)

@@ -6,7 +6,7 @@ import os
 # 检查条件：type="flight_booking", from="成都", to="深圳", date="2025-10-24", flightIndex=0
 
 
-def check_booking_flight_wh_sz(result=None, device_id=None, backup_dir=None):
+def verify_first_flight_booking_created(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/booking_history.json"
     local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
@@ -49,4 +49,4 @@ def check_booking_flight_wh_sz(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_booking_flight_wh_sz() else "false")
+    print("true" if verify_first_flight_booking_created() else "false")

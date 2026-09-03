@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_seven(result=None, device_id=None, backup_dir=None):
+def verify_contact_created_and_group_added(result=None, device_id=None, backup_dir=None):
     """Verify task 37: contacts.json contains Jessie Brown; SF Tech Squad in group_details.json has memberIds containing contact_018."""
     ct_path = os.path.join(backup_dir, "contacts.json") if backup_dir else "contacts.json"
     gd_path = os.path.join(backup_dir, "group_details.json") if backup_dir else "group_details.json"
@@ -53,5 +53,5 @@ def validate_task_thirty_seven(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_seven()
+    result = verify_contact_created_and_group_added()
     print(result)

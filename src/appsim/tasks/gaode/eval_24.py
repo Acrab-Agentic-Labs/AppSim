@@ -13,7 +13,7 @@ TASK24_ANSWER_SCHEMA = {
 }
 
 
-def validate(result=None, **kwargs):
+def verify_driving_duration_to_destination(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

@@ -17,7 +17,7 @@ TASK26_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty_six(result=None, device_id=None, backup_dir=None):
+def verify_store_pending_order_total_price(result=None, device_id=None, backup_dir=None):
     """验证任务二十六：统计待使用的京东超市的订单总价，保留一位小数。"""
     json_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 

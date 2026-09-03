@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
+def verify_cart_purchase_with_discount_coupon(result=None, device_id=None, backup_dir=None):
     """验证任务十六：将购物车的iPhone15买下来，使用满3000减50的优惠券结算。"""
 
     cart_items_file_path = os.path.join(backup_dir, "cart_items.json") if backup_dir else "cart_items.json"
@@ -69,5 +69,5 @@ def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
 
 if __name__ == "__main__":
     # For local testing, ensure the device is connected and the app state is correct.
-    result = validate_task_sixteen()
+    result = verify_cart_purchase_with_discount_coupon()
     print(f"Validation Result: {result}")

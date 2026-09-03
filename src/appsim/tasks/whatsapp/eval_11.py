@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_eleven(result=None, device_id=None, backup_dir=None):
+def verify_new_conversation_message_sent(result=None, device_id=None, backup_dir=None):
     """Verify task 11: the last item in conversations.json has participantNames containing JiayiDai and James Walker."""
     file_path = os.path.join(backup_dir, "conversations.json") if backup_dir else "conversations.json"
 
@@ -37,5 +37,5 @@ def validate_task_eleven(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_eleven()
+    result = verify_new_conversation_message_sent()
     print(result)

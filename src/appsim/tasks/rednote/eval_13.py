@@ -5,7 +5,7 @@ import subprocess
 from io import StringIO
 
 
-def share_note_check(result=None, device_id=None, backup_dir=None):
+def verify_note_shared(result=None, device_id=None, backup_dir=None):
     output_buffer = StringIO()
     _USER_ID = "user_current"
     _NOTE_ID = "note_001"
@@ -50,4 +50,4 @@ def share_note_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(share_note_check())
+    print(verify_note_shared())

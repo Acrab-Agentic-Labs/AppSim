@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_screen_share_in_new_meeting(
+def verify_meeting_participant_controls_and_lock(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_screen_share_in_new_meeting(
 
 
 if __name__ == "__main__":
-    print(verify_screen_share_in_new_meeting())
+    print(verify_meeting_participant_controls_and_lock())

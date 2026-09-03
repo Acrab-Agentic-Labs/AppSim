@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_forty(result=None, device_id=None, backup_dir=None):
+def verify_most_discounted_repurchase_item_purchased(result=None, device_id=None, backup_dir=None):
     """Validate task 40: buy the most heavily discounted item on the repurchase page and check out."""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -39,5 +39,5 @@ def validate_task_forty(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_forty()
+    result = verify_most_discounted_repurchase_item_purchased()
     print(result)

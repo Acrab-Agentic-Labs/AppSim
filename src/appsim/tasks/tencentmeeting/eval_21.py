@@ -41,7 +41,7 @@ def _format_expected_users(user_ids):
     return [f"{user_id} {EXPECTED_ZHOU_USERS.get(user_id, '')}".strip() for user_id in sorted(user_ids)]
 
 
-def check_personal_room_invitation(
+def verify_personal_room_invitees_added(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -75,4 +75,4 @@ def check_personal_room_invitation(
 
 
 if __name__ == "__main__":
-    print(check_personal_room_invitation())
+    print(verify_personal_room_invitees_added())

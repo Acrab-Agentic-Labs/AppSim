@@ -20,7 +20,7 @@ TASK24_ANSWER_SCHEMA = {
 }
 
 
-def check_flight_search_price_avg(result=None, device_id=None, backup_dir=None):
+def verify_cheapest_flight_average_price(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
@@ -31,5 +31,5 @@ def check_flight_search_price_avg(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = check_flight_search_price_avg()
+    result = verify_cheapest_flight_average_price()
     print(result)

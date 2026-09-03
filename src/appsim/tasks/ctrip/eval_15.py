@@ -6,7 +6,7 @@ import os
 # 检查条件：type="train_search", ticketType="学生票"
 
 
-def check_train_search_student(result=None, device_id=None, backup_dir=None):
+def verify_student_ticket_train_search_results(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/search_params.json"
     local_file_path = os.path.join(backup_dir, 'search_params.json') if backup_dir else 'search_params.json'
@@ -40,4 +40,4 @@ def check_train_search_student(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_train_search_student() else "false")
+    print("true" if verify_student_ticket_train_search_results() else "false")

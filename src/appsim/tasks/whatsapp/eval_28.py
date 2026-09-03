@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_eight(result=None, device_id=None, backup_dir=None):
+def verify_latest_incoming_message_request_completed(result=None, device_id=None, backup_dir=None):
     """Verify task 28: the first item in calls.json has contactIds containing contact_009 and contact_013."""
     file_path = os.path.join(backup_dir, "calls.json") if backup_dir else "calls.json"
 
@@ -34,5 +34,5 @@ def validate_task_twenty_eight(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_eight()
+    result = verify_latest_incoming_message_request_completed()
     print(result)

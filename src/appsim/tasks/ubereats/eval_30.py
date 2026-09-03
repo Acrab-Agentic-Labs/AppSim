@@ -8,7 +8,7 @@ PAGE_VALUE = "sendmessages"
 MESSAGE_VALUE = "How long will it take to arrive?"
 
 
-def validate_task_thirty(result=None, device_id=None, backup_dir=None):
+def verify_courier_message_sent(result=None, device_id=None, backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, MESSAGES_FILE_PATH, backup_dir)
         state = read_json_from_device(device_id, PACKAGE_NAME, APP_STATE_FILE_PATH, backup_dir)
@@ -41,4 +41,4 @@ def validate_task_thirty(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(validate_task_thirty())
+    print(verify_courier_message_sent())

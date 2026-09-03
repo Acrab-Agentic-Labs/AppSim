@@ -28,7 +28,7 @@ EXPECTED_DESTINATION = "滨江饭店"
 EXPECTED_WAYPOINT = "亚朵酒店"
 
 
-def verify_add_favorite_as_waypoint(device_id=None):
+def verify_favorite_place_added_as_waypoint(device_id=None):
     """
     验证添加收藏地点作为途经点任务是否完成
 
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_add_favorite_as_waypoint()
+    success = verify_favorite_place_added_as_waypoint()
 
     # 输出最终结果
     print("=" * 60)

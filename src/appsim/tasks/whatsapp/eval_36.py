@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_six(result=None, device_id=None, backup_dir=None):
+def verify_high_unread_chats_replied_to(result=None, device_id=None, backup_dir=None):
     """Verify task 36: the last three items in messages.json have conversationId values conv_004, conv_010, and conv_015, and all textContent values are ok."""
     file_path = os.path.join(backup_dir, "messages.json") if backup_dir else "messages.json"
 
@@ -39,5 +39,5 @@ def validate_task_thirty_six(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_six()
+    result = verify_high_unread_chats_replied_to()
     print(result)

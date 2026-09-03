@@ -17,7 +17,7 @@ TASK8_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_eight(result=None, device_id=None, backup_dir=None):
+def verify_homepage_phone_product_count(result=None, device_id=None, backup_dir=None):
     """验证任务八：计算首页展示的商品中前十个有多少个是手机，给出一个阿拉伯数字即可。"""
     json_path = os.path.join(backup_dir, "products.json") if backup_dir else "products.json"
 

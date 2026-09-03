@@ -12,7 +12,7 @@ TASK16_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
+def verify_related_video_count(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

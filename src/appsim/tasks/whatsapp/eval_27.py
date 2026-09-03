@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_seven(result=None, device_id=None, backup_dir=None):
+def verify_community_created_with_contacts(result=None, device_id=None, backup_dir=None):
     """Verify task 27: the first item in communities.json has name Book Club and members containing user_010 and user_004."""
     file_path = os.path.join(backup_dir, "communities.json") if backup_dir else "communities.json"
 
@@ -47,5 +47,5 @@ def validate_task_twenty_seven(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_seven()
+    result = verify_community_created_with_contacts()
     print(result)

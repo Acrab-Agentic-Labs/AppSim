@@ -6,7 +6,7 @@ ACTION_COMPLETE_ORDER = "complete_order"
 PAGE_CHECKOUT = "checkout"
 SEARCH_QUERY_VALUE = "肯德基"
 
-def validate_task_twelve(result=None,device_id=None,backup_dir=None):
+def verify_coupon_applied_order_completed(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
@@ -29,5 +29,5 @@ def validate_task_twelve(result=None,device_id=None,backup_dir=None):
 
 if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_task_twelve()
+    result = verify_coupon_applied_order_completed()
     print(result)

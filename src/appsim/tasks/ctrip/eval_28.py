@@ -6,7 +6,7 @@ import os
 # 检查条件：type="train_booking", from="北京", to="上海", date="2025-10-23", trainIndex=0
 
 
-def check_booking_train_bj_sh(result=None, device_id=None, backup_dir=None):
+def verify_first_train_booking_created(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/booking_history.json"
     local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
@@ -49,4 +49,4 @@ def check_booking_train_bj_sh(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_booking_train_bj_sh() else "false")
+    print("true" if verify_first_train_booking_created() else "false")

@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_display_name_updated(
+def verify_scheduled_meeting_updated_with_participant_and_waiting_room(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_display_name_updated(
 
 
 if __name__ == "__main__":
-    print(verify_display_name_updated())
+    print(verify_scheduled_meeting_updated_with_participant_and_waiting_room())

@@ -14,7 +14,7 @@ TASK14_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_fourteen(result=None, device_id=None, backup_dir=None):
+def verify_product_review_count(result=None, device_id=None, backup_dir=None):
     """验证任务十四：查看首页前十个商品中华为商品评论数最多的为多少条。"""
     if not isinstance(result, dict):
         return False

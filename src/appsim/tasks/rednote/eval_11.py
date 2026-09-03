@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def change_nickname_check(result=None, device_id=None, backup_dir=None):
+def verify_profile_name_updated(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _EXPECTED_NICKNAME = "111"
 
@@ -42,4 +42,4 @@ def change_nickname_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(change_nickname_check())
+    print(verify_profile_name_updated())

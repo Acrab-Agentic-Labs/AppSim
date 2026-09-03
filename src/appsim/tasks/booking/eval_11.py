@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_car_pickup_lhr_day_after_tomorrow_noon(
+def verify_airport_car_pickup_booking_created(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_car_pickup_lhr_day_after_tomorrow_noon(
 
 
 if __name__ == "__main__":
-    print(verify_book_car_pickup_lhr_day_after_tomorrow_noon())
+    print(verify_airport_car_pickup_booking_created())

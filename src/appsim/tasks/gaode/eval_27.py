@@ -28,7 +28,7 @@ EXPECTED_DESTINATION = ["M+", "M+购物中心"]
 EXPECTED_WAYPOINTS = ["芦苇滩", "武汉市人民政府"]
 
 
-def verify_add_multiple_waypoints(device_id=None):
+def verify_multiple_waypoints_added(device_id=None):
     """
     验证添加多个途经点任务是否完成
 
@@ -174,7 +174,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_add_multiple_waypoints()
+    success = verify_multiple_waypoints_added()
 
     # 输出最终结果
     print("=" * 60)

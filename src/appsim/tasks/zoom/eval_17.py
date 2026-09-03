@@ -15,7 +15,7 @@ TASK17_ANSWER_SCHEMA = {
 }
 
 
-def verify_delay_tomorrow_noon_to_1300(
+def verify_upcoming_meeting_count_and_rename(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -31,4 +31,4 @@ def verify_delay_tomorrow_noon_to_1300(
 
 
 if __name__ == "__main__":
-    print(verify_delay_tomorrow_noon_to_1300())
+    print(verify_upcoming_meeting_count_and_rename())

@@ -17,7 +17,7 @@ TASK24_ANSWER_SCHEMA = {
 }
 
 
-def eval_24(result=None, device_id=None, backup_dir=None):
+def verify_private_message_count(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
@@ -47,5 +47,5 @@ def eval_24(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = eval_24()
+    result = verify_private_message_count()
     print(result)

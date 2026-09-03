@@ -6,7 +6,7 @@ ACTION_CHANGE_SETTING = "change_setting"
 PAGE_SETTINGS = "settings"
 SETTING_TYPE_VALUE = "免密支付"
 
-def validate_task_eight(result=None,device_id=None,backup_dir=None):
+def verify_automatic_payment_enabled(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
         data = all_data[-1] if isinstance(all_data, list) and all_data else all_data
@@ -21,5 +21,5 @@ def validate_task_eight(result=None,device_id=None,backup_dir=None):
     return True
 
 if __name__ == '__main__':
-    result = validate_task_eight()
+    result = verify_automatic_payment_enabled()
     print(result)

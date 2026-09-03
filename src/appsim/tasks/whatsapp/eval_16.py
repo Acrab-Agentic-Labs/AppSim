@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
+def verify_most_commented_status_forwarded(result=None, device_id=None, backup_dir=None):
     """Verify task 16: the last item in messages.json has conversationId conv_003 and the expected textContent."""
     file_path = os.path.join(backup_dir, "messages.json") if backup_dir else "messages.json"
 
@@ -33,5 +33,5 @@ def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_sixteen()
+    result = verify_most_commented_status_forwarded()
     print(result)

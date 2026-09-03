@@ -17,7 +17,7 @@ except ImportError:
 PROFILE_UPDATE_TASK_ID = 22
 
 
-def verify_update_profile_first_name_to_peter(
+def verify_profile_first_name_updated(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -37,4 +37,4 @@ def verify_update_profile_first_name_to_peter(
 
 
 if __name__ == "__main__":
-    print(verify_update_profile_first_name_to_peter())
+    print(verify_profile_first_name_updated())

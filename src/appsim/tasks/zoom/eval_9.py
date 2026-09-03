@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_join_994488281_with_camera(
+def verify_scheduled_meeting_time_and_duration_updated(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_join_994488281_with_camera(
 
 
 if __name__ == "__main__":
-    print(verify_join_994488281_with_camera())
+    print(verify_scheduled_meeting_time_and_duration_updated())

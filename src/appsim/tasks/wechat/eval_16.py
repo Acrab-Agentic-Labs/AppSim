@@ -4,7 +4,7 @@ import json
 import subprocess
 
 
-def task16_validate_cat_dog_messages(result=None, device_id=None, backup_dir=None):
+def verify_multiple_moment_authors_contacted(result=None, device_id=None, backup_dir=None):
     def _normalize_exclamation(content):
         return str(content).replace("!", "！")
 
@@ -57,4 +57,4 @@ def task16_validate_cat_dog_messages(result=None, device_id=None, backup_dir=Non
 
 
 if __name__ == "__main__":
-    print(task16_validate_cat_dog_messages())
+    print(verify_multiple_moment_authors_contacted())

@@ -17,7 +17,7 @@ TASK25_ANSWER_SCHEMA = {
 }
 
 
-def eval_25(result=None, device_id=None, backup_dir=None):
+def verify_following_and_follower_count(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
@@ -52,5 +52,5 @@ def eval_25(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = eval_25()
+    result = verify_following_and_follower_count()
     print(result)

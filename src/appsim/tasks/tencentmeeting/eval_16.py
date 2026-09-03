@@ -74,7 +74,7 @@ def _has_screen_sharing_result_evidence(result) -> bool:
     return answer_contains_any(result, SCREEN_SHARING_SUCCESS_KEYWORDS)
 
 
-def check_screen_sharing_active(
+def verify_screen_sharing_active(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -141,4 +141,4 @@ def check_screen_sharing_active(
         return False
 
 if __name__ == '__main__':
-    print(check_screen_sharing_active())
+    print(verify_screen_sharing_active())

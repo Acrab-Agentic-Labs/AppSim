@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_sagrada_standard_ticket(
+def verify_attraction_standard_ticket_booking(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_sagrada_standard_ticket(
 
 
 if __name__ == "__main__":
-    print(verify_book_sagrada_standard_ticket())
+    print(verify_attraction_standard_ticket_booking())

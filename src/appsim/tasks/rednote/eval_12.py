@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def publish_note_check(result=None, device_id=None, backup_dir=None):
+def verify_private_note_published(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _NOTE_TITLE = "今日份分享"
     _NOTE_CONTENT = "天晴了"
@@ -54,4 +54,4 @@ def publish_note_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(publish_note_check())
+    print(verify_private_note_published())

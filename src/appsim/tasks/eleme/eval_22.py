@@ -12,7 +12,7 @@ NOON_HOUR_MAX = 13
 NAME_YUXIAO = "于骁"
 NAME_YUWEI = "余味"
 
-def validate_task_twenty_two(result=None,device_id=None,backup_dir=None):
+def verify_two_scheduled_orders_completed(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
@@ -62,5 +62,5 @@ def validate_task_twenty_two(result=None,device_id=None,backup_dir=None):
 
 if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_task_twenty_two()
+    result = verify_two_scheduled_orders_completed()
     print(result)

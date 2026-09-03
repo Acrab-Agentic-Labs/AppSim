@@ -27,7 +27,7 @@ import sys
 EXPECTED_DESTINATIONS = ["M+", "M+购物中心"]
 
 
-def verify_navigate_to_destination(device_id=None):
+def verify_walking_navigation_to_destination(device_id=None):
     """
     验证导航任务是否完成
 
@@ -145,7 +145,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_navigate_to_destination()
+    success = verify_walking_navigation_to_destination()
 
     # 输出最终结果
     print("=" * 60)

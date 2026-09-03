@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_nine(result=None, device_id=None, backup_dir=None):
+def verify_most_discounted_home_items_stores_followed(result=None, device_id=None, backup_dir=None):
     """Validate task 29: find the product or products with the largest discount on the home page and follow their stores."""
     brands_file_path = os.path.join(backup_dir, "brands.json") if backup_dir else "brands.json"
 
@@ -35,5 +35,5 @@ def validate_task_twenty_nine(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_nine()
+    result = verify_most_discounted_home_items_stores_followed()
     print(result)

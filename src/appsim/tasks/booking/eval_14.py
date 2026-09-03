@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_cheapest_comfort_sedan_at_hkg(
+def verify_cheapest_comfort_sedan_rental(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_cheapest_comfort_sedan_at_hkg(
 
 
 if __name__ == "__main__":
-    print(verify_book_cheapest_comfort_sedan_at_hkg())
+    print(verify_cheapest_comfort_sedan_rental())

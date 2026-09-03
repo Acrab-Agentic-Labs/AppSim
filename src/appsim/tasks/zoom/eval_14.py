@@ -15,7 +15,7 @@ TASK14_ANSWER_SCHEMA = {
 }
 
 
-def verify_schedule_tomorrow_1900_with_derek_and_brittany(
+def verify_unread_chat_thread_count_after_messages(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -31,4 +31,4 @@ def verify_schedule_tomorrow_1900_with_derek_and_brittany(
 
 
 if __name__ == "__main__":
-    print(verify_schedule_tomorrow_1900_with_derek_and_brittany())
+    print(verify_unread_chat_thread_count_after_messages())

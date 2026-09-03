@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_nineteen(result=None, device_id=None, backup_dir=None):
+def verify_chat_notifications_muted(result=None, device_id=None, backup_dir=None):
     """Verify task 19: the first item in group_details.json has isMuted set to true."""
     file_path = os.path.join(backup_dir, "group_details.json") if backup_dir else "group_details.json"
 
@@ -32,5 +32,5 @@ def validate_task_nineteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_nineteen()
+    result = verify_chat_notifications_muted()
     print(result)

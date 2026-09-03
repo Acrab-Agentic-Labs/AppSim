@@ -12,7 +12,7 @@ TASK18_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_eighteen(result=None, device_id=None, backup_dir=None):
+def verify_customer_service_return_period(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

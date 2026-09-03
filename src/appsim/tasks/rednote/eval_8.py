@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def dislike_note_check(result=None, device_id=None, backup_dir=None):
+def verify_homepage_note_disliked(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _NOTE_ID = "note_006"
 
@@ -39,4 +39,4 @@ def dislike_note_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(dislike_note_check())
+    print(verify_homepage_note_disliked())

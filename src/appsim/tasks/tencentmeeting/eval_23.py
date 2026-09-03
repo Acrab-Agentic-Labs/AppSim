@@ -14,7 +14,7 @@ EXPECTED_TOPIC = "新产品发布"
 MEETINGS_FILE = "meetings.json"
 USERS_FILE = "users.json"
 
-def check_selective_meeting_invitation(
+def verify_selected_meeting_invitees_added(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -113,4 +113,4 @@ if __name__ == "__main__":
 
 
 if __name__ == '__main__':
-    print(check_selective_meeting_invitation())
+    print(verify_selected_meeting_invitees_added())

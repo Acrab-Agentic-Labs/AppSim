@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_eighteen(result=None, device_id=None, backup_dir=None):
+def verify_group_call_completed(result=None, device_id=None, backup_dir=None):
     """Verify task 18: the first item in calls.json has contactIds containing contact_013 and contact_017."""
     file_path = os.path.join(backup_dir, "calls.json") if backup_dir else "calls.json"
 
@@ -34,5 +34,5 @@ def validate_task_eighteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_eighteen()
+    result = verify_group_call_completed()
     print(result)

@@ -13,7 +13,7 @@ TASK2_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_two(result=None, device_id=None, backup_dir=None):
+def verify_latest_call_contact_identified(result=None, device_id=None, backup_dir=None):
     """Verify task 2: answer "Sarah Mitchell"."""
     if not isinstance(result, dict):
         return False
@@ -25,5 +25,5 @@ def validate_task_two(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_two()
+    result = verify_latest_call_contact_identified()
     print(result)

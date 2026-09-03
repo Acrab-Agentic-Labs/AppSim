@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_hkg_car_with_child_seat(
+def verify_rental_car_with_child_seat(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_hkg_car_with_child_seat(
 
 
 if __name__ == "__main__":
-    print(verify_book_hkg_car_with_child_seat())
+    print(verify_rental_car_with_child_seat())

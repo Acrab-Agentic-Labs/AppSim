@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_thirteen(result=None, device_id=None, backup_dir=None):
+def verify_status_posted_with_background(result=None, device_id=None, backup_dir=None):
     """Verify task 13: my_status_001 in user_statuses.json has bgColor -415707 and preview Sunshine."""
     file_path = os.path.join(backup_dir, "user_statuses.json") if backup_dir else "user_statuses.json"
 
@@ -30,5 +30,5 @@ def validate_task_thirteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirteen()
+    result = verify_status_posted_with_background()
     print(result)

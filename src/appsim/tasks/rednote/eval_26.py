@@ -17,7 +17,7 @@ TASK26_ANSWER_SCHEMA = {
 }
 
 
-def eval_26(result=None, device_id=None, backup_dir=None):
+def verify_author_note_count_from_notes(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
@@ -44,5 +44,5 @@ def eval_26(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = eval_26()
+    result = verify_author_note_count_from_notes()
     print(result)

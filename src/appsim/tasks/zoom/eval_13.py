@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_upcoming_schedule_count_answer(
+def verify_contact_message_sent_and_recent_chat(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_upcoming_schedule_count_answer(
 
 
 if __name__ == "__main__":
-    print(verify_upcoming_schedule_count_answer())
+    print(verify_contact_message_sent_and_recent_chat())

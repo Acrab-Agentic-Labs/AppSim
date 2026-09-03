@@ -9,7 +9,7 @@ PAGE_TAKEOUT = "takeout"
 FROM_PAGE_VALUE = "takeout"
 SORT_OPTION_VALUE = "距离优先"
 
-def validate_task_seventeen(result=None,device_id=None,backup_dir=None):
+def verify_distance_sorted_restaurant_order_completed(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
@@ -33,5 +33,5 @@ def validate_task_seventeen(result=None,device_id=None,backup_dir=None):
 
 if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_task_seventeen()
+    result = verify_distance_sorted_restaurant_order_completed()
     print(result)

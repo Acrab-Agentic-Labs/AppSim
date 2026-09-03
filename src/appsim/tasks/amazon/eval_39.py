@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_nine(result=None, device_id=None, backup_dir=None):
+def verify_highest_sales_product_purchased(result=None, device_id=None, backup_dir=None):
     """Validate task 39: Search for 'food', find the product with the highest sales volume, immediately purchase the highest-priced specification of it and complete the checkout."""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -39,5 +39,5 @@ def validate_task_thirty_nine(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_nine()
+    result = verify_highest_sales_product_purchased()
     print(result)

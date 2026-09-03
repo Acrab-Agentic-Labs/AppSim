@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_three(result=None, device_id=None, backup_dir=None):
+def verify_multiple_group_chats_muted(result=None, device_id=None, backup_dir=None):
     """Verify task 33: the first three items in group_details.json all have isMuted set to true."""
     file_path = os.path.join(backup_dir, "group_details.json") if backup_dir else "group_details.json"
 
@@ -32,5 +32,5 @@ def validate_task_thirty_three(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_three()
+    result = verify_multiple_group_chats_muted()
     print(result)

@@ -16,7 +16,7 @@ IS_SHARING_SCREEN_KEY = "isSharingScreen"
 MEETING_ID_KEY = "meetingId"
 USER_ID_KEY = "userId"
 
-def check_screen_sharing(
+def verify_screen_sharing_enabled(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -64,4 +64,4 @@ def check_screen_sharing(
         return False
 
 if __name__ == '__main__':
-    print(check_screen_sharing())
+    print(verify_screen_sharing_enabled())

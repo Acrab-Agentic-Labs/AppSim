@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_one(result=None, device_id=None, backup_dir=None):
+def verify_search_results_first_product_viewed(result=None, device_id=None, backup_dir=None):
     """验证任务一：在首页中搜索「iPhone 15」，并查看搜索结果的第一个商品"""
     task_one_logs_file_path = os.path.join(backup_dir, "task_one_logs.json") if backup_dir else "task_one_logs.json"
 
@@ -41,5 +41,5 @@ def validate_task_one(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_one()
+    result = verify_search_results_first_product_viewed()
     print(result)

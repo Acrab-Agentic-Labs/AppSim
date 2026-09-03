@@ -141,7 +141,7 @@ def _run_subcheck(label, verify_func, *args, **kwargs) -> bool:
         return False
 
 
-def check_hand_raise_and_search_user_by_phone(
+def verify_hand_raise_and_contact_lookup(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -182,4 +182,4 @@ def check_hand_raise_and_search_user_by_phone(
 
 
 if __name__ == "__main__":
-    print(check_hand_raise_and_search_user_by_phone())
+    print(verify_hand_raise_and_contact_lookup())

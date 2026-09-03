@@ -6,7 +6,7 @@ ACTION_NAVIGATE = "navigate"
 ACTION_CLEAR_SEARCH_HISTORY = "clear_search_history"
 PAGE_SEARCH = "search"
 
-def validate_task_twenty_four(result=None,device_id=None,backup_dir=None):
+def verify_search_history_cleared(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
@@ -28,5 +28,5 @@ def validate_task_twenty_four(result=None,device_id=None,backup_dir=None):
 if __name__ == '__main__':
     # 运行验证并输出结果
     result = (
-        validate_task_twenty_four())
+        verify_search_history_cleared())
     print(result)

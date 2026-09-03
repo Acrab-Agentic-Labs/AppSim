@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
+def verify_first_order_items_reordered(result=None, device_id=None, backup_dir=None):
     """Validate task 16: buy the items from the first order again."""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -39,5 +39,5 @@ def validate_task_sixteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_sixteen()
+    result = verify_first_order_items_reordered()
     print(result)

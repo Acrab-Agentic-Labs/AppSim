@@ -12,7 +12,7 @@ TASK35_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_thirty_five(result=None, device_id=None, backup_dir=None):
+def verify_highest_spending_restaurant(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

@@ -12,7 +12,7 @@ TASK18_ANSWER_SCHEMA = {
 }
 
 
-def validate(result=None, **kwargs):
+def verify_iris_out_first_lyrics_line(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

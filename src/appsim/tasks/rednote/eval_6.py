@@ -5,7 +5,7 @@ import subprocess
 from io import StringIO
 
 
-def reply_comment_check(result=None, device_id=None, backup_dir=None):
+def verify_latest_comment_replied(result=None, device_id=None, backup_dir=None):
     output_buffer = StringIO()
 
     _USER_ID = "user_current"
@@ -56,4 +56,4 @@ def reply_comment_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(reply_comment_check())
+    print(verify_latest_comment_replied())

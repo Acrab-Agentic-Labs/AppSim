@@ -6,7 +6,7 @@ import os
 # 检查条件：type="flight_search", from="成都", to="上海", date="2025-10-20", cabin="头等舱"
 
 
-def check_flight_search_cd_sh_first(result=None, device_id=None, backup_dir=None):
+def verify_first_class_flight_search_results(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/search_params.json"
     local_file_path = os.path.join(backup_dir, 'search_params.json') if backup_dir else 'search_params.json'
@@ -46,4 +46,4 @@ def check_flight_search_cd_sh_first(result=None, device_id=None, backup_dir=None
 
 
 if __name__ == "__main__":
-    print("true" if check_flight_search_cd_sh_first() else "false")
+    print("true" if verify_first_class_flight_search_results() else "false")

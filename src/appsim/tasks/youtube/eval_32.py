@@ -8,7 +8,7 @@ TARGET_ITEM_ID = "music-blue-porcelain"
 TARGET_PAGE = f"video_play:{TARGET_ITEM_ID}"
 
 
-def validate_task_thirty_two(result=None, device_id=None, backup_dir=None):
+def verify_video_playback_quality_and_ambient_settings(result=None, device_id=None, backup_dir=None):
     try:
         message_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
         state = read_json_from_device(device_id, PACKAGE_NAME, STATE_FILE_PATH, backup_dir)
@@ -51,4 +51,4 @@ def validate_task_thirty_two(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(validate_task_thirty_two())
+    print(verify_video_playback_quality_and_ambient_settings())

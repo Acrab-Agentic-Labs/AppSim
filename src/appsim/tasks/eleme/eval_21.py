@@ -7,7 +7,7 @@ ACTION_APPLY_FOOD_INSURANCE = "apply_food_insurance"
 PAGE_FOOD_INSURANCE = "food_insurance"
 KEYWORD_MALATANG = "麻辣烫"
 
-def validate_task_twenty_one(result=None,device_id=None,backup_dir=None):
+def verify_order_insurance_claim_requested(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
@@ -38,5 +38,5 @@ def validate_task_twenty_one(result=None,device_id=None,backup_dir=None):
 
 if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_task_twenty_one()
+    result = verify_order_insurance_claim_requested()
     print(result)

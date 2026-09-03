@@ -6,7 +6,7 @@ import subprocess
 # 检查条件：type="train_search", from="杭州", to="深圳", date="2025-10-24", ticketType="学生票"
 
 
-def check_train_search_hz_sz_student(result=None, device_id=None, backup_dir=None):
+def verify_student_train_search_results_for_route_and_date(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/search_params.json"
     local_file_path = os.path.join(backup_dir, 'search_params.json') if backup_dir else 'search_params.json'
@@ -46,4 +46,4 @@ def check_train_search_hz_sz_student(result=None, device_id=None, backup_dir=Non
 
 
 if __name__ == "__main__":
-    print("true" if check_train_search_hz_sz_student() else "false")
+    print("true" if verify_student_train_search_results_for_route_and_date() else "false")

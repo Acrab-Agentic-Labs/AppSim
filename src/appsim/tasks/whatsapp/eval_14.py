@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_fourteen(result=None, device_id=None, backup_dir=None):
+def verify_unread_group_message_replied(result=None, device_id=None, backup_dir=None):
     """Verify task 14: the last item in messages.json has conversationId conv_004 and textContent OK."""
     file_path = os.path.join(backup_dir, "messages.json") if backup_dir else "messages.json"
 
@@ -32,5 +32,5 @@ def validate_task_fourteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_fourteen()
+    result = verify_unread_group_message_replied()
     print(result)

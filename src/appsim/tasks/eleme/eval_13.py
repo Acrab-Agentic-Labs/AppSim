@@ -8,7 +8,7 @@ RECIPIENT_TYPE_RIDER = "rider"
 MESSAGE_VALUE = "出了什么情况，怎么还没到"
 ORDER_STATUS_DELIVERING = "配送中"
 
-def validate_task_thirteen(result=None,device_id=None,backup_dir=None):
+def verify_delivery_driver_contacted(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
@@ -26,5 +26,5 @@ def validate_task_thirteen(result=None,device_id=None,backup_dir=None):
 
 if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_task_thirteen()
+    result = verify_delivery_driver_contacted()
     print(result)

@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_cancel_all_orders_after_next_month(
+def verify_future_bookings_canceled(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_cancel_all_orders_after_next_month(
 
 
 if __name__ == "__main__":
-    print(verify_cancel_all_orders_after_next_month())
+    print(verify_future_bookings_canceled())

@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_cancel_may_first_schedule(
+def verify_meeting_media_defaults_updated(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_cancel_may_first_schedule(
 
 
 if __name__ == "__main__":
-    print(verify_cancel_may_first_schedule())
+    print(verify_meeting_media_defaults_updated())

@@ -28,7 +28,7 @@ EXPECTED_DESTINATION = "肖记公安牛肉鱼杂馆"
 EXPECTED_MODE = "步行"
 
 
-def verify_walk_to_nearest_food(device_id=None):
+def verify_walking_navigation_to_nearest_food(device_id=None):
     """
     验证步行导航到最近美食店任务是否完成
 
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_walk_to_nearest_food()
+    success = verify_walking_navigation_to_nearest_food()
 
     # 输出最终结果
     print("=" * 60)

@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_one(result=None, device_id=None, backup_dir=None):
+def verify_broadcast_list_created_and_message_sent(result=None, device_id=None, backup_dir=None):
     """Verify task 31: the last four items in messages.json have conversationId values conv_003, conv_011, conv_012, and conv_013, and all have the same textContent."""
     file_path = os.path.join(backup_dir, "messages.json") if backup_dir else "messages.json"
 
@@ -40,5 +40,5 @@ def validate_task_thirty_one(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_one()
+    result = verify_broadcast_list_created_and_message_sent()
     print(result)

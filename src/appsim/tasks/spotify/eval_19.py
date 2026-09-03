@@ -12,7 +12,7 @@ TASK19_ANSWER_SCHEMA = {
 }
 
 
-def validate(result=None, **kwargs):
+def verify_style_lyricist(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

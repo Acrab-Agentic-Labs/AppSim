@@ -28,7 +28,7 @@ def _get_baseline_orders_path(backup_dir):
     return os.path.normpath(os.path.join(current_task_dir, "orders.json"))
 
 
-def validate_task_twenty_nine(result=None, device_id=None, backup_dir=None):
+def verify_low_value_pending_orders_settled(result=None, device_id=None, backup_dir=None):
     """验证任务：结算总价低于2000的所有待付款订单。"""
 
     orders_file_path = os.path.join(backup_dir, "orders_after.json") if backup_dir else "orders.json"
@@ -113,5 +113,5 @@ def validate_task_twenty_nine(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_nine()
+    result = verify_low_value_pending_orders_settled()
     print(result)

@@ -12,7 +12,7 @@ TASK3_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_three(result=None, device_id=None, backup_dir=None):
+def verify_interests_category_item_count(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

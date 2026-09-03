@@ -6,7 +6,7 @@ import os
 # 检查条件：最后3条记录依次是：机票(北京->上海)、酒店(上海)、火车票(上海->北京)
 
 
-def check_booking_multi_step(result=None, device_id=None, backup_dir=None):
+def verify_multi_segment_trip_bookings_created(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/booking_history.json"
     local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
@@ -61,4 +61,4 @@ def check_booking_multi_step(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_booking_multi_step() else "false")
+    print("true" if verify_multi_segment_trip_bookings_created() else "false")

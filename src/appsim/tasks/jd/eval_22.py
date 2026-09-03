@@ -14,7 +14,7 @@ TASK22_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty_two(result=None, device_id=None, backup_dir=None):
+def verify_matching_product_review_count(result=None, device_id=None, backup_dir=None):
     """验证任务：查看评价iPhone15电池续航强的评论有多少。"""
     if not isinstance(result, dict):
         return False

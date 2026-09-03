@@ -15,7 +15,7 @@ TASK12_ANSWER_SCHEMA = {
 }
 
 
-def verify_contact_count_answer(
+def verify_not_started_meeting_count_and_invite_link(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -31,4 +31,4 @@ def verify_contact_count_answer(
 
 
 if __name__ == "__main__":
-    print(verify_contact_count_answer())
+    print(verify_not_started_meeting_count_and_invite_link())

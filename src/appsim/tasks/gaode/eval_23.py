@@ -12,7 +12,7 @@ TASK23_ANSWER_SCHEMA = {
 }
 
 
-def validate(result=None, **kwargs):
+def verify_top_rated_food_name(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

@@ -5,7 +5,7 @@ DEVICE_FILE_PATH = "files/messages.json"
 ACTION_CART_CHECKOUT_SUCCESS = "cart_checkout_success"
 PAGE_CART = "cart"
 
-def validate_task_nine(result=None,device_id=None,backup_dir=None):
+def verify_cart_items_ordered(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
         data = all_data[-1] if isinstance(all_data, list) and all_data else all_data
@@ -20,5 +20,5 @@ def validate_task_nine(result=None,device_id=None,backup_dir=None):
     return True
 
 if __name__ == '__main__':
-    result = validate_task_nine()
+    result = verify_cart_items_ordered()
     print(result)

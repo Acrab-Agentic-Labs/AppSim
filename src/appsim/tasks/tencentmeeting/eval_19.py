@@ -29,7 +29,7 @@ MEETING_ID = "meeting_3d7e91"
 EXPECTED_SENDER_ID = "user003"
 MESSAGES_FILE = "messages.json"
 
-def verify_most_active_sender(
+def verify_most_active_meeting_sender(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -135,4 +135,4 @@ if __name__ == "__main__":
 
 
 if __name__ == '__main__':
-    print(verify_most_active_sender())
+    print(verify_most_active_meeting_sender())

@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_fifteen(result=None, device_id=None, backup_dir=None):
+def verify_multiple_products_added_to_cart(result=None, device_id=None, backup_dir=None):
     """验证任务十五：将商品"iPhone 15 蓝色 128GB 1件"、"iPhone 15 黑色 256GB 2件"、"iPhone 15 粉色 128GB 3件"共6件商品加入购物车"""
     cart_items_file_path = os.path.join(backup_dir, "cart_items.json") if backup_dir else "cart_items.json"
 
@@ -54,5 +54,5 @@ def validate_task_fifteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_fifteen()
+    result = verify_multiple_products_added_to_cart()
     print(result)

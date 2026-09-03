@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_send_im_lcl_in_new_meeting(
+def verify_scheduled_meeting_created_with_invite_settings(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_send_im_lcl_in_new_meeting(
 
 
 if __name__ == "__main__":
-    print(verify_send_im_lcl_in_new_meeting())
+    print(verify_scheduled_meeting_created_with_invite_settings())

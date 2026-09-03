@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_taxi_lhr_to_hilton_now(
+def verify_immediate_taxi_booking_created(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_taxi_lhr_to_hilton_now(
 
 
 if __name__ == "__main__":
-    print(verify_book_taxi_lhr_to_hilton_now())
+    print(verify_immediate_taxi_booking_created())

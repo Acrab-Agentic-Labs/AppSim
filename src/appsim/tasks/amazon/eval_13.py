@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirteen(result=None, device_id=None, backup_dir=None):
+def verify_shipping_address_phone_updated(result=None, device_id=None, backup_dir=None):
     """Validate task 13: change the phone number for Robert Taylor's address to '+1(555)613-1230'."""
     addresses_file_path = os.path.join(backup_dir, "addresses.json") if backup_dir else "addresses.json"
 
@@ -29,5 +29,5 @@ def validate_task_thirteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirteen()
+    result = verify_shipping_address_phone_updated()
     print(result)

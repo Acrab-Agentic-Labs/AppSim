@@ -12,7 +12,7 @@ TASK10_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_ten(result=None, **kwargs):
+def verify_cheapest_nearby_menu_item(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

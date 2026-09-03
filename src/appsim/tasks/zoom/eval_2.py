@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_copy_invite_link_then_leave(
+def verify_meeting_participation_and_chat_actions(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_copy_invite_link_then_leave(
 
 
 if __name__ == "__main__":
-    print(verify_copy_invite_link_then_leave())
+    print(verify_meeting_participation_and_chat_actions())

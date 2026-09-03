@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_submit_five_star_review_for_last_stay(
+def verify_last_stay_five_star_review_submitted(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_submit_five_star_review_for_last_stay(
 
 
 if __name__ == "__main__":
-    print(verify_submit_five_star_review_for_last_stay())
+    print(verify_last_stay_five_star_review_submitted())

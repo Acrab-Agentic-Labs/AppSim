@@ -4,7 +4,7 @@ import json
 import subprocess
 
 
-def task2_group_message_send_check(
+def verify_group_message_sent(
     result=None,
     device_id=None,
     backup_dir=None
@@ -39,4 +39,4 @@ def task2_group_message_send_check(
 
 
 if __name__ == "__main__":
-    print(task2_group_message_send_check())
+    print(verify_group_message_sent())

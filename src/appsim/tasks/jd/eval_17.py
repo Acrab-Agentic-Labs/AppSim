@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_seventeen(result=None, device_id=None, backup_dir=None):
+def verify_store_product_purchased(result=None, device_id=None, backup_dir=None):
     """验证任务十七：帮我在Apple京东自营店购买一件iPhone 15 粉色 256GB"""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -43,5 +43,5 @@ def validate_task_seventeen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_seventeen()
+    result = verify_store_product_purchased()
     print(result)

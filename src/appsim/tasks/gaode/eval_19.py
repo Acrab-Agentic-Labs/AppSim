@@ -27,7 +27,7 @@ import sys
 EXPECTED_NAME = "庚子革命烈士墓墓道牌坊"
 
 
-def verify_call_top_attraction(device_id=None):
+def verify_top_attraction_call_initiated(device_id=None):
     """
     验证拨打景点电话任务是否完成
 
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_call_top_attraction()
+    success = verify_top_attraction_call_initiated()
 
     # 输出最终结果
     print("=" * 60)

@@ -14,7 +14,7 @@ TASK23_ANSWER_SCHEMA = {
 }
 
 
-def verify_calculate_spent_amount(
+def verify_total_spending_amount(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -29,4 +29,4 @@ def verify_calculate_spent_amount(
 
 
 if __name__ == "__main__":
-    print(verify_calculate_spent_amount())
+    print(verify_total_spending_amount())

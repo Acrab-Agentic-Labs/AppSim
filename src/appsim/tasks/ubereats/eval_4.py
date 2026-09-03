@@ -4,7 +4,7 @@ PACKAGE_NAME = "com.example.ubereats_sim"
 DEVICE_FILE_PATH = "files/app_state.json"
 
 
-def validate_task_four(result=None, device_id=None, backup_dir=None):
+def verify_cart_purchased(result=None, device_id=None, backup_dir=None):
     try:
         state = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except Exception:
@@ -15,4 +15,4 @@ def validate_task_four(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(validate_task_four())
+    print(verify_cart_purchased())

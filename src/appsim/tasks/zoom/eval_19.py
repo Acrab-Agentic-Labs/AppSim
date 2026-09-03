@@ -7,7 +7,7 @@ except ImportError:
 PROFILE_UPDATE_TASK_ID = 16
 
 
-def verify_change_personal_status_to_busy(
+def verify_personal_status_busy(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -18,4 +18,4 @@ def verify_change_personal_status_to_busy(
 
 
 if __name__ == "__main__":
-    print(verify_change_personal_status_to_busy())
+    print(verify_personal_status_busy())

@@ -8,7 +8,7 @@ TARGET_ITEM_IDS = {"all-taylor-ophelia", "music-taylor-ophelia"}
 TARGET_TEXT = "Although your song sounds great, I still prefer listening to Jay Chou"
 
 
-def validate_task_thirty_five(result=None, device_id=None, backup_dir=None):
+def verify_external_video_interaction(result=None, device_id=None, backup_dir=None):
     try:
         message_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
         state = read_json_from_device(device_id, PACKAGE_NAME, STATE_FILE_PATH, backup_dir)
@@ -42,4 +42,4 @@ def validate_task_thirty_five(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(validate_task_thirty_five())
+    print(verify_external_video_interaction())

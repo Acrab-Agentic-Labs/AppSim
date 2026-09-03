@@ -13,7 +13,7 @@ TASK10_ANSWER_SCHEMA = {
 }
 
 
-def task10_validate_latest_friend_like_count(result=None, device_id=None, backup_dir=None):
+def verify_friend_moments_like_count(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

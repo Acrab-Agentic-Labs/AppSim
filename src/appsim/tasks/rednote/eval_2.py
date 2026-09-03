@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def browse_notes_check(result=None, device_id=None, backup_dir=None):
+def verify_homepage_notes_summarized(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _EXPECTED_COUNT = 3
 
@@ -51,4 +51,4 @@ def browse_notes_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(browse_notes_check())
+    print(verify_homepage_notes_summarized())

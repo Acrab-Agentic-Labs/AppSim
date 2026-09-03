@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_raise_lower_hand_with_thumbs_up(
+def verify_scheduled_meeting_canceled(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_raise_lower_hand_with_thumbs_up(
 
 
 if __name__ == "__main__":
-    print(verify_raise_lower_hand_with_thumbs_up())
+    print(verify_scheduled_meeting_canceled())

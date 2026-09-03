@@ -17,7 +17,7 @@ TASK15_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_fifteen(result=None, device_id=None, backup_dir=None):
+def verify_search_result_count(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

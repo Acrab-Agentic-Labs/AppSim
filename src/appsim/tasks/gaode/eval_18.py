@@ -28,7 +28,7 @@ EXPECTED_DESTINATION = "滨江饭店"
 EXPECTED_WAYPOINT = "群芳园"
 
 
-def verify_add_waypoint(device_id=None):
+def verify_navigation_with_waypoint_added(device_id=None):
     """
     验证添加途经点任务是否完成
 
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_add_waypoint()
+    success = verify_navigation_with_waypoint_added()
 
     # 输出最终结果
     print("=" * 60)

@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_seven(result=None, device_id=None, backup_dir=None):
+def verify_store_message_sent(result=None, device_id=None, backup_dir=None):
     """验证任务七：给Apple官方旗舰店发消息问手机什么时候发货"""
     new_messages_file_path = os.path.join(backup_dir, "new_messages.json") if backup_dir else "new_messages.json"
 
@@ -33,5 +33,5 @@ def validate_task_seven(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_seven()
+    result = verify_store_message_sent()
     print(result)

@@ -36,7 +36,7 @@ def _load_baseline_pending_order_ids():
     return pending_order_ids
 
 
-def validate_task_fifteen(result=None, device_id=None, backup_dir=None):
+def verify_pending_orders_canceled(result=None, device_id=None, backup_dir=None):
     """Validate task 15: cancel all pending orders."""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -82,5 +82,5 @@ def validate_task_fifteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_fifteen()
+    result = verify_pending_orders_canceled()
     print(result)

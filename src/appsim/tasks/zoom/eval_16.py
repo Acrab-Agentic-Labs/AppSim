@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_message_natalie_about_next_monday_leave(
+def verify_personal_meeting_link_sent_and_returned(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_message_natalie_about_next_monday_leave(
 
 
 if __name__ == "__main__":
-    print(verify_message_natalie_about_next_monday_leave())
+    print(verify_personal_meeting_link_sent_and_returned())

@@ -26,7 +26,7 @@ import sys
 EXPECTED_RESTAURANT = "肖记公安牛肉鱼杂馆"
 
 
-def verify_favorite_nearest_restaurant(device_id=None):
+def verify_nearest_restaurant_favorited(device_id=None):
     """
     验证收藏餐馆任务是否完成
 
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_favorite_nearest_restaurant()
+    success = verify_nearest_restaurant_favorited()
 
     # 输出最终结果
     print("=" * 60)

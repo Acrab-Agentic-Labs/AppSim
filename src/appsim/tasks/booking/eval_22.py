@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_update_phone_to_752_0405(
+def verify_profile_phone_updated(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_update_phone_to_752_0405(
 
 
 if __name__ == "__main__":
-    print(verify_update_phone_to_752_0405())
+    print(verify_profile_phone_updated())

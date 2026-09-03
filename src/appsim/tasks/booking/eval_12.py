@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_lhr_car_until_next_monday(
+def verify_economy_suv_rental_booking_created(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_lhr_car_until_next_monday(
 
 
 if __name__ == "__main__":
-    print(verify_book_lhr_car_until_next_monday())
+    print(verify_economy_suv_rental_booking_created())

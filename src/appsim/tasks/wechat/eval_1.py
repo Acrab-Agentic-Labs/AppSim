@@ -4,7 +4,7 @@ import json
 import subprocess
 
 
-def task1_friend_message_send_check(
+def verify_private_message_sent(
     result=None,
     device_id=None,
     backup_dir=None
@@ -40,4 +40,4 @@ def task1_friend_message_send_check(
 
 
 if __name__ == "__main__":
-    print(task1_friend_message_send_check())
+    print(verify_private_message_sent())

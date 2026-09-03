@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_eighteen(result=None, device_id=None, backup_dir=None):
+def verify_pending_order_cancelled(result=None, device_id=None, backup_dir=None):
     """验证任务十八：取消我的nike待付款订单"""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -32,5 +32,5 @@ def validate_task_eighteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_eighteen()
+    result = verify_pending_order_cancelled()
     print(result)

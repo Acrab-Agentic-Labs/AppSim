@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_lhr_to_sydney_premium_economy(
+def verify_premium_economy_flight_booking_created(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_lhr_to_sydney_premium_economy(
 
 
 if __name__ == "__main__":
-    print(verify_book_lhr_to_sydney_premium_economy())
+    print(verify_premium_economy_flight_booking_created())

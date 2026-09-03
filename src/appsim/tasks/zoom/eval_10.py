@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_unmute_all_389257198(
+def verify_meeting_link_sent_to_participants(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_unmute_all_389257198(
 
 
 if __name__ == "__main__":
-    print(verify_unmute_all_389257198())
+    print(verify_meeting_link_sent_to_participants())

@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_safe_driving_hello(
+def verify_screen_sharing_pause_resume_and_chat(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_safe_driving_hello(
 
 
 if __name__ == "__main__":
-    print(verify_safe_driving_hello())
+    print(verify_screen_sharing_pause_resume_and_chat())

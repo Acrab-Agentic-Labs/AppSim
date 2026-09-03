@@ -12,7 +12,7 @@ TASK40_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_forty(result=None, device_id=None, backup_dir=None):
+def verify_fastest_drink_restaurant_delivery(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

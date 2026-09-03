@@ -4,7 +4,7 @@ import json
 import subprocess
 
 
-def task14_validate_movie_message(result=None, device_id=None, backup_dir=None):
+def verify_moment_author_question_sent(result=None, device_id=None, backup_dir=None):
     _RECEIVER_ID = "user_25"
     _SENDER_ID = "current_user"
     _MESSAGE_CONTENT = "是什么电影呀？可以给我讲一下是什么主题的吗？"
@@ -35,4 +35,4 @@ def task14_validate_movie_message(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(task14_validate_movie_message())
+    print(verify_moment_author_question_sent())

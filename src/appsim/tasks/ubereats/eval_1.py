@@ -12,7 +12,7 @@ TASK1_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_one(result=None, **kwargs):
+def verify_nearby_restaurant_exists(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

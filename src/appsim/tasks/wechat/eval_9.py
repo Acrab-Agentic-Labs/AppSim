@@ -12,7 +12,7 @@ TASK9_ANSWER_SCHEMA = {
 }
 
 
-def task9_song_name_check(result=None, device_id=None, backup_dir=None) -> bool:
+def verify_song_name_retrieved(result=None, device_id=None, backup_dir=None) -> bool:
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

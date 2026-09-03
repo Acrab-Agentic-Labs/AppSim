@@ -12,7 +12,7 @@ TASK17_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_seventeen(result=None, **kwargs):
+def verify_category_delivery_spending_between_dates(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

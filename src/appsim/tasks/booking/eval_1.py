@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_london_stay_next_saturday(
+def verify_hotel_booking_created_for_requested_date(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_london_stay_next_saturday(
 
 
 if __name__ == "__main__":
-    print(verify_book_london_stay_next_saturday())
+    print(verify_hotel_booking_created_for_requested_date())

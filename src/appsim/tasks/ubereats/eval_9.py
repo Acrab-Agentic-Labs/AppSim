@@ -6,7 +6,7 @@ ACTION_VALUE = "set_hearing_option"
 PAGE_VALUE = "hearing"
 
 
-def validate_task_nine(result=None, device_id=None, backup_dir=None):
+def verify_hearing_assistance_enabled(result=None, device_id=None, backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
         events = all_data if isinstance(all_data, list) else [all_data]
@@ -23,4 +23,4 @@ def validate_task_nine(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(validate_task_nine())
+    print(verify_hearing_assistance_enabled())

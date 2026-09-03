@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_eight(result=None, device_id=None, backup_dir=None):
+def verify_friend_statuses_reacted_to(result=None, device_id=None, backup_dir=None):
     """Verify task 38: every item except the first one in user_statuses.json has userReaction set to 💜."""
     file_path = os.path.join(backup_dir, "user_statuses.json") if backup_dir else "user_statuses.json"
 
@@ -34,5 +34,5 @@ def validate_task_thirty_eight(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_eight()
+    result = verify_friend_statuses_reacted_to()
     print(result)

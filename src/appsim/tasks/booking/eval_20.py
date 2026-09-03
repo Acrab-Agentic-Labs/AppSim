@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_london_green_skip_line_ticket_tomorrow(
+def verify_fast_track_attraction_ticket_booking(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_london_green_skip_line_ticket_tomorrow(
 
 
 if __name__ == "__main__":
-    print(verify_book_london_green_skip_line_ticket_tomorrow())
+    print(verify_fast_track_attraction_ticket_booking())

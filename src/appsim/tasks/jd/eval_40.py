@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_forty(result=None, device_id=None, backup_dir=None):
+def verify_high_rated_electronic_products_added_to_cart(result=None, device_id=None, backup_dir=None):
     """验证任务四十：找到首页前十个商品中评分为4.7的电子商品，选择他们价格最高的规格加入购物车。"""
 
     cart_items_file_path = os.path.join(backup_dir, "cart_items.json") if backup_dir else "cart_items.json"
@@ -56,5 +56,5 @@ def validate_task_forty(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_forty()
+    result = verify_high_rated_electronic_products_added_to_cart()
     print(f"Validation Result: {result}")

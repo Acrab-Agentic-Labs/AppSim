@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_seventeen(result=None, device_id=None, backup_dir=None):
+def verify_contact_created(result=None, device_id=None, backup_dir=None):
     """Verify task 17: contacts.json contains an item with displayName Jaye Zhang and phone +1 (415) 555-1230."""
     file_path = os.path.join(backup_dir, "contacts.json") if backup_dir else "contacts.json"
 
@@ -29,5 +29,5 @@ def validate_task_seventeen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_seventeen()
+    result = verify_contact_created()
     print(result)

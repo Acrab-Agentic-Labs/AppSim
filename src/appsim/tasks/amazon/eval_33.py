@@ -16,7 +16,7 @@ TASK33_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_thirty_three(result=None, device_id=None, backup_dir=None):
+def verify_customer_service_response_count(result=None, device_id=None, backup_dir=None):
     """Validate task 33: Send messages to customer service and count responses."""
     if not isinstance(result, dict):
         return False
@@ -57,5 +57,5 @@ def validate_task_thirty_three(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_three()
+    result = verify_customer_service_response_count()
     print(result)

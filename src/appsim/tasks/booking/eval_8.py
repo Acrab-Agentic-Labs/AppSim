@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_hkg_to_lhr_first_class_without_extra_baggage(
+def verify_first_class_flight_without_extra_baggage(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_hkg_to_lhr_first_class_without_extra_baggage(
 
 
 if __name__ == "__main__":
-    print(verify_book_hkg_to_lhr_first_class_without_extra_baggage())
+    print(verify_first_class_flight_without_extra_baggage())

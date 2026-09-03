@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_two(result=None, device_id=None, backup_dir=None):
+def verify_product_added_to_cart(result=None, device_id=None, backup_dir=None):
     """验证任务二：将首页中的商品iPhone 15 任意颜色 128GB加入购物车。"""
     cart_items_file_path = os.path.join(backup_dir, "cart_items.json") if backup_dir else "cart_items.json"
 
@@ -32,5 +32,5 @@ def validate_task_two(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_two()
+    result = verify_product_added_to_cart()
     print(result)

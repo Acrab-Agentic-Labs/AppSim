@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty(result=None, device_id=None, backup_dir=None):
+def verify_status_forwarded_and_group_message_sent(result=None, device_id=None, backup_dir=None):
     """Verify task 30: the last two items in messages.json both have conversationId conv_005, and their textContent values match the expected content respectively."""
     file_path = os.path.join(backup_dir, "messages.json") if backup_dir else "messages.json"
 
@@ -40,5 +40,5 @@ def validate_task_thirty(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty()
+    result = verify_status_forwarded_and_group_message_sent()
     print(result)

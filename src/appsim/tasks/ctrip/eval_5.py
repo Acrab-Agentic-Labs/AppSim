@@ -6,7 +6,7 @@ import os
 # 检查条件：icon="行程", page="行程页面"
 
 
-def check_click_itinerary(result=None, device_id=None, backup_dir=None):
+def verify_itinerary_page_opened(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/click_history.json"
     local_file_path = os.path.join(backup_dir, 'click_history.json') if backup_dir else 'click_history.json'
@@ -40,4 +40,4 @@ def check_click_itinerary(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_click_itinerary() else "false")
+    print("true" if verify_itinerary_page_opened() else "false")

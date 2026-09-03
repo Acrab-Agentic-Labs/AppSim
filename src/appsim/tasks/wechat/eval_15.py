@@ -4,7 +4,7 @@ import json
 import subprocess
 
 
-def task15_validate_restaurant_message(result=None, device_id=None, backup_dir=None):
+def verify_moment_author_information_requested(result=None, device_id=None, backup_dir=None):
     _RECEIVER_ID = "user_37"
     _SENDER_ID = "current_user"
     _MESSAGE_CONTENT = "是哪家餐厅呀？主打菜是什么？"
@@ -35,4 +35,4 @@ def task15_validate_restaurant_message(result=None, device_id=None, backup_dir=N
 
 
 if __name__ == "__main__":
-    print(task15_validate_restaurant_message())
+    print(verify_moment_author_information_requested())

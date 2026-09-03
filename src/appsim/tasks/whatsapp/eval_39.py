@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_nine(result=None, device_id=None, backup_dir=None):
+def verify_multiple_contacts_video_called(result=None, device_id=None, backup_dir=None):
     """Verify task 39: the first item in calls.json has callType VIDEO, contactIds containing the expected ids, and durationSeconds greater than 10."""
     file_path = os.path.join(backup_dir, "calls.json") if backup_dir else "calls.json"
 
@@ -43,5 +43,5 @@ def validate_task_thirty_nine(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_nine()
+    result = verify_multiple_contacts_video_called()
     print(result)

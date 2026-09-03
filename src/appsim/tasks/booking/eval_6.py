@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_again_last_stay_with_no_end_room_note(
+def verify_repeat_hotel_booking_with_room_note(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_again_last_stay_with_no_end_room_note(
 
 
 if __name__ == "__main__":
-    print(verify_book_again_last_stay_with_no_end_room_note())
+    print(verify_repeat_hotel_booking_with_room_note())

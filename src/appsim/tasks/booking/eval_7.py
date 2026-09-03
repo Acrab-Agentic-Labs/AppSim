@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_cheapest_wuhan_to_london_flight(
+def verify_cheapest_flight_booking_created(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_cheapest_wuhan_to_london_flight(
 
 
 if __name__ == "__main__":
-    print(verify_book_cheapest_wuhan_to_london_flight())
+    print(verify_cheapest_flight_booking_created())

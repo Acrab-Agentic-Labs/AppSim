@@ -17,7 +17,7 @@ TASK10_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_ten(result=None, device_id=None, backup_dir=None):
+def verify_pending_delivery_order_count(result=None, device_id=None, backup_dir=None):
     """验证任务十：计算待收货的订单有多少项，给出一个阿拉伯数字即可。"""
     json_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 

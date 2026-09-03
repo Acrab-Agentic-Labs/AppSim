@@ -6,7 +6,7 @@ import os
 # 检查条件：最后6条记录都是：机票(北京->上海, 2025-10-25, 经济舱)
 
 
-def check_booking_batch_flight(result=None, device_id=None, backup_dir=None):
+def verify_batch_flight_tickets_booked(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/booking_history.json"
     local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
@@ -57,4 +57,4 @@ def check_booking_batch_flight(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_booking_batch_flight() else "false")
+    print("true" if verify_batch_flight_tickets_booked() else "false")

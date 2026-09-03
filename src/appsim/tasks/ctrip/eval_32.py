@@ -20,7 +20,7 @@ TASK32_ANSWER_SCHEMA = {
 }
 
 
-def check_booking_complex_budget(result=None, device_id=None, backup_dir=None):
+def verify_multi_segment_trip_budget_sufficiency(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
 
@@ -101,4 +101,4 @@ def check_booking_complex_budget(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_booking_complex_budget() else "false")
+    print("true" if verify_multi_segment_trip_budget_sufficiency() else "false")

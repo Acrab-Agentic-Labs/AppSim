@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_search_london_to_hong_kong_next_sunday_without_booking(
+def verify_flight_search_without_booking(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_search_london_to_hong_kong_next_sunday_without_booking(
 
 
 if __name__ == "__main__":
-    print(verify_search_london_to_hong_kong_next_sunday_without_booking())
+    print(verify_flight_search_without_booking())

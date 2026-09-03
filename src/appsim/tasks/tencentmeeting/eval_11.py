@@ -10,7 +10,7 @@ MEETING_ID = "meeting_3d7e91"
 MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
 IS_MUTED_KEY = "isMuted"
 
-def check_all_mics_muted(
+def verify_all_meeting_mics_muted(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -66,4 +66,4 @@ def check_all_mics_muted(
 
 
 if __name__ == '__main__':
-    print(check_all_mics_muted())
+    print(verify_all_meeting_mics_muted())

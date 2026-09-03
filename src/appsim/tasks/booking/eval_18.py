@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_book_paris_most_expensive_vip_ticket(
+def verify_most_expensive_attraction_vip_ticket(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -16,4 +16,4 @@ def verify_book_paris_most_expensive_vip_ticket(
 
 
 if __name__ == "__main__":
-    print(verify_book_paris_most_expensive_vip_ticket())
+    print(verify_most_expensive_attraction_vip_ticket())

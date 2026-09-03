@@ -5,7 +5,7 @@ import os
 import subprocess
 
 
-def validate_task_nine(result=None, device_id=None, backup_dir=None):
+def verify_product_purchased_with_gift_card(result=None, device_id=None, backup_dir=None):
     """Validate task 9: buy a white Nintendo Switch now and check out using Amazon Gift Card."""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -45,5 +45,5 @@ def validate_task_nine(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_nine()
+    result = verify_product_purchased_with_gift_card()
     print(result)

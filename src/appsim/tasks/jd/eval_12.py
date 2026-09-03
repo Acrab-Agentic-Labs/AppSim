@@ -14,7 +14,7 @@ TASK12_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twelve(result=None, device_id=None, backup_dir=None):
+def verify_delivery_eta_minutes(result=None, device_id=None, backup_dir=None):
     """验证任务十二：查看京东秒送的物流消息，确定商品还有多少分钟能送达。"""
     if not isinstance(result, dict):
         return False

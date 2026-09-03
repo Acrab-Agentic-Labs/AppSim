@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty(result=None, device_id=None, backup_dir=None):
+def verify_shopping_list_created_with_home_items(result=None, device_id=None, backup_dir=None):
     """Validate task 30: create a new shopping list named 'Coffee' and add the coffee-related items from the home page to that list."""
     lists_data_file_path = os.path.join(backup_dir, "lists_data.json") if backup_dir else "lists_data.json"
 
@@ -30,5 +30,5 @@ def validate_task_thirty(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty()
+    result = verify_shopping_list_created_with_home_items()
     print(result)

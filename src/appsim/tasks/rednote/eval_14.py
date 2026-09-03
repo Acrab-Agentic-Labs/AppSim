@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def send_message_check(result=None, device_id=None, backup_dir=None):
+def verify_followed_author_message_sent(result=None, device_id=None, backup_dir=None):
     # 从设备获取消息记录
     message_file_path = os.path.join(backup_dir, "messages.json") if backup_dir is not None else "messages.json"
     cmd = ["adb"]
@@ -39,4 +39,4 @@ def send_message_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(send_message_check())
+    print(verify_followed_author_message_sent())

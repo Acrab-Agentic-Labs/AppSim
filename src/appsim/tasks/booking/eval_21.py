@@ -22,7 +22,7 @@ TASK21_ANSWER_SCHEMA = {
 }
 
 
-def verify_answer_nearest_upcoming_trip(
+def verify_nearest_upcoming_trip(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -37,4 +37,4 @@ def verify_answer_nearest_upcoming_trip(
 
 
 if __name__ == "__main__":
-    print(verify_answer_nearest_upcoming_trip())
+    print(verify_nearest_upcoming_trip())

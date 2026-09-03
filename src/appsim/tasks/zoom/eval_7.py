@@ -1,7 +1,7 @@
 from ._shared import evaluate_task
 
 
-def verify_busy_status(
+def verify_recurring_meeting_created_with_participants(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -17,4 +17,4 @@ def verify_busy_status(
 
 
 if __name__ == "__main__":
-    print(verify_busy_status())
+    print(verify_recurring_meeting_created_with_participants())

@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def search_result_count_check(result=None, device_id=None, backup_dir=None):
+def verify_search_result_note_count(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _SEARCH_QUERY = "美妆"
     _MIN_COUNT = 1
@@ -58,4 +58,4 @@ def search_result_count_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(search_result_count_check())
+    print(verify_search_result_note_count())

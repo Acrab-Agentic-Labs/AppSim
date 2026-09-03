@@ -36,7 +36,7 @@ EXPECTED_ATTRACTIONS = [
 ]
 
 
-def verify_favorite_nearby_attractions(device_id=None):
+def verify_nearby_attractions_favorited(device_id=None):
     """
     验证收藏周边景点任务是否完成
 
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_favorite_nearby_attractions()
+    success = verify_nearby_attractions_favorited()
 
     # 输出最终结果
     print("=" * 60)

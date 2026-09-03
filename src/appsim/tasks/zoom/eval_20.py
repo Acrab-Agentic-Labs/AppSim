@@ -7,7 +7,7 @@ except ImportError:
 PROFILE_UPDATE_TASK_ID = 16
 
 
-def verify_change_display_name_to_liu_chenlong(
+def verify_display_name_updated(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -18,4 +18,4 @@ def verify_change_display_name_to_liu_chenlong(
 
 
 if __name__ == "__main__":
-    print(verify_change_display_name_to_liu_chenlong())
+    print(verify_display_name_updated())

@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_five(result=None, device_id=None, backup_dir=None):
+def verify_community_created_with_description(result=None, device_id=None, backup_dir=None):
     """Verify task 25: the first item in communities.json has the expected name and description."""
     file_path = os.path.join(backup_dir, "communities.json") if backup_dir else "communities.json"
 
@@ -33,5 +33,5 @@ def validate_task_twenty_five(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_five()
+    result = verify_community_created_with_description()
     print(result)

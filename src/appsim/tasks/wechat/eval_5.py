@@ -16,7 +16,7 @@ TASK5_ANSWER_SCHEMA = {
 }
 
 
-def task5_validate_info_in_group(result=None, device_id=None, backup_dir=None):
+def verify_group_event_details(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

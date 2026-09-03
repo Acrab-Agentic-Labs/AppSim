@@ -12,7 +12,7 @@ TASK19_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_nineteen(result=None, **kwargs):
+def verify_app_version(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

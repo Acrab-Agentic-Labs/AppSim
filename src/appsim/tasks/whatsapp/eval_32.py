@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_two(result=None, device_id=None, backup_dir=None):
+def verify_status_reacted_to_and_contact_messaged(result=None, device_id=None, backup_dir=None):
     """Verify task 32: status_rm_001 in statuses.json has userReaction ❤️; the last item in messages.json has conversationId conv_002 and matching textContent."""
     st_path = os.path.join(backup_dir, "statuses.json") if backup_dir else "statuses.json"
     msg_path = os.path.join(backup_dir, "messages.json") if backup_dir else "messages.json"
@@ -55,5 +55,5 @@ def validate_task_thirty_two(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_two()
+    result = verify_status_reacted_to_and_contact_messaged()
     print(result)
