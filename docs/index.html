@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="AppSim-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents">
+  <meta name="description" content="AppSim-Bench is a reproducible benchmark of 557 tasks across 17 simulated Chinese and English mobile apps, evaluating mobile GUI agents with controllable backends and deterministic outcome verification.">
+  <meta name="keywords" content="mobile GUI agents, benchmark, reproducible evaluation, vision-language models, app simulation, LLM agents, AppSim-Bench">
+  <meta name="author" content="Jintian Feng, Long Chen, Xiao Yu, Jiayi Dai, Chenglong Liu, Haoru Wang, Zizhen Xue, Yuxuan Shi, Ziyang Wang, Yichen Gong">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="AppSim-Bench">
+  <meta property="og:title" content="AppSim-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents">
+  <meta property="og:description" content="A reproducible benchmark of 557 tasks across 17 simulated mobile apps for evaluating mobile GUI agents.">
+  <meta property="og:url" content="https://andrewfeng2001.github.io/AppSimBench-MainPage/">
+  <meta property="og:image" content="https://andrewfeng2001.github.io/AppSimBench-MainPage/static/images/overview.png">
+  <meta property="og:image:alt" content="AppSim-Bench overview">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AppSim-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents">
+  <meta name="twitter:description" content="A reproducible benchmark of 557 tasks across 17 simulated mobile apps for evaluating mobile GUI agents.">
+  <meta name="twitter:image" content="https://andrewfeng2001.github.io/AppSimBench-MainPage/static/images/overview.png">
+
+  <!-- Academic/Research Specific -->
+  <meta name="citation_title" content="AppSim-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents">
+  <meta name="citation_publication_date" content="2026">
+
+  <meta name="theme-color" content="#2563eb">
+  <meta name="msapplication-TileColor" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <title>AppSim-Bench | Reproducible Evaluation for Mobile GUI Agents</title>
+
+  <!-- Critical CSS - Load synchronously -->
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <!-- Non-critical CSS - Load asynchronously -->
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <!-- Structured Data for Academic Papers -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "AppSim-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents",
+    "description": "A reproducible benchmark of 557 tasks across 17 simulated Chinese and English mobile apps for evaluating mobile GUI agents with controllable backends and deterministic outcome verification.",
+    "datePublished": "2026",
+    "url": "https://andrewfeng2001.github.io/AppSimBench-MainPage/",
+    "image": "https://andrewfeng2001.github.io/AppSimBench-MainPage/static/images/overview.png",
+    "keywords": ["mobile GUI agents", "benchmark", "reproducible evaluation", "vision-language models", "LLM agents"],
+    "isAccessibleForFree": true,
+    "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+  }
+  </script>
+  <style>
+    /* Left sidebar navigation */
+    .side-nav {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #d9dee8;
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      max-height: 80vh;
+      overflow-y: auto;
+      transition: opacity 0.2s;
+    }
+    .side-nav a {
+      display: block;
+      padding: 6px 16px 6px 12px;
+      font-size: 0.78rem;
+      color: #4b5563;
+      text-decoration: none;
+      white-space: nowrap;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    .side-nav a:hover {
+      color: #1f2328;
+      background: #f4f6f9;
+    }
+    .side-nav a.active {
+      color: #2563eb;
+      border-left-color: #2563eb;
+      font-weight: 600;
+      background: #eef2ff;
+    }
+    @media (max-width: 1200px) {
+      .side-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Left sidebar navigation -->
+  <nav class="side-nav" id="sideNav">
+    <a href="#main-content">Top</a>
+    <a href="#abstract">Abstract</a>
+    <a href="#apps">Apps</a>
+    <a href="#method">Method</a>
+    <a href="#statistics">Statistics</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#results">Results</a>
+    <a href="#BibTeX">BibTeX</a>
+  </nav>
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <main id="main-content">
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">AppSim-Bench</h1>
+            <h2 class="title is-4 publication-title" style="font-weight:500;margin-top:-0.5rem;">
+              Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents
+            </h2>
+            <div class="is-size-5 publication-authors" style="line-height:1.9;">
+              <span class="author-block"><strong>Jintian Feng<sup>1,2</sup></strong><sup>*</sup>, <strong>Long Chen<sup>3</sup></strong>, <strong>Xiao Yu<sup>1,2</sup></strong>, <strong>Jiayi Dai<sup>1,2</sup></strong>, <strong>Chenglong Liu<sup>2</sup></strong>, <strong>Haoru Wang<sup>2</sup></strong>, <strong>Zizhen Xue<sup>3</sup></strong>, <strong>Yuxuan Shi<sup>1,2</sup></strong><sup>†</sup>, <strong>Ziyang Wang<sup>3</sup></strong>, <strong>Yichen Gong<sup>3</sup></strong></span>
+              <div class="is-size-6" style="color:#64748b; margin-top:0.35rem;">
+                <span><sup>1</sup>Laboratory for Artificial Intelligence and New Forms of Education, Central China Normal University</span><br>
+                <span><sup>2</sup>Faculty of Artificial Intelligence in Education, Central China Normal University</span><br>
+                <span><sup>3</sup>Agentic Labs, Acrab AI</span><br>
+                <span><sup>*</sup>Work done as a research intern at Acrab AI.</span><br>
+                <span><sup>†</sup>Yuxuan Shi is the corresponding author.</span><br>
+              </div>
+            </div>
+
+            <div class="is-size-5 publication-authors" style="margin-top:0.4rem;">
+              <span class="author-block">Accepted to EMNLP 2026 Main Conference</span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- Paper (coming soon) -->
+                <span class="link-block">
+                  <a href="paper.html" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+
+              <!-- Code (coming soon) -->
+              <span class="link-block">
+                <a href="https://github.com/Acrab-Lab/AppSim" target="_blank"
+                class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="fab fa-github"></i>
+                </span>
+                <span>Code</span>
+              </a>
+            </span>
+
+              <!-- Leaderboard (coming soon) -->
+              <span class="link-block">
+                <a href="leaderboard.html" target="_blank"
+                class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="fas fa-trophy"></i>
+                </span>
+                <span>Leaderboard</span>
+              </a>
+            </span>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Teaser / Overview figure -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="static/images/overview.png" alt="AppSim-Bench overview: inconsistent live-app states vs. controllable simulated apps" loading="eager"/>
+      <h2 class="subtitle has-text-centered">
+        <strong>(a)</strong> In live commercial apps, the same task can face different states across time or devices (e.g. shifting search suggestions or cart availability), making fair comparison hard.
+        <strong>(b)</strong> AppSim-Bench replaces live apps with 17 controllable simulated apps covering 557 tasks, removing recommendation- and content-driven evaluation noise.
+      </h2>
+    </div>
+  </div>
+</section>
+<!-- End teaser -->
+
+<!-- Paper abstract -->
+<section class="section hero is-light" id="abstract">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Mobile GUI agents can execute tasks from natural-language instructions, but their evaluation remains difficult to make both realistic and reproducible. Existing benchmarks typically trade off these goals: simplified apps lack real-world mobile complexity, whereas live commercial apps introduce uncontrolled variation from recommendations, advertisements, accounts, and changing content.
+          </p>
+          <p>
+            We propose <strong>AppSim-Bench</strong>, which addresses this trade-off through controllable simulated apps that preserve task-relevant interaction logic while supporting deterministic evaluation. Built through a coding-agent-assisted and human-verified workflow, it contains <strong>557 tasks across 17 high-frequency Chinese and English apps</strong>. Its controllable backend data and outcome-based verification remove major sources of environmental stochasticity, enabling reproducible cross-model comparison.
+          </p>
+          <p>
+            Evaluating <strong>19 GUI agents</strong>, spanning general-purpose and GUI-specialized systems, we find that autonomous mobile execution remains far from solved. The best model completes only <strong>50.27%</strong> of tasks, and <strong>28.55%</strong> of tasks are not solved by any agent. Further analysis shows that failures concentrate in longer workflows, numerical reasoning tasks, and inefficient trajectories marked by high action overhead and budget exhaustion. Our project is available at <a href="https://github.com/Acrab-Lab/AppSim" target="_blank">https://github.com/Acrab-Lab/AppSim</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+
+<!-- App overview table -->
+<section class="section hero" id="apps">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">Apps in AppSim-Bench</h2>
+        <div class="content has-text-justified">
+          <p>
+            AppSim-Bench covers 17 apps spanning video sharing, travel, food delivery, navigation, e-commerce, music streaming, social media, communication, ride hailing, and video conferencing. The table below lists each app, a brief description, and its task count (557 tasks in total).
+          </p>
+        </div>
+        <style>
+          table.app-overview { border-collapse: collapse; width: 100%; font-size: 0.88rem; background: #fff; }
+          table.app-overview th, table.app-overview td { padding: 8px 10px; border-bottom: 1px solid #eef1f5; text-align: left; vertical-align: top; }
+          table.app-overview th { background: #f4f6f9; color: #626c7a; font-weight: 700; font-size: 0.8rem; }
+          table.app-overview td.num, table.app-overview th.num { text-align: center; white-space: nowrap; }
+          table.app-overview tbody tr:hover { background: #fafbff; }
+          .app-overview-wrap { overflow-x: auto; }
+        </style>
+        <div class="app-overview-wrap">
+          <table class="app-overview">
+            <thead>
+              <tr>
+                <th class="num">#</th>
+                <th>App (EN)</th>
+                <th>App (ZH)</th>
+                <th>Description</th>
+                <th class="num">#Tasks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="num">1</td><td>Bilibili</td><td>哔哩哔哩</td><td>A video-sharing app with ACG-oriented community content.</td><td class="num">30</td></tr>
+              <tr><td class="num">2</td><td>Booking.com</td><td>—</td><td>A travel booking app for hotels, flights, cars, taxis, and attractions.</td><td class="num">25</td></tr>
+              <tr><td class="num">3</td><td>Ctrip</td><td>携程旅行</td><td>A travel-service app for hotels, flights, trains, trips, and messages.</td><td class="num">35</td></tr>
+              <tr><td class="num">4</td><td>Ele.me</td><td>饿了么</td><td>A local-life and food-delivery app for restaurants, orders, coupons, and addresses.</td><td class="num">40</td></tr>
+              <tr><td class="num">5</td><td>Amap</td><td>高德地图</td><td>A map and navigation app with nearby places, routes, favorites, and travel tools.</td><td class="num">28</td></tr>
+              <tr><td class="num">6</td><td>NetEase Cloud Music</td><td>网易云音乐</td><td>A music-streaming app with songs, playlists, charts, lyrics, and user profiles.</td><td class="num">39</td></tr>
+              <tr><td class="num">7</td><td>JD</td><td>京东</td><td>An e-commerce app for product search, carts, orders, addresses, and store services.</td><td class="num">40</td></tr>
+              <tr><td class="num">8</td><td>RedNote</td><td>小红书</td><td>A lifestyle social-media app for notes, creators, comments, messages, and profiles.</td><td class="num">29</td></tr>
+              <tr><td class="num">9</td><td>Tencent Meeting</td><td>腾讯会议</td><td>A video-conferencing app for meetings, contacts, messages, and personal rooms.</td><td class="num">26</td></tr>
+              <tr><td class="num">10</td><td>Uber Eats</td><td>—</td><td>A food-delivery and local-services app with restaurants, carts, orders, and rides.</td><td class="num">34</td></tr>
+              <tr><td class="num">11</td><td>WeChat</td><td>微信</td><td>A messaging and social app with chats, contacts, groups, and Moments.</td><td class="num">16</td></tr>
+              <tr><td class="num">12</td><td>YouTube</td><td>—</td><td>A video platform for search, playback, comments, subscriptions, Shorts, and settings.</td><td class="num">35</td></tr>
+              <tr><td class="num">13</td><td>Amazon</td><td>\</td><td>An e-commerce app for product discovery, shopping lists, carts, orders, and support.</td><td class="num">40</td></tr>
+              <tr><td class="num">14</td><td>WhatsApp</td><td>—</td><td>A messaging app with chats, calls, statuses, channels, communities, and contacts.</td><td class="num">40</td></tr>
+              <tr><td class="num">15</td><td>Zoom</td><td>—</td><td>A video-meeting app for instant meetings, scheduled meetings, chat, contacts, and settings.</td><td class="num">20</td></tr>
+              <tr><td class="num">16</td><td>Spotify</td><td>—</td><td>A music and podcast app with playback, search, playlists, lyrics, and subscriptions.</td><td class="num">40</td></tr>
+              <tr><td class="num">17</td><td>Instagram</td><td>—</td><td>A social-media app for posts, reels, messages, profiles, search, and publishing.</td><td class="num">40</td></tr>
+            </tbody>
+            <tfoot>
+              <tr style="font-weight:700; background:#f4f6f9;">
+                <td class="num" colspan="4" style="text-align:right;">Total</td>
+                <td class="num">557</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End app overview table -->
+
+
+<!-- How it works / pipeline -->
+<section class="section hero" id="method">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">How AppSim-Bench is Built</h2>
+        <div class="content has-text-justified">
+          <p>
+            AppSim-Bench has three components: <strong>Tasks</strong> described in natural language, <strong>Simulated Apps</strong> with controllable backend data, and <strong>Automated Evaluation</strong> via deterministic outcome verification. Simulated apps are produced through a human-led, coding-agent-assisted workflow: developers specify task requirements, data schemas, page hierarchies, and reference screenshots; coding agents generate candidate implementations; and human developers inspect, run, and correct them until the task-relevant UI flows and backend states match the specification.
+          </p>
+        </div>
+        <img src="static/images/pipeline.png" alt="AppSim-Bench construction pipeline: task construction, simulated app construction, and automated evaluation" loading="lazy"/>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End pipeline -->
+
+
+<!-- Dataset statistics -->
+<section class="section hero is-light" id="statistics">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">Benchmark at a Glance</h2>
+        <img src="static/images/dataset.png" alt="AppSim-Bench statistics: app coverage, task-length distribution, and numerical reasoning subtypes" loading="lazy"/>
+        <h2 class="subtitle has-text-centered" style="margin-top:1rem;">
+          <strong>(a–b)</strong> Task coverage across 9 Chinese and 8 English apps. <strong>(c)</strong> 283 Chinese vs. 274 English tasks. <strong>(d)</strong> Distribution by human-annotated reference steps (≤5, 6–10, ≥11). <strong>(e)</strong> 183 numerical-reasoning tasks split into counting, arithmetic, comparison, and threshold-filtering subtypes.
+        </h2>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End dataset statistics -->
+
+
+<!-- App gallery -->
+<section class="section hero" id="gallery">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">The 17 Simulated Apps</h2>
+        <div class="content has-text-justified">
+          <p>
+            AppSim-Bench spans 17 high-frequency apps across video sharing, travel, food delivery, navigation, e-commerce, music streaming, social media, communication, ride hailing, and video conferencing. Each is a controllable simulation that reproduces the task-relevant screens and flows of its real-world counterpart. Screenshots below show one representative screen per app.
+          </p>
+        </div>
+      </div>
+    </div>
+    <style>
+      .app-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 20px;
+      }
+      .app-card { text-align: center; }
+      .app-card img {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid #d9dee8;
+        box-shadow: 0 6px 16px rgba(31,35,40,0.10);
+        display: block;
+      }
+      .app-card .app-name {
+        margin-top: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #1f2328;
+      }
+      @media (max-width: 640px) {
+        .app-gallery { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; }
+      }
+    </style>
+    <div class="app-gallery" id="appGallery"></div>
+    <script>
+      (function () {
+        var apps = [["bilibili","Bilibili"],["ctrip","Ctrip"],["eleme","Ele.me"],["amap","Amap"],["jd","JD"],["netease-music","NetEase Cloud Music"],["rednote","RedNote"],["tencent-meeting","Tencent Meeting"],["wechat","WeChat"],["amazon","Amazon"],["booking","Booking.com"],["instagram","Instagram"],["spotify","Spotify"],["ubereats","Uber Eats"],["whatsapp","WhatsApp"],["youtube","YouTube"],["zoom","Zoom"]];
+        var g = document.getElementById("appGallery");
+        g.innerHTML = apps.map(function (a) {
+          return '<div class="app-card">'
+            + '<img src="static/images/apps/' + a[0] + '.jpg" alt="' + a[1] + ' simulated app screenshot" loading="lazy">'
+            + '<div class="app-name">' + a[1] + '</div>'
+            + '</div>';
+        }).join("");
+      })();
+    </script>
+  </div>
+</section>
+<!-- End app gallery -->
+
+
+<!-- Leaderboard -->
+<section class="section hero" id="results">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">Main Results</h2>
+        <div class="content has-text-justified">
+          <p>
+            Overall accuracy of 19 agents on AppSim-Bench, spanning general-purpose and GUI-specialized systems, with task-weighted accuracy on the Chinese (ZH) and English (EN) app groups, accuracy by task length (<em>#S</em> = human-annotated step count), and numerical-reasoning subtypes. Even the strongest model completes only about half of the tasks, and performance drops sharply on the longest workflows (≥11 steps).
+          </p>
+        </div>
+        <div class="table-container">
+          <style>
+            table.results-table th,
+            table.results-table td {
+              padding: 0.35rem 0.45rem;
+              white-space: normal;
+              word-break: break-word;
+              vertical-align: middle;
+            }
+            table.results-table thead th {
+              line-height: 1.15;
+            }
+            table.results-table td:first-child,
+            table.results-table th:first-child {
+              word-break: keep-all;
+            }
+          </style>
+          <table class="table results-table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:0.72rem; table-layout:fixed; width:100%;">
+            <colgroup>
+              <col style="width:17%;">
+              <col span="3" style="width:8.3%;">
+              <col span="3" style="width:8.3%;">
+              <col span="4" style="width:8.3%;">
+            </colgroup>
+            <thead>
+              <tr>
+                <th rowspan="2">Agent Model</th>
+                <th colspan="3" class="has-text-centered">Overall Benchmark</th>
+                <th colspan="3" class="has-text-centered">Task Length</th>
+                <th colspan="4" class="has-text-centered">Numerical Reasoning Subtype</th>
+              </tr>
+              <tr>
+                <th>Overall</th>
+                <th>ZH Apps</th>
+                <th>EN Apps</th>
+                <th>#S ≤ 5</th>
+                <th>#S 6–10</th>
+                <th>#S ≥ 11</th>
+                <th>Cnt.</th>
+                <th>Arith.</th>
+                <th>Comp.</th>
+                <th>Thres.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="11" style="font-style:italic;background:#f8fafc;">General-purpose Agents</td></tr>
+              <tr><td>Claude-Opus-4.7</td><td><strong>50.27%</strong></td><td><strong>60.07%</strong></td><td><u>40.15%</u></td><td><u>58.87%</u></td><td><strong>54.29%</strong> <span class="has-text-danger">↓4.58</span></td><td>28.15% <span class="has-text-danger">↓26.14</span><sup><span class="has-text-danger">†</span></sup></td><td><strong>52.31%</strong></td><td><u>55.56%</u></td><td><strong>52.00%</strong></td><td><strong>42.86%</strong></td></tr>
+              <tr><td>Gemini-3-Pro</td><td><u>49.91%</u></td><td><strong>60.07%</strong></td><td>39.42%</td><td>56.38%</td><td><u>52.86%</u> <span class="has-text-danger">↓3.52</span></td><td><strong>33.33%</strong> <span class="has-text-danger">↓19.53</span></td><td><u>46.15%</u></td><td>42.22%</td><td>49.33%</td><td>23.81%</td></tr>
+              <tr><td>GPT-5.5</td><td>49.73%</td><td>58.66%</td><td><strong>40.51%</strong></td><td><strong>59.22%</strong></td><td>52.14% <span class="has-text-danger">↓7.08</span></td><td>27.41% <span class="has-text-danger">↓24.73</span></td><td>44.62%</td><td><strong>57.78%</strong></td><td><strong>52.00%</strong></td><td><u>33.33%</u></td></tr>
+              <tr><td>Gemini-3.1-Pro</td><td>49.55%</td><td><u>59.36%</u></td><td>39.42%</td><td>56.74%</td><td><u>52.86%</u> <span class="has-text-danger">↓3.88</span></td><td><u>31.11%</u> <span class="has-text-danger">↓21.75</span></td><td>43.08%</td><td>42.22%</td><td><u>50.67%</u></td><td>23.81%</td></tr>
+              <tr><td>Doubao-Seed-1.6</td><td>39.14%</td><td>50.88%</td><td>27.01%</td><td>45.74%</td><td>43.57% <span class="has-text-danger">↓2.17</span></td><td>20.74% <span class="has-text-danger">↓22.83</span></td><td>23.08%</td><td>22.22%</td><td>36.00%</td><td>9.52%</td></tr>
+              <tr><td>GPT-5</td><td>33.39%</td><td>37.81%</td><td>28.83%</td><td>43.62%</td><td>31.43% <span class="has-text-danger">↓12.19</span></td><td>14.07% <span class="has-text-danger">↓17.36</span></td><td>27.69%</td><td>35.56%</td><td>40.00%</td><td>4.76%</td></tr>
+              <tr><td>Doubao-Seed-1.8</td><td>32.14%</td><td>34.63%</td><td>29.56%</td><td>43.26%</td><td>27.86% <span class="has-text-danger">↓15.40</span></td><td>13.33% <span class="has-text-danger">↓14.53</span></td><td>23.08%</td><td>31.11%</td><td>28.00%</td><td>4.76%</td></tr>
+              <tr><td>Qwen-3.6-Plus</td><td>31.42%</td><td>39.58%</td><td>22.99%</td><td>39.01%</td><td>31.43% <span class="has-text-danger">↓7.58</span></td><td>15.56% <span class="has-text-danger">↓15.87</span></td><td>23.08%</td><td>13.33%</td><td>28.00%</td><td>9.52%</td></tr>
+              <tr><td>Doubao-Seed-2.0</td><td>29.26%</td><td>36.40%</td><td>21.90%</td><td>37.94%</td><td>28.57% <span class="has-text-danger">↓9.37</span></td><td>11.85% <span class="has-text-danger">↓16.72</span></td><td>27.69%</td><td>28.89%</td><td>20.00%</td><td>14.29%</td></tr>
+              <tr><td>GPT-5.4</td><td>29.08%</td><td>34.63%</td><td>23.36%</td><td>38.30%</td><td>25.71% <span class="has-text-danger">↓12.59</span></td><td>13.33% <span class="has-text-danger">↓12.38</span></td><td>24.62%</td><td>24.44%</td><td>30.67%</td><td>9.52%</td></tr>
+              <tr><td>Qwen-3.6-Flash</td><td>28.19%</td><td>38.87%</td><td>17.15%</td><td>38.30%</td><td>25.71% <span class="has-text-danger">↓12.59</span></td><td>9.63% <span class="has-text-danger">↓16.08</span></td><td>20.00%</td><td>24.44%</td><td>26.67%</td><td>4.76%</td></tr>
+              <tr><td>Claude-Sonnet-4.6</td><td>27.29%</td><td>31.10%</td><td>23.36%</td><td>36.17%</td><td>27.86% <span class="has-text-danger">↓8.31</span></td><td>8.15% <span class="has-text-danger">↓19.71</span></td><td>29.23%</td><td>33.33%</td><td>26.67%</td><td>14.29%</td></tr>
+              <tr><td>Claude-Haiku-4.5</td><td>22.80%</td><td>22.61%</td><td>22.99%</td><td>34.04%</td><td>15.71% <span class="has-text-danger">↓18.33</span><sup><span class="has-text-danger">†</span></sup></td><td>6.67% <span class="has-text-danger">↓9.04</span></td><td>20.00%</td><td>22.22%</td><td>20.00%</td><td>9.52%</td></tr>
+              <tr><td>Claude-Sonnet-4.5</td><td>21.01%</td><td>24.03%</td><td>17.88%</td><td>31.91%</td><td>14.29% <span class="has-text-danger">↓17.62</span></td><td>5.19% <span class="has-text-danger">↓9.10</span></td><td>23.08%</td><td>26.67%</td><td>21.33%</td><td>14.29%</td></tr>
+              <tr><td>Gemini-2.5-Pro</td><td>17.24%</td><td>21.20%</td><td>13.14%</td><td>26.24%</td><td>14.29% <span class="has-text-danger">↓11.95</span></td><td>1.48% <span class="has-text-danger">↓12.81</span></td><td>23.08%</td><td>17.78%</td><td>17.33%</td><td>9.52%</td></tr>
+              <tr><td colspan="11" style="font-style:italic;background:#f8fafc;">GUI-specialized Agents</td></tr>
+              <tr><td>MobileAgent-v3.5</td><td>31.42%</td><td>35.34%</td><td>27.37%</td><td>41.49%</td><td>26.43% <span class="has-text-danger">↓15.06</span></td><td>15.56% <span class="has-text-danger">↓10.87</span></td><td>18.46%</td><td>24.44%</td><td>32.00%</td><td>4.76%</td></tr>
+              <tr><td>UI-TARS-1.5-7B</td><td>22.62%</td><td>31.10%</td><td>13.87%</td><td>30.14%</td><td>22.86% <span class="has-text-danger">↓7.28</span></td><td>6.67% <span class="has-text-danger">↓16.19</span></td><td>20.00%</td><td>8.89%</td><td>16.00%</td><td>4.76%</td></tr>
+              <tr><td>AgentCPM-GUI</td><td>10.05%</td><td>9.19%</td><td>10.95%</td><td>17.02%</td><td>5.71% <span class="has-text-danger">↓11.31</span></td><td>0.00% <span class="has-text-danger">↓5.71</span></td><td>3.08%</td><td>2.22%</td><td>5.33%</td><td>4.76%</td></tr>
+              <tr><td>V-Droid</td><td>9.87%</td><td>13.43%</td><td>6.20%</td><td>15.25%</td><td>7.86% <span class="has-text-danger">↓7.39</span></td><td>0.74% <span class="has-text-danger">↓7.12</span></td><td>15.38%</td><td>11.11%</td><td>9.33%</td><td>0.00%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="is-size-7 has-text-grey">Bold marks the best value in each column and underlining marks the second-best. ZH/EN are task-weighted accuracies over the Chinese and English app groups. Down arrows indicate drops relative to the adjacent shorter task-length bucket.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End leaderboard -->
+
+
+<!--BibTex citation -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <div class="bibtex-header">
+        <h2 class="title">BibTeX</h2>
+        <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+          <i class="fas fa-copy"></i>
+          <span class="copy-text">Copy</span>
+        </button>
+      </div>
+      <pre id="bibtex-code"><code>@inproceedings{appsimbench2026,
+  title        = {AppSim-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents},
+  author       = {Jintian Feng, Long Chen, Xiao Yu, Jiayi Dai, Chenglong Liu, Haoru Wang, Zizhen Xue, Yuxuan Shi, Ziyang Wang and Yichen Gong},
+  year         = {2026},
+  booktitle    = {EMNLP 2026 Main Conference},
+  note         = {Accepted}
+}</code></pre>
+    </div>
+</section>
+<!--End BibTex citation -->
+
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </main>
+
+  <script>
+    // Scroll-spy for side nav
+    (function() {
+      const nav = document.getElementById("sideNav");
+      if (!nav) return;
+      const links = nav.querySelectorAll("a[href^='#']");
+      const sections = Array.from(links).map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+      function update() {
+        let current = "";
+        const offset = window.innerHeight * 0.3;
+        sections.forEach(sec => {
+          if (sec.getBoundingClientRect().top <= offset) current = sec.id;
+        });
+        links.forEach(a => {
+          a.classList.toggle("active", a.getAttribute("href") === "#" + current);
+        });
+      }
+      window.addEventListener("scroll", update, { passive: true });
+      update();
+    })();
+  </script>
+  </body>
+  </html>
