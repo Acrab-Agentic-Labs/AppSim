@@ -160,38 +160,50 @@ class ActionExecutor:
 
         # 获取屏幕尺寸
         info = self.u2_device.info
-        screen_width = info.get("displayWidth", 1080)
-        screen_height = info.get("displayHeight", 1920)
+        screen_width = int(info.get("displayWidth", 1080))
+        screen_height = int(info.get("displayHeight", 1920))
+        if screen_width <= 2 or screen_height <= 2:
+            logging.error(f"无效屏幕尺寸: {screen_width}x{screen_height}")
+            return False
 
-        # 确定滚动起点和终点
+        left, top, right, bottom = 0, 0, screen_width - 1, screen_height - 1
         if index is not None:
-            # 滚动特定元素
-            center = self._get_element_center(index, ui_elements)
-            if center is None:
+            if index < 0 or index >= len(ui_elements):
                 logging.error(f"无法获取元素 {index} 的坐标")
                 return False
-            start_x, start_y = center
-        else:
-            # 滚动整个屏幕
-            start_x = screen_width // 2
-            start_y = screen_height // 2
+            element_left, element_top, element_right, element_bottom = ui_elements[index].bounds
+            left = max(0, min(screen_width - 1, element_left))
+            top = max(0, min(screen_height - 1, element_top))
+            right = max(0, min(screen_width - 1, element_right))
+            bottom = max(0, min(screen_height - 1, element_bottom))
+            if right - left < 20 or bottom - top < 20:
+                left, top, right, bottom = 0, 0, screen_width - 1, screen_height - 1
 
-        # 根据方向确定终点
-        scroll_distance = min(screen_width, screen_height) // 3
+        horizontal_padding = max(1, min(48, (right - left) // 5))
+        vertical_padding = max(1, min(48, (bottom - top) // 5))
+        center_x = (left + right) // 2
+        center_y = (top + bottom) // 2
 
         if direction == "up":
-            end_x, end_y = start_x, start_y + scroll_distance
+            start_x, start_y = center_x, top + vertical_padding
+            end_x, end_y = center_x, bottom - vertical_padding
         elif direction == "down":
-            end_x, end_y = start_x, start_y - scroll_distance
+            start_x, start_y = center_x, bottom - vertical_padding
+            end_x, end_y = center_x, top + vertical_padding
         elif direction == "left":
-            end_x, end_y = start_x + scroll_distance, start_y
+            start_x, start_y = left + horizontal_padding, center_y
+            end_x, end_y = right - horizontal_padding, center_y
         elif direction == "right":
-            end_x, end_y = start_x - scroll_distance, start_y
+            start_x, start_y = right - horizontal_padding, center_y
+            end_x, end_y = left + horizontal_padding, center_y
         else:
             logging.error(f"未知的滚动方向: {direction}")
             return False
 
-        # 执行滑动
+        if start_x == end_x and start_y == end_y:
+            logging.error(f"滚动距离为零: {action}")
+            return False
+
         self.u2_device.swipe(start_x, start_y, end_x, end_y, duration=0.5)
         logging.debug(f"滚动方向: {direction}, 从 ({start_x}, {start_y}) 到 ({end_x}, {end_y})")
         return True

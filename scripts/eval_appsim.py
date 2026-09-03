@@ -112,7 +112,12 @@ def main():
 
     # 构造 Agent
     try:
-        agent = create_agent(agent_name, device_id, screenshots_dir)
+        agent = create_agent(
+            agent_name,
+            device_id,
+            screenshots_dir,
+            app_package=app_package,
+        )
         logging.info(f"   任务: {task_app.name}")
         logging.info(f"   设备ID: {device_id}")
         logging.info(f"   Agent: {agent_name}")
