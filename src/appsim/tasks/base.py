@@ -1,7 +1,17 @@
 # -*- coding:utf-8 -*-
+from enum import Enum
 from typing import Any, Callable, Dict, List, Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+
+class NumericReasoningCategory(str, Enum):
+    """数值推理任务分类。"""
+
+    COUNT = "count"
+    CALCULATE = "calculate"
+    COMPARE_SELECT = "compare_select"
+    THRESHOLD_FILTER = "threshold_filter"
 
 
 class TaskItem(BaseModel):
@@ -15,9 +25,9 @@ class TaskItem(BaseModel):
     instruction: str
     verify_func: Callable[[dict], Any]
     human_steps: int
-    is_reasoning: bool
     evaluation_type: Literal["state", "answer", "hybrid"] = "state"
     answer_schema: Optional[Dict[str, Any]] = None
+    numeric_reasoning_categories: List[NumericReasoningCategory] = Field(default_factory=list)
 
     class Config:
         arbitrary_types_allowed = True

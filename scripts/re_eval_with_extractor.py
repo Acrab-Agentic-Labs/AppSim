@@ -74,6 +74,9 @@ def main():
             task_item = task_items[task_id]
             result_payload = item_detail["result"]
             old_verify = item_detail["verify_result"]
+            item_detail["numeric_reasoning_categories"] = [
+                category.value for category in task_item.numeric_reasoning_categories
+            ]
 
             # 只处理 answer/hybrid 类型且有 schema 的任务
             if task_item.evaluation_type not in ("answer", "hybrid") or not task_item.answer_schema:

@@ -1,7 +1,7 @@
 # All instructions: file index equals task index
 # type: ignore
 # noqa
-from ..base import AppTasks, TaskItem
+from ..base import AppTasks, NumericReasoningCategory, TaskItem
 
 
 from .eval_1 import verify_hotel_booking_created_for_requested_date
@@ -37,127 +37,113 @@ BOOKING_TASKS = AppTasks(
             instruction='Book me a hotel in London for next Saturday night for two people.',
             verify_func=verify_hotel_booking_created_for_requested_date,
             human_steps=14,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='I want to stay tomorrow night at the highest-rated hotel in London.',
             verify_func=verify_highest_rated_hotel_booking_created,
             human_steps=13,
-            is_reasoning=False,
+            numeric_reasoning_categories=[NumericReasoningCategory.COMPARE_SELECT],
         ),
         TaskItem(
             instruction='I want to stay the night after tomorrow at the most expensive hotel in London.',
             verify_func=verify_most_expensive_hotel_booking_created,
             human_steps=13,
-            is_reasoning=False,
+            numeric_reasoning_categories=[NumericReasoningCategory.COMPARE_SELECT],
         ),
         TaskItem(
             instruction='Leave a five-star review for the hotel I stayed at last time.',
             verify_func=verify_last_stay_five_star_review_submitted,
             human_steps=6,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='Book me a hotel in London for the night after tomorrow: it must be a 4-star hotel with airport shuttle service and not too expensive.',
             verify_func=verify_four_star_hotel_with_shuttle_booking_created,
             human_steps=17,
-            is_reasoning=False,
+            numeric_reasoning_categories=[NumericReasoningCategory.THRESHOLD_FILTER],
         ),
         TaskItem(
             instruction='I want to stay tomorrow night at the same hotel as my last stay, and add a note saying no end room.',
             verify_func=verify_repeat_hotel_booking_with_room_note,
             human_steps=10,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='Book me the cheapest flight from Wuhan to London.',
             verify_func=verify_cheapest_flight_booking_created,
             human_steps=13,
-            is_reasoning=False,
+            numeric_reasoning_categories=[NumericReasoningCategory.COMPARE_SELECT],
         ),
         TaskItem(
             instruction='Book me a first-class flight from Hong Kong International Airport to London Heathrow Airport, and confirm that I do not need extra baggage allowance.',
             verify_func=verify_first_class_flight_without_extra_baggage,
             human_steps=14,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='Book me a premium economy flight from London to Sydney.',
             verify_func=verify_premium_economy_flight_booking_created,
             human_steps=14,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='I might need to fly from London to Hong Kong next Sunday, but I am not sure yet.',
             verify_func=verify_flight_search_without_booking,
             human_steps=7,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='Book me a rental car with pickup at London Heathrow Airport at noon the day after tomorrow.',
             verify_func=verify_airport_car_pickup_booking_created,
             human_steps=8,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='I am at London Heathrow Airport now. Rent me an economy SUV through next Monday.',
             verify_func=verify_economy_suv_rental_booking_created,
             human_steps=13,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='I want to rent a car when I land at Hong Kong International Airport at noon the day after tomorrow. I am traveling with a child, so add a child safety seat.',
             verify_func=verify_rental_car_with_child_seat,
             human_steps=9,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='I will arrive at Hong Kong International Airport at noon the day after tomorrow. Please rent the cheapest comfort sedan.',
             verify_func=verify_cheapest_comfort_sedan_rental,
             human_steps=11,
-            is_reasoning=False,
+            numeric_reasoning_categories=[NumericReasoningCategory.COMPARE_SELECT],
         ),
         TaskItem(
             instruction='I just landed at London Heathrow Airport. Book me a taxi to the London Heathrow Airport Hilton Hotel now.',
             verify_func=verify_immediate_taxi_booking_created,
             human_steps=9,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='I will be transiting at London Heathrow Airport tomorrow at noon. Book a taxi then to the London Heathrow Airport Hilton Hotel, and another ride at 8:00 AM the day after tomorrow back to London Heathrow Airport.',
             verify_func=verify_round_trip_taxi_bookings_created,
             human_steps=15,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='Book me a taxi right now from Hong Kong International Airport to the Regal Airport Hotel, and choose the most comfortable car.',
             verify_func=verify_most_comfortable_taxi_booking_created,
             human_steps=10,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='Book me a VIP ticket for the most expensive attraction in Paris for the day after tomorrow.',
             verify_func=verify_most_expensive_attraction_vip_ticket,
             human_steps=13,
-            is_reasoning=False,
+            numeric_reasoning_categories=[NumericReasoningCategory.COMPARE_SELECT],
         ),
         TaskItem(
             instruction='Book me a standard ticket to Sagrada Familia.',
             verify_func=verify_attraction_standard_ticket_booking,
             human_steps=9,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='Book me a fast-track ticket for a green-themed attraction in London for tomorrow.',
             verify_func=verify_fast_track_attraction_ticket_booking,
             human_steps=13,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='Tell me what my nearest upcoming trip is.',
             verify_func=verify_nearest_upcoming_trip,
             human_steps=1,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.COMPARE_SELECT],
             evaluation_type="answer",
             answer_schema=TASK21_ANSWER_SCHEMA,
         ),
@@ -165,13 +151,12 @@ BOOKING_TASKS = AppTasks(
             instruction='Change my phone number to 752-0405.',
             verify_func=verify_profile_phone_updated,
             human_steps=5,
-            is_reasoning=False,
         ),
         TaskItem(
             instruction='Calculate how much I have spent so far.',
             verify_func=verify_total_spending_amount,
             human_steps=2,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.CALCULATE],
             evaluation_type="hybrid",
             answer_schema=TASK23_ANSWER_SCHEMA,
         ),
@@ -179,13 +164,12 @@ BOOKING_TASKS = AppTasks(
             instruction='Cancel all bookings scheduled after next month.',
             verify_func=verify_future_bookings_canceled,
             human_steps=2,
-            is_reasoning=False,
+            numeric_reasoning_categories=[NumericReasoningCategory.THRESHOLD_FILTER],
         ),
         TaskItem(
             instruction='Update my profile first name to Peter.',
             verify_func=verify_profile_first_name_updated,
             human_steps=5,
-            is_reasoning=False,
         ),
     ],
 )

@@ -151,6 +151,9 @@ def main():
             "result": None,  # 执行结果
             "verify_result": None,  # 检验结果
             "evaluation_type": item.evaluation_type,
+            "numeric_reasoning_categories": [
+                category.value for category in item.numeric_reasoning_categories
+            ],
         }
 
         # 重置 Agent （历史对话记录清空）

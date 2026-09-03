@@ -1,23 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-统计模型在不同难度级别和推理任务上的准确率
+统计模型在不同难度级别和数值推理任务上的准确率
 """
 
-import os
-import sys
-import json
 import argparse
+import json
 import re
-from pathlib import Path
 from collections import defaultdict
-from enum import Enum
+from pathlib import Path
 
 from rich.console import Console
 from rich.markdown import Markdown
 
-from appsim.tasks.base import TaskItem, AppTasks
-from appsim.tasks import AppEnum, APP_TASKS_MAP
+from appsim.tasks import APP_TASKS_MAP
+from appsim.tasks.base import NumericReasoningCategory
+
+NUMERIC_REASONING_CATEGORY_NAMES = {
+    NumericReasoningCategory.COUNT: "计数 (count)",
+    NumericReasoningCategory.CALCULATE: "计算 (calculate)",
+    NumericReasoningCategory.COMPARE_SELECT: "比较选择 (compare_select)",
+    NumericReasoningCategory.THRESHOLD_FILTER: "阈值筛选 (threshold_filter)",
+}
 
 
 def load_results_from_jsonl(jsonl_file_path):
@@ -76,9 +80,40 @@ def get_difficulty_level(human_steps):
         return 'L3'
 
 
+def empty_stats():
+    """创建准确率统计容器。"""
+    return {'correct': 0, 'total': 0}
+
+
+def format_count(stats):
+    """把统计容器格式化为 correct/total。"""
+    return f"{stats['correct']}/{stats['total']}" if stats['total'] > 0 else "-"
+
+
+def format_accuracy(stats):
+    """把统计容器格式化为百分比。"""
+    return f"{stats['correct'] / stats['total'] * 100:.2f}%" if stats['total'] > 0 else "-"
+
+
+def create_app_detail():
+    """创建单个应用的统计容器。"""
+    return {
+        'L1': empty_stats(),
+        'L2': empty_stats(),
+        'L3': empty_stats(),
+        'numeric_reasoning': empty_stats(),
+        'non_numeric_reasoning': empty_stats(),
+        'numeric_reasoning_categories': {
+            category: empty_stats()
+            for category in NumericReasoningCategory
+        },
+        'overall': empty_stats(),
+    }
+
+
 def main():
     # 解析命令行参数
-    parser = argparse.ArgumentParser(description='统计模型在不同难度级别和推理任务上的准确率')
+    parser = argparse.ArgumentParser(description='统计模型在不同难度级别和数值推理任务上的准确率')
     parser.add_argument('--results_dir', type=str, required=True, help='结果文件目录路径')
     args = parser.parse_args()
 
@@ -87,35 +122,23 @@ def main():
 
     # 统计数据
     difficulty_stats = {
-        'L1': {'correct': 0, 'total': 0},
-        'L2': {'correct': 0, 'total': 0},
-        'L3': {'correct': 0, 'total': 0}
+        'L1': empty_stats(),
+        'L2': empty_stats(),
+        'L3': empty_stats(),
     }
 
-    reasoning_stats = {
-        'correct': 0,
-        'total': 0
+    numeric_reasoning_stats = empty_stats()
+    non_numeric_reasoning_stats = empty_stats()
+
+    numeric_reasoning_category_stats = {
+        category: empty_stats()
+        for category in NumericReasoningCategory
     }
 
-    non_reasoning_stats = {
-        'correct': 0,
-        'total': 0
-    }
-
-    overall_stats = {
-        'correct': 0,
-        'total': 0
-    }
+    overall_stats = empty_stats()
 
     # 详细统计（按应用）
-    app_details = defaultdict(lambda: {
-        'L1': {'correct': 0, 'total': 0},
-        'L2': {'correct': 0, 'total': 0},
-        'L3': {'correct': 0, 'total': 0},
-        'reasoning': {'correct': 0, 'total': 0},
-        'non_reasoning': {'correct': 0, 'total': 0},
-        'overall': {'correct': 0, 'total': 0}
-    })
+    app_details = defaultdict(create_app_detail)
 
     # 遍历所有应用
     for app_enum, tasks in APP_TASKS_MAP.items():
@@ -147,7 +170,8 @@ def main():
         for task in tasks.task_items:
             instruction = task.instruction
             human_steps = task.human_steps
-            is_reasoning = task.is_reasoning
+            numeric_reasoning_categories = task.numeric_reasoning_categories
+            is_numeric_reasoning = bool(numeric_reasoning_categories)
 
             # 获取验证结果（根据 instruction 匹配）
             if instruction not in results:
@@ -167,15 +191,20 @@ def main():
             if verify_result:
                 difficulty_stats[difficulty]['correct'] += 1
 
-            # 更新推理任务统计
-            if is_reasoning:
-                reasoning_stats['total'] += 1
+            # 更新数值推理任务统计
+            if is_numeric_reasoning:
+                numeric_reasoning_stats['total'] += 1
                 if verify_result:
-                    reasoning_stats['correct'] += 1
+                    numeric_reasoning_stats['correct'] += 1
             else:
-                non_reasoning_stats['total'] += 1
+                non_numeric_reasoning_stats['total'] += 1
                 if verify_result:
-                    non_reasoning_stats['correct'] += 1
+                    non_numeric_reasoning_stats['correct'] += 1
+
+            for category in numeric_reasoning_categories:
+                numeric_reasoning_category_stats[category]['total'] += 1
+                if verify_result:
+                    numeric_reasoning_category_stats[category]['correct'] += 1
 
             # 更新应用级别的详细统计
             app_name = app_enum.value
@@ -187,14 +216,20 @@ def main():
             if verify_result:
                 app_details[app_name][difficulty]['correct'] += 1
 
-            if is_reasoning:
-                app_details[app_name]['reasoning']['total'] += 1
+            if is_numeric_reasoning:
+                app_details[app_name]['numeric_reasoning']['total'] += 1
                 if verify_result:
-                    app_details[app_name]['reasoning']['correct'] += 1
+                    app_details[app_name]['numeric_reasoning']['correct'] += 1
             else:
-                app_details[app_name]['non_reasoning']['total'] += 1
+                app_details[app_name]['non_numeric_reasoning']['total'] += 1
                 if verify_result:
-                    app_details[app_name]['non_reasoning']['correct'] += 1
+                    app_details[app_name]['non_numeric_reasoning']['correct'] += 1
+
+            for category in numeric_reasoning_categories:
+                category_detail = app_details[app_name]['numeric_reasoning_categories'][category]
+                category_detail['total'] += 1
+                if verify_result:
+                    category_detail['correct'] += 1
 
     if overall_stats['total'] == 0:
         print("\n无统计数据")
@@ -226,33 +261,36 @@ def main():
 
         # 按任务类型统计表格
         f.write("## 按任务类型统计\n\n")
+        f.write("数值推理子类支持多标签，子类总数可能大于数值推理任务总数。\n\n")
         f.write("| 任务类型 | 正确数 | 总数 | 准确率 |\n")
         f.write("|---------|--------|------|--------|\n")
-        if reasoning_stats['total'] > 0:
-            reasoning_accuracy = reasoning_stats['correct'] / reasoning_stats['total'] * 100
-            f.write(f"| 推理任务 (Reasoning) | {reasoning_stats['correct']} | {reasoning_stats['total']} | {reasoning_accuracy:.2f}% |\n")
-        if non_reasoning_stats['total'] > 0:
-            non_reasoning_accuracy = non_reasoning_stats['correct'] / non_reasoning_stats['total'] * 100
-            f.write(f"| 非推理任务 (Non-reasoning) | {non_reasoning_stats['correct']} | {non_reasoning_stats['total']} | {non_reasoning_accuracy:.2f}% |\n")
+        if numeric_reasoning_stats['total'] > 0:
+            f.write(f"| 数值推理任务 (Numeric reasoning) | {numeric_reasoning_stats['correct']} | {numeric_reasoning_stats['total']} | {format_accuracy(numeric_reasoning_stats)} |\n")
+        if non_numeric_reasoning_stats['total'] > 0:
+            f.write(f"| 非数值推理任务 (Non-numeric reasoning) | {non_numeric_reasoning_stats['correct']} | {non_numeric_reasoning_stats['total']} | {format_accuracy(non_numeric_reasoning_stats)} |\n")
+        for category in NumericReasoningCategory:
+            category_stats = numeric_reasoning_category_stats[category]
+            if category_stats['total'] > 0:
+                category_name = NUMERIC_REASONING_CATEGORY_NAMES[category]
+                f.write(f"| {category_name} | {category_stats['correct']} | {category_stats['total']} | {format_accuracy(category_stats)} |\n")
         f.write("\n")
 
         # 各应用详细统计表格
         f.write("## 各应用详细统计\n\n")
-        f.write("| 应用 | L1 | L2 | L3 | Reasoning | Non-reasoning | 总体 |\n")
+        f.write("| 应用 | L1 | L2 | L3 | Numeric reasoning | Non-numeric reasoning | 总体 |\n")
         f.write("|------|----|----|----|-----------|--------------:|------|\n")
 
         for app_name in sorted(app_details.keys()):
             stats = app_details[app_name]
 
-            # 计算各项准确率
-            l1_acc = f"{stats['L1']['correct']}/{stats['L1']['total']}" if stats['L1']['total'] > 0 else "-"
-            l2_acc = f"{stats['L2']['correct']}/{stats['L2']['total']}" if stats['L2']['total'] > 0 else "-"
-            l3_acc = f"{stats['L3']['correct']}/{stats['L3']['total']}" if stats['L3']['total'] > 0 else "-"
-            reasoning_acc = f"{stats['reasoning']['correct']}/{stats['reasoning']['total']}" if stats['reasoning']['total'] > 0 else "-"
-            non_reasoning_acc = f"{stats['non_reasoning']['correct']}/{stats['non_reasoning']['total']}" if stats['non_reasoning']['total'] > 0 else "-"
-            overall_acc = f"{stats['overall']['correct']}/{stats['overall']['total']}" if stats['overall']['total'] > 0 else "-"
+            l1_acc = format_count(stats['L1'])
+            l2_acc = format_count(stats['L2'])
+            l3_acc = format_count(stats['L3'])
+            numeric_reasoning_acc = format_count(stats['numeric_reasoning'])
+            non_numeric_reasoning_acc = format_count(stats['non_numeric_reasoning'])
+            overall_acc = format_count(stats['overall'])
 
-            f.write(f"| {app_name} | {l1_acc} | {l2_acc} | {l3_acc} | {reasoning_acc} | {non_reasoning_acc} | {overall_acc} |\n")
+            f.write(f"| {app_name} | {l1_acc} | {l2_acc} | {l3_acc} | {numeric_reasoning_acc} | {non_numeric_reasoning_acc} | {overall_acc} |\n")
 
         f.write("\n")
 
@@ -266,21 +304,26 @@ def main():
 
             overall = stats['overall']
             if overall['total'] > 0:
-                f.write(f"| 总体 | {overall['correct']} | {overall['total']} | {overall['correct']/overall['total']*100:.2f}% |\n")
+                f.write(f"| 总体 | {overall['correct']} | {overall['total']} | {format_accuracy(overall)} |\n")
 
             for level in ['L1', 'L2', 'L3']:
                 level_stats = stats[level]
                 if level_stats['total'] > 0:
-                    acc = level_stats['correct'] / level_stats['total'] * 100
-                    f.write(f"| {level} | {level_stats['correct']} | {level_stats['total']} | {acc:.2f}% |\n")
+                    f.write(f"| {level} | {level_stats['correct']} | {level_stats['total']} | {format_accuracy(level_stats)} |\n")
 
-            reasoning = stats['reasoning']
-            if reasoning['total'] > 0:
-                f.write(f"| 推理任务 | {reasoning['correct']} | {reasoning['total']} | {reasoning['correct']/reasoning['total']*100:.2f}% |\n")
+            numeric_reasoning = stats['numeric_reasoning']
+            if numeric_reasoning['total'] > 0:
+                f.write(f"| 数值推理任务 | {numeric_reasoning['correct']} | {numeric_reasoning['total']} | {format_accuracy(numeric_reasoning)} |\n")
 
-            non_reasoning = stats['non_reasoning']
-            if non_reasoning['total'] > 0:
-                f.write(f"| 非推理任务 | {non_reasoning['correct']} | {non_reasoning['total']} | {non_reasoning['correct']/non_reasoning['total']*100:.2f}% |\n")
+            non_numeric_reasoning = stats['non_numeric_reasoning']
+            if non_numeric_reasoning['total'] > 0:
+                f.write(f"| 非数值推理任务 | {non_numeric_reasoning['correct']} | {non_numeric_reasoning['total']} | {format_accuracy(non_numeric_reasoning)} |\n")
+
+            for category in NumericReasoningCategory:
+                category_stats = stats['numeric_reasoning_categories'][category]
+                if category_stats['total'] > 0:
+                    category_name = NUMERIC_REASONING_CATEGORY_NAMES[category]
+                    f.write(f"| {category_name} | {category_stats['correct']} | {category_stats['total']} | {format_accuracy(category_stats)} |\n")
 
             f.write("\n")
 
