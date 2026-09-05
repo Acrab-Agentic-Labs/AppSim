@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leaderboard | AppSim-Bench</title>
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { background:#f7f8fb; }
+    .lb-section { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .lb-table-wrap { overflow-x:hidden; }
+    table.lb { border-collapse: collapse; width:100%; table-layout:fixed; font-size:0.72rem; background:#fff; }
+    table.lb th, table.lb td {
+      padding:6px 7px;
+      border-bottom:1px solid #eef1f5;
+      text-align:center;
+      white-space:normal;
+      word-break:break-word;
+      line-height:1.15;
+      vertical-align:middle;
+    }
+    table.lb th { background:#f4f6f9; color:#626c7a; font-weight:700; font-size:0.72rem; position:sticky; top:0; }
+    table.lb td:first-child, table.lb th:first-child { text-align:left; }
+    table.lb td:first-child, table.lb th:first-child { white-space:nowrap; width:18%; min-width:130px; }
+    table.lb tbody tr:hover { background:#fafbff; }
+    table.lb .best { font-weight:800; color:#166534; }
+    table.lb .second { text-decoration:underline; }
+    table.lb .grp { border-left:1px solid #d9dee8; }
+
+    /* App x Model accuracy heatmap */
+    .acc-heatmap { overflow-x:hidden; margin-top:12px; }
+    .acc-grid { display:grid; gap:1px; background:#d9dee8; border-radius:8px; overflow:hidden; width:100%; box-sizing:border-box; }
+    .acc-grid .corner { background:#f4f6f9; padding:6px 8px; font-size:0.72rem; font-weight:700; color:#626c7a; position:sticky; left:0; z-index:3; display:flex; align-items:center; }
+    .acc-grid .col-label { background:#f4f6f9; padding:4px 2px; font-size:0.62rem; font-weight:600; color:#1f2328; text-align:center; writing-mode:vertical-rl; transform:rotate(180deg); height:88px; display:flex; align-items:center; justify-content:center; min-width:0; }
+    .acc-grid .row-label { background:#f4f6f9; padding:6px 8px; font-size:0.74rem; font-weight:600; color:#1f2328; white-space:nowrap; position:sticky; left:0; z-index:2; display:flex; align-items:center; min-width:0; }
+    .acc-cell { padding:2px; display:flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:600; color:#fff; cursor:pointer; min-width:0; min-height:28px; transition:filter .1s; white-space:nowrap; overflow:hidden; }
+    .acc-cell:hover { filter:brightness(0.85); outline:2px solid #2563eb; outline-offset:-2px; }
+    .acc-cell.low-acc { color:#1f2328; }
+    .acc-legend { display:flex; align-items:center; gap:6px; margin-top:8px; font-size:0.76rem; color:#626c7a; }
+    .acc-legend .grad { width:150px; height:12px; border-radius:3px; background: linear-gradient(to right, #fee2e2, #fca5a5, #f87171, #ef4444, #dc2626, #16a34a, #15803d, #166534); }
+
+    /* Drill-down panel */
+    .drill-panel { margin-top:16px; border:1px solid #d9dee8; border-radius:8px; background:#fff; overflow:hidden; display:none; }
+    .drill-head { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#f4f6f9; border-bottom:1px solid #eef1f5; }
+    .drill-head h4 { margin:0; font-size:0.9rem; }
+    .drill-close { border:none; background:none; font-size:1.1rem; cursor:pointer; padding:4px 8px; border-radius:4px; color:#626c7a; }
+    .drill-close:hover { background:#eef1f5; color:#1f2328; }
+    .drill-body { overflow-x:auto; padding:10px 12px; }
+    .drill-grid { display:grid; gap:3px; width:max-content; }
+    .drill-grid .task-hd { font-size:0.65rem; color:#626c7a; text-align:center; display:flex; align-items:flex-end; justify-content:center; }
+    .drill-grid .cell { width:16px; height:16px; border-radius:3px; cursor:pointer; border:1px solid transparent; }
+    .drill-grid .cell.ok { background:#26a641; } .drill-grid .cell.no { background:#e5544e; }
+    .drill-grid .cell:hover { outline:2px solid #2563eb; outline-offset:1px; }
+
+    /* Per-task heatmap */
+    .heat-controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:14px 0; }
+    .heat-controls input[type=search]{ height:36px; padding:0 12px; border:1px solid #d9dee8; border-radius:6px; min-width:240px; flex:1 1 260px; }
+    .legend { display:flex; gap:16px; align-items:center; color:#626c7a; font-size:0.85rem; flex-wrap:wrap;}
+    .legend .sw { display:inline-block; width:14px; height:14px; border-radius:3px; vertical-align:-2px; margin-right:5px; border:1px solid transparent;}
+    .sw.ok{ background:#26a641;} .sw.no{ background:#e5544e;}
+
+    .app-block { background:#fff; border:1px solid #d9dee8; border-radius:8px; margin-bottom:14px; overflow:hidden; }
+    .app-head { display:flex; justify-content:space-between; align-items:baseline; padding:9px 12px; background:#f4f6f9; border-bottom:1px solid #eef1f5; }
+    .app-head h3 { margin:0; font-size:0.95rem; }
+    .app-head span { color:#626c7a; font-size:0.8rem; }
+    .grid-scroll { overflow-x:hidden; }
+    .heat-grid { display:grid; gap:3px; padding:10px 12px; width:100%; box-sizing:border-box; }
+    .agent-name { font-size:0.78rem; font-weight:600; color:#1f2328; display:flex; align-items:center; height:16px; padding-right:10px; white-space:nowrap; position:sticky; left:0; background:#fff; z-index:2; min-width:0; overflow:hidden; text-overflow:ellipsis;}
+    .cell { width:16px; height:16px; border-radius:3px; cursor:pointer; border:1px solid transparent; overflow:hidden; }
+    .heat-grid .cell { width:auto; }
+    .cell.ok{ background:#26a641;} .cell.no{ background:#e5544e;}
+    .cell:hover{ outline:2px solid #2563eb; outline-offset:1px; }
+    .col-head { position:sticky; left:0; background:#fff; z-index:2; font-size:0.72rem; color:#626c7a; height:16px; display:flex; align-items:center; min-width:0; overflow:hidden; }
+
+    .tip { position:fixed; z-index:50; max-width:340px; pointer-events:none; padding:8px 10px; border-radius:6px;
+           background:#111827; color:#f9fafb; font-size:0.8rem; box-shadow:0 8px 24px rgba(0,0,0,.18); opacity:0; transition:opacity .08s; }
+    .tip.on{ opacity:1; }
+    .tip .m{ color:#cbd5e1; margin-top:3px; }
+    .back-link{ display:inline-block; margin:1.2rem 0; }
+    .note{ color:#626c7a; font-size:0.78rem; }
+    .heat-controls select{ height:36px; padding:0 8px; border:1px solid #d9dee8; border-radius:6px; background:#fff; }
+    .heat-controls label.sel{ display:inline-flex; flex-direction:column; gap:2px; font-size:0.72rem; color:#626c7a; }
+
+    @media (max-width: 1200px) {
+      table.lb { font-size:0.67rem; }
+      table.lb th, table.lb td { padding:5px 5px; }
+      .acc-grid .col-label { font-size:0.58rem; height:80px; }
+      .acc-grid .row-label { font-size:0.68rem; padding:5px 6px; }
+      .acc-cell { font-size:0.56rem; min-height:24px; }
+    }
+
+    /* Left sidebar navigation */
+    .side-nav {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #d9dee8;
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .side-nav a {
+      display: block;
+      padding: 6px 16px 6px 12px;
+      font-size: 0.78rem;
+      color: #4b5563;
+      text-decoration: none;
+      white-space: nowrap;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    .side-nav a:hover {
+      color: #1f2328;
+      background: #f4f6f9;
+    }
+    .side-nav a.active {
+      color: #2563eb;
+      border-left-color: #2563eb;
+      font-weight: 600;
+      background: #eef2ff;
+    }
+    @media (max-width: 1200px) {
+      .side-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Left sidebar navigation -->
+  <nav class="side-nav" id="sideNav">
+    <a href="#sec-main">Main Results</a>
+    <a href="#sec-efficiency">Efficiency</a>
+    <a href="#sec-app-model">App × Model</a>
+    <a href="#sec-heatmap">Per-Task Heatmap</a>
+    <a href="index.html" style="margin-top:8px; border-top:1px solid #eef1f5; padding-top:8px;">← Home</a>
+  </nav>
+
+  <section class="section">
+    <div class="lb-section">
+      <a href="index.html" class="back-link">&larr; Back to project page</a>
+      <h1 class="title is-2">AppSim-Bench Leaderboard</h1>
+      <p class="subtitle is-5">19 GUI agents evaluated on 557 tasks across 17 simulated apps.</p>
+
+      <!-- ===== Table 1: Main accuracy ===== -->
+      <h2 class="title is-4" style="margin-top:2rem;" id="sec-main">Main Results</h2>
+      <p class="content">
+        Accuracy across overall performance, task length, and numerical-reasoning subtype.
+        <strong>ZH</strong>/<strong>EN</strong> are task-weighted accuracies over the Chinese and English app groups;
+        <em>#S</em> is the human-annotated step count. <span class="best">Bold</span> = best, <span class="second">underline</span> = second best per column.
+      </p>
+      <div class="lb-table-wrap">
+        <table class="lb">
+          <thead>
+            <tr>
+              <th rowspan="2">Agent Model</th>
+              <th colspan="3">Overall Benchmark</th>
+              <th colspan="3" class="grp">Task Length</th>
+              <th colspan="4" class="grp">Numerical Reasoning Subtype</th>
+            </tr>
+            <tr>
+              <th>Overall</th><th>ZH</th><th>EN</th>
+              <th class="grp">#S&le;5</th><th>#S 6&ndash;10</th><th>#S&ge;11</th>
+              <th class="grp">Cnt.</th><th>Arith.</th><th>Comp.</th><th>Thres.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Claude-Opus-4.7</td><td class="best">50.27%</td><td class="best">60.07%</td><td class="second">40.15%</td><td class="second grp">58.87%</td><td class="best">54.29%</td><td>28.15%</td><td class="best grp">52.31%</td><td class="second">55.56%</td><td class="best">52.00%</td><td class="best">42.86%</td></tr>
+            <tr><td>Gemini-3-Pro</td><td class="second">49.91%</td><td class="best">60.07%</td><td>39.42%</td><td class="grp">56.38%</td><td>52.86%</td><td class="best">33.33%</td><td class="second grp">46.15%</td><td>42.22%</td><td>49.33%</td><td>23.81%</td></tr>
+            <tr><td>GPT-5.5</td><td>49.73%</td><td>58.66%</td><td class="best">40.51%</td><td class="best grp">59.22%</td><td>52.14%</td><td>27.41%</td><td class="grp">44.62%</td><td class="best">57.78%</td><td class="best">52.00%</td><td class="second">33.33%</td></tr>
+            <tr><td>Gemini-3.1-Pro</td><td>49.55%</td><td class="second">59.36%</td><td>39.42%</td><td class="grp">56.74%</td><td>52.86%</td><td class="second">31.11%</td><td class="grp">43.08%</td><td>42.22%</td><td class="second">50.67%</td><td>23.81%</td></tr>
+            <tr><td>Doubao-Seed-1.6</td><td>39.14%</td><td>50.88%</td><td>27.01%</td><td class="grp">45.74%</td><td>43.57%</td><td>20.74%</td><td class="grp">23.08%</td><td>22.22%</td><td>36.00%</td><td>9.52%</td></tr>
+            <tr><td>GPT-5</td><td>33.39%</td><td>37.81%</td><td>28.83%</td><td class="grp">43.62%</td><td>31.43%</td><td>14.07%</td><td class="grp">27.69%</td><td>35.56%</td><td>40.00%</td><td>4.76%</td></tr>
+            <tr><td>Doubao-Seed-1.8</td><td>32.14%</td><td>34.63%</td><td>29.56%</td><td class="grp">43.26%</td><td>27.86%</td><td>13.33%</td><td class="grp">23.08%</td><td>31.11%</td><td>28.00%</td><td>4.76%</td></tr>
+            <tr><td>Qwen-3.6-Plus</td><td>31.42%</td><td>39.58%</td><td>22.99%</td><td class="grp">39.01%</td><td>31.43%</td><td>15.56%</td><td class="grp">23.08%</td><td>13.33%</td><td>28.00%</td><td>9.52%</td></tr>
+            <tr><td>Doubao-Seed-2.0</td><td>29.26%</td><td>36.40%</td><td>21.90%</td><td class="grp">37.94%</td><td>28.57%</td><td>11.85%</td><td class="grp">27.69%</td><td>28.89%</td><td>20.00%</td><td>14.29%</td></tr>
+            <tr><td>GPT-5.4</td><td>29.08%</td><td>34.63%</td><td>23.36%</td><td class="grp">38.30%</td><td>25.71%</td><td>13.33%</td><td class="grp">24.62%</td><td>24.44%</td><td>30.67%</td><td>9.52%</td></tr>
+            <tr><td>Qwen-3.6-Flash</td><td>28.19%</td><td>38.87%</td><td>17.15%</td><td class="grp">38.30%</td><td>25.71%</td><td>9.63%</td><td class="grp">20.00%</td><td>24.44%</td><td>26.67%</td><td>4.76%</td></tr>
+            <tr><td>Claude-Sonnet-4.6</td><td>27.29%</td><td>31.10%</td><td>23.36%</td><td class="grp">36.17%</td><td>27.86%</td><td>8.15%</td><td class="grp">29.23%</td><td>33.33%</td><td>26.67%</td><td>14.29%</td></tr>
+            <tr><td>Claude-Haiku-4.5</td><td>22.80%</td><td>22.61%</td><td>22.99%</td><td class="grp">34.04%</td><td>15.71%</td><td>6.67%</td><td class="grp">20.00%</td><td>22.22%</td><td>20.00%</td><td>9.52%</td></tr>
+            <tr><td>Claude-Sonnet-4.5</td><td>21.01%</td><td>24.03%</td><td>17.88%</td><td class="grp">31.91%</td><td>14.29%</td><td>5.19%</td><td class="grp">23.08%</td><td>26.67%</td><td>21.33%</td><td>14.29%</td></tr>
+            <tr><td>Gemini-2.5-Pro</td><td>17.24%</td><td>21.20%</td><td>13.14%</td><td class="grp">26.24%</td><td>14.29%</td><td>1.48%</td><td class="grp">23.08%</td><td>17.78%</td><td>17.33%</td><td>9.52%</td></tr>
+            <tr><td>MobileAgent-v3.5</td><td>31.42%</td><td>35.34%</td><td>27.37%</td><td class="grp">41.49%</td><td>26.43% <span class="has-text-danger">↓15.06</span></td><td>15.56% <span class="has-text-danger">↓10.87</span></td><td class="grp">18.46%</td><td>24.44%</td><td>32.00%</td><td>4.76%</td></tr>
+            <tr><td>UI-TARS-1.5-7B</td><td>22.62%</td><td>31.10%</td><td>13.87%</td><td class="grp">30.14%</td><td>22.86% <span class="has-text-danger">↓7.28</span></td><td>6.67% <span class="has-text-danger">↓16.19</span></td><td class="grp">20.00%</td><td>8.89%</td><td>16.00%</td><td>4.76%</td></tr>
+            <tr><td>AgentCPM-GUI</td><td>10.05%</td><td>9.19%</td><td>10.95%</td><td class="grp">17.02%</td><td>5.71% <span class="has-text-danger">↓11.31</span></td><td>0.00% <span class="has-text-danger">↓5.71</span></td><td class="grp">3.08%</td><td>2.22%</td><td>5.33%</td><td>4.76%</td></tr>
+            <tr><td>V-Droid</td><td>9.87%</td><td>13.43%</td><td>6.20%</td><td class="grp">15.25%</td><td>7.86% <span class="has-text-danger">↓7.39</span></td><td>0.74% <span class="has-text-danger">↓7.12</span></td><td class="grp">15.38%</td><td>11.11%</td><td>9.33%</td><td>0.00%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top:6px;">Cnt./Arith./Comp./Thres. = counting, arithmetic, numeric comparison, threshold filtering. Subtypes are not mutually exclusive.</p>
+
+      <!-- ===== Table 2: Efficiency ===== -->
+      <h2 class="title is-4" style="margin-top:2.5rem;" id="sec-efficiency">Action Efficiency &amp; Budget Exhaustion</h2>
+      <p class="content">
+        AvgAct = average valid actions per task. ActOH = action overhead on successful tasks (valid actions / human reference steps).
+        Budg. Exh. = trajectories exhausting the 50-step budget. Budg. ACC = accuracy among those. Rep.&ge;3 / Rep.&ge;5 = budget-exhausted runs with &ge;3 / &ge;5 consecutive repeated actions.
+      </p>
+      <div class="lb-table-wrap">
+        <table class="lb">
+          <thead>
+            <tr>
+              <th>Agent Model</th><th>ACC &uarr;</th><th>AvgAct &darr;</th><th>ActOH &darr;</th>
+              <th>Budg. Exh. &darr;</th><th>Budg. ACC &uarr;</th><th>Rep.&ge;3 &darr;</th><th>Rep.&ge;5 &darr;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Claude-Opus-4.7</td><td>50.27%</td><td>14.01</td><td>1.98</td><td>33</td><td>0.00%</td><td>27 (81.82%)</td><td>20 (60.61%)</td></tr>
+            <tr><td>Gemini-3-Pro</td><td>49.91%</td><td>10.79</td><td>1.69</td><td>14</td><td>0.00%</td><td>5 (35.71%)</td><td>3 (21.43%)</td></tr>
+            <tr><td>GPT-5.5</td><td>49.73%</td><td>15.04</td><td>2.09</td><td>45</td><td>0.00%</td><td>27 (60.00%)</td><td>15 (33.33%)</td></tr>
+            <tr><td>Gemini-3.1-Pro</td><td>49.55%</td><td>10.69</td><td>1.80</td><td>19</td><td>10.53%</td><td>7 (36.84%)</td><td>3 (15.79%)</td></tr>
+            <tr><td>Doubao-Seed-1.6</td><td>39.14%</td><td>15.59</td><td>1.73</td><td>85</td><td>1.18%</td><td>74 (87.06%)</td><td>52 (61.18%)</td></tr>
+            <tr><td>GPT-5</td><td>33.39%</td><td>23.15</td><td>2.94</td><td>136</td><td>0.00%</td><td>105 (77.21%)</td><td>61 (44.85%)</td></tr>
+            <tr><td>Doubao-Seed-1.8</td><td>32.14%</td><td>9.71</td><td>1.60</td><td>44</td><td>0.00%</td><td>36 (81.82%)</td><td>27 (61.36%)</td></tr>
+            <tr><td>Qwen-3.6-Plus</td><td>31.42%</td><td>12.66</td><td>1.62</td><td>23</td><td>0.00%</td><td>11 (47.83%)</td><td>9 (39.13%)</td></tr>
+            <tr><td>Doubao-Seed-2.0</td><td>29.26%</td><td>10.76</td><td>1.81</td><td>46</td><td>0.00%</td><td>33 (71.74%)</td><td>28 (60.87%)</td></tr>
+            <tr><td>GPT-5.4</td><td>29.08%</td><td>10.88</td><td>1.56</td><td>16</td><td>0.00%</td><td>12 (75.00%)</td><td>7 (43.75%)</td></tr>
+            <tr><td>Qwen-3.6-Flash</td><td>28.19%</td><td>13.30</td><td>2.10</td><td>38</td><td>0.00%</td><td>27 (71.05%)</td><td>23 (60.53%)</td></tr>
+            <tr><td>Claude-Sonnet-4.6</td><td>27.29%</td><td>29.80</td><td>3.11</td><td>253</td><td>0.40%</td><td>222 (87.75%)</td><td>171 (67.59%)</td></tr>
+            <tr><td>Claude-Haiku-4.5</td><td>22.80%</td><td>31.63</td><td>4.07</td><td>221</td><td>0.00%</td><td>208 (94.12%)</td><td>162 (73.30%)</td></tr>
+            <tr><td>Claude-Sonnet-4.5</td><td>21.01%</td><td>23.31</td><td>3.30</td><td>93</td><td>3.23%</td><td>81 (87.10%)</td><td>55 (59.14%)</td></tr>
+            <tr><td>Gemini-2.5-Pro</td><td>17.24%</td><td>22.10</td><td>2.38</td><td>106</td><td>0.00%</td><td>74 (69.81%)</td><td>40 (37.74%)</td></tr>
+            <tr><td>MobileAgent-v3.5</td><td>31.42%</td><td>16.79</td><td>2.02</td><td>83</td><td>1.20%</td><td>69 (83.13%)</td><td>40 (48.19%)</td></tr>
+            <tr><td>UI-TARS-1.5-7B</td><td>22.62%</td><td>24.76</td><td>1.67</td><td>226</td><td>0.00%</td><td>156 (69.03%)</td><td>138 (61.06%)</td></tr>
+            <tr><td>AgentCPM-GUI</td><td>10.05%</td><td>24.82</td><td>1.71</td><td>242</td><td>0.00%</td><td>203 (83.88%)</td><td>198 (81.82%)</td></tr>
+            <tr><td>V-Droid</td><td>9.87%</td><td>33.30</td><td>4.60</td><td>313</td><td>0.32%</td><td>313 (100.00%)</td><td>295 (94.25%)</td></tr>
+            <tr style="font-weight:700; background:#f4f6f9;"><td>Summary</td><td>30.76%</td><td>18.58</td><td>2.15</td><td>2036</td><td>0.44%</td><td>1690 (83.01%)</td><td>1347 (66.16%)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ===== App × Model Accuracy Heatmap ===== -->
+      <h2 class="title is-4" style="margin-top:2.5rem;" id="sec-app-model">App × Model Accuracy Heatmap</h2>
+      <p class="content">
+        Each cell shows one model's accuracy on one app. Deeper green = higher accuracy, deeper red = lower accuracy.
+        Click any cell to see the per-task correctness grid for that (model, app) pair.
+      </p>
+      <div class="acc-heatmap">
+        <div class="acc-grid" id="accGrid"></div>
+      </div>
+      <div class="acc-legend"><span>0%</span><span class="grad"></span><span>60%+</span></div>
+      <div class="drill-panel" id="drillPanel">
+        <div class="drill-head">
+          <h4 id="drillTitle">—</h4>
+          <button class="drill-close" id="drillClose" title="Close">&times;</button>
+        </div>
+        <div class="drill-body">
+          <div class="drill-grid" id="drillGrid"></div>
+        </div>
+      </div>
+
+      <!-- ===== Heatmap ===== -->
+      <h2 class="title is-4" style="margin-top:2.5rem;" id="sec-heatmap">Per-Task Correctness Heatmap</h2>
+      <p class="content">
+        Each cell is one (model, task) pair. <span class="legend" style="display:inline-flex;"><span><span class="sw ok"></span>correct</span> <span><span class="sw no"></span>wrong</span></span>.
+        Rows are models (ordered by overall accuracy), grouped by app. Hover a cell for the task instruction.
+      </p>
+      <div class="heat-controls">
+        <input type="search" id="appFilter" placeholder="Filter by app name (e.g. WeChat, Amazon)…">
+        <label class="sel">Language
+          <select id="langFilter">
+            <option value="all">All</option>
+            <option value="zh">ZH only</option>
+            <option value="en">EN only</option>
+          </select>
+        </label>
+        <label class="sel">Task length
+          <select id="stepFilter">
+            <option value="all">All</option>
+            <option value="le5">#S &le; 5</option>
+            <option value="mid">#S 6&ndash;10</option>
+            <option value="ge11">#S &ge; 11</option>
+          </select>
+        </label>
+        <label class="sel">Numerical reasoning
+          <select id="catFilter">
+            <option value="all">All tasks</option>
+            <option value="any">Numerical reasoning (any)</option>
+            <option value="count">count</option>
+            <option value="calculate">calculate</option>
+            <option value="compare_select">compare_select</option>
+            <option value="threshold_filter">threshold_filter</option>
+          </select>
+        </label>
+      </div>
+      <p class="note" id="heatStat" style="margin-bottom:10px;"></p>
+      <div id="heatmap"></div>
+    </div>
+  </section>
+
+  <div class="tip" id="tip"></div>
+
+  <script src="static/data/leaderboard_data.js?v=3"></script>
+  <script>
+    // ===== App × Model Accuracy Heatmap =====
+    (function () {
+      const D = window.APPSIM_LEADERBOARD;
+      const accGrid = document.getElementById("accGrid");
+      const drillPanel = document.getElementById("drillPanel");
+      const drillTitle = document.getElementById("drillTitle");
+      const drillGrid = document.getElementById("drillGrid");
+      const drillClose = document.getElementById("drillClose");
+      const tip = document.getElementById("tip");
+
+      const nModels = D.models.length;
+      const nApps = D.appSpans.length;
+
+      // Compute per-app accuracy for each model
+      const accData = []; // accData[appIdx][modelIdx] = {correct, total, acc}
+      D.appSpans.forEach((span, ai) => {
+        accData[ai] = [];
+        const total = span.end - span.start + 1;
+        D.models.forEach((m, mi) => {
+          let correct = 0;
+          for (let i = span.start; i <= span.end; i++) {
+            if (m.s[i] === 1) correct++;
+          }
+          accData[ai][mi] = { correct, total, acc: correct / total };
+        });
+      });
+
+      // Color function: interpolate from red (0%) to green (60%+)
+      function accColor(acc) {
+        // clamp to [0, 0.65] for color mapping
+        const t = Math.min(acc / 0.65, 1);
+        if (t < 0.5) {
+          // red to yellow
+          const s = t / 0.5;
+          const r = Math.round(220 - s * 30);
+          const g = Math.round(60 + s * 140);
+          const b = Math.round(60 - s * 10);
+          return `rgb(${r},${g},${b})`;
+        } else {
+          // yellow to green
+          const s = (t - 0.5) / 0.5;
+          const r = Math.round(190 - s * 150);
+          const g = Math.round(200 - s * 40);
+          const b = Math.round(50 + s * 40);
+          return `rgb(${r},${g},${b})`;
+        }
+      }
+
+      // Build the grid: columns = 1 (row label) + nModels
+      accGrid.style.gridTemplateColumns = `minmax(112px, 150px) repeat(${nModels}, minmax(26px, 1fr))`;
+
+      // Header row: corner + model names (vertical)
+      const corner = document.createElement("div");
+      corner.className = "corner";
+      corner.textContent = "App \\ Model";
+      accGrid.appendChild(corner);
+
+      D.models.forEach((m) => {
+        const lbl = document.createElement("div");
+        lbl.className = "col-label";
+        lbl.textContent = m.name;
+        accGrid.appendChild(lbl);
+      });
+
+      // App rows
+      D.appSpans.forEach((span, ai) => {
+        const rowLabel = document.createElement("div");
+        rowLabel.className = "row-label";
+        rowLabel.textContent = span.label;
+        accGrid.appendChild(rowLabel);
+
+        D.models.forEach((m, mi) => {
+          const d = accData[ai][mi];
+          const cell = document.createElement("div");
+          cell.className = "acc-cell" + (d.acc < 0.3 ? " low-acc" : "");
+          cell.style.background = accColor(d.acc);
+          cell.textContent = Math.round(d.acc * 100) + "%";
+          cell.dataset.ai = ai;
+          cell.dataset.mi = mi;
+          accGrid.appendChild(cell);
+        });
+      });
+
+      // Tooltip on hover
+      accGrid.addEventListener("mouseover", (e) => {
+        const cell = e.target.closest(".acc-cell");
+        if (!cell) return;
+        const ai = +cell.dataset.ai, mi = +cell.dataset.mi;
+        const d = accData[ai][mi];
+        const span = D.appSpans[ai];
+        const m = D.models[mi];
+        tip.innerHTML = `<strong>${m.name} on ${span.label}</strong>`
+          + `<div class="m">${d.correct}/${d.total} correct · ${Math.round(d.acc*1000)/10}%</div>`;
+        tip.classList.add("on");
+      });
+      accGrid.addEventListener("mousemove", (e) => {
+        const pad = 14, r = tip.getBoundingClientRect();
+        let left = e.clientX + 14, top = e.clientY + 14;
+        if (left + r.width + pad > window.innerWidth) left = e.clientX - r.width - 14;
+        if (top + r.height + pad > window.innerHeight) top = e.clientY - r.height - 14;
+        tip.style.left = Math.max(pad, left) + "px";
+        tip.style.top = Math.max(pad, top) + "px";
+      });
+      accGrid.addEventListener("mouseout", (e) => {
+        if (e.target.closest(".acc-cell")) tip.classList.remove("on");
+      });
+
+      // Click: drill down into per-task grid for that (model, app)
+      accGrid.addEventListener("click", (e) => {
+        const cell = e.target.closest(".acc-cell");
+        if (!cell) return;
+        const ai = +cell.dataset.ai, mi = +cell.dataset.mi;
+        const span = D.appSpans[ai];
+        const m = D.models[mi];
+        const d = accData[ai][mi];
+
+        drillTitle.textContent = `${m.name} on ${span.label} — ${d.correct}/${d.total} (${Math.round(d.acc*1000)/10}%)`;
+        drillGrid.innerHTML = "";
+
+        const taskCount = span.end - span.start + 1;
+        drillGrid.style.gridTemplateColumns = `repeat(${taskCount}, 16px)`;
+
+        // Task index headers
+        for (let i = span.start; i <= span.end; i++) {
+          const hd = document.createElement("div");
+          hd.className = "task-hd";
+          hd.textContent = "#" + D.tasks[i].i;
+          drillGrid.appendChild(hd);
+        }
+
+        // Cells
+        for (let i = span.start; i <= span.end; i++) {
+          const v = m.s[i];
+          const c = document.createElement("div");
+          c.className = "cell " + (v === 1 ? "ok" : "no");
+          c.dataset.m = m.name;
+          c.dataset.t = i;
+          drillGrid.appendChild(c);
+        }
+
+        drillPanel.style.display = "block";
+        drillPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+
+      // Drill-down tooltip (reuse global tip)
+      drillGrid.addEventListener("mouseover", (e) => {
+        const cell = e.target.closest(".cell");
+        if (!cell) return;
+        const i = +cell.dataset.t;
+        const t = D.tasks[i];
+        const v = D.models.find(x => x.name === cell.dataset.m).s[i];
+        const cats = (t.cats && t.cats.length) ? " · " + t.cats.join(", ") : "";
+        tip.innerHTML = `<strong>${cell.dataset.m} — ${v===1?"Correct":"Wrong"}</strong>`
+          + `<div class="m">${t.app} #${t.i}${t.steps != null ? " · " + t.steps + " steps" : ""}${cats}</div>`
+          + `<div class="m">${t.ins.replace(/</g,"&lt;")}</div>`;
+        tip.classList.add("on");
+      });
+      drillGrid.addEventListener("mousemove", (e) => {
+        const pad = 14, r = tip.getBoundingClientRect();
+        let left = e.clientX + 14, top = e.clientY + 14;
+        if (left + r.width + pad > window.innerWidth) left = e.clientX - r.width - 14;
+        if (top + r.height + pad > window.innerHeight) top = e.clientY - r.height - 14;
+        tip.style.left = Math.max(pad, left) + "px";
+        tip.style.top = Math.max(pad, top) + "px";
+      });
+      drillGrid.addEventListener("mouseout", (e) => {
+        if (e.target.closest(".cell")) tip.classList.remove("on");
+      });
+
+      drillClose.addEventListener("click", () => {
+        drillPanel.style.display = "none";
+      });
+    })();
+  </script>
+  <script>
+    // ===== Per-Task Correctness Heatmap =====
+    (function () {
+      const D = window.APPSIM_LEADERBOARD;
+      const root = document.getElementById("heatmap");
+      const tip = document.getElementById("tip");
+      const appFilter = document.getElementById("appFilter");
+      const langFilter = document.getElementById("langFilter");
+      const stepFilter = document.getElementById("stepFilter");
+      const catFilter = document.getElementById("catFilter");
+      const heatStat = document.getElementById("heatStat");
+
+      const cls = (v) => v === 1 ? "ok" : "no";
+      const lbl = (v) => v === 1 ? "Correct" : "Wrong";
+
+      function stepBucket(steps) {
+        if (steps == null) return null;
+        if (steps <= 5) return "le5";
+        if (steps <= 10) return "mid";
+        return "ge11";
+      }
+
+      function taskVisible(t) {
+        const cats = t.cats || [];
+        if (langFilter.value !== "all" && t.lang !== langFilter.value) return false;
+        if (stepFilter.value !== "all" && stepBucket(t.steps) !== stepFilter.value) return false;
+        const cv = catFilter.value;
+        if (cv === "any" && cats.length === 0) return false;
+        if (cv !== "all" && cv !== "any" && !cats.includes(cv)) return false;
+        return true;
+      }
+
+      function render() {
+        const q = appFilter.value.trim().toLowerCase();
+        root.innerHTML = "";
+
+        let shownTasks = 0;
+        D.appSpans.forEach((span) => {
+          if (q && !span.label.toLowerCase().includes(q)) return;
+
+          // collect visible task indices for this app
+          const idxs = [];
+          for (let i = span.start; i <= span.end; i++) {
+            if (taskVisible(D.tasks[i])) idxs.push(i);
+          }
+          if (!idxs.length) return;
+          shownTasks += idxs.length;
+
+          const block = document.createElement("div");
+          block.className = "app-block";
+          block.innerHTML =
+            `<div class="app-head"><h3>${span.label}</h3><span>${idxs.length} task${idxs.length>1?"s":""}</span></div>`;
+
+          const scroll = document.createElement("div");
+          scroll.className = "grid-scroll";
+          const grid = document.createElement("div");
+          grid.className = "heat-grid";
+          grid.style.gridTemplateColumns = `minmax(112px, 150px) repeat(${idxs.length}, minmax(12px, 1fr))`;
+
+          // header row: blank corner + task numbers (#localIndex)
+          const corner = document.createElement("div");
+          corner.className = "col-head";
+          corner.textContent = "Model";
+          grid.appendChild(corner);
+          idxs.forEach((i) => {
+            const c = document.createElement("div");
+            c.className = "col-head";
+            c.style.justifyContent = "center";
+            c.style.fontSize = "0.62rem";
+            c.textContent = "#" + D.tasks[i].i;
+            grid.appendChild(c);
+          });
+
+          // one row per model
+          D.models.forEach((m) => {
+            const name = document.createElement("div");
+            name.className = "agent-name";
+            name.textContent = m.name;
+            grid.appendChild(name);
+
+            idxs.forEach((i) => {
+              const v = m.s[i];
+              const cell = document.createElement("div");
+              cell.className = "cell " + cls(v);
+              cell.dataset.m = m.name;
+              cell.dataset.t = i;
+              grid.appendChild(cell);
+            });
+          });
+
+          scroll.appendChild(grid);
+          block.appendChild(scroll);
+          root.appendChild(block);
+        });
+
+        if (!root.children.length) {
+          root.innerHTML = '<p class="note" style="padding:14px;">No tasks match the current filter.</p>';
+          heatStat.textContent = "";
+        } else {
+          heatStat.textContent = `Showing ${shownTasks} task${shownTasks>1?"s":""} across ${root.children.length} app${root.children.length>1?"s":""}.`;
+        }
+      }
+
+      // delegated tooltip
+      root.addEventListener("mouseover", (e) => {
+        const cell = e.target.closest(".cell");
+        if (!cell) return;
+        const i = +cell.dataset.t;
+        const t = D.tasks[i];
+        const m = D.models.find((x) => x.name === cell.dataset.m);
+        const v = m.s[i];
+        const steps = t.steps != null ? `${t.steps} steps` : "";
+        const cats = (t.cats && t.cats.length) ? " · " + t.cats.join(", ") : "";
+        const lang = t.lang === "zh" ? "ZH" : t.lang === "en" ? "EN" : "";
+        tip.innerHTML = `<strong>${cell.dataset.m} — ${lbl(v)}</strong>`
+          + `<div class="m">${t.app} #${t.i}${steps ? " · " + steps : ""}${lang ? " · " + lang : ""}${cats}</div>`
+          + `<div class="m">${t.ins.replace(/</g,"&lt;")}</div>`;
+        tip.classList.add("on");
+      });
+      root.addEventListener("mousemove", (e) => {
+        const pad = 14;
+        const r = tip.getBoundingClientRect();
+        let left = e.clientX + 14, top = e.clientY + 14;
+        if (left + r.width + pad > window.innerWidth) left = e.clientX - r.width - 14;
+        if (top + r.height + pad > window.innerHeight) top = e.clientY - r.height - 14;
+        tip.style.left = Math.max(pad, left) + "px";
+        tip.style.top = Math.max(pad, top) + "px";
+      });
+      root.addEventListener("mouseout", (e) => {
+        if (e.target.closest(".cell")) tip.classList.remove("on");
+      });
+
+      appFilter.addEventListener("input", render);
+      langFilter.addEventListener("change", render);
+      stepFilter.addEventListener("change", render);
+      catFilter.addEventListener("change", render);
+      render();
+    })();
+  </script>
+  <script>
+    // Scroll-spy for side nav
+    (function() {
+      const nav = document.getElementById("sideNav");
+      if (!nav) return;
+      const links = nav.querySelectorAll("a[href^='#']");
+      const sections = Array.from(links).map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+      function update() {
+        let current = "";
+        const offset = window.innerHeight * 0.3;
+        sections.forEach(sec => {
+          if (sec.getBoundingClientRect().top <= offset) current = sec.id;
+        });
+        links.forEach(a => {
+          a.classList.toggle("active", a.getAttribute("href") === "#" + current);
+        });
+      }
+      window.addEventListener("scroll", update, { passive: true });
+      update();
+    })();
+  </script>
+</body>
+</html>
