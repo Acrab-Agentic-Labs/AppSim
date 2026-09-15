@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_seven(result=None, device_id=None, backup_dir=None):
+def verify_channel_followed(result=None, device_id=None, backup_dir=None):
     """Verify task 7: netflix in channels.json has initiallyFollowing set to true."""
     file_path = os.path.join(backup_dir, "channels.json") if backup_dir else "channels.json"
 
@@ -30,5 +30,5 @@ def validate_task_seven(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_seven()
+    result = verify_channel_followed()
     print(result)

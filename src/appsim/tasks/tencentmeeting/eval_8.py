@@ -141,7 +141,7 @@ def read_json_from_device(
 # 验证函数 - 核心业务逻辑
 # ============================================================================
 
-def verify_surname_zhou_count(
+def verify_contacts_by_surname_count(
     result=None,
     device_id=None,
     backup_dir=None,

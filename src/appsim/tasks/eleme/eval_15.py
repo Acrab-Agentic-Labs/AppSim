@@ -10,7 +10,7 @@ PHONE_VALUE = "13022222222"
 TAG_VALUE = "学校"
 DETAIL_ADDRESS_KEYWORD = "613"
 
-def validate_task_fifteen(result=None,device_id=None,backup_dir=None):
+def verify_shipping_address_added(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
@@ -28,5 +28,5 @@ def validate_task_fifteen(result=None,device_id=None,backup_dir=None):
 
 if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_task_fifteen()
+    result = verify_shipping_address_added()
     print(result)

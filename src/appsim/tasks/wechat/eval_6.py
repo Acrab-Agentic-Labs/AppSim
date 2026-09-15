@@ -4,7 +4,7 @@ import json
 import subprocess
 
 
-def task6_validate_forward_message(result=None, device_id=None, backup_dir=None):
+def verify_latest_message_instructions_completed(result=None, device_id=None, backup_dir=None):
     def _validate_message_send(data, receiver_id, sender_id, message_content):
         messages = data.get("privateChatMessages", {}).get(receiver_id, [])
         if not messages:
@@ -49,4 +49,4 @@ def task6_validate_forward_message(result=None, device_id=None, backup_dir=None)
 
 
 if __name__ == "__main__":
-    print(task6_validate_forward_message())
+    print(verify_latest_message_instructions_completed())

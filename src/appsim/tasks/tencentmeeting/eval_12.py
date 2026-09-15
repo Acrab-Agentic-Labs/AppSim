@@ -18,7 +18,7 @@ MESSAGES_FILE = "messages.json"
 MESSAGE_CONTENT_KEY = "content"
 MESSAGE_TIMESTAMP_KEY = "timestamp"
 
-def check_message_content(
+def verify_latest_meeting_message_sent(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -101,4 +101,4 @@ def check_message_content(
 
 
 if __name__ == '__main__':
-    print(check_message_content())
+    print(verify_latest_meeting_message_sent())

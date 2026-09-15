@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_seven(result=None, device_id=None, backup_dir=None):
+def verify_default_shipping_address_added(result=None, device_id=None, backup_dir=None):
     """Validate task 27: add a new shipping address for recipient 'Alex Johnson', phone number '3105550199', address '123 Main St, Apt 8C, Los Angeles, California', ZIP code '90012', and set it as the default address."""
     addresses_file_path = os.path.join(backup_dir, "addresses.json") if backup_dir else "addresses.json"
 
@@ -39,5 +39,5 @@ def validate_task_twenty_seven(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_seven()
+    result = verify_default_shipping_address_added()
     print(result)

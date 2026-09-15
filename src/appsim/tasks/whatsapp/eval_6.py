@@ -13,7 +13,7 @@ TASK6_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_six(result=None, device_id=None, backup_dir=None):
+def verify_latest_video_call_contact_identified(result=None, device_id=None, backup_dir=None):
     """Verify task 6: answer "Marcus Davis"."""
     if not isinstance(result, dict):
         return False
@@ -25,5 +25,5 @@ def validate_task_six(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_six()
+    result = verify_latest_video_call_contact_identified()
     print(result)

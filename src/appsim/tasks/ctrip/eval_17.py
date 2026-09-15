@@ -6,7 +6,7 @@ import subprocess
 # 检查条件：type="hotel_search", city="上海", checkIn="2025-10-20", checkOut="2025-10-21", rooms=2, adults=2, children=0
 
 
-def check_hotel_search_shanghai(result=None, device_id=None, backup_dir=None):
+def verify_hotel_search_results_for_guest_counts_and_dates(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/search_params.json"
     local_file_path = os.path.join(backup_dir, 'search_params.json') if backup_dir else 'search_params.json'
@@ -48,4 +48,4 @@ def check_hotel_search_shanghai(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_hotel_search_shanghai() else "false")
+    print("true" if verify_hotel_search_results_for_guest_counts_and_dates() else "false")

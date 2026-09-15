@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def set_password_check(result=None, device_id=None, backup_dir=None):
+def verify_account_password_updated(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _EXPECTED_PASSWORD = "123456"
 
@@ -42,4 +42,4 @@ def set_password_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(set_password_check())
+    print(verify_account_password_updated())

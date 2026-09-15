@@ -30,7 +30,7 @@ MEETING_TYPE_SCHEDULED = "SCHEDULED"
 MEETING_STATUS_UPCOMING = "UPCOMING"
 TIME_TOLERANCE_MS = 9 * 60 * 60 * 1000  # 9小时（覆盖时区差异：Agent可能设置UTC 20:00或北京时间20:00）
 
-def check_scheduled_meeting_with_all_friends(
+def verify_scheduled_meeting_created(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -170,4 +170,4 @@ def check_scheduled_meeting_with_all_friends(
         return False
 
 if __name__ == '__main__':
-    print(check_scheduled_meeting_with_all_friends())
+    print(verify_scheduled_meeting_created())

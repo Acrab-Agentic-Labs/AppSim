@@ -12,7 +12,7 @@ TASK13_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_thirteen(result=None, **kwargs):
+def verify_free_delivery_merchant_count(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

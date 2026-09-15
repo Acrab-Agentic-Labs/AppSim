@@ -12,7 +12,7 @@ TASK1_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_1(result=None, **kwargs):
+def verify_private_message_intercept_status(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

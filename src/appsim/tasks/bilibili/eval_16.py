@@ -12,7 +12,7 @@ TASK16_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_16(result=None, **kwargs):
+def verify_most_liked_comment_user_name(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

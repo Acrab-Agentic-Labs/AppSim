@@ -3,7 +3,7 @@ import subprocess
 import os
 
 
-def check_click_flight(result=None, device_id=None, backup_dir=None):
+def verify_flight_booking_page_opened(result=None, device_id=None, backup_dir=None):
     """
     任务2: 点击 "机票" 图标，进入机票预订界面
     检验方法: 维护点击记录存储
@@ -35,5 +35,5 @@ def check_click_flight(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result1 = check_click_flight()
+    result1 = verify_flight_booking_page_opened()
     print("true" if result1 else "false")

@@ -57,7 +57,7 @@ def _target_data_exists(device_id, backup_dir) -> bool:
     return meeting_exists
 
 
-def check_previous_meeting_playback(
+def verify_recent_meeting_replay_opened(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -89,4 +89,4 @@ def check_previous_meeting_playback(
 
 
 if __name__ == "__main__":
-    print(check_previous_meeting_playback())
+    print(verify_recent_meeting_replay_opened())

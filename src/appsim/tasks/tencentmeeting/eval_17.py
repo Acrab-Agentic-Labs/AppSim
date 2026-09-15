@@ -30,7 +30,7 @@ SENDER_ID = "user002"
 EXPECTED_COUNT = 2
 MESSAGES_FILE = "messages.json"
 
-def verify_message_count_by_sender(
+def verify_sender_message_count(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -119,4 +119,4 @@ if __name__ == "__main__":
 
 
 if __name__ == '__main__':
-    print(verify_message_count_by_sender())
+    print(verify_sender_message_count())

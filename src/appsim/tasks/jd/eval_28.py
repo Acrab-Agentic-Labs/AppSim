@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_eight(result=None, device_id=None, backup_dir=None):
+def verify_lowest_price_cart_product_purchased(result=None, device_id=None, backup_dir=None):
     """验证任务：找到购物车中单价最低的商品购买5件。"""
 
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
@@ -55,5 +55,5 @@ def validate_task_twenty_eight(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_eight()
+    result = verify_lowest_price_cart_product_purchased()
     print(result)

@@ -5,7 +5,7 @@ import shutil
 import time
 
 
-def CheckFavoriteLikeComment(result=None, device_id=None, backup_dir=None):
+def verify_favorite_video_like_comment(result=None, device_id=None, backup_dir=None):
     """
     检验逻辑:给我的收藏里第二个视频点赞并评论："谢谢up主的分享！"
     验证用户是否进入收藏、点赞、并发送评论
@@ -86,5 +86,5 @@ def CheckFavoriteLikeComment(result=None, device_id=None, backup_dir=None):
             print(f"⚠️ 清除日志失败: {str(e)}")
 
 if __name__ == "__main__":
-    result1 = CheckFavoriteLikeComment()
+    result1 = verify_favorite_video_like_comment()
     print(result1)

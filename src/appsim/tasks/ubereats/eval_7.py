@@ -12,7 +12,7 @@ TASK7_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_seven(result=None, **kwargs):
+def verify_nearby_pickup_location_exists(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

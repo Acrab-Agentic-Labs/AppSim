@@ -6,7 +6,7 @@ import os
 # 检查条件：type="hotel_search", city="北京", checkIn="2025-10-22", checkOut="2025-10-23"
 
 
-def check_hotel_search_beijing(result=None, device_id=None, backup_dir=None):
+def verify_hotel_search_results_for_location_and_dates(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/search_params.json"
     local_file_path = os.path.join(backup_dir, 'search_params.json') if backup_dir else 'search_params.json'
@@ -45,4 +45,4 @@ def check_hotel_search_beijing(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_hotel_search_beijing() else "false")
+    print("true" if verify_hotel_search_results_for_location_and_dates() else "false")

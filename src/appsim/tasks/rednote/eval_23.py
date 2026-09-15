@@ -5,7 +5,7 @@ import subprocess
 from io import StringIO
 
 
-def unfollow_author_check(result=None, device_id=None, backup_dir=None):
+def verify_author_unfollowed(result=None, device_id=None, backup_dir=None):
     output_buffer = StringIO()
 
     _USER_ID = "user_current"
@@ -48,4 +48,4 @@ def unfollow_author_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(unfollow_author_check())
+    print(verify_author_unfollowed())

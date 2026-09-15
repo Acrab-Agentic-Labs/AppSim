@@ -28,7 +28,7 @@ EXPECTED_DESTINATION = "肖记公安牛肉鱼杂馆"
 EXPECTED_MODE = "骑行"
 
 
-def verify_cycle_to_favorite(device_id=None):
+def verify_cycling_navigation_to_nearest_favorite(device_id=None):
     """
     验证骑行导航到收藏饭店任务是否完成
 
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_cycle_to_favorite()
+    success = verify_cycling_navigation_to_nearest_favorite()
 
     # 输出最终结果
     print("=" * 60)

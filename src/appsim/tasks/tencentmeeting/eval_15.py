@@ -38,7 +38,7 @@ MEETING_STATUS_ENDED = "ENDED"
 
 DEFAULT_DURATION_TOLERANCE_MINUTES = 5 # 默认时长容差为5分钟
 
-def get_latest_ended_meeting_details(
+def verify_latest_ended_meeting_details(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -131,4 +131,4 @@ def get_latest_ended_meeting_details(
         return False
 
 if __name__ == '__main__':
-    print(get_latest_ended_meeting_details())
+    print(verify_latest_ended_meeting_details())

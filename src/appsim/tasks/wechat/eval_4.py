@@ -13,7 +13,7 @@ TASK4_ANSWER_SCHEMA = {
 }
 
 
-def task4_validate_friend_count(result=None, device_id=None, backup_dir=None):
+def verify_friend_count(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

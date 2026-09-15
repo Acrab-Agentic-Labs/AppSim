@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_three(result=None, device_id=None, backup_dir=None):
+def verify_community_participants_added(result=None, device_id=None, backup_dir=None):
     """Verify task 23: NYC Foodies in communities.json has members containing Mia Harris and Noah Kim."""
     file_path = os.path.join(backup_dir, "communities.json") if backup_dir else "communities.json"
 
@@ -39,5 +39,5 @@ def validate_task_twenty_three(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_three()
+    result = verify_community_participants_added()
     print(result)

@@ -15,7 +15,7 @@ TASK4_ANSWER_SCHEMA = {
 }
 
 
-def CheckProfilePage(result=None, device_id=None, backup_dir=None):
+def verify_first_followed_anime_name(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

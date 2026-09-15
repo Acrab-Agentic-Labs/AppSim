@@ -13,7 +13,7 @@ PACKAGE_NAME = "com.example.tencent_meeting_sim"
 MEETING_ID = "meeting_3d7e91"
 PARTICIPANTS_FILE = "meeting_participants.json"
 
-def check_participant_management(
+def verify_meeting_participant_mute_state(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -122,4 +122,4 @@ if __name__ == "__main__":
 
 
 if __name__ == '__main__':
-    print(check_participant_management())
+    print(verify_meeting_participant_mute_state())

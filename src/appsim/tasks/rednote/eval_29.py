@@ -16,7 +16,7 @@ TASK29_ANSWER_SCHEMA = {
 }
 
 
-def eval_29(result=None, device_id=None, backup_dir=None):
+def verify_most_followed_author_identified(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
@@ -75,5 +75,5 @@ def eval_29(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = eval_29()
+    result = verify_most_followed_author_identified()
     print(result)

@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_ten(result=None, device_id=None, backup_dir=None):
+def verify_store_followed(result=None, device_id=None, backup_dir=None):
     """Validate task 10: follow the Marshall store."""
     brands_file_path = os.path.join(backup_dir, "brands.json") if backup_dir else "brands.json"
 
@@ -29,5 +29,5 @@ def validate_task_ten(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_ten()
+    result = verify_store_followed()
     print(result)

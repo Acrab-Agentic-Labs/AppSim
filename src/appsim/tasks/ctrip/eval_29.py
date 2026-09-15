@@ -6,7 +6,7 @@ import os
 # 检查条件：type="hotel_booking", city="上海", checkIn="2025-10-21", checkOut="2025-10-25", selection="cheapest"
 
 
-def check_booking_hotel_cheapest(result=None, device_id=None, backup_dir=None):
+def verify_cheapest_hotel_room_booking_created(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/booking_history.json"
     local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
@@ -49,4 +49,4 @@ def check_booking_hotel_cheapest(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_booking_hotel_cheapest() else "false")
+    print("true" if verify_cheapest_hotel_room_booking_created() else "false")

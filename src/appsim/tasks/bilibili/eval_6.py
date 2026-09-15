@@ -12,7 +12,7 @@ TASK6_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_6(result=None, **kwargs):
+def verify_first_video_favorite_share_total(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

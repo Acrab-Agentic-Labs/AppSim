@@ -4,7 +4,7 @@ import json
 import subprocess
 
 
-def task13_validate_panda_message(result=None, device_id=None, backup_dir=None):
+def verify_moment_author_message_sent(result=None, device_id=None, backup_dir=None):
     _RECEIVER_ID = "user_2"
     _SENDER_ID = "current_user"
     _MESSAGE_CONTENT = "大熊猫好可爱啊！是哪里的动物园呀？"
@@ -35,4 +35,4 @@ def task13_validate_panda_message(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(task13_validate_panda_message())
+    print(verify_moment_author_message_sent())

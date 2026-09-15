@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_four(result=None, device_id=None, backup_dir=None):
+def verify_address_phone_number_updated(result=None, device_id=None, backup_dir=None):
     """ 验证任务三十四：将陈七地址详情中的电话号码改成18972746987。 """
 
     addresses_file_path = os.path.join(backup_dir, "addresses.json") if backup_dir else "addresses.json"
@@ -56,5 +56,5 @@ def validate_task_thirty_four(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    result = validate_task_thirty_four()
+    result = verify_address_phone_number_updated()
     print(f"__result__:{result}")

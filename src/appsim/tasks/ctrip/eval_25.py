@@ -19,7 +19,7 @@ TASK25_ANSWER_SCHEMA = {
 }
 
 
-def check_train_search_max_price(result=None, device_id=None, backup_dir=None):
+def verify_highest_train_fare(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
@@ -30,4 +30,4 @@ def check_train_search_max_price(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_train_search_max_price() else "false")
+    print("true" if verify_highest_train_fare() else "false")

@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_eight(result=None, device_id=None, backup_dir=None):
+def verify_shipped_orders_receipt_confirmed(result=None, device_id=None, backup_dir=None):
     """Validate task 38: confirm receipt for all shipped orders."""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -41,5 +41,5 @@ def validate_task_thirty_eight(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_eight()
+    result = verify_shipped_orders_receipt_confirmed()
     print(result)

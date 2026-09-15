@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_twelve(result=None, device_id=None, backup_dir=None):
+def verify_lowest_price_product_purchased_and_shipped(result=None, device_id=None, backup_dir=None):
     """Validate task 12: buy a watch from the home page right away, choose the lowest-priced option, and have it shipped to Sarah Davis's address."""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -45,5 +45,5 @@ def validate_task_twelve(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twelve()
+    result = verify_lowest_price_product_purchased_and_shipped()
     print(result)

@@ -17,7 +17,7 @@ TASK22_ANSWER_SCHEMA = {
 }
 
 
-def count_author_notes_check(result=None, device_id=None, backup_dir=None):
+def verify_author_note_count_from_profile(result=None, device_id=None, backup_dir=None):
     _AUTHOR_USERNAME = "旅行日记"
 
     if not isinstance(result, dict):
@@ -71,4 +71,4 @@ def count_author_notes_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(count_author_notes_check())
+    print(verify_author_note_count_from_profile())

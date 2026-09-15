@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def browsing_history_check(result=None, device_id=None, backup_dir=None):
+def verify_followed_author_note_summarized(result=None, device_id=None, backup_dir=None):
     message_file_path = os.path.join(backup_dir, "browsing_history.json") if backup_dir is not None else "browsing_history.json"
 
     cmd = ["adb"]
@@ -36,4 +36,4 @@ def browsing_history_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(browsing_history_check())
+    print(verify_followed_author_note_summarized())

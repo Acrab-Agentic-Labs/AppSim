@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_six(result=None, device_id=None, backup_dir=None):
+def verify_product_variant_added_to_cart(result=None, device_id=None, backup_dir=None):
     """Validate task 6: select the 12 oz option of Starbucks coffee beans and add it to the cart."""
     cart_data_file_path = os.path.join(backup_dir, "cart_data.json") if backup_dir else "cart_data.json"
 
@@ -29,5 +29,5 @@ def validate_task_six(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_six()
+    result = verify_product_variant_added_to_cart()
     print(result)

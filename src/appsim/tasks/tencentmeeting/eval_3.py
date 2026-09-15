@@ -24,7 +24,7 @@ def _to_int(value):
         return None
 
 
-def check_join_meeting_with_password(
+def verify_meeting_joined_with_password(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -83,4 +83,4 @@ def check_join_meeting_with_password(
 
 
 if __name__ == "__main__":
-    print(check_join_meeting_with_password())
+    print(verify_meeting_joined_with_password())

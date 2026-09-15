@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty(result=None, device_id=None, backup_dir=None):
+def verify_highest_price_store_product_purchased(result=None, device_id=None, backup_dir=None):
     """验证任务三十：进入Apple官方旗舰店选择价格最高的商品规格加入购物车并结算，选择赵六的地址。"""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -43,5 +43,5 @@ def validate_task_thirty(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty()
+    result = verify_highest_price_store_product_purchased()
     print(result)

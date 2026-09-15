@@ -13,7 +13,7 @@ TASK1_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_one(result=None, device_id=None, backup_dir=None):
+def verify_latest_chat_sender_identified(result=None, device_id=None, backup_dir=None):
     """Verify task 1: answer "Emily Chen"."""
     if not isinstance(result, dict):
         return False
@@ -25,5 +25,5 @@ def validate_task_one(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_one()
+    result = verify_latest_chat_sender_identified()
     print(result)

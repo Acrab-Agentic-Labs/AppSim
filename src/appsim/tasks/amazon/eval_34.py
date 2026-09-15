@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_four(result=None, device_id=None, backup_dir=None):
+def verify_unpaid_orders_checked_out(result=None, device_id=None, backup_dir=None):
     """Validate task 34: check out all unpaid orders."""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -41,5 +41,5 @@ def validate_task_thirty_four(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_four()
+    result = verify_unpaid_orders_checked_out()
     print(result)

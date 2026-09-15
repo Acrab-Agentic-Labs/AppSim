@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_eight(result=None, device_id=None, backup_dir=None):
+def verify_shipping_address_deleted(result=None, device_id=None, backup_dir=None):
     """Validate task 8: delete the fourth shipping address (addr_004)."""
     addresses_file_path = os.path.join(backup_dir, "addresses.json") if backup_dir else "addresses.json"
 
@@ -29,5 +29,5 @@ def validate_task_eight(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_eight()
+    result = verify_shipping_address_deleted()
     print(result)

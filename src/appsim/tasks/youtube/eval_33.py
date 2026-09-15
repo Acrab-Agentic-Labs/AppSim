@@ -10,7 +10,7 @@ QUALITY_PAGES = {"quality", "quality_settings"}
 QUALITY_GROUP_KEYS = {"quality_mobile", "quality_wifi"}
 
 
-def validate_task_thirty_three(result=None, device_id=None, backup_dir=None):
+def verify_quality_setting_and_comment(result=None, device_id=None, backup_dir=None):
     try:
         message_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
         state = read_json_from_device(device_id, PACKAGE_NAME, STATE_FILE_PATH, backup_dir)
@@ -42,4 +42,4 @@ def validate_task_thirty_three(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(validate_task_thirty_three())
+    print(verify_quality_setting_and_comment())

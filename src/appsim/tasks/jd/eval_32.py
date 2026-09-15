@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_two(result=None, device_id=None, backup_dir=None):
+def verify_lowest_price_phone_product_purchased(result=None, device_id=None, backup_dir=None):
     """ 验证任务三十二：找到首页前十个商品中价格最低的手机，选择其最便宜的规格购买。 """
 
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
@@ -62,5 +62,5 @@ def validate_task_thirty_two(result=None, device_id=None, backup_dir=None):
     return True
 
 if __name__ == "__main__":
-    result = validate_task_thirty_two()
+    result = verify_lowest_price_phone_product_purchased()
     print(f"__result__:{result}")

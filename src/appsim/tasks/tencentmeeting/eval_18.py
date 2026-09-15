@@ -29,7 +29,7 @@ EXPECTED_MINUTES = 78
 TOLERANCE = 5
 MEETINGS_FILE = "meetings.json"
 
-def verify_average_meeting_duration(
+def verify_average_ended_meeting_duration(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -140,4 +140,4 @@ if __name__ == "__main__":
 
 
 if __name__ == '__main__':
-    print(verify_average_meeting_duration())
+    print(verify_average_ended_meeting_duration())

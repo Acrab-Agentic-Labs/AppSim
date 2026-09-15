@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_fifteen(result=None, device_id=None, backup_dir=None):
+def verify_group_participant_added(result=None, device_id=None, backup_dir=None):
     """Verify task 15: conv_010 in group_details.json has memberIds containing user_012."""
     file_path = os.path.join(backup_dir, "group_details.json") if backup_dir else "group_details.json"
 
@@ -31,5 +31,5 @@ def validate_task_fifteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_fifteen()
+    result = verify_group_participant_added()
     print(result)

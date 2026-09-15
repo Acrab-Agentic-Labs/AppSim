@@ -12,7 +12,7 @@ TASK33_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_thirty_three(result=None, **kwargs):
+def verify_higher_follower_store_identified(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

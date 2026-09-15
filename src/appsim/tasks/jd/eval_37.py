@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_seven(result=None, device_id=None, backup_dir=None):
+def verify_most_reviewed_store_product_purchased(result=None, device_id=None, backup_dir=None):
     """ 验证任务三十七：购买首页前十个商品中买家评价最多的华为商品。 """
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -61,5 +61,5 @@ def validate_task_thirty_seven(result=None, device_id=None, backup_dir=None):
     return True
 
 if __name__ == "__main__":
-    result = validate_task_thirty_seven()
+    result = verify_most_reviewed_store_product_purchased()
     print(f"__result__:{result}")

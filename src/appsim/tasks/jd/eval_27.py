@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_seven(result=None, device_id=None, backup_dir=None):
+def verify_highest_quantity_pending_order_confirmed(result=None, device_id=None, backup_dir=None):
     """验证任务：找到我的待收货订单中购买件数最多的商品并确认收货。"""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -37,5 +37,5 @@ def validate_task_twenty_seven(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_seven()
+    result = verify_highest_quantity_pending_order_confirmed()
     print(result)

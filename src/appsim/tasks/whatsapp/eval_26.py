@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_six(result=None, device_id=None, backup_dir=None):
+def verify_group_created_and_message_sent(result=None, device_id=None, backup_dir=None):
     """Verify task 26: the last item in group_details.json has groupName Project Discussion Group and the correct memberIds; the last item in messages.json has the expected textContent."""
     gd_path = os.path.join(backup_dir, "group_details.json") if backup_dir else "group_details.json"
     msg_path = os.path.join(backup_dir, "messages.json") if backup_dir else "messages.json"
@@ -55,5 +55,5 @@ def validate_task_twenty_six(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_six()
+    result = verify_group_created_and_message_sent()
     print(result)

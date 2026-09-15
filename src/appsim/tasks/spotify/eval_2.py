@@ -12,7 +12,7 @@ TASK2_ANSWER_SCHEMA = {
 }
 
 
-def validate(result=None, **kwargs):
+def verify_current_playing_song_name(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

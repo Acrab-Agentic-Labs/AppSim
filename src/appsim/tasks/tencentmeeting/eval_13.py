@@ -26,7 +26,7 @@ DEFAULT_QUICK_MEETING_SETTINGS = {
     "muteOnEntry": True,
 }
 
-def check_quick_meeting_created(
+def verify_quick_meeting_created(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -97,4 +97,4 @@ def check_quick_meeting_created(
         return False
 
 if __name__ == '__main__':
-    print(check_quick_meeting_created())
+    print(verify_quick_meeting_created())

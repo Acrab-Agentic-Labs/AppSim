@@ -26,7 +26,7 @@ import sys
 EXPECTED_USERNAME = "123456"
 
 
-def verify_modify_username(device_id=None):
+def verify_profile_name_updated(device_id=None):
     """
     验证修改用户名任务是否完成
 
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_modify_username()
+    success = verify_profile_name_updated()
 
     # 输出最终结果
     print("=" * 60)

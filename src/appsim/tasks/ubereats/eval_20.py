@@ -12,7 +12,7 @@ TASK20_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty(result=None, **kwargs):
+def verify_cheapest_homepage_burger(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

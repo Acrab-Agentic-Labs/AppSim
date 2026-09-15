@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def find_tie_method(result=None, device_id=None, backup_dir=None):
+def verify_recommended_note_opened(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     message_file_path = os.path.join(backup_dir, "browsing_history.json") if backup_dir else "browsing_history.json"
 
@@ -48,4 +48,4 @@ def find_tie_method(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(find_tie_method())
+    print(verify_recommended_note_opened())

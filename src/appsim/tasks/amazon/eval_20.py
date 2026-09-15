@@ -12,7 +12,7 @@ TASK20_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty(result=None, device_id=None, backup_dir=None):
+def verify_high_rated_search_result_count(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

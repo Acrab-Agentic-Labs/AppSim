@@ -25,7 +25,7 @@ import sys
 EXPECTED_STOPS_ORDER = ["M+", "武汉市人民政府", "芦苇滩", "我的位置"]
 
 
-def verify_multi_stop_navigation(device_id=None):
+def verify_multi_stop_navigation_completed(device_id=None):
     """
     验证多站点路线导航任务是否完成
 
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验��
-    success = verify_multi_stop_navigation()
+    success = verify_multi_stop_navigation_completed()
 
     # 输出最终结果
     print("=" * 60)

@@ -236,7 +236,7 @@ def _run_subcheck(label, verify_func, *args, **kwargs) -> bool:
         return False
 
 
-def verify_invitation_link_copied_and_participant_count(
+def verify_personal_room_link_copied_and_participant_count(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -275,4 +275,4 @@ def verify_invitation_link_copied_and_participant_count(
 
 
 if __name__ == "__main__":
-    print(verify_invitation_link_copied_and_participant_count())
+    print(verify_personal_room_link_copied_and_participant_count())

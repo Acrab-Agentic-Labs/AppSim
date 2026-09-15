@@ -14,7 +14,7 @@ TASK3_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_three(result=None, device_id=None, backup_dir=None):
+def verify_account_phone_number_retrieved(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
@@ -26,5 +26,5 @@ def validate_task_three(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_three()
+    result = verify_account_phone_number_retrieved()
     print(result)

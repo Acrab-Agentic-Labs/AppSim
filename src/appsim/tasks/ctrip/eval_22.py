@@ -19,7 +19,7 @@ TASK22_ANSWER_SCHEMA = {
 }
 
 
-def check_from_search_params_file(result=None, device_id=None, backup_dir=None):
+def verify_top_rated_hotel_average_price(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
@@ -30,5 +30,5 @@ def check_from_search_params_file(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = check_from_search_params_file()
+    result = verify_top_rated_hotel_average_price()
     print(result)

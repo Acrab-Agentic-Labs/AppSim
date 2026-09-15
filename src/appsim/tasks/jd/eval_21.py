@@ -17,7 +17,7 @@ TASK21_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty_one(result=None, device_id=None, backup_dir=None):
+def verify_filtered_product_count_by_price_range(result=None, device_id=None, backup_dir=None):
     """验证任务：在Apple官方旗舰店筛选出价格在6000.0至8000.0的手机类别商品有多少个，给出一个阿拉伯数字即可。"""
     json_path = os.path.join(backup_dir, "apple_shop_data.json") if backup_dir else "apple_shop_data.json"
 

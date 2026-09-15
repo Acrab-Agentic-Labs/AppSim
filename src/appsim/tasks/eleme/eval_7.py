@@ -6,7 +6,7 @@ ACTION_CANCEL_ORDER = "cancel_order"
 PAGE_ORDER = "order"
 ORDER_STATUS_VALUE = "待接单"
 
-def validate_task_seven(result=None,device_id=None,backup_dir=None):
+def verify_unaccepted_order_canceled(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
         data = all_data[-1] if isinstance(all_data, list) and all_data else all_data
@@ -21,5 +21,5 @@ def validate_task_seven(result=None,device_id=None,backup_dir=None):
     return True
 
 if __name__ == '__main__':
-    result = validate_task_seven()
+    result = verify_unaccepted_order_canceled()
     print(result)

@@ -5,7 +5,7 @@ import subprocess
 from io import StringIO
 
 
-def like_collect_comment_check(result=None, device_id=None, backup_dir=None):
+def verify_note_liked_collected_and_commented(result=None, device_id=None, backup_dir=None):
     output_buffer = StringIO()
 
     _USER_ID = "user_current"
@@ -123,4 +123,4 @@ def like_collect_comment_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(like_collect_comment_check())
+    print(verify_note_liked_collected_and_commented())

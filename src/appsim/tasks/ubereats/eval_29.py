@@ -12,7 +12,7 @@ TASK29_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty_nine(result=None, **kwargs):
+def verify_past_matcha_spending(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

@@ -5,7 +5,7 @@ import subprocess
 from io import StringIO
 
 
-def follow_back_fan_check(result=None, device_id=None, backup_dir=None):
+def verify_fan_followed_back(result=None, device_id=None, backup_dir=None):
     output_buffer = StringIO()
 
     _USER_ID = "user_current"
@@ -48,4 +48,4 @@ def follow_back_fan_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(follow_back_fan_check())
+    print(verify_fan_followed_back())

@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_four(result=None, device_id=None, backup_dir=None):
+def verify_group_video_call_completed(result=None, device_id=None, backup_dir=None):
     """Verify task 24: the first item in calls.json has conversationId conv_005 and durationSeconds greater than 5."""
     file_path = os.path.join(backup_dir, "calls.json") if backup_dir else "calls.json"
 
@@ -34,5 +34,5 @@ def validate_task_twenty_four(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_four()
+    result = verify_group_video_call_completed()
     print(result)

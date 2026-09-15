@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def browse_and_interact_check(result=None, device_id=None, backup_dir=None):
+def verify_homepage_notes_interacted_with(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _VIEW_COUNT = 2
     _COMMENT_CONTENT = "很精彩"
@@ -100,4 +100,4 @@ def browse_and_interact_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(browse_and_interact_check())
+    print(verify_homepage_notes_interacted_with())

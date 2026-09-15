@@ -1,60 +1,44 @@
 from ..base import AppTasks, TaskItem
-from .check_1 import check as check_1
-from .check_2 import check as check_2
-from .check_3 import check as check_3
-from .check_4 import check as check_4
-from .check_5 import check as check_5
-from .check_6 import check as check_6
-from .check_7 import check as check_7
-from .check_8 import check as check_8
-from .check_9 import check as check_9
-from .check_10 import check as check_10
-from .check_11 import check as check_11
-from .check_12 import check as check_12
-from .check_13 import check as check_13
-from .check_14 import check as check_14
-from .check_15 import check as check_15
-from .check_16 import check as check_16
-from .check_17 import check as check_17
-from .check_18 import check as check_18
-from .check_19 import check as check_19
-from .check_20 import check as check_20
-from .check_21 import check as check_21
-from .check_22 import check as check_22
-from .check_23 import check as check_23
-from .check_24 import check as check_24
-from .check_25 import check as check_25
-from .check_26 import check as check_26
-from .check_27 import check as check_27
-from .check_28 import check as check_28
-from .check_29 import check as check_29
-from .check_30 import check as check_30
-from .check_31 import check as check_31
-from .check_32 import check as check_32
-from .check_33 import check as check_33
-from .check_34 import check as check_34
-from .check_35 import check as check_35
-from .check_36 import check as check_36
-from .check_37 import check as check_37
-from .check_38 import check as check_38
-from .check_39 import check as check_39
-from .check_40 import check as check_40
-from .eval_2 import TASK2_ANSWER_SCHEMA, validate as validate_eval_2
-from .eval_3 import TASK3_ANSWER_SCHEMA, validate as validate_eval_3
-from .eval_4 import TASK4_ANSWER_SCHEMA, validate as validate_eval_4
-from .eval_5 import TASK5_ANSWER_SCHEMA, validate as validate_eval_5
-from .eval_6 import TASK6_ANSWER_SCHEMA, validate as validate_eval_6
-from .eval_7 import TASK7_ANSWER_SCHEMA, validate as validate_eval_7
-from .eval_8 import TASK8_ANSWER_SCHEMA, validate as validate_eval_8
-from .eval_9 import TASK9_ANSWER_SCHEMA, validate as validate_eval_9
-from .eval_18 import TASK18_ANSWER_SCHEMA, validate as validate_eval_18
-from .eval_19 import TASK19_ANSWER_SCHEMA, validate as validate_eval_19
-from .eval_20 import TASK20_ANSWER_SCHEMA, validate as validate_eval_20
-from .eval_32 import TASK32_ANSWER_SCHEMA, validate as validate_eval_32
-from .eval_34 import TASK34_ANSWER_SCHEMA, validate as validate_eval_34
-from .eval_38 import TASK38_ANSWER_SCHEMA, validate as validate_eval_38
-from .eval_39 import TASK39_ANSWER_SCHEMA, validate as validate_eval_39
-from .eval_40 import TASK40_ANSWER_SCHEMA, validate as validate_eval_40
+from .eval_1 import verify_current_username
+from .eval_10 import verify_full_screen_playback_state
+from .eval_11 import verify_next_song_played
+from .eval_12 import verify_shuffle_mode_enabled
+from .eval_13 import verify_repeat_one_mode_enabled
+from .eval_14 import verify_current_song_liked
+from .eval_15 import verify_current_song_unliked
+from .eval_16 import verify_sleep_timer_set
+from .eval_17 import verify_sleep_timer_disabled
+from .eval_21 import verify_song_search
+from .eval_22 import verify_searched_song_liked
+from .eval_23 import verify_playlist_created_with_songs
+from .eval_24 import verify_recent_search_deleted
+from .eval_25 import verify_playlist_created
+from .eval_26 import verify_playback_controls_and_like
+from .eval_27 import verify_playlist_created_and_artist_followed
+from .eval_28 import verify_new_artist_followed
+from .eval_29 import verify_new_podcast_followed
+from .eval_30 import verify_playlist_added_to_library
+from .eval_31 import verify_song_added_to_liked_songs
+from .eval_33 import verify_premium_subscription_activated
+from .eval_35 import verify_podcast_fast_forwarded
+from .eval_36 import verify_artist_unfollowed
+from .eval_37 import verify_playlist_created_and_podcasts_followed
+from .eval_2 import TASK2_ANSWER_SCHEMA, verify_current_playing_song_name
+from .eval_3 import TASK3_ANSWER_SCHEMA, verify_search_page_category_count
+from .eval_4 import TASK4_ANSWER_SCHEMA, verify_first_recommended_playlist_song_count
+from .eval_5 import TASK5_ANSWER_SCHEMA, verify_first_podcast_title
+from .eval_6 import TASK6_ANSWER_SCHEMA, verify_first_podcast_publish_date
+from .eval_7 import TASK7_ANSWER_SCHEMA, verify_first_audiobook_name
+from .eval_8 import TASK8_ANSWER_SCHEMA, verify_first_audiobook_duration
+from .eval_9 import TASK9_ANSWER_SCHEMA, verify_current_playing_song_artist_name
+from .eval_18 import TASK18_ANSWER_SCHEMA, verify_iris_out_first_lyrics_line
+from .eval_19 import TASK19_ANSWER_SCHEMA, verify_style_lyricist
+from .eval_20 import TASK20_ANSWER_SCHEMA, verify_style_artist_intro_first_sentence
+from .eval_32 import TASK32_ANSWER_SCHEMA, verify_blank_space_first_lyrics_line_and_lyricist
+from .eval_34 import TASK34_ANSWER_SCHEMA, verify_third_podcast_title_and_publish_date
+from .eval_38 import TASK38_ANSWER_SCHEMA, verify_style_first_lyrics_line_and_lyricist
+from .eval_39 import TASK39_ANSWER_SCHEMA, verify_chill_vibes_initial_song_count
+from .eval_40 import TASK40_ANSWER_SCHEMA, verify_first_audiobook_title_and_publish_date
 
 import inspect
 
@@ -71,12 +55,11 @@ TASK1_ANSWER_SCHEMA = {
     "additionalProperties": False,
 }
 
-def validate_task(task_id):
+def build_spotify_verify_func(check_func):
     """Wrapper to convert check function to validate function signature"""
     def wrapper(result=None, device_id=None, backup_dir=None):
         from .check_common import AppChecker
         checker = AppChecker(device_id)
-        check_func = globals()[f'check_{task_id}']
         try:
             sig = inspect.signature(check_func)
             if 'result' in sig.parameters:
@@ -86,6 +69,7 @@ def validate_task(task_id):
             return passed
         except Exception:
             return False
+    wrapper.__name__ = check_func.__name__
     return wrapper
 
 SPOTIFY_TASKS = AppTasks(
@@ -93,7 +77,7 @@ SPOTIFY_TASKS = AppTasks(
     task_items=[
         TaskItem(
             instruction="Check the current username",
-            verify_func=validate_task(1),
+            verify_func=build_spotify_verify_func(verify_current_username),
             human_steps=2,
             is_reasoning=True,
             evaluation_type="hybrid",
@@ -101,7 +85,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Tell me the name of the currently playing song",
-            verify_func=validate_eval_2,
+            verify_func=verify_current_playing_song_name,
             human_steps=2,
             is_reasoning=True,
             evaluation_type="answer",
@@ -109,7 +93,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Count how many categories are on the search page",
-            verify_func=validate_eval_3,
+            verify_func=verify_search_page_category_count,
             human_steps=3,
             is_reasoning=True,
             evaluation_type="answer",
@@ -117,7 +101,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Count how many songs are in the first recommended playlist in 'To get you started'",
-            verify_func=validate_eval_4,
+            verify_func=verify_first_recommended_playlist_song_count,
             human_steps=2,
             is_reasoning=True,
             evaluation_type="answer",
@@ -125,7 +109,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Tell me the title of the first podcast on the podcasts page",
-            verify_func=validate_eval_5,
+            verify_func=verify_first_podcast_title,
             human_steps=2,
             is_reasoning=True,
             evaluation_type="answer",
@@ -133,7 +117,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Tell me the publish date of the first podcast",
-            verify_func=validate_eval_6,
+            verify_func=verify_first_podcast_publish_date,
             human_steps=2,
             is_reasoning=True,
             evaluation_type="answer",
@@ -141,7 +125,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Tell me the name of the first audiobook",
-            verify_func=validate_eval_7,
+            verify_func=verify_first_audiobook_name,
             human_steps=2,
             is_reasoning=True,
             evaluation_type="answer",
@@ -149,7 +133,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Tell me the duration of the first audiobook",
-            verify_func=validate_eval_8,
+            verify_func=verify_first_audiobook_duration,
             human_steps=3,
             is_reasoning=True,
             evaluation_type="answer",
@@ -157,7 +141,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Tell me who is the artist of the currently playing song",
-            verify_func=validate_eval_9,
+            verify_func=verify_current_playing_song_artist_name,
             human_steps=3,
             is_reasoning=True,
             evaluation_type="answer",
@@ -165,55 +149,55 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Play or pause the song on the full-screen playing page",
-            verify_func=validate_task(10),
+            verify_func=build_spotify_verify_func(verify_full_screen_playback_state),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Play the next song",
-            verify_func=validate_task(11),
+            verify_func=build_spotify_verify_func(verify_next_song_played),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Enter shuffle mode",
-            verify_func=validate_task(12),
+            verify_func=build_spotify_verify_func(verify_shuffle_mode_enabled),
             human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Enter repeat one mode",
-            verify_func=validate_task(13),
+            verify_func=build_spotify_verify_func(verify_repeat_one_mode_enabled),
             human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Like the currently playing song",
-            verify_func=validate_task(14),
+            verify_func=build_spotify_verify_func(verify_current_song_liked),
             human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Unlike the currently playing song",
-            verify_func=validate_task(15),
+            verify_func=build_spotify_verify_func(verify_current_song_unliked),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Set the sleep timer to 15 minutes",
-            verify_func=validate_task(16),
+            verify_func=build_spotify_verify_func(verify_sleep_timer_set),
             human_steps=5,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Turn off the sleep timer",
-            verify_func=validate_task(17),
+            verify_func=build_spotify_verify_func(verify_sleep_timer_disabled),
             human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="View the lyrics of IRIS OUT and tell me the first line",
-            verify_func=validate_eval_18,
+            verify_func=verify_iris_out_first_lyrics_line,
             human_steps=3,
             is_reasoning=True,
             evaluation_type="answer",
@@ -221,7 +205,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="View the credits of Style and tell me who is the lyricist",
-            verify_func=validate_eval_19,
+            verify_func=verify_style_lyricist,
             human_steps=4,
             is_reasoning=True,
             evaluation_type="answer",
@@ -229,7 +213,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="View the artist information of Style and tell me the first sentence of the introduction",
-            verify_func=validate_eval_20,
+            verify_func=verify_style_artist_intro_first_sentence,
             human_steps=4,
             is_reasoning=True,
             evaluation_type="answer",
@@ -237,73 +221,73 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Search for the song 'Shape of You'",
-            verify_func=validate_task(21),
+            verify_func=build_spotify_verify_func(verify_song_search),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Search for the song 'Perfect' and like it",
-            verify_func=validate_task(22),
+            verify_func=build_spotify_verify_func(verify_searched_song_liked),
             human_steps=6,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Create a playlist 'My Jazz', search and add songs 'Shape of You' and 'Style'",
-            verify_func=validate_task(23),
+            verify_func=build_spotify_verify_func(verify_playlist_created_with_songs),
             human_steps=11,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Delete a recent search record on the search input page",
-            verify_func=validate_task(24),
+            verify_func=build_spotify_verify_func(verify_recent_search_deleted),
             human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Create a new playlist named 'My Rock' in the library",
-            verify_func=validate_task(25),
+            verify_func=build_spotify_verify_func(verify_playlist_created),
             human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Play the next song, enable shuffle mode, enable repeat one mode, and like the song",
-            verify_func=validate_task(26),
+            verify_func=build_spotify_verify_func(verify_playback_controls_and_like),
             human_steps=6,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Create a playlist 'Workout', add the song 'In Your Eyes' and follow the artist of this song",
-            verify_func=validate_task(27),
+            verify_func=build_spotify_verify_func(verify_playlist_created_and_artist_followed),
             human_steps=12,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Follow a new artist",
-            verify_func=validate_task(28),
+            verify_func=build_spotify_verify_func(verify_new_artist_followed),
             human_steps=2,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Follow a new podcast",
-            verify_func=validate_task(29),
+            verify_func=build_spotify_verify_func(verify_new_podcast_followed),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Randomly add a playlist to the library from the home page",
-            verify_func=validate_task(30),
+            verify_func=build_spotify_verify_func(verify_playlist_added_to_library),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Add a song to Liked Songs",
-            verify_func=validate_task(31),
+            verify_func=build_spotify_verify_func(verify_song_added_to_liked_songs),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Search for the song 'Blank Space', like it, tell me the first line of the lyrics, view the credits and tell me who is the lyricist",
-            verify_func=validate_eval_32,
+            verify_func=verify_blank_space_first_lyrics_line_and_lyricist,
             human_steps=9,
             is_reasoning=True,
             evaluation_type="answer",
@@ -311,13 +295,13 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Proceed with premium subscription payment",
-            verify_func=validate_task(33),
+            verify_func=build_spotify_verify_func(verify_premium_subscription_activated),
             human_steps=4,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Tell me the title and publish date of the third podcast on the podcasts page, save it, post a comment 'Great episode!', and fast forward 15 seconds",
-            verify_func=validate_eval_34,
+            verify_func=verify_third_podcast_title_and_publish_date,
             human_steps=8,
             is_reasoning=True,
             evaluation_type="answer",
@@ -325,25 +309,25 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Fast forward a podcast by 15 seconds",
-            verify_func=validate_task(35),
+            verify_func=build_spotify_verify_func(verify_podcast_fast_forwarded),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Unfollow Taylor Swift",
-            verify_func=validate_task(36),
+            verify_func=build_spotify_verify_func(verify_artist_unfollowed),
             human_steps=3,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Create a playlist 'My Punk', search and add 'Shape of You', search and add 'Style', follow two new podcasts 'The Daily' and 'Crime Junkie'",
-            verify_func=validate_task(37),
+            verify_func=build_spotify_verify_func(verify_playlist_created_and_podcasts_followed),
             human_steps=15,
             is_reasoning=False,
         ),
         TaskItem(
             instruction="Search for the song 'Style', like it, tell me the first line of the lyrics, view the credits and tell me who is the lyricist, then set the sleep timer to 15 minutes",
-            verify_func=validate_eval_38,
+            verify_func=verify_style_first_lyrics_line_and_lyricist,
             human_steps=13,
             is_reasoning=True,
             evaluation_type="answer",
@@ -351,7 +335,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Tell me how many songs are in the playlist 'Chill Vibes' in the library, if less than 6, add songs until there are 6",
-            verify_func=validate_eval_39,
+            verify_func=verify_chill_vibes_initial_song_count,
             human_steps=6,
             is_reasoning=True,
             evaluation_type="answer",
@@ -359,7 +343,7 @@ SPOTIFY_TASKS = AppTasks(
         ),
         TaskItem(
             instruction="Tell me the title and publish date of the first audiobook, play and save it, post a comment 'Great episode!', fast forward 15 seconds, then save the second audiobook",
-            verify_func=validate_eval_40,
+            verify_func=verify_first_audiobook_title_and_publish_date,
             human_steps=12,
             is_reasoning=True,
             evaluation_type="answer",

@@ -13,7 +13,7 @@ TASK22_ANSWER_SCHEMA = {
 }
 
 
-def validate(result=None, **kwargs):
+def verify_parking_hourly_fee(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

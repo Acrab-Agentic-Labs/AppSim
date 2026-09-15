@@ -12,7 +12,7 @@ TASK17_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_17(result=None, **kwargs):
+def verify_timer_shutdown_status(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

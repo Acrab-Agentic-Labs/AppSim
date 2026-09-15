@@ -6,7 +6,7 @@ import os
 # 检查条件：type="train_booking", from="北京", to="上海", date="2025-10-20", departureTime在13:00-15:00范围内
 
 
-def check_booking_train_time(result=None, device_id=None, backup_dir=None):
+def verify_train_booking_for_requested_time(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/booking_history.json"
     local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
@@ -75,4 +75,4 @@ def check_booking_train_time(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_booking_train_time() else "false")
+    print("true" if verify_train_booking_for_requested_time() else "false")

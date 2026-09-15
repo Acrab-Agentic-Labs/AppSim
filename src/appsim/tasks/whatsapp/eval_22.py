@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty_two(result=None, device_id=None, backup_dir=None):
+def verify_top_followed_channel_muted(result=None, device_id=None, backup_dir=None):
     """Verify task 22: real_madrid in channels.json has isNotificationMuted set to true."""
     file_path = os.path.join(backup_dir, "channels.json") if backup_dir else "channels.json"
 
@@ -30,5 +30,5 @@ def validate_task_twenty_two(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty_two()
+    result = verify_top_followed_channel_muted()
     print(result)

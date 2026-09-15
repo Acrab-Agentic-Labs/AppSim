@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_two(result=None, device_id=None, backup_dir=None):
+def verify_requested_item_quantities_added_to_cart(result=None, device_id=None, backup_dir=None):
     """Validate task 32: add 1 'Apple MacBook Air 13-inch with M4 Chip, Space Grey', 2 'Apple MacBook Air 13-inch with M4 Chip, Midnight', and 3 'Apple MacBook Air 13-inch with M4 Chip, Starlight' to the cart."""
     cart_data_file_path = os.path.join(backup_dir, "cart_data.json") if backup_dir else "cart_data.json"
 
@@ -42,5 +42,5 @@ def validate_task_thirty_two(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_two()
+    result = verify_requested_item_quantities_added_to_cart()
     print(result)

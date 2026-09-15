@@ -12,7 +12,7 @@ TASK4_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_four(result=None, **kwargs):
+def verify_cart_electronics_total_price(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

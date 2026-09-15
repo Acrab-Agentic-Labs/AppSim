@@ -26,7 +26,7 @@ import sys
 EXPECTED_MODES = ["夜间", "dark", "夜间模式"]
 
 
-def verify_open_bright_mode(device_id=None):
+def verify_night_mode_enabled(device_id=None):
     """
     验证打开夜间模式任务是否完成
 
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_open_bright_mode()
+    success = verify_night_mode_enabled()
 
     # 输出最终结果
     print("=" * 60)

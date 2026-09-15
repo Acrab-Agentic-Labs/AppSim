@@ -19,7 +19,7 @@ TASK23_ANSWER_SCHEMA = {
 }
 
 
-def check_hotel_search_shanghai_min_price(result=None, device_id=None, backup_dir=None):
+def verify_lowest_hotel_price(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
@@ -30,5 +30,5 @@ def check_hotel_search_shanghai_min_price(result=None, device_id=None, backup_di
 
 
 if __name__ == "__main__":
-    result = check_hotel_search_shanghai_min_price()
+    result = verify_lowest_hotel_price()
     print(result)

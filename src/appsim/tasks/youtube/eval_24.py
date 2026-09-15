@@ -12,7 +12,7 @@ TASK24_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty_four(result=None, device_id=None, backup_dir=None):
+def verify_short_video_category_duration_total(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

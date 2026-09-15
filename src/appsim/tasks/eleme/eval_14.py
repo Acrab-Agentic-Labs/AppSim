@@ -10,7 +10,7 @@ PAGE_STORE_PAGE = "store_page"
 KEYWORD_MALATANG = "麻辣烫"
 PLATFORM_VALUE = "微信"
 
-def validate_task_fourteen(result=None,device_id=None,backup_dir=None):
+def verify_restaurant_shared_with_contact(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
@@ -41,5 +41,5 @@ def validate_task_fourteen(result=None,device_id=None,backup_dir=None):
 
 if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_task_fourteen()
+    result = verify_restaurant_shared_with_contact()
     print(result)

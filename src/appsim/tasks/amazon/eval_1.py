@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_one(result=None, device_id=None, backup_dir=None):
+def verify_first_search_result_added_to_cart(result=None, device_id=None, backup_dir=None):
     """Validate task 1: search for 'ball' on the home page, view the search results, and add the first item to the cart."""
     cart_data_file_path = os.path.join(backup_dir, "cart_data.json") if backup_dir else "cart_data.json"
 
@@ -29,5 +29,5 @@ def validate_task_one(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_one()
+    result = verify_first_search_result_added_to_cart()
     print(result)

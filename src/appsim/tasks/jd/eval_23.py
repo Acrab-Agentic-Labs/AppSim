@@ -17,7 +17,7 @@ TASK23_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty_three(result=None, device_id=None, backup_dir=None):
+def verify_store_high_rated_product_average_price(result=None, device_id=None, backup_dir=None):
     """验证任务二十三：计算Apple官方旗舰店评分大于4.7的商品的平均价格，保留一位小数。"""
     json_path = os.path.join(backup_dir, "shop_data.json") if backup_dir else "shop_data.json"
 

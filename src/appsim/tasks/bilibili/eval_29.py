@@ -5,7 +5,7 @@ import shutil
 import time
 
 
-def CheckCacheVideoCommentAndMessageSetting(result=None, device_id=None, backup_dir=None):
+def verify_offline_cache_video_comment_and_message_setting(result=None, device_id=None, backup_dir=None):
     """
     检验逻辑: 看一下离线缓存中是什么视频然后去我的收藏里观看这个视频，
     并给这个视频评论"张三就是有学问！"然后关闭消息设置里的消息提醒。
@@ -115,5 +115,5 @@ def CheckCacheVideoCommentAndMessageSetting(result=None, device_id=None, backup_
             print(f"⚠️ 清除日志失败: {str(e)}")
 
 if __name__ == "__main__":
-    result1 = CheckCacheVideoCommentAndMessageSetting()
+    result1 = verify_offline_cache_video_comment_and_message_setting()
     print(result1)

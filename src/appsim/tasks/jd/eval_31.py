@@ -12,7 +12,7 @@ def _get_cart_item_id(item):
     return item.get("id") if isinstance(item, dict) else None
 
 
-def validate_task_thirty_one(result=None, device_id=None, backup_dir=None):
+def verify_most_expensive_cart_products_removed(result=None, device_id=None, backup_dir=None):
     """验证任务三十一：查看购物车中所有商品，将价格最高的三件商品移出购物车。"""
     cart_items_file_path = os.path.join(backup_dir, "cart_items_after.json") if backup_dir else "cart_items.json"
 
@@ -54,5 +54,5 @@ def validate_task_thirty_one(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_one()
+    result = verify_most_expensive_cart_products_removed()
     print(f"__result__:{result}")

@@ -6,7 +6,7 @@ import os
 # 检查条件：最后8条记录前5条是火车票(广州->北京, 2025-10-20)，后3条是酒店(北京,不同酒店)
 
 
-def check_booking_complex_batch(result=None, device_id=None, backup_dir=None):
+def verify_batch_hotel_bookings_created(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/booking_history.json"
     local_file_path = os.path.join(backup_dir, 'booking_history.json') if backup_dir else 'booking_history.json'
@@ -72,4 +72,4 @@ def check_booking_complex_batch(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print("true" if check_booking_complex_batch() else "false")
+    print("true" if verify_batch_hotel_bookings_created() else "false")

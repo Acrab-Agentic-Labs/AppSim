@@ -12,7 +12,7 @@ TASK27_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty_seven(result=None, device_id=None, backup_dir=None):
+def verify_mobile_network_video_quality(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

@@ -12,7 +12,7 @@ TASK16_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_sixteen(result=None, **kwargs):
+def verify_latest_order_arrival_time(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

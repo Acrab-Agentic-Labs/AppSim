@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_nineteen(result=None, device_id=None, backup_dir=None):
+def verify_default_address_created(result=None, device_id=None, backup_dir=None):
     """验证任务十九：新建默认地址"代嘉仪，13066666666 湖北省武汉市洪山区文秀街9号"并设为默认地址"""
     addresses_file_path = os.path.join(backup_dir, "addresses.json") if backup_dir else "addresses.json"
 
@@ -48,5 +48,5 @@ def validate_task_nineteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_nineteen()
+    result = verify_default_address_created()
     print(result)

@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_seventeen(result=None, device_id=None, backup_dir=None):
+def verify_low_price_cart_items_removed(result=None, device_id=None, backup_dir=None):
     """Validate task 17: remove all items priced below $200 from the cart."""
     cart_data_file_path = os.path.join(backup_dir, "cart_data.json") if backup_dir else "cart_data.json"
 
@@ -30,5 +30,5 @@ def validate_task_seventeen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_seventeen()
+    result = verify_low_price_cart_items_removed()
     print(result)

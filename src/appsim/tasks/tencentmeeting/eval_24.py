@@ -16,7 +16,7 @@ EXPECTED_MESSAGE_CONTENT = "我有问题"
 MESSAGES_FILE = "messages.json"
 HAND_RAISE_FILE = "hand_raise_records.json"
 
-def check_message_and_handraise(
+def verify_meeting_message_and_hand_raise(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -132,4 +132,4 @@ if __name__ == "__main__":
 
 
 if __name__ == '__main__':
-    print(check_message_and_handraise())
+    print(verify_meeting_message_and_hand_raise())

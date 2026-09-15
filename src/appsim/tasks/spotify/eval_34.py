@@ -16,7 +16,7 @@ TASK34_ANSWER_SCHEMA = {
 }
 
 
-def validate(result=None, **kwargs):
+def verify_third_podcast_title_and_publish_date(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

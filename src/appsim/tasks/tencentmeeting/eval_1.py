@@ -63,7 +63,7 @@ def _has_history_page_evidence(ui_text: str) -> bool:
     return has_search_placeholder or has_empty_state or has_ended_card_fields
 
 
-def check_recent_ended_meeting(
+def verify_meeting_history_opened(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -94,4 +94,4 @@ def check_recent_ended_meeting(
 
 
 if __name__ == "__main__":
-    print(check_recent_ended_meeting())
+    print(verify_meeting_history_opened())

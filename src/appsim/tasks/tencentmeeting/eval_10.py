@@ -30,7 +30,7 @@ MEETING_PARTICIPANTS_FILE = "meeting_participants.json"
 USER_ID_KEY = "userId"
 
 
-def verify_invitable_people_count(
+def verify_invitable_participant_count(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -93,4 +93,4 @@ def verify_invitable_people_count(
 
 
 if __name__ == '__main__':
-    print(verify_invitable_people_count())
+    print(verify_invitable_participant_count())

@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_five(result=None, device_id=None, backup_dir=None):
+def verify_community_announcement_shared(result=None, device_id=None, backup_dir=None):
     """Verify task 35: the last item in community_channel_messages.json has the expected conversationId and textContent."""
     file_path = os.path.join(backup_dir, "community_channel_messages.json") if backup_dir else "community_channel_messages.json"
 
@@ -32,5 +32,5 @@ def validate_task_thirty_five(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_five()
+    result = verify_community_announcement_shared()
     print(result)

@@ -37,7 +37,7 @@ def _normalize_mute_on_entry(value):
     return normalized
 
 
-def check_personal_meeting_room_settings(
+def verify_personal_meeting_room_settings(
     result=None,
     device_id=None,
     backup_dir=None,
@@ -197,4 +197,4 @@ def check_personal_meeting_room_settings(
         return False
 
 if __name__ == '__main__':
-    print(check_personal_meeting_room_settings())
+    print(verify_personal_meeting_room_settings())

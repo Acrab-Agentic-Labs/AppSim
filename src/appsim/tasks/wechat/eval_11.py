@@ -13,7 +13,7 @@ TASK11_ANSWER_SCHEMA = {
 }
 
 
-def task11_validate_financial_report_person(result=None, device_id=None, backup_dir=None):
+def verify_financial_report_assignee_identified(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

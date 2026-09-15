@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def publish_and_self_interact_check(result=None, device_id=None, backup_dir=None):
+def verify_public_note_published_and_interacted_with(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
     _NOTE_TITLE = "今日分享"
 
@@ -73,4 +73,4 @@ def publish_and_self_interact_check(result=None, device_id=None, backup_dir=None
 
 
 if __name__ == "__main__":
-    print(publish_and_self_interact_check())
+    print(verify_public_note_published_and_interacted_with())

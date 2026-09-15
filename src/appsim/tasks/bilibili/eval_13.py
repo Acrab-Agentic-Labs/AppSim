@@ -12,7 +12,7 @@ TASK13_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_13(result=None, **kwargs):
+def verify_first_favorited_video_duration(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

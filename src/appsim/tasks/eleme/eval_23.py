@@ -23,7 +23,7 @@ TASK23_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty_three(result=None, device_id=None, backup_dir=None):
+def verify_latest_delivered_order_paid_amount(result=None, device_id=None, backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:

@@ -7,7 +7,7 @@ PAGE_CHAT = "chat"
 RECIPIENT_TYPE_MERCHANT = "merchant"
 MESSAGE_VALUE = "缺少可乐，要求退款"
 
-def validate_task_sixteen(result=None,device_id=None,backup_dir=None):
+def verify_order_issue_refund_requested(result=None,device_id=None,backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
     except:
@@ -25,5 +25,5 @@ def validate_task_sixteen(result=None,device_id=None,backup_dir=None):
 
 if __name__ == '__main__':
     # 运行验证并输出结果
-    result = validate_task_sixteen()
+    result = verify_order_issue_refund_requested()
     print(result)

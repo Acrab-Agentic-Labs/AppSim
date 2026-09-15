@@ -19,7 +19,7 @@ TASK4_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_four(result=None, device_id=None, backup_dir=None):
+def verify_saved_address_recipient_count(result=None, device_id=None, backup_dir=None):
     try:
         all_data = read_json_from_device(device_id, PACKAGE_NAME, DEVICE_FILE_PATH, backup_dir)
         if isinstance(all_data, list):

@@ -12,7 +12,7 @@ TASK12_ANSWER_SCHEMA = {
 }
 
 
-def task12_validate_design_draft_person(result=None, device_id=None, backup_dir=None):
+def verify_design_draft_assignee_identified(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

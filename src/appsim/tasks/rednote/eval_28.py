@@ -16,7 +16,7 @@ TASK28_ANSWER_SCHEMA = {
 }
 
 
-def eval_28(result=None, device_id=None, backup_dir=None):
+def verify_account_identifier_retrieved(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_001"
 
     if not isinstance(result, dict):
@@ -56,5 +56,5 @@ def eval_28(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = eval_28()
+    result = verify_account_identifier_retrieved()
     print(result)

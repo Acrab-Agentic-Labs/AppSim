@@ -12,7 +12,7 @@ TASK21_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty_one(result=None, **kwargs):
+def verify_cheapest_item_price_difference_between_merchants(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

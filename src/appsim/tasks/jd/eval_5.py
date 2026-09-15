@@ -17,7 +17,7 @@ TASK5_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_five(result=None, device_id=None, backup_dir=None):
+def verify_homepage_phone_products_total_price(result=None, device_id=None, backup_dir=None):
     """验证任务五：首页显示的前十个商品中的手机商品的总价是多少？"""
     json_path = os.path.join(backup_dir, "products.json") if backup_dir else "products.json"
 

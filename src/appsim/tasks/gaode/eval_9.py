@@ -26,7 +26,7 @@ import sys
 EXPECTED_DESTINATION = "武汉市少儿图书馆"
 
 
-def verify_delete_recent_route(device_id=None):
+def verify_oldest_navigation_history_deleted(device_id=None):
     """
     验证删除历史路线任务是否完成
 
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_delete_recent_route()
+    success = verify_oldest_navigation_history_deleted()
 
     # 输出最终结果
     print("=" * 60)

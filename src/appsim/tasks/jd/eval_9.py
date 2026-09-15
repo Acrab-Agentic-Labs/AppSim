@@ -17,7 +17,7 @@ TASK9_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_nine(result=None, device_id=None, backup_dir=None):
+def verify_cart_total_price(result=None, device_id=None, backup_dir=None):
     """验证任务九：计算购物车中所有商品的总价"""
     json_path = os.path.join(backup_dir, "cart_items.json") if backup_dir else "cart_items.json"
 

@@ -17,7 +17,7 @@ TASK25_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_twenty_five(result=None, device_id=None, backup_dir=None):
+def verify_non_phone_product_average_rating(result=None, device_id=None, backup_dir=None):
     """验证任务：统计首页前10个商品中不是手机商品的平均评分,保留2位小数。"""
     json_path = os.path.join(backup_dir, "products.json") if backup_dir else "products.json"
 

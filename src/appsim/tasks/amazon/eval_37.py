@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_seven(result=None, device_id=None, backup_dir=None):
+def verify_search_result_added_to_shopping_list(result=None, device_id=None, backup_dir=None):
     """Validate task 37: create a shopping list named 'Electronics Wishlist', then search for 'Samsung' and add the first search result to that list."""
     lists_data_file_path = os.path.join(backup_dir, "lists_data.json") if backup_dir else "lists_data.json"
 
@@ -30,5 +30,5 @@ def validate_task_thirty_seven(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_seven()
+    result = verify_search_result_added_to_shopping_list()
     print(result)

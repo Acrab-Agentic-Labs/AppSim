@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_three(result=None, device_id=None, backup_dir=None):
+def verify_immediate_product_purchase(result=None, device_id=None, backup_dir=None):
     """验证任务三：立即购买首页中一台任意规格的「iPhone 15」"""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
     log_file_path = os.path.join(backup_dir, "running_status.log") if backup_dir else "running_status.log"
@@ -44,5 +44,5 @@ def validate_task_three(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_three()
+    result = verify_immediate_product_purchase()
     print(result)

@@ -12,7 +12,7 @@ TASK19_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_nineteen(result=None, device_id=None, backup_dir=None):
+def verify_search_result_review_keyword_count(result=None, device_id=None, backup_dir=None):
     """Validate task 19: search for 'MacBook' and report how many reviews mention 'Battery life' in the result item."""
     if not isinstance(result, dict):
         return False
@@ -23,5 +23,5 @@ def validate_task_nineteen(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_nineteen()
+    result = verify_search_result_review_keyword_count()
     print(result)

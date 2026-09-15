@@ -12,7 +12,7 @@ TASK19_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_19(result=None, **kwargs):
+def verify_favorite_items_purchase_total(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

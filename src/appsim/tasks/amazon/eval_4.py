@@ -8,7 +8,7 @@ import subprocess
 TARGET_MESSAGE = "hello, I have some questions about dyson products."
 
 
-def validate_task_four(result=None, device_id=None, backup_dir=None):
+def verify_customer_service_message_sent(result=None, device_id=None, backup_dir=None):
     """Validate task 4: send 'Hello, I have some questions about Dyson products.' to customer service."""
     chat_messages_file_path = os.path.join(backup_dir, "chat_messages.json") if backup_dir else "chat_messages.json"
 
@@ -42,5 +42,5 @@ def validate_task_four(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_four()
+    result = verify_customer_service_message_sent()
     print(result)

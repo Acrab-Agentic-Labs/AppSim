@@ -12,7 +12,7 @@ TASK11_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_eleven(result=None, device_id=None, backup_dir=None):
+def verify_restricted_mode_state(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

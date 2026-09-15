@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_four(result=None, device_id=None, backup_dir=None):
+def verify_friend_status_liked(result=None, device_id=None, backup_dir=None):
     """Verify task 4: status_004 in user_statuses.json has likeCount equal to 13."""
     file_path = os.path.join(backup_dir, "user_statuses.json") if backup_dir else "user_statuses.json"
 
@@ -30,5 +30,5 @@ def validate_task_four(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_four()
+    result = verify_friend_status_liked()
     print(result)

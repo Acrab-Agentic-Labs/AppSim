@@ -13,7 +13,7 @@ TASK9_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_nine(result=None, device_id=None, backup_dir=None):
+def verify_joined_community_count(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
@@ -23,5 +23,5 @@ def validate_task_nine(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_nine()
+    result = verify_joined_community_count()
     print(result)

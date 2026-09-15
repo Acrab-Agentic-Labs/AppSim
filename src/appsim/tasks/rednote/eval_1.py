@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def message_send_check(result=None, device_id=None, backup_dir=None):
+def verify_author_message_sent(result=None, device_id=None, backup_dir=None):
     _RECEIVEER_ID = "user_001"
     _SENDER_ID = "user_current"
     _MESSAGE_CONTENT = "你好"
@@ -46,4 +46,4 @@ def message_send_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(message_send_check())
+    print(verify_author_message_sent())

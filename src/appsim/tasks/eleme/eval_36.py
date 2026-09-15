@@ -12,7 +12,7 @@ TASK36_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_thirty_six(result=None, device_id=None, backup_dir=None):
+def verify_low_delivery_threshold_restaurant_count(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

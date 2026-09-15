@@ -3,7 +3,7 @@ import subprocess
 import os
 
 
-def check_click_hotel(result=None, device_id=None, backup_dir=None):
+def verify_hotel_booking_page_opened(result=None, device_id=None, backup_dir=None):
     app_package = "com.example.ctrip_sim"
     phone_file_path = "files/click_history.json"
     local_file_path = os.path.join(backup_dir, 'click_history.json') if backup_dir else 'click_history.json'
@@ -30,4 +30,4 @@ def check_click_hotel(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(check_click_hotel())
+    print(verify_hotel_booking_page_opened())

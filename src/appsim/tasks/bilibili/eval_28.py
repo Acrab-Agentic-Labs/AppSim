@@ -15,7 +15,7 @@ TASK28_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_28(result=None, device_id=None, backup_dir=None):
+def verify_follow_list_count_and_feed_like(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

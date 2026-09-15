@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def like_comment_check(result=None, device_id=None, backup_dir=None):
+def verify_note_comment_liked(result=None, device_id=None, backup_dir=None):
     _USER_ID = "user_current"
 
     # 从设备获取点赞记录
@@ -40,4 +40,4 @@ def like_comment_check(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    print(like_comment_check())
+    print(verify_note_comment_liked())

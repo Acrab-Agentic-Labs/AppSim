@@ -12,7 +12,7 @@ TASK10_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_10(result=None, **kwargs):
+def verify_first_video_comment_like_total(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

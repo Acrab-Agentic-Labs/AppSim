@@ -12,7 +12,7 @@ TASK10_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_ten(result=None, device_id=None, backup_dir=None):
+def verify_liked_video_duration(result=None, device_id=None, backup_dir=None):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")

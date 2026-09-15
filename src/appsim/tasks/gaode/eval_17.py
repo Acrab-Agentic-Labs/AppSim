@@ -28,7 +28,7 @@ EXPECTED_FROM = ["M+", "M+购物中心"]
 EXPECTED_TO = "我的位置"
 
 
-def verify_navigate_from_poi(device_id=None):
+def verify_navigation_from_poi(device_id=None):
     """
     验证从M+购物中心导航到我的位置任务是否完成
 
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # 执行验证
-    success = verify_navigate_from_poi()
+    success = verify_navigation_from_poi()
 
     # 输出最终结果
     print("=" * 60)

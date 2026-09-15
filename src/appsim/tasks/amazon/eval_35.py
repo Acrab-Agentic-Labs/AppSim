@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_thirty_five(result=None, device_id=None, backup_dir=None):
+def verify_most_reviewed_category_item_purchased_and_shipped(result=None, device_id=None, backup_dir=None):
     """Validate task 35: add the Food item with the most reviews from the Interests page to the cart, then check it out and send it to Patricia Harris's address."""
     orders_file_path = os.path.join(backup_dir, "orders.json") if backup_dir else "orders.json"
 
@@ -45,5 +45,5 @@ def validate_task_thirty_five(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_thirty_five()
+    result = verify_most_reviewed_category_item_purchased_and_shipped()
     print(result)

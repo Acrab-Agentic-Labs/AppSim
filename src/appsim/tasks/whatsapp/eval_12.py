@@ -4,7 +4,7 @@ import os
 import subprocess
 
 
-def validate_task_twelve(result=None, device_id=None, backup_dir=None):
+def verify_personal_status_updated(result=None, device_id=None, backup_dir=None):
     """Verify task 12: user_001 in accounts.json has about set to Busy."""
     file_path = os.path.join(backup_dir, "accounts.json") if backup_dir else "accounts.json"
 
@@ -30,5 +30,5 @@ def validate_task_twelve(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twelve()
+    result = verify_personal_status_updated()
     print(result)

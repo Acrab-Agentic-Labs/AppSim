@@ -16,7 +16,7 @@ TASK15_ANSWER_SCHEMA = {
 }
 
 
-def CheckHistoryItemDelete(result=None, device_id=None, backup_dir=None):
+def verify_history_item_deleted(result=None, device_id=None, backup_dir=None):
     try:
         cmd_logcat = ['adb']
         if device_id:

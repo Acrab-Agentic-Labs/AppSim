@@ -1,7 +1,7 @@
 import json
 import os
 import subprocess
-def browsing_history_check(result=None, device_id=None, backup_dir=None):
+def verify_collected_note_summarized(result=None, device_id=None, backup_dir=None):
 
     _USER_ID = "user_current"
     _EXPECTED_COUNT = 1
@@ -42,5 +42,5 @@ def browsing_history_check(result=None, device_id=None, backup_dir=None):
         return False
 
 if __name__ == "__main__":
-    result = browsing_history_check()
+    result = verify_collected_note_summarized()
     print(result)

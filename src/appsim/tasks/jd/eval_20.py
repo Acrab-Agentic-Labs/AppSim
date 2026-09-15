@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def validate_task_twenty(result=None, device_id=None, backup_dir=None):
+def verify_store_chat_muted(result=None, device_id=None, backup_dir=None):
     """验证任务二十：设置Apple官方旗舰店的聊天为消息免打扰"""
     mute_settings_file_path = os.path.join(backup_dir, "mute_settings.json") if backup_dir else "mute_settings.json"
 
@@ -35,5 +35,5 @@ def validate_task_twenty(result=None, device_id=None, backup_dir=None):
 
 
 if __name__ == "__main__":
-    result = validate_task_twenty()
+    result = verify_store_chat_muted()
     print(result)

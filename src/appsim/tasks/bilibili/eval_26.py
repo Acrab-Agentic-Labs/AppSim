@@ -12,7 +12,7 @@ TASK26_ANSWER_SCHEMA = {
 }
 
 
-def validate_task_26(result=None, **kwargs):
+def verify_favorite_video_lowest_comment_user_number(result=None, **kwargs):
     if not isinstance(result, dict):
         return False
     extracted_answer = result.get("extracted_answer")
