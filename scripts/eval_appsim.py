@@ -13,7 +13,7 @@ from appsim.utils import run_app_with_clear_data
 
 try:
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-    from agent_factory import AgentEnum, create_agent
+    from agent_factory import BaselineEnum, create_agent
 except ImportError:
     raise ImportError("agent_factory.py 文件不存在")
 
@@ -31,9 +31,9 @@ def parse_args():
 示例用法:
   在环境变量或者.env文件中配置 OPENAI_API_KEY 和 OPENAI_API_BASE (可选)
 
-  python eval_m3a_agent.py --task BILIBILI --device-id emulator-5554
-  python eval_m3a_agent.py -t WECHAT -d emulator-5554
-  python eval_m3a_agent.py -t GAODE -d emulator-5554 --output-dir results --agent-name gpt-4o
+  python scripts/eval_appsim.py --task BILIBILI --device-id emulator-5554 --agent-name GPT-5
+  python scripts/eval_appsim.py -t WECHAT -d emulator-5554 --agent-name GPT-5
+  python scripts/eval_appsim.py -t GAODE -d emulator-5554 --output-dir results --agent-name GPT-4o
 
 可用的任务选项: {", ".join([app.name for app in AppEnum])}
         """,
@@ -43,8 +43,8 @@ def parse_args():
         "--agent-name",
         type=str,
         required=True,
-        choices=[agent.value for agent in AgentEnum],
-        help="Agent 名称 (默认: Seed-1.5-VL)",
+        choices=[agent.value for agent in BaselineEnum],
+        help="Agent 名称",
     )
 
     parser.add_argument(
@@ -83,7 +83,7 @@ def main():
         logging.error(f"可用的任务: {', '.join([app.name for app in AppEnum])}")
         sys.exit(1)
 
-    agent_name = AgentEnum(args.agent_name)
+    agent_name = BaselineEnum(args.agent_name)
     tasks = APP_TASKS_MAP[task_app]
     device_id = args.device_id
     app_package = tasks.package_name

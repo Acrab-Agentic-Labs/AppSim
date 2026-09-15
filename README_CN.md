@@ -1,4 +1,12 @@
-# AppSim 项目文档
+# AppSim-Bench：连接真实世界应用与可复现的移动 GUI Agent 评测
+
+<p align="center">
+中文 &nbsp; | &nbsp; <a href="README.md">English</a>
+</p>
+
+<p align="center">
+<a href="https://acrab-agentic-labs.github.io/AppSim/">项目主页</a> &nbsp; | &nbsp; <a href="https://arxiv.org/abs/2609.07712">论文</a>
+</p>
 
 ## 📑 目录
 
@@ -17,6 +25,7 @@
     - [4. 特别说明](#4-特别说明)
     - [5. 扩展Agent类型](#5-扩展agent类型)
 - [常见问题](#常见问题)
+- [引用](#引用)
 
 ---
 
@@ -128,23 +137,23 @@ scrcpy
 
 | 中文名 | 英文名 | App 的 GitHub 地址 |
 |---|---|---|
-| 哔哩哔哩 | BiliBili | https://github.com/Acrab-Lab/AppSim-BiliBili |
-| 饿了么 | Eleme | https://github.com/Acrab-Lab/AppSim-Eleme |
-| 高德地图 | Amap | https://github.com/Acrab-Lab/AppSim-Amap |
-| 京东 | JD | https://github.com/Acrab-Lab/AppSim-JD |
-| 腾讯会议 | Tencent Meeting | https://github.com/Acrab-Lab/AppSim-TencentMeeting |
-| 网易云音乐 | NetEase Cloud Music | https://github.com/Acrab-Lab/AppSim-NetEaseCloudMusic |
-| 微信 | WeChat | https://github.com/Acrab-Lab/AppSim-Wechat-V2 |
-| 小红书 | RedNote | https://github.com/Acrab-Lab/AppSim-RedNote |
-| 携程 | Ctrip | https://github.com/Acrab-Lab/AppSim-Ctrip |
-|  | Amazon | https://github.com/Acrab-Lab/AppSim-Amazon |
-|  | Booking | https://github.com/Acrab-Lab/AppSim-Booking |
-|  | Instagram | https://github.com/Acrab-Lab/AppSim-Instagram |
-|  | Spotify | https://github.com/Acrab-Lab/GUIAgent-Spotify |
-|  | Uber Eats | https://github.com/Acrab-Lab/AppSim-UberEats |
-|  | WhatsApp | https://github.com/Acrab-Lab/AppSim-WhatsApp |
-|  | YouTube | https://github.com/Acrab-Lab/AppSim-Youtube |
-|  | Zoom | https://github.com/Acrab-Lab/AppSim-Zoom |
+| 哔哩哔哩 | BiliBili | https://github.com/Acrab-Agentic-Labs/AppSim-BiliBili |
+| 饿了么 | Eleme | https://github.com/Acrab-Agentic-Labs/AppSim-Eleme |
+| 高德地图 | Amap | https://github.com/Acrab-Agentic-Labs/AppSim-Amap |
+| 京东 | JD | https://github.com/Acrab-Agentic-Labs/AppSim-JD |
+| 腾讯会议 | Tencent Meeting | https://github.com/Acrab-Agentic-Labs/AppSim-TencentMeeting |
+| 网易云音乐 | NetEase Cloud Music | https://github.com/Acrab-Agentic-Labs/AppSim-NetEaseCloudMusic |
+| 微信 | WeChat | https://github.com/Acrab-Agentic-Labs/AppSim-Wechat-V2 |
+| 小红书 | RedNote | https://github.com/Acrab-Agentic-Labs/AppSim-RedNote |
+| 携程 | Ctrip | https://github.com/Acrab-Agentic-Labs/AppSim-Ctrip |
+|  | Amazon | https://github.com/Acrab-Agentic-Labs/AppSim-Amazon |
+|  | Booking | https://github.com/Acrab-Agentic-Labs/AppSim-Booking |
+|  | Instagram | https://github.com/Acrab-Agentic-Labs/AppSim-Instagram |
+|  | Spotify | https://github.com/Acrab-Agentic-Labs/GUIAgent-Spotify |
+|  | Uber Eats | https://github.com/Acrab-Agentic-Labs/AppSim-UberEats |
+|  | WhatsApp | https://github.com/Acrab-Agentic-Labs/AppSim-WhatsApp |
+|  | YouTube | https://github.com/Acrab-Agentic-Labs/AppSim-Youtube |
+|  | Zoom | https://github.com/Acrab-Agentic-Labs/AppSim-Zoom |
 
 ```bash
 # 创建虚拟环境
@@ -175,14 +184,11 @@ python scripts/eval_appsim.py \
 
 ##### 命令行参数
 
-- `--agent-name`: Agent 名称，可选值：
-  - `Seed-1.5-VL`
-  - `UI-TARS-1.5`
+- `--agent-name`: Agent 名称，示例：
   - `GPT-5`
-  - `Gemini-2.5-Pro`
-  - `Claude-4.5-Sonnet`
-  - `Qwen3-VL`
-  - `AgentCPM-GUI`（批量脚本默认）
+  - `AgentCPM-GUI`
+
+  完整列表请参阅 [`scripts/agent_factory/agent_factory.py`](scripts/agent_factory/agent_factory.py)。
 
 - `--task`: 要评估的应用任务，可选值：
   - `BILIBILI` - 哔哩哔哩
@@ -248,8 +254,8 @@ export ANSWER_EXTRACTOR_MODEL_NAME='your-extractor-model-name'
 编辑 `scripts/eval.sh` 文件，配置以下信息：
 
 ```bash
-# Agent 配置，默认使用 AgentCPM-GUI。
-AGENT_NAME="${AGENT_NAME:-AgentCPM-GUI}"
+# Agent 配置。
+AGENT_NAME="<agent-name>"
 
 # OpenAI 兼容 API 配置。三组数组按下标一一对应，数量必须不少于设备数量。
 API_BASES=(
@@ -355,24 +361,6 @@ bash scripts/eval.sh
 - 如果使用其他模型，请确保模型输出的坐标格式符合要求（1000x1000 坐标系，整数坐标）
 - 评估结果会实时保存到输出目录的 JSONL 文件中，文件名包含时间戳
 
-##### UI-TARS 官方 API 提供的手机 GUI 任务处理场景动作表
-
-> 记录 UI-TARS 模型的官方 API 提供的 Action
-
-模型会输出类似于 `click(point='<point>500 257</point>')` 这样的一段动作，我们按照下表展示的规则去解析模型输出的内容。
-
-| Action 名称 | 动作类型 | 参数                | 输出示例                                                                 |
-|-------------|----------|---------------------|--------------------------------------------------------------------------|
-| click       | 点击     | point               | `click(point='<point>x1 y1</point>')`                            |
-| long_press  | 长按     | point               | `long_press(point='<point>x1 y1</point>')`                       |
-| type        | 输入     | content             | `type(content='文本内容\\n')`                                    |
-| scroll      | 滚动     | point、direction    | `scroll(point='<point>x1 y1</point>', direction='down')`         |
-| open_app    | 打开应用 | app_name            | `open_app(app_name='微信')`                                      |
-| drag        | 拖拽     | start_point、end_point | `drag(start_point='<point>x1 y1</point>', end_point='<point>x2 y2</point>')` |
-| press_home  | 返回主屏幕 | 无                  | `press_home()`                                                   |
-| press_back  | 返回     | 无                  | `press_back()`                                                   |
-| finished    | 完成     | content             | `finished(content='操作完成信息')`                                |
-
 #### 5. 扩展Agent类型
 
 项目支持多种 Agent，通过 `--agent-name` 参数切换。不同的 Agent 对应不同的模型和配置，具体实现位于 `scripts/agent_factory/agent_factory.py`。
@@ -401,5 +389,19 @@ A: 按以下步骤排查：
 ### Q: 如何只测试部分应用？
 
 A: 编辑 `eval.sh` 中的 `APPS` 数组，只保留需要测试的应用名称。
+
+## 引用
+
+```bibtex
+@misc{appsimbench,
+      title={APPSim-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents},
+      author={Jintian Feng and Long Chen and Xiao Yu and Jiayi Dai and Chenglong Liu and Haoru Wang and Zizhen Xue and Yuxuan Shi and Ziyang Wang and Yichen Gong},
+      year={2026},
+      eprint={2609.07712},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2609.07712},
+}
+```
 
 ---
