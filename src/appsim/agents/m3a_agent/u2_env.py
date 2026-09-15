@@ -53,7 +53,12 @@ class UIElement:
 class U2Env:
     """uiautomator2 环境封装，提供类似 android_world env 的接口"""
 
-    def __init__(self, device_id: str):
+    def __init__(
+        self,
+        device_id: str,
+        connect_attempts: int = 3,
+        connect_retry_seconds: float = 2.0,
+    ):
         """初始化 uiautomator2 环境.
 
         Args:
@@ -61,24 +66,61 @@ class U2Env:
         """
         if not device_id:
             raise ValueError("device_id is required")
+        if connect_attempts <= 0 or connect_retry_seconds < 0:
+            raise ValueError("connect_attempts 必须大于 0，connect_retry_seconds 不能小于 0")
 
         self.device_id = device_id
+        self.connect_attempts = connect_attempts
+        self.connect_retry_seconds = connect_retry_seconds
         self.u2_device = None
         self._check_and_connect()
 
     def _check_and_connect(self):
         """检查并连接设备"""
-        try:
-            # 连接 uiautomator2
-            self.u2_device = u2.connect(self.device_id)
-            info = self.u2_device.info
-            logger.info("✅ uiautomator2 连接成功!")
-            logger.info(f"   设备: {self.device_id}")
-            logger.info(f"   屏幕尺寸: {info.get('displayWidth', 'Unknown')}x{info.get('displayHeight', 'Unknown')}")
+        last_error = None
+        for attempt in range(1, self.connect_attempts + 1):
+            try:
+                self.u2_device = u2.connect(self.device_id)
+                info = self.u2_device.info
+                logger.info("✅ uiautomator2 连接成功!")
+                logger.info(f"   设备: {self.device_id}")
+                logger.info(
+                    f"   屏幕尺寸: {info.get('displayWidth', 'Unknown')}x"
+                    f"{info.get('displayHeight', 'Unknown')}"
+                )
+                return
+            except Exception as error:
+                last_error = error
+                self.u2_device = None
+                if attempt >= self.connect_attempts:
+                    break
+                logger.warning(
+                    "uiautomator2 连接失败，%s 秒后重试 %s/%s: %s",
+                    self.connect_retry_seconds,
+                    attempt,
+                    self.connect_attempts,
+                    error,
+                )
+                time.sleep(self.connect_retry_seconds)
+        logger.error(f"uiautomator2 连接失败: {last_error}")
+        raise RuntimeError(f"uiautomator2 连接失败: {last_error}")
 
-        except Exception as e:
-            logger.error(f"uiautomator2 连接失败: {e}")
-            raise RuntimeError(f"uiautomator2 连接失败: {e}")
+    def current_package(self) -> Optional[str]:
+        """返回当前前台应用包名。"""
+
+        try:
+            current = self.u2_device.app_current()
+            package = current.get("package") if isinstance(current, dict) else None
+            if package:
+                return str(package)
+        except Exception as error:
+            logger.warning("读取当前应用包名失败: %s", error)
+        try:
+            package = self.u2_device.info.get("currentPackageName")
+            return str(package) if package else None
+        except Exception as error:
+            logger.warning("从设备信息读取当前应用包名失败: %s", error)
+            return None
 
     def reset(self, go_home: bool = False):
         """重置环境.
