@@ -1,6 +1,12 @@
-# AppSim Project Documentation
+# AppSim-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents
 
-Chinese version: [README_CN.md](README_CN.md)
+<p align="center">
+<a href="README_CN.md">中文</a> &nbsp; | &nbsp; English
+</p>
+
+<p align="center">
+<a href="https://acrab-agentic-labs.github.io/AppSim/">Project Homepage</a> &nbsp; | &nbsp; <a href="https://arxiv.org/abs/2609.07712">Paper</a>
+</p>
 
 ## Contents
 
@@ -19,6 +25,7 @@ Chinese version: [README_CN.md](README_CN.md)
     - [4. Notes](#4-notes)
     - [5. Extending Agent Types](#5-extending-agent-types)
 - [FAQ](#faq)
+- [Citation](#citation)
 
 ---
 
@@ -104,23 +111,23 @@ Before running evaluations, install the 17 AppSim APKs on the test phone or emul
 
 | Chinese Name | English Name | GitHub Repo |
 |---|---|---|
-| 哔哩哔哩 | BiliBili | https://github.com/Acrab-Lab/AppSim-BiliBili |
-| 饿了么 | Eleme | https://github.com/Acrab-Lab/AppSim-Eleme |
-| 高德地图 | Amap | https://github.com/Acrab-Lab/AppSim-Amap |
-| 京东 | JD | https://github.com/Acrab-Lab/AppSim-JD |
-| 腾讯会议 | Tencent Meeting | https://github.com/Acrab-Lab/AppSim-TencentMeeting |
-| 网易云音乐 | NetEase Cloud Music | https://github.com/Acrab-Lab/AppSim-NetEaseCloudMusic |
-| 微信 | WeChat | https://github.com/Acrab-Lab/AppSim-Wechat-V2 |
-| 小红书 | RedNote | https://github.com/Acrab-Lab/AppSim-RedNote |
-| 携程 | Ctrip | https://github.com/Acrab-Lab/AppSim-Ctrip |
-|  | Amazon | https://github.com/Acrab-Lab/AppSim-Amazon |
-|  | Booking | https://github.com/Acrab-Lab/AppSim-Booking |
-|  | Instagram | https://github.com/Acrab-Lab/AppSim-Instagram |
-|  | Spotify | https://github.com/Acrab-Lab/GUIAgent-Spotify |
-|  | Uber Eats | https://github.com/Acrab-Lab/AppSim-UberEats |
-|  | WhatsApp | https://github.com/Acrab-Lab/AppSim-WhatsApp |
-|  | YouTube | https://github.com/Acrab-Lab/AppSim-Youtube |
-|  | Zoom | https://github.com/Acrab-Lab/AppSim-Zoom |
+| 哔哩哔哩 | BiliBili | https://github.com/Acrab-Agentic-Labs/AppSim-BiliBili |
+| 饿了么 | Eleme | https://github.com/Acrab-Agentic-Labs/AppSim-Eleme |
+| 高德地图 | Amap | https://github.com/Acrab-Agentic-Labs/AppSim-Amap |
+| 京东 | JD | https://github.com/Acrab-Agentic-Labs/AppSim-JD |
+| 腾讯会议 | Tencent Meeting | https://github.com/Acrab-Agentic-Labs/AppSim-TencentMeeting |
+| 网易云音乐 | NetEase Cloud Music | https://github.com/Acrab-Agentic-Labs/AppSim-NetEaseCloudMusic |
+| 微信 | WeChat | https://github.com/Acrab-Agentic-Labs/AppSim-Wechat-V2 |
+| 小红书 | RedNote | https://github.com/Acrab-Agentic-Labs/AppSim-RedNote |
+| 携程 | Ctrip | https://github.com/Acrab-Agentic-Labs/AppSim-Ctrip |
+|  | Amazon | https://github.com/Acrab-Agentic-Labs/AppSim-Amazon |
+|  | Booking | https://github.com/Acrab-Agentic-Labs/AppSim-Booking |
+|  | Instagram | https://github.com/Acrab-Agentic-Labs/AppSim-Instagram |
+|  | Spotify | https://github.com/Acrab-Agentic-Labs/GUIAgent-Spotify |
+|  | Uber Eats | https://github.com/Acrab-Agentic-Labs/AppSim-UberEats |
+|  | WhatsApp | https://github.com/Acrab-Agentic-Labs/AppSim-WhatsApp |
+|  | YouTube | https://github.com/Acrab-Agentic-Labs/AppSim-Youtube |
+|  | Zoom | https://github.com/Acrab-Agentic-Labs/AppSim-Zoom |
 
 ```bash
 uv venv --python=3.11
@@ -146,14 +153,11 @@ python scripts/eval_appsim.py \
 
 ##### Command-line arguments
 
-- `--agent-name`: Agent name. Available values:
-  - `Seed-1.5-VL`
-  - `UI-TARS-1.5`
+- `--agent-name`: Agent name. Examples:
   - `GPT-5`
-  - `Gemini-2.5-Pro`
-  - `Claude-4.5-Sonnet`
-  - `Qwen3-VL`
-  - `AgentCPM-GUI` (default for batch scripts)
+  - `AgentCPM-GUI`
+
+  See [`scripts/agent_factory/agent_factory.py`](scripts/agent_factory/agent_factory.py) for the complete list.
 
 - `--task`: App task to evaluate. Available values:
   - `BILIBILI` - BiliBili
@@ -219,7 +223,7 @@ The project provides batch evaluation scripts that can run evaluations for multi
 Edit `scripts/eval.sh` and set the following values:
 
 ```bash
-AGENT_NAME="${AGENT_NAME:-AgentCPM-GUI}"
+AGENT_NAME="<agent-name>"
 
 API_BASES=(
   "https://your-api-endpoint-1.com/api/v3"
@@ -315,24 +319,6 @@ bash scripts/eval.sh
 - If you use another model, make sure its coordinate format matches the required 1000x1000 integer coordinate format
 - Evaluation results are saved to JSONL files in the output directory in real time, and the file names include timestamps
 
-##### Official UI-TARS API Action Table for Mobile GUI Tasks
-
-> Action reference provided by the official UI-TARS API
-
-The model may output actions such as `click(point='<point>500 257</point>')`. We parse the model output according to the rules in the table below.
-
-| Action Name | Action Type | Parameters | Example Output |
-|-------------|-------------|------------|----------------|
-| click | click | point | `click(point='<point>x1 y1</point>')` |
-| long_press | long press | point | `long_press(point='<point>x1 y1</point>')` |
-| type | input | content | `type(content='text\\n')` |
-| scroll | scroll | point, direction | `scroll(point='<point>x1 y1</point>', direction='down')` |
-| open_app | open app | app_name | `open_app(app_name='WeChat')` |
-| drag | drag | start_point, end_point | `drag(start_point='<point>x1 y1</point>', end_point='<point>x2 y2</point>')` |
-| press_home | return to home screen | none | `press_home()` |
-| press_back | go back | none | `press_back()` |
-| finished | finish | content | `finished(content='operation complete')` |
-
 #### 5. Extending Agent Types
 
 The project supports multiple agents through the `--agent-name` parameter. Different agents map to different models and settings, and the implementation lives in `scripts/agent_factory/agent_factory.py`.
@@ -361,5 +347,19 @@ A: Follow these steps:
 ### Q: How do I test only a subset of apps?
 
 A: Edit the `APPS` array in `eval.sh` and keep only the app names you want to test.
+
+## Citation
+
+```bibtex
+@misc{appsimbench,
+      title={APPSim-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents},
+      author={Jintian Feng and Long Chen and Xiao Yu and Jiayi Dai and Chenglong Liu and Haoru Wang and Zizhen Xue and Yuxuan Shi and Ziyang Wang and Yichen Gong},
+      year={2026},
+      eprint={2609.07712},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2609.07712},
+}
+```
 
 ---
