@@ -1,7 +1,7 @@
 # 所有指令
 # type: ignore
 # noqa
-from ..base import AppTasks, TaskItem
+from ..base import AppTasks, NumericReasoningCategory, TaskItem
 
 # ============================================================================
 # 任务导入
@@ -42,35 +42,31 @@ TENCENT_MEETING_TASKS = AppTasks(
             instruction="查看历史会议记录",
             verify_func=verify_meeting_history_opened,
             human_steps=1,
-            is_reasoning=False,
         ),
         # 2
         TaskItem(
             instruction="在历史会议里观看最近一次会议的回放",
             verify_func=verify_recent_meeting_replay_opened,
             human_steps=3,
-            is_reasoning=False,
         ),
         # 3
         TaskItem(
             instruction="用会议号 341234546 + 密码 312435 加入会议",
             verify_func=verify_meeting_joined_with_password,
             human_steps=4,
-            is_reasoning=False,
         ),
         # 4
         TaskItem(
             instruction="在技术方案讨论会议中，开启 '共享屏幕'",
             verify_func=verify_screen_sharing_enabled,
             human_steps=2,
-            is_reasoning=False,
         ),
         # 5
         TaskItem(
             instruction="数一下会议列表中的会议数目",
             verify_func=verify_meeting_count,
             human_steps=1,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.COUNT],
             evaluation_type="answer",
             answer_schema=TASK5_ANSWER_SCHEMA,
         ),
@@ -79,7 +75,7 @@ TENCENT_MEETING_TASKS = AppTasks(
             instruction="数一下我的联系人数目",
             verify_func=verify_contact_count,
             human_steps=15,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.COUNT],
             evaluation_type="answer",
             answer_schema=TASK6_ANSWER_SCHEMA,
         ),
@@ -88,7 +84,7 @@ TENCENT_MEETING_TASKS = AppTasks(
             instruction="数一下未开始会议的数目",
             verify_func=verify_upcoming_meeting_count,
             human_steps=1,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.COUNT],
             evaluation_type="answer",
             answer_schema=TASK7_ANSWER_SCHEMA,
         ),
@@ -97,7 +93,7 @@ TENCENT_MEETING_TASKS = AppTasks(
             instruction="数一下周姓的人数",
             verify_func=verify_contacts_by_surname_count,
             human_steps=15,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.COUNT],
             evaluation_type="answer",
             answer_schema=TASK8_ANSWER_SCHEMA,
         ),
@@ -106,7 +102,7 @@ TENCENT_MEETING_TASKS = AppTasks(
             instruction="数一下手机号13开头的人数",
             verify_func=verify_contacts_by_phone_prefix_count,
             human_steps=15,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.COUNT],
             evaluation_type="answer",
             answer_schema=TASK9_ANSWER_SCHEMA,
         ),
@@ -115,7 +111,7 @@ TENCENT_MEETING_TASKS = AppTasks(
             instruction="数一下技术讨论会议（meeting_3d7e91）中可邀请的人员数量",
             verify_func=verify_invitable_participant_count,
             human_steps=15,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.COUNT],
             evaluation_type="answer",
             answer_schema=TASK10_ANSWER_SCHEMA,
         ),
@@ -124,35 +120,30 @@ TENCENT_MEETING_TASKS = AppTasks(
             instruction="在技术讨论会议（会议号Meeting_3d7e91）中关闭所有人的麦克风",
             verify_func=verify_all_meeting_mics_muted,
             human_steps=3,
-            is_reasoning=False,
         ),
         # 12
         TaskItem(
             instruction="在技术讨论会议（会议号Meeting_3d7e91）中发送消息\"大家好\"",
             verify_func=verify_latest_meeting_message_sent,
             human_steps=5,
-            is_reasoning=False,
         ),
         # 13
         TaskItem(
             instruction="保持默认配置创建一场快速会议",
             verify_func=verify_quick_meeting_created,
             human_steps=2,
-            is_reasoning=False,
         ),
         # 14
         TaskItem(
             instruction="预约一场会议，时间定为明天晚上八点",
             verify_func=verify_scheduled_meeting_created,
             human_steps=10,
-            is_reasoning=False,
         ),
         # 15
         TaskItem(
             instruction="查看最近一场会议的会议主题和会议时长",
             verify_func=verify_latest_ended_meeting_details,
             human_steps=2,
-            is_reasoning=True,
             evaluation_type="answer",
             answer_schema=TASK15_ANSWER_SCHEMA,
         ),
@@ -161,14 +152,13 @@ TENCENT_MEETING_TASKS = AppTasks(
             instruction="加入会议号为Meeting_5d8e21的会议，然后共享屏幕",
             verify_func=verify_screen_sharing_active,
             human_steps=4,
-            is_reasoning=False,
         ),
         # 17
         TaskItem(
             instruction="帮我统计一下，技术讨论会议中，陈思远发送了多少条消息？",
             verify_func=verify_sender_message_count,
             human_steps=4,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.COUNT],
             evaluation_type="answer",
             answer_schema=TASK17_ANSWER_SCHEMA,
         ),
@@ -177,7 +167,7 @@ TENCENT_MEETING_TASKS = AppTasks(
             instruction="帮我计算一下，所有已结束会议的平均时长是多少分钟？",
             verify_func=verify_average_ended_meeting_duration,
             human_steps=39,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.CALCULATE],
             evaluation_type="answer",
             answer_schema=TASK18_ANSWER_SCHEMA,
         ),
@@ -186,7 +176,7 @@ TENCENT_MEETING_TASKS = AppTasks(
             instruction="帮我看看，技术讨论会议中，谁发送的消息最多？",
             verify_func=verify_most_active_meeting_sender,
             human_steps=4,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.COMPARE_SELECT],
             evaluation_type="answer",
             answer_schema=TASK19_ANSWER_SCHEMA,
         ),
@@ -195,49 +185,43 @@ TENCENT_MEETING_TASKS = AppTasks(
             instruction="设置我的个人会议室，设置会议密码为\"648723\"，启用等候室，将成员入会时静音设置为\"始终关闭\"",
             verify_func=verify_personal_meeting_room_settings,
             human_steps=9,
-            is_reasoning=False,
         ),
         # 21
         TaskItem(
             instruction="进入个人会议室，邀请所有周姓好友参加",
             verify_func=verify_personal_room_invitees_added,
             human_steps=20,
-            is_reasoning=False,
         ),
         # 22
         TaskItem(
             instruction="进入会议号为meeting_3d7e91的会议，将所有参与者静音",
             verify_func=verify_meeting_participant_mute_state,
             human_steps=5,
-            is_reasoning=False,
         ),
         # 23
         TaskItem(
             instruction="创建一场会议，主题为\"新产品发布\"",
             verify_func=verify_selected_meeting_invitees_added,
             human_steps=3,
-            is_reasoning=True,
         ),
         # 24
         TaskItem(
             instruction="进入技术讨论会议，发送消息\"我有问题\"，然后举手发言",
             verify_func=verify_meeting_message_and_hand_raise,
             human_steps=6,
-            is_reasoning=False,
         ),
         # 25
         TaskItem(
             instruction="在技术讨论会议中举手发言，并在联系人列表中查看手机号为15823467912的联系人信息",
             verify_func=verify_hand_raise_and_contact_lookup,
             human_steps=6,
-            is_reasoning=False,
         ),
         # 26
         TaskItem(
             instruction="复制我的个人会议室链接，并数一下我的会议室的参会人数",
             verify_func=verify_personal_room_link_copied_and_participant_count,
             human_steps=8,
-            is_reasoning=True,
+            numeric_reasoning_categories=[NumericReasoningCategory.COUNT],
             evaluation_type="hybrid",
             answer_schema=TASK26_ANSWER_SCHEMA,
         ),
