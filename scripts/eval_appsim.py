@@ -83,7 +83,7 @@ def main():
         logging.error(f"可用的任务: {', '.join([app.name for app in AppEnum])}")
         sys.exit(1)
 
-    agent_name = BaselineEnum(args.agent_name)
+    baseline_name = BaselineEnum(args.agent_name)
     tasks = APP_TASKS_MAP[task_app]
     device_id = args.device_id
     app_package = tasks.package_name
@@ -113,14 +113,14 @@ def main():
     # 构造 Agent
     try:
         agent = create_agent(
-            agent_name,
+            baseline_name,
             device_id,
             screenshots_dir,
             app_package=app_package,
         )
         logging.info(f"   任务: {task_app.name}")
         logging.info(f"   设备ID: {device_id}")
-        logging.info(f"   Agent: {agent_name}")
+        logging.info(f"   Agent: {baseline_name}")
         logging.info(f"   输出目录: {args.output_dir}")
         logging.info(f"   截图目录: {screenshots_dir}")
         if check_log_dir:
