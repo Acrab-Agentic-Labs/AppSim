@@ -74,7 +74,7 @@ class BaselineEnum(Enum):
 
 
 def create_agent(
-    agent_name: BaselineEnum,
+    baseline_name: BaselineEnum,
     device_id: str,
     screenshots_dir: str = "screenshots",
     app_package: str = "",
@@ -83,7 +83,7 @@ def create_agent(
     创建 Agent 实例
 
     Args:
-        agent_name: Baseline 模型类型（BaselineEnum）
+        baseline_name: Baseline 模型类型（BaselineEnum）
         device_id: 设备 ID（必需）
         screenshots_dir: 截图保存目录（可选，默认 "screenshots"）
         app_package: 当前评测 App 包名（MobileAgent-v3.5 必需）
@@ -92,7 +92,7 @@ def create_agent(
         BaseAgent: Agent 实例
 
     Raises:
-        ValueError: 如果 agent_name 无效或缺少必要的环境变量
+        ValueError: 如果 baseline_name 无效或缺少必要的环境变量
     """
     # 从环境变量读取API配置
     api_key = os.getenv("API_KEY")
@@ -112,7 +112,7 @@ def create_agent(
         )
 
     # Doubao 系列模型 (使用 seed_agent)
-    if agent_name == BaselineEnum.DOUBAO_PRO_32K:
+    if baseline_name == BaselineEnum.DOUBAO_PRO_32K:
         from appsim.agents.seed_agent import SeedAgent
 
         api_key = os.getenv("DOUBAO_PRO_32K_API_KEY", api_key)
@@ -129,7 +129,7 @@ def create_agent(
             model_kwargs=model_kwargs,
         )
 
-    elif agent_name == BaselineEnum.DOUBAO_PRO_256K:
+    elif baseline_name == BaselineEnum.DOUBAO_PRO_256K:
         from appsim.agents.seed_agent import SeedAgent
 
         api_key = os.getenv("DOUBAO_PRO_256K_API_KEY", api_key)
@@ -147,7 +147,7 @@ def create_agent(
         )
 
     # Seed 系列模型
-    elif agent_name == BaselineEnum.SEED15_VL:
+    elif baseline_name == BaselineEnum.SEED15_VL:
         # 导入模型
         from appsim.agents.seed_agent import SeedAgent
 
@@ -169,7 +169,7 @@ def create_agent(
         )
 
     # Doubao-Seed 系列模型 (使用 seed_agent)
-    elif agent_name == BaselineEnum.DOUBAO_SEED_16:
+    elif baseline_name == BaselineEnum.DOUBAO_SEED_16:
         from appsim.agents.seed_agent import SeedAgent
 
         api_key = os.getenv("DOUBAO_SEED_16_API_KEY", api_key)
@@ -186,7 +186,7 @@ def create_agent(
             model_kwargs=model_kwargs,
         )
 
-    elif agent_name == BaselineEnum.DOUBAO_SEED_18:
+    elif baseline_name == BaselineEnum.DOUBAO_SEED_18:
         from appsim.agents.seed_agent import SeedAgent
 
         api_key = os.getenv("DOUBAO_SEED_18_API_KEY", api_key)
@@ -203,7 +203,7 @@ def create_agent(
             model_kwargs=model_kwargs,
         )
 
-    elif agent_name == BaselineEnum.DOUBAO_SEED_20:
+    elif baseline_name == BaselineEnum.DOUBAO_SEED_20:
         from appsim.agents.seed_agent import SeedAgent
 
         api_key = os.getenv("DOUBAO_SEED_20_API_KEY", api_key)
@@ -220,7 +220,7 @@ def create_agent(
             model_kwargs=model_kwargs,
         )
 
-    elif agent_name == BaselineEnum.UI_TARS_15:
+    elif baseline_name == BaselineEnum.UI_TARS_15:
         # 导入模型
         from appsim.agents.seed_agent import SeedAgent
 
@@ -240,7 +240,7 @@ def create_agent(
             model_kwargs=model_kwargs,
         )
 
-    elif agent_name == BaselineEnum.UI_TARS_15_7B:
+    elif baseline_name == BaselineEnum.UI_TARS_15_7B:
         # 论文中的 UI-TARS-1.5-7B (使用 seed_agent)
         from appsim.agents.seed_agent import SeedAgent
 
@@ -258,92 +258,92 @@ def create_agent(
             model_kwargs=model_kwargs,
         )
 
-    elif agent_name == BaselineEnum.M3A_AGENT:
+    elif baseline_name == BaselineEnum.M3A_AGENT:
         return _create_m3a_agent(api_key, base_url, model_name)
 
     # GPT 系列模型 (使用 m3a_agent)
-    elif agent_name == BaselineEnum.GPT4O:
+    elif baseline_name == BaselineEnum.GPT4O:
         api_key = os.getenv("GPT4O_API_KEY", api_key)
         base_url = os.getenv("GPT4O_API_BASE", base_url)
         model_name = os.getenv("GPT4O_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
-    elif agent_name == BaselineEnum.GPT5:
+    elif baseline_name == BaselineEnum.GPT5:
         api_key = os.getenv("GPT5_API_KEY", api_key)
         base_url = os.getenv("GPT5_API_BASE", base_url)
         model_name = os.getenv("GPT5_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
-    elif agent_name == BaselineEnum.GPT54:
+    elif baseline_name == BaselineEnum.GPT54:
         api_key = os.getenv("GPT54_API_KEY", api_key)
         base_url = os.getenv("GPT54_API_BASE", base_url)
         model_name = os.getenv("GPT54_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
-    elif agent_name == BaselineEnum.GPT55:
+    elif baseline_name == BaselineEnum.GPT55:
         api_key = os.getenv("GPT55_API_KEY", api_key)
         base_url = os.getenv("GPT55_API_BASE", base_url)
         model_name = os.getenv("GPT55_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
     # Gemini 系列模型 (使用 m3a_agent)
-    elif agent_name == BaselineEnum.GEMINI20_FLASH_EXP:
+    elif baseline_name == BaselineEnum.GEMINI20_FLASH_EXP:
         api_key = os.getenv("GEMINI20_FLASH_EXP_API_KEY", api_key)
         base_url = os.getenv("GEMINI20_FLASH_EXP_API_BASE", base_url)
         model_name = os.getenv("GEMINI20_FLASH_EXP_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
-    elif agent_name == BaselineEnum.GEMINI25_PRO:
+    elif baseline_name == BaselineEnum.GEMINI25_PRO:
         api_key = os.getenv("GEMINI25_PRO_API_KEY", api_key)
         base_url = os.getenv("GEMINI25_PRO_API_BASE", base_url)
         model_name = os.getenv("GEMINI25_PRO_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
-    elif agent_name == BaselineEnum.GEMINI3_PRO:
+    elif baseline_name == BaselineEnum.GEMINI3_PRO:
         api_key = os.getenv("GEMINI3_PRO_API_KEY", api_key)
         base_url = os.getenv("GEMINI3_PRO_API_BASE", base_url)
         model_name = os.getenv("GEMINI3_PRO_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
-    elif agent_name == BaselineEnum.GEMINI31_PRO:
+    elif baseline_name == BaselineEnum.GEMINI31_PRO:
         api_key = os.getenv("GEMINI31_PRO_API_KEY", api_key)
         base_url = os.getenv("GEMINI31_PRO_API_BASE", base_url)
         model_name = os.getenv("GEMINI31_PRO_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
     # Claude 系列模型 (使用 m3a_agent)
-    elif agent_name == BaselineEnum.CLAUDE35_SONNET:
+    elif baseline_name == BaselineEnum.CLAUDE35_SONNET:
         api_key = os.getenv("CLAUDE35_SONNET_API_KEY", api_key)
         base_url = os.getenv("CLAUDE35_SONNET_API_BASE", base_url)
         model_name = os.getenv("CLAUDE35_SONNET_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
-    elif agent_name == BaselineEnum.CLAUDE45_SONNET:
+    elif baseline_name == BaselineEnum.CLAUDE45_SONNET:
         api_key = os.getenv("CLAUDE45_SONNET_API_KEY", api_key)
         base_url = os.getenv("CLAUDE45_SONNET_API_BASE", base_url)
         model_name = os.getenv("CLAUDE45_SONNET_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
-    elif agent_name == BaselineEnum.CLAUDE47_OPUS:
+    elif baseline_name == BaselineEnum.CLAUDE47_OPUS:
         api_key = os.getenv("CLAUDE47_OPUS_API_KEY", api_key)
         base_url = os.getenv("CLAUDE47_OPUS_API_BASE", base_url)
         model_name = os.getenv("CLAUDE47_OPUS_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
-    elif agent_name == BaselineEnum.CLAUDE46_SONNET:
+    elif baseline_name == BaselineEnum.CLAUDE46_SONNET:
         api_key = os.getenv("CLAUDE46_SONNET_API_KEY", api_key)
         base_url = os.getenv("CLAUDE46_SONNET_API_BASE", base_url)
         model_name = os.getenv("CLAUDE46_SONNET_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
-    elif agent_name == BaselineEnum.CLAUDE45_HAIKU:
+    elif baseline_name == BaselineEnum.CLAUDE45_HAIKU:
         api_key = os.getenv("CLAUDE45_HAIKU_API_KEY", api_key)
         base_url = os.getenv("CLAUDE45_HAIKU_API_BASE", base_url)
         model_name = os.getenv("CLAUDE45_HAIKU_MODEL_NAME", model_name)
         return _create_m3a_agent(api_key, base_url, model_name)
 
     # Qwen 系列模型 (使用 qwen3)
-    elif agent_name == BaselineEnum.QWEN25_VL_72B:
+    elif baseline_name == BaselineEnum.QWEN25_VL_72B:
         from appsim.agents.qwen3 import Qwen3Agent
 
         api_key = os.getenv("QWEN25_VL_72B_API_KEY", api_key)
@@ -360,7 +360,7 @@ def create_agent(
             model_kwargs=model_kwargs,
         )
 
-    elif agent_name == BaselineEnum.QWEN3_VL:
+    elif baseline_name == BaselineEnum.QWEN3_VL:
         # 导入模型
         from appsim.agents.qwen3 import Qwen3Agent
 
@@ -381,7 +381,7 @@ def create_agent(
         )
 
     # 论文中的 Qwen 系列模型
-    elif agent_name == BaselineEnum.QWEN36_PLUS:
+    elif baseline_name == BaselineEnum.QWEN36_PLUS:
         from appsim.agents.qwen3 import Qwen3Agent
 
         api_key = os.getenv("QWEN36_PLUS_API_KEY", api_key)
@@ -398,7 +398,7 @@ def create_agent(
             model_kwargs=model_kwargs,
         )
 
-    elif agent_name == BaselineEnum.QWEN36_FLASH:
+    elif baseline_name == BaselineEnum.QWEN36_FLASH:
         from appsim.agents.qwen3 import Qwen3Agent
 
         api_key = os.getenv("QWEN36_FLASH_API_KEY", api_key)
@@ -415,7 +415,7 @@ def create_agent(
             model_kwargs=model_kwargs,
         )
 
-    elif agent_name == BaselineEnum.AGENTCPM_GUI:
+    elif baseline_name == BaselineEnum.AGENTCPM_GUI:
         # 导入模型
         from appsim.agents.agentcpm import AgentCPMAgent
 
@@ -439,7 +439,7 @@ def create_agent(
             model_kwargs=model_kwargs,
         )
 
-    elif agent_name == BaselineEnum.OPEN_SOURCE_UI_TRAS:
+    elif baseline_name == BaselineEnum.OPEN_SOURCE_UI_TRAS:
         from appsim.agents.open_source_ui_tras import OpenSourceUITRASAgent
 
         api_key = os.getenv("OPEN_SOURCE_UI_TRAS_API_KEY", api_key) or "EMPTY"
@@ -488,7 +488,7 @@ def create_agent(
             model_kwargs={},
         )
 
-    elif agent_name == BaselineEnum.MOBILE_AGENT_V35:
+    elif baseline_name == BaselineEnum.MOBILE_AGENT_V35:
         from appsim.agents.mobile_agent_v35 import MobileAgentV35Agent
 
         if not app_package:
@@ -538,7 +538,7 @@ def create_agent(
             wait_after_action_seconds=wait_after_action_seconds,
         )
 
-    elif agent_name == BaselineEnum.V_DROID:
+    elif baseline_name == BaselineEnum.V_DROID:
         from appsim.agents.vdroid import VDroidAgent
 
         verifier_api_base = os.getenv("VDROID_VERIFIER_API_BASE", base_url)
@@ -603,4 +603,4 @@ def create_agent(
             ),
         )
 
-    raise ValueError(f"无效的 Agent 名称: {agent_name}")
+    raise ValueError(f"无效的 Agent 名称: {baseline_name}")
