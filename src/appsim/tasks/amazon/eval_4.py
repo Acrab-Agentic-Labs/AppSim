@@ -5,7 +5,8 @@ import os
 import subprocess
 
 
-TARGET_MESSAGE = "hello, I have some questions about dyson products."
+# Compared against the stored message lower-cased, so this must be lower-case too.
+TARGET_MESSAGE = "hello, i have some questions about dyson products."
 
 
 def verify_customer_service_message_sent(result=None, device_id=None, backup_dir=None):
