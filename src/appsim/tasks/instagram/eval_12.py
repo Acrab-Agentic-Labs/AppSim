@@ -9,7 +9,7 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from .common import *
 
-INITIAL_FOLLOWING = ["user_anushka", "user_naina", "user_deepak", "user_yashi"]
+INITIAL_FOLLOWING = ["user_tanu", "user_deepak"]
 
 
 def _read_search_state(adb):

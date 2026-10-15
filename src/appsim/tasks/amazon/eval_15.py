@@ -3,37 +3,12 @@ import os
 import subprocess
 
 
-BASELINE_ORDERS_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
-    "app",
-    "src",
-    "main",
-    "assets",
-    "data",
-    "orders.json",
-)
+# Orders seeded as PENDING by the app (assets/data/orders.json in AppSim-Amazon).
+BASELINE_PENDING_ORDER_IDS = {"ORD-2024-005", "ORD-2024-012"}
 
 
 def _load_baseline_pending_order_ids():
-    try:
-        with open(BASELINE_ORDERS_PATH, "r", encoding="utf-8") as f:
-            baseline_orders = json.load(f)
-    except Exception:
-        return set()
-
-    if not isinstance(baseline_orders, list):
-        return set()
-
-    pending_order_ids = set()
-    for order in baseline_orders:
-        if not isinstance(order, dict):
-            continue
-        if order.get("orderStatus") == "PENDING":
-            order_id = order.get("orderId")
-            if order_id:
-                pending_order_ids.add(order_id)
-
-    return pending_order_ids
+    return set(BASELINE_PENDING_ORDER_IDS)
 
 
 def verify_pending_orders_canceled(result=None, device_id=None, backup_dir=None):

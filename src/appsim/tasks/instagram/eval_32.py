@@ -1,7 +1,7 @@
 """
 Check Script #32: 退出当前账号
 Difficulty: 3 (Hard)
-Check Method: Check if login page or logout confirmation appeared
+Check Method: Logout writes no state file, so verify the logged-out screen is shown
 """
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -9,23 +9,10 @@ from .common import *
 
 
 def verify_account_logged_out(adb, ui):
-    # After logout may show login page
-    if ui.has_text("Log in") and not ui.has_text("Log out"):
-        return result_pass("Successfully logged out (login page shown)")
-
-    # May show logout confirmation dialog
-    if ui.has_text("Log out") and ui.has_text("Are you sure"):
-        return result_pass("Logout confirmation dialog appeared")
-
-    # May be on Settings page, Log out not clicked yet
-    if ui.has_text("Settings") and ui.has_text("Log out"):
-        return result_fail("On Settings page but Log out not clicked")
-
-    # Check if app closed/restarted
-    if not ui.xml or len(ui.xml) < 50:
-        return result_pass("App may have exited")
-
-    return result_fail("Logout action not detected")
+    # Only shown after confirming logout; a failed/empty UI dump must not count as success
+    if ui.has_text("You have been logged out"):
+        return result_pass("Logged-out screen shown")
+    return result_fail("Logged-out screen not detected")
 
 
 if __name__ == "__main__":
