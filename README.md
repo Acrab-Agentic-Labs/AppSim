@@ -109,6 +109,8 @@ scrcpy
 
 Before running evaluations, install the 17 AppSim APKs on the test phone or emulator. You can also fork the source repos below and build the APKs yourself for evaluation.
 
+See the [APK download list](APK_DOWNLOADS.md) for release links and corresponding source commits. Download each APK from the **Assets** section of its release page.
+
 | Chinese Name | English Name | GitHub Repo |
 |---|---|---|
 | 哔哩哔哩 | BiliBili | https://github.com/Acrab-Agentic-Labs/AppSim-BiliBili |
@@ -351,15 +353,30 @@ A: Edit the `APPS` array in `eval.sh` and keep only the app names you want to te
 ## Citation
 
 ```bibtex
-@misc{appsimbench,
-      title={APPSim-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents},
-      author={Jintian Feng and Long Chen and Xiao Yu and Jiayi Dai and Chenglong Liu and Haoru Wang and Zizhen Xue and Yuxuan Shi and Ziyang Wang and Yichen Gong},
-      year={2026},
-      eprint={2609.07712},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2609.07712},
+@inproceedings{appsim-bench,
+    title = "{APPS}im-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile {GUI} Agents",
+    author = "Feng, Jintian  and
+      Chen, Long  and
+      Yu, Xiao  and
+      Dai, Jiayi  and
+      Liu, Chenglong  and
+      Wang, Haoru  and
+      Xue, Zizhen  and
+      Shi, Yuxuan  and
+      Wang, Ziyang  and
+      Gong, Yichen",
+    editor = "Lee, Hung-Yi  and
+      Dev, Sunipa  and
+      Li, Jessy  and
+      Elliott, Desmond",
+    booktitle = "Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing",
+    month = oct,
+    year = "2026",
+    address = "Budapest, Hungary",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.emnlp-main.1620/",
+    pages = "36823--36845",
+    ISBN = "979-8-89176-459-0"
 }
 ```
-
 ---
