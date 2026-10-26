@@ -135,6 +135,8 @@ scrcpy
 
 在运行评测前，需要先将 AppSim 依赖的 17 个 App APK 下载并安装到测试手机或模拟器中。你也可以基于下列项目源码进行二次开发，再自行构建 APK 用于评测。
 
+APK 下载链接及对应源码提交见 [APK 下载清单](APK_DOWNLOADS.md)。请进入各 Release 页面的 **Assets** 下载 APK。
+
 | 中文名 | 英文名 | App 的 GitHub 地址 |
 |---|---|---|
 | 哔哩哔哩 | BiliBili | https://github.com/Acrab-Agentic-Labs/AppSim-BiliBili |
@@ -393,14 +395,30 @@ A: 编辑 `eval.sh` 中的 `APPS` 数组，只保留需要测试的应用名称�
 ## 引用
 
 ```bibtex
-@misc{appsimbench,
-      title={APPSim-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile GUI Agents},
-      author={Jintian Feng and Long Chen and Xiao Yu and Jiayi Dai and Chenglong Liu and Haoru Wang and Zizhen Xue and Yuxuan Shi and Ziyang Wang and Yichen Gong},
-      year={2026},
-      eprint={2609.07712},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2609.07712},
+@inproceedings{appsim-bench,
+    title = "{APPS}im-Bench: Bridging Real-world Apps and Reproducible Evaluation for Mobile {GUI} Agents",
+    author = "Feng, Jintian  and
+      Chen, Long  and
+      Yu, Xiao  and
+      Dai, Jiayi  and
+      Liu, Chenglong  and
+      Wang, Haoru  and
+      Xue, Zizhen  and
+      Shi, Yuxuan  and
+      Wang, Ziyang  and
+      Gong, Yichen",
+    editor = "Lee, Hung-Yi  and
+      Dev, Sunipa  and
+      Li, Jessy  and
+      Elliott, Desmond",
+    booktitle = "Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing",
+    month = oct,
+    year = "2026",
+    address = "Budapest, Hungary",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.emnlp-main.1620/",
+    pages = "36823--36845",
+    ISBN = "979-8-89176-459-0"
 }
 ```
 
